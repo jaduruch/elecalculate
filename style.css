@@ -1,0 +1,374 @@
+/*customize*/
+header {
+    /*------------------Normal Dark Mode*/
+    /*background-color: #00d3b0;*/
+    background: #333;
+    /*------------------Rainbow*/
+    /*background-image: linear-gradient(to right, red , rgb(255, 153, 0),rgb(194, 194, 0),rgb(0, 218, 0),rgb(0, 140, 255), rgb(195, 0, 255), rgb(255, 0, 221));
+    /*------------------Bi Pride Flag*/
+    /*background-image: linear-gradient(to right, rgb(255, 0, 149) , rgb(212, 0, 255), rgb(0, 89, 255));*/
+}
+
+.main-menu li a {
+    color: white;    /*Text farbe aendern*/
+    /*font-weight: bold;*/
+
+}
+
+.burger-menu div {
+    background-color: white; /*farbe bruger menu*/
+}
+
+.main-menu li a:hover{
+    background-color: #00000044;
+}
+.main-menu li a.active {
+    background-color: #000000A0;
+    /*background-color: #ffffff83;*/
+}
+
+/******Farben*****************************************/
+:root {
+    --Strom: #C00000;
+    --Winkel: #FF0000;
+    --Kraft: #FF0000;
+    --Zeitkonstante: #FF0000;
+    --Verstaerkungsmass: #FF6201;
+    --Feldstaerke:#FF9515;
+    --Widerstand:#FF9515;
+    --Durchflutung:#D29B00;
+    --Induktivitaet:#D29B00;
+    --Daempfungsmass:#FFC000;
+    --Permeabilitaetszahl:#C0CF3A;
+    --Dielektrizitaetszahl: #C0CF3A;
+    --Guete: #93D07C;
+    --Flaeche: #25FF35;
+    --Leistung: #00B050;
+    --Elektronenabstand: #549E39;
+    --Windungszahl:#549E39;
+    --Geschwindigkeit: #549E39;
+    --Mag_Widerstand: #549E39;
+    --Kapazitaet: #1D9F52;
+    --Mag_Fluss: #34A7B6;
+    --Spannung: #0070C0;
+    --Energie: #0000FF;
+    --Spulenkonstante: #0000FF;
+    --Laenge: #7030A0;
+    --Ladung: #7030A0;
+    --Verstaerkungsfaktor: #C50DFF;
+    --Frequenz: #C50DFF;
+    --Mag_Flussdichte: #C50DFF;
+    --Daempfungsfaktor: #FF15E3;
+    --Zeit: #FF15E3;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Horizontal scroll bar */
+header {
+    /*------------------Normal Dark Mode*/
+    /*background: #333;*/
+
+    width: 100%;
+    height: 55px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+    white-space: nowrap;
+}
+
+/* Für horizontales Scrollen */
+/*.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}*/
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE und Edge */
+    scrollbar-width: none;     /* Firefox */
+    height: 100%; /* Stellt sicher, dass es die volle Header-Höhe einnimmt */
+    align-items: center; /* Zentriert den Inhalt vertikal */
+    padding: 0; /* Entfernt zusaetzlichen Abstand */
+    margin: 0; /* Entfernt eventuelle Raender */
+}
+
+
+/* Scrollbar in Chrome, Safari, Edge und Opera entfernen */
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/*******************************  horizontal menu  ***/
+.main-menu {
+    list-style: none;
+    margin: 0;
+    /*padding: 0;*/
+    padding-left: 0px; /* fuegt Abstand ohne 'li:first-child' */
+    display: flex;
+    /*white-space: nowrap; /* Verhindert Zeilenumbruch */
+}
+
+.main-menu li {
+    /*margin: 0 10px;*/
+    float: left;
+    
+}
+
+.main-menu li a {
+    /*color: rgb(255, 255, 255);    /*Text farbe aendern*/
+    /*font-weight: bold;*/
+    text-align: center;
+    padding: 19px 16px;
+    text-decoration: none;
+    display: block;
+    /*background-color: #33333300;*/
+    /*border-radius: none;*/
+}
+
+
+/*******************************  burger menu  ***/
+    .burger-menu {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+    }
+
+    .burger-menu div {
+        width: 25px;
+        height: 3px;
+        /*background-color: rgb(255, 255, 255); /*farbe bruger menu*/
+        margin: 3px 0;
+        transition: 0.4s;
+        margin-right: 20px;
+    }
+
+    .change .bar1 {
+        transform: rotate(-45deg) translate(-7.5px, 5px);
+    }
+
+    .change .bar2 {
+        opacity: 0;
+    }
+
+    .change .bar3 {
+        transform: rotate(45deg) translate(-7.5px, -5px);
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 55px;
+        left: 0px;
+        background-color: black;
+        color: white;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1000;
+        
+    }
+
+    .dropdown-menu ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dropdown-menu li {
+        padding: 0;
+        text-align: left;
+    }
+
+    .dropdown-menu li a {
+        text-decoration: none;
+        color: white;
+        display: block;
+        padding: 12px 20px;
+    }
+
+    .dropdown-menu li a:hover {
+        background-color: #383838;
+    }
+
+
+
+/*****************************************************/
+h1{
+    margin-top: 65px;
+}
+
+.description {
+    padding: 10px;
+    width: 100%;
+    margin-top: 60px;
+}
+
+.active {
+    display: block;
+}
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    background-color: black;
+    margin: auto;
+}
+
+th, td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+}
+
+/*.container {
+    background-color: #000;
+    padding: 20px;
+    border-radius: 10px;
+
+    display: inline-block;
+}*/
+
+
+input[type="number"] {
+    padding: 5px;
+    margin: 10px;
+    width: 100px;
+}
+
+input[type="text"] {
+    padding: 5px;
+    margin: 5px;
+    width: 150px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 3px;
+}
+.Button_Berechnen
+{
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 8px;
+    color: white;
+
+    transition-duration: 0.4s;
+}
+.Button_Berechnen:hover
+{
+    background-color: white;
+    color: black;
+}
+
+.result {
+    margin-top: 20px;
+}
+
+.comment{
+    font-size: smaller;
+    font-style: italic;
+    color:rgb(179, 179, 179);
+    margin-left: 10px;
+    text-align: left;
+}
+
+/*.container {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100vh;
+    
+}
+
+.content{
+    padding-bottom: 100px; 
+}
+
+footer {
+    background-color: #111;
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    position: fixed; 
+    bottom: 0;
+    left: 0; 
+}*/
+
+/* HTML und Body müssen die volle Höhe des Viewports einnehmen */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Wrapper umschließt den gesamten Inhalt */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Nimmt die volle Höhe des Viewports ein */
+    width: 100%;
+}
+
+/* Main-Bereich wächst, um Platz einzunehmen */
+main {
+    flex: 1; /* Füllt den verfügbaren Platz zwischen Header und Footer */
+}
+
+*{
+    box-sizing: border-box;
+}
+
+/* Footer bleibt unten */
+footer {
+    background-color: #111;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%;
+    
+    left: 0; 
+}
+
+
+

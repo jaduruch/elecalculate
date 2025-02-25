@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Transformator</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+        }
+        .input-container, .output-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-container input, .output-container input {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        .middle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .middle-container img {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="Gleichstrom.html">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a class="active" href="#Transformator">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Transformator</h1>
+            </div>
+            <div class="container">
+                <div class="input-container">
+                    <label for="primaryVoltage">Primärspannung (V):</label>
+                    <input type="number" id="primaryVoltage" placeholder="Primärspannung eingeben">
+                </div>
+                <div class="middle-container">
+                    <img src="../Pictures/Transformator.png" alt="Foto_Transformator">
+                    <div class="input-container">
+                        <label for="turnsRatio">Windungsverhältnis:</label>
+                        <input type="number" id="turnsRatio" placeholder="Windungsverhältnis eingeben">
+                    </div>
+                    <button onclick="calculateValues()">Berechnen</button>
+                </div>
+                <div class="output-container">
+                    <label for="secondaryVoltage">Sekundärspannung (V):</label>
+                    <input type="number" id="secondaryVoltage" placeholder="Sekundärspannung eingeben">
+                </div>
+            </div>
+            <br>
+        </main>
+        <div>
+            <footer>&copy 2025 Elecalculate</footer>
+        </div>
+    </div>
+    <script src="../scripts.js"></script>
+    <script>
+        function calculateValues() {
+            const primaryVoltage = parseFloat(document.getElementById('primaryVoltage').value);
+            const turnsRatio = parseFloat(document.getElementById('turnsRatio').value);
+            const secondaryVoltage = parseFloat(document.getElementById('secondaryVoltage').value);
+            
+            if (!isNaN(primaryVoltage) && !isNaN(turnsRatio)) {
+                document.getElementById('secondaryVoltage').value = primaryVoltage * turnsRatio;
+            } else if (!isNaN(primaryVoltage) && !isNaN(secondaryVoltage)) {
+                document.getElementById('turnsRatio').value = secondaryVoltage / primaryVoltage;
+            } else if (!isNaN(turnsRatio) && !isNaN(secondaryVoltage)) {
+                document.getElementById('primaryVoltage').value = secondaryVoltage / turnsRatio;
+            } else {
+                alert('Bitte geben Sie mindestens zwei Werte ein.');
+            }
+        }
+    </script> 
+</body>
+</html>

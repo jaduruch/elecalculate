@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Gleichstrom</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+
+    <style>
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            border: 3px solid;
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 600px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+        img{
+            width: 80%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a class="active" href="#Gleichstrom">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <br>
+                <h1>Gleichstrom</h1>
+            </div>
+            <div>
+                <img src="../Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik">
+            </div>
+            <div class="input-numbers">
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                </div>
+                <!-- Strom I -->
+                <div class="form-row">
+                    <label>Strom I</label>
+                    <input type="text" id="I" style="border-color: var(--Strom);">
+                    <label>A [Ampere]</label>
+                </div>
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R</label>
+                    <input type="text" id="R" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <!-- Feldsaerke E -->
+                <div class="form-row">
+                    <label>Leistung P</label>
+                    <input type="text" id="P" style="border-color: var(--Leistung);">
+                    <label>P [Watt]</label>
+                </div>
+
+                <!-- Dielektizitaetszahl Er -->
+                <div class="form-row">
+                    <label>Spannung U</label>
+                    <input type="text" id="U" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+            </div>
+            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParameters()">
+            
+            
+            <p id="result"></p>
+
+            <br>
+            <div>
+                <img src="../Pictures/Gliechstrom_Tabelle.jpg" alt="Foto_URI_Formeln"">
+            </div>
+            <br>
+        </main>
+        <div>
+            <footer>&copy 2025 Elecalculate</footer>
+        </div>
+    </div>
+    <script src="../scripts.js"></script>
+    <script>
+ 
+        function calculateParameters() 
+            {
+                let result = ``;
+
+                const I = document.getElementById("I").value;
+                const R = document.getElementById("R").value;
+                const P = document.getElementById("P").value;
+                const U = document.getElementById("U").value;
+
+                if(U && R && !I && !P)
+                {
+                    // I = U/R
+                    // P = U^2/R
+                    result += `
+                        Strom I = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> U </span><br>
+                            <span>R</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${U}V </span><br>
+                            <span>${R}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(U) / parseInput(R), "A")}<br>
+
+                    Leistung P = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> U<sup>2</sup> </span><br>
+                            <span>R</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                            <span>${R}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(R), "W")}<br>`;
+
+
+                }
+
+                if(P && U && !R && !I)
+                {
+                    // I = P/U
+                    // R = U^2/P
+                    result += `
+                        Strom I = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> P </span><br>
+                            <span>U</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${P}W </span><br>
+                            <span>${U}V</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(P) / parseInput(U), "A")}<br>
+
+                    Widerstand R = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> U<sup>2</sup> </span><br>
+                            <span>P</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                            <span>${P}W</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(P), "&Omega;")}<br>`;
+                }
+
+                if(P && R && !I && !U)
+                {
+                    // I = sqrt(P/R)
+                    // U = sqrt(P*R)
+                    result += `
+                        Strom I = 
+                        &radic;	<div class ="fraction">
+                            <span class="fraction-numerator"> P </span><br>
+                            <span>R</span>
+                        </div> 
+                    =
+                        &radic;	 <div class ="fraction">
+                            <span class="fraction-numerator">${P}W </span><br>
+                            <span>${R}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix( Math.pow((parseInput(P))/parseInput(R), 0.5), "A")}<br>
+
+
+                    Spannung U =
+                           &radic; P &times; R
+                        =
+                           &radic; ${P}W &times; ${R}&Omega;
+                        = ${formatWithPrefix( Math.pow((parseInput(P))*parseInput(R), 0.5), "V")}<br>`;
+                }
+
+                if(I && R && !P && !U)
+                {
+                    // U = I * R
+                    // P = I^2 *R
+                    result += `
+                            Spannung U =
+                            I &times; R
+                        =
+                            ${I}A &times; ${R}&Omega;
+                        = ${formatWithPrefix(parseInput(I) * parseInput(R), "V")}<br>
+
+                        Leistung P =
+                            I<sup>2</sup> &times; R
+                        =
+                            (${I}A)<sup>2</sup> &times; ${R}&Omega;
+                        = ${formatWithPrefix(Math.pow(parseInput(I), 2) * parseInput(R), "W")}<br>`;
+                }
+                
+                if(P && I && !R && !U)
+                {
+                    // R = P/I^2
+                    // U = P/I
+                    result += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">P</span><br>
+                            <span>I<sup>2</sup> </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">  ${P}W</span><br>
+                            <span>(${I}A)<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefix( parseInput(P)/ Math.pow(parseInput(I), 2), "&Omega;")}<br>
+
+                    Spannung U = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">P</span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">  ${P}W</span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${formatWithPrefix( parseInput(P)/parseInput(I), "V")}<br>`;
+                }
+
+                if(U && I && !P && !R)
+                {
+                    // P = U * I
+                    // R = U/I
+                    result += `
+                            Leistung P =
+                            U &times; I
+                        =
+                            ${U}V &times; ${I}A;
+                        = ${formatWithPrefix(parseInput(U) * parseInput(I), "W")}<br>
+
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U</span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${U}V</span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${formatWithPrefix( parseInput(U)/parseInput(I), "&Omega;")}<br>`;
+                }
+                
+
+                document.getElementById('result').innerHTML = result;
+            }
+    </script>
+</body>
+</html>

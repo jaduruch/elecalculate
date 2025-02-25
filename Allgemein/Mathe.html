@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allgemein | Mathe</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+</head>
+<body>
+    
+        <header>
+            <div class="burger-menu" onclick="toggleMenu()">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+            <div class="scroll-container">
+                <ul class="main-menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="E-Reihe.html">E-Reihe</a></li>
+                    <li><a class="active" href="#Mathe.html">Mathe</a></li>
+                    <li><a href="Widerstandstabelle.html">Widerstandstabelle</a></li>
+                    <li><a href="Glossar.html">Glossar</a></li>
+                    <li><a href="Massvorsaetze.html">Massvors&auml;tze</a></li>
+                </ul>
+            </div>    
+            <nav class="dropdown-menu">
+                <ul>
+                    <li><a href="#Allgemein">Allgemein</a></li>
+                    <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                    <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                    <li><a href="../HST/hst.html">HST</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="wrapper">
+            <main>
+                <div>
+                    <h1><br>Mathe</h1>
+                </div>
+
+                <!-- Neuer Bereich zur Berechnung des Kreises -->
+                <div>
+                    <h2>Kreisberechnung</h2>
+                    <label for="radius">Radius eingeben:</label>
+                    <input type="number" id="radius" step="any" placeholder="Radius" onchange="calculateAreaFromRadius()">
+                    <select id="radiusUnit" onchange="calculateAreaFromRadius()">
+                        <option value="0.001">mm</option>
+                        <option value="0.01" selected>cm</option>
+                        <option value="1">m</option>
+                        <option value="1000">km</option>
+                    </select>
+                    <br><br>
+                    <label for="area">Fläche eingeben:</label>
+                    <input type="number" id="area" step="any" placeholder="Fläche" onchange="calculateRadiusFromArea()">
+                    <select id="areaUnit" onchange="calculateRadiusFromArea()">
+                        <option value="1e-6">mm²</option>
+                        <option value="0.0001" selected>cm²</option>
+                        <option value="1">m²</option>
+                        <option value="1e6">km²</option>
+                    </select>
+                    <br><br>
+                    <button onclick="resetFields()">Zurücksetzen</button>
+                </div>
+                <br>                 
+            </main>
+    
+        <footer>
+            &copy 2025 Elecalculate
+        </footer>
+
+        </div>
+    <script src="../scripts.js"></script>
+    <!-- Inline JavaScript zur Kreisberechnung -->
+    <script>
+        const pi = Math.PI;
+
+        function calculateAreaFromRadius() {
+            const radius = parseFloat(document.getElementById('radius').value);
+            const radiusUnit = parseFloat(document.getElementById('radiusUnit').value);
+
+            if (!isNaN(radius) && radius > 0) {
+                const radiusInMeters = radius * radiusUnit;
+                const areaInMeters = pi * Math.pow(radiusInMeters, 2);
+                const areaUnit = parseFloat(document.getElementById('areaUnit').value);
+                const areaConverted = areaInMeters / areaUnit;
+
+                document.getElementById('area').value = areaConverted.toFixed(2);
+            }
+        }
+
+        function calculateRadiusFromArea() {
+            const area = parseFloat(document.getElementById('area').value);
+            const areaUnit = parseFloat(document.getElementById('areaUnit').value);
+
+            if (!isNaN(area) && area > 0) {
+                const areaInMeters = area * areaUnit;
+                const radiusInMeters = Math.sqrt(areaInMeters / pi);
+                const radiusUnit = parseFloat(document.getElementById('radiusUnit').value);
+                const radiusConverted = radiusInMeters / radiusUnit;
+
+                document.getElementById('radius').value = radiusConverted.toFixed(2);
+            }
+        }
+
+        function resetFields() {
+            document.getElementById('radius').value = '';
+            document.getElementById('area').value = '';
+            document.getElementById('radiusUnit').selectedIndex = 1;
+            document.getElementById('areaUnit').selectedIndex = 1;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Wechselstrom</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .waveform-button {
+            position: relative;
+            width: 100px; /* Adjust as needed */
+            height: 100px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .waveform-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .waveform-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .waveform-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .waveform-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="Gleichstrom.html">Gleichstrom</a></li>
+                <li><a class="active" href="#Wechselstrom">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Wechselstrom</h1>
+            </div>
+            <div id="waveformButtons">
+                <button class="waveform-button" type="button" onclick="selectWaveform('sinus', this)">
+                    <img src="../Pictures/Sinus.jpg" alt="Sinus">
+                    <span>Sinus</span>
+                </button>
+                <button class="waveform-button" type="button" onclick="selectWaveform('rectangle', this)">
+                    <img src="../Pictures/Rechteck.jpg" alt="Rechteck (Symmetrisch)">
+                    <span>Rechteck</span>
+                </button>
+                <button class="waveform-button" type="button" onclick="selectWaveform('triangle', this)">
+                    <img src="../Pictures/Dreieck.jpg" alt="Dreieck/Sägezahn">
+                    <span>Dreieck</span>
+                </button>
+                <button class="waveform-button" type="button" onclick="selectWaveform('pwm', this)">
+                    <img src="../Pictures/PWM.jpg" alt="PWM">
+                    <span>PWM</span>
+                </button>
+            </div>
+            <div id="inputFields">
+                <!-- Input fields will be dynamically generated here -->
+            </div>
+            <div id="result">
+                <!-- Result will be displayed here -->
+            </div>
+            <div id="sinusVoltageCalculator">
+                <!-- Sinus voltage calculator will be dynamically generated here -->
+            </div>
+            <br>
+        </main>
+        <div>
+            <footer>&copy 2025 Elecalculate</footer>
+        </div>
+    </div>
+    <script src="../scripts.js"></script> <!-- Link to the burger menu JavaScript file -->
+    <script>
+        function selectWaveform(waveform, button) {
+            // Remove 'selected' class from all buttons
+            const buttons = document.querySelectorAll('.waveform-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+
+            const inputFields = document.getElementById('inputFields');
+            if (waveform === 'pwm') {
+                inputFields.innerHTML = `
+                    <label for="peakVoltage">Spitzenwert der Spannung (V):</label>
+                    <input type="number" id="peakVoltage"><br>
+                    <label for="dutyCycle">Duty Cycle (%):</label>
+                    <input type="number" id="dutyCycle"><br>
+                    <button type="button" onclick="calculateRMS('${waveform}')">Berechnen</button>
+                `;
+            } else {
+                inputFields.innerHTML = `
+                    <label for="peakVoltage">Spitzenwert der Spannung (V):</label>
+                    <input type="number" id="peakVoltage"><br>
+                    <button type="button" onclick="calculateRMS('${waveform}')">Berechnen</button>
+                `;
+            }
+            document.getElementById('result').innerHTML = ''; // Clear previous result
+
+            if (waveform === 'sinus') {
+                const sinusVoltageCalculator = document.getElementById('sinusVoltageCalculator');
+                sinusVoltageCalculator.innerHTML = `
+                    <label for="frequency">Frequenz (Hz):</label>
+                    <input type="number" id="frequency"><br>
+                    <label for="time">Zeit (s):</label>
+                    <input type="number" id="time"><br>
+                    <button type="button" onclick="calculateSinusVoltage()">Berechnen</button>
+                    <div id="sinusVoltageResult"></div>
+                `;
+            } else {
+                document.getElementById('sinusVoltageCalculator').innerHTML = '';
+            }
+        }
+
+        function calculateRMS(waveform) {
+            const peakVoltage = parseFloat(document.getElementById('peakVoltage').value);
+            if (isNaN(peakVoltage)) {
+                document.getElementById('result').innerHTML = 'Bitte geben Sie einen gültigen Spitzenwert ein.';
+                return;
+            }
+
+            let rmsVoltage;
+            switch (waveform) {
+                case 'sinus':
+                    rmsVoltage = peakVoltage / Math.sqrt(2);
+                    break;
+                case 'rectangle':
+                    rmsVoltage = peakVoltage;
+                    break;
+                case 'triangle':
+                    rmsVoltage = peakVoltage / Math.sqrt(3);
+                    break;
+                case 'pwm':
+                    const dutyCycle = parseFloat(document.getElementById('dutyCycle').value) / 100;
+                    if (isNaN(dutyCycle) || dutyCycle < 0 || dutyCycle > 1) {
+                        document.getElementById('result').innerHTML = 'Bitte geben Sie einen gültigen Duty Cycle ein (0-100%).';
+                        return;
+                    }
+                    rmsVoltage = peakVoltage * Math.sqrt(dutyCycle);
+                    break;
+                default:
+                    rmsVoltage = NaN;
+            }
+
+            if (!isNaN(rmsVoltage)) {
+                document.getElementById('result').innerHTML = `Effektivwert der Spannung: ${rmsVoltage.toFixed(2)} V`;
+            } else {
+                document.getElementById('result').innerHTML = 'Unbekannter Wellenformtyp.';
+            }
+        }
+
+        function calculateSinusVoltage() {
+            const peakVoltage = parseFloat(document.getElementById('peakVoltage').value);
+            const frequency = parseFloat(document.getElementById('frequency').value);
+            const time = parseFloat(document.getElementById('time').value);
+            if (isNaN(peakVoltage) || isNaN(frequency) || isNaN(time)) {
+                document.getElementById('sinusVoltageResult').innerHTML = 'Bitte geben Sie gültige Werte für Spitzenwert, Frequenz und Zeit ein.';
+                return;
+            }
+
+            const angularFrequency = 2 * Math.PI * frequency;
+            const currentVoltage = peakVoltage * Math.sin(angularFrequency * time);
+
+            document.getElementById('sinusVoltageResult').innerHTML = `Aktueller Spannungswert: ${currentVoltage.toFixed(2)} V`;
+        }
+    </script>
+</body>
+</html>

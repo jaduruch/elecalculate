@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektronik | OPV</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .opv-button {
+            position: relative;
+            width: 200px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .opv-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .opv-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .opv-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .opv-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        
+        .input-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .input-container label, .input-container input, .input-container select, .input-container button {
+            display: block;
+            margin: 5px auto;
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .input-group input {
+            margin-right: 5px;
+        }
+        
+        .input-group select {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektronik.html">Elektronik</a></li>
+                <li><a href="Dioden.html">Dioden</a></li>
+                <li><a href="Transistor.html">Transistoren</a></li>
+                <li><a href="FETs.html">FETs</a></li>
+                <li><a class="active" href="#OPV.html">OPVs</a></li>
+                <li><a href="Aktiv_Filter.html">Aktiv Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="#Elektronik">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>OPV</h1>
+            </div>
+            <div>
+                <h2>Rückkopplungen</h2>
+            </div>
+            <div id="opvButtonsRückkopplungen">
+                <button class="opv-button" type="button" onclick="selectOPV('invertierenderVerstärker', this)">
+                    <img src="../Pictures/OPV_invertierender_Verstaerker.png" alt="invertierender Verstärker">
+                    <span>invertierender Verstärker</span>
+                </button>
+                <button class="opv-button" type="button" onclick="selectOPV('nichtinvertierenderVerstärker', this)">
+                    <img src="../Pictures/OPV_nichtinvertierender_Verstaerker.png" alt="nicht-invertierender Verstärker">
+                    <span>nicht-invertierender Verstärker</span>
+                </button>
+                <button class="opv-button" type="button" onclick="selectOPV('summierVerstärker', this)">
+                    <img src="../Pictures/OPV_Summier_Verstaerker.png" alt="Summier Verstärker">
+                    <span>Summier Verstärker</span>
+                </button>
+                <button class="opv-button" type="button" onclick="selectOPV('differenzierVerstärker', this)">
+                    <img src="../Pictures/OPV_Differenz_Verstaerker.png" alt="Differenzier Verstärker">
+                    <span>Differenzier Verstärker</span>
+                </button>
+            </div>
+            <div id="inputFields">
+                <!-- Input fields will be dynamically generated here -->
+            </div>
+            <div id="result">
+                <!-- Result will be displayed here -->
+            </div>
+            <div>
+                <h2>Mitkopplungen</h2>
+            </div>
+            <div id="opvButtonsMitkopplungen">
+                <button class="opv-button" type="button" onclick="selectOPV('invertierenderSchmittTrigger', this)">
+                    <img src="../Pictures/OPV_invertierender_SchmittTrigger.jpg" alt="invertierender Schmitt-Trigger">
+                    <span>invertierender Schmitt-Trigger</span>
+                </button>
+                <button class="opv-button" type="button" onclick="selectOPV('nichtinvertierenderSchmittTrigger', this)">
+                    <img src="../Pictures/OPV_nichtinvertierender_SchmittTrigger.jpg" alt="nicht-invertierender Schmitt-Trigger">
+                    <span>nicht-invertierender Schmitt-Trigger</span>
+                </button>
+            </div>
+            <div id="inputFieldsMitkopplungen">
+                <!-- Input fields will be dynamically generated here -->
+            </div>
+            <div id="resultMitkopplungen">
+                <!-- Result will be displayed here -->
+            </div>
+            <br>
+            
+        </main>
+
+        <footer>
+            &copy; 2025 Elecalcualte
+        </footer>
+    </div>
+    <script>
+        function selectOPV(opv, button) {
+            const buttonGroup = button.closest('div');
+            const buttons = buttonGroup.querySelectorAll('.opv-button');
+            const inputFields = document.getElementById(buttonGroup.id === 'opvButtonsRückkopplungen' ? 'inputFields' : 'inputFieldsMitkopplungen');
+
+            if (button.classList.contains('selected')) {
+                // If the button is already selected, deselect it
+                button.classList.remove('selected');
+                inputFields.innerHTML = ''; // Clear input fields
+                document.getElementById(buttonGroup.id === 'opvButtonsRückkopplungen' ? 'result' : 'resultMitkopplungen').innerHTML = ''; // Clear previous result
+            } else {
+                // Remove 'selected' class from all buttons in the same group
+                buttons.forEach(btn => btn.classList.remove('selected'));
+
+                // Add 'selected' class to the clicked button
+                button.classList.add('selected');
+
+                let inputHTML = '';
+                switch (opv) {
+                    case 'invertierenderVerstärker':
+                        inputHTML = `
+                            <div class="input-group">
+                                <label for="r1">R1 (Ohm):</label>
+                                <input type="number" id="r1" placeholder="Widerstand R1 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r2">R2 (Ohm):</label>
+                                <input type="number" id="r2" placeholder="Widerstand R2 eingeben">
+                            </div>
+                            <button type="button" onclick="calculate('${opv}')">Verstärkung berechnen</button>
+                        `;
+                        break;
+                    case 'nichtinvertierenderVerstärker':
+                        inputHTML = `
+                            <div class="input-group">
+                                <label for="r1">R1 (Ohm):</label>
+                                <input type="number" id="r1" placeholder="Widerstand R1 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r2">R2 (Ohm):</label>
+                                <input type="number" id="r2" placeholder="Widerstand R2 eingeben">
+                            </div>
+                            <button type="button" onclick="calculate('${opv}')">Verstärkung berechnen</button>
+                        `;
+                        break;
+                    case 'summierVerstärker':
+                        inputHTML = `
+                            <div class="input-group">
+                                <label for="r1">R1 (Ohm):</label>
+                                <input type="number" id="r1" placeholder="Widerstand R1 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r2">R2 (Ohm):</label>
+                                <input type="number" id="r2" placeholder="Widerstand R2 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r3">R3 (Ohm):</label>
+                                <input type="number" id="r3" placeholder="Widerstand R3 eingeben">
+                            </div>
+                            <button type="button" onclick="calculate('${opv}')">Summierung berechnen</button>
+                        `;
+                        break;
+                    case 'differenzierVerstärker':
+                        inputHTML = `
+                            <div class="input-group">
+                                <label for="r1">R1 (Ohm):</label>
+                                <input type="number" id="r1" placeholder="Widerstand R1 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r2">R2 (Ohm):</label>
+                                <input type="number" id="r2" placeholder="Widerstand R2 eingeben">
+                            </div>
+                            <button type="button" onclick="calculate('${opv}')">Differenzierung berechnen</button>
+                        `;
+                        break;
+                    case 'invertierenderSchmittTrigger':
+                    case 'nichtinvertierenderSchmittTrigger':
+                        inputHTML = `
+                            <div class="input-group">
+                                <label for="r1">R1 (Ohm):</label>
+                                <input type="number" id="r1" placeholder="Widerstand R1 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="r2">R2 (Ohm):</label>
+                                <input type="number" id="r2" placeholder="Widerstand R2 eingeben">
+                            </div>
+                            <div class="input-group">
+                                <label for="vcc">Vcc (V):</label>
+                                <input type="number" id="vcc" placeholder="Speisespannung Vcc eingeben">
+                            </div>
+                            <button type="button" onclick="calculate('${opv}')">Hysterese berechnen</button>
+                            <div id="resultMitkopplungen"></div>
+                        `;
+                        break;
+                    default:
+                        inputHTML = '';
+                }
+                inputFields.innerHTML = inputHTML;
+                document.getElementById(buttonGroup.id === 'opvButtonsRückkopplungen' ? 'result' : 'resultMitkopplungen').innerHTML = ''; // Clear previous result
+            }
+        }
+
+        function calculate(opv) {
+            const r1 = parseFloat(document.getElementById('r1').value);
+            const r2 = parseFloat(document.getElementById('r2').value);
+            let result;
+
+            switch (opv) {
+                case 'invertierenderVerstärker':
+                    if (isNaN(r1) || isNaN(r2)) {
+                        result = 'Bitte geben Sie gültige Werte für R1 und R2 ein.';
+                    } else {
+                        result = `Verstärkung: ${-(r2 / r1).toFixed(2)}`;
+                    }
+                    break;
+                case 'nichtinvertierenderVerstärker':
+                    if (isNaN(r1) || isNaN(r2)) {
+                        result = 'Bitte geben Sie gültige Werte für R1 und R2 ein.';
+                    } else {
+                        result = `Verstärkung: ${(1 + r2 / r1).toFixed(2)}`;
+                    }
+                    break;
+                case 'summierVerstärker':
+                    const r3 = parseFloat(document.getElementById('r3').value);
+                    if (isNaN(r1) || isNaN(r2) || isNaN(r3)) {
+                        result = 'Bitte geben Sie gültige Werte für R1, R2 und R3 ein.';
+                    } else {
+                        result = `Summierung: Vout = - (Vin1 * R3/R1 + Vin2 * R3/R2)`;
+                    }
+                    break;
+                case 'differenzierVerstärker':
+                    if (isNaN(r1) || isNaN(r2)) {
+                        result = 'Bitte geben Sie gültige Werte für R1 und R2 ein.';
+                    } else {
+                        result = `Differenzierung: Vout = (R2/R1) * (Vin1 - Vin2)`;
+                    }
+                    break;
+                case 'invertierenderSchmittTrigger':
+                case 'nichtinvertierenderSchmittTrigger':
+                    const vcc = parseFloat(document.getElementById('vcc').value);
+                    if (isNaN(r1) || isNaN(r2) || isNaN(vcc)) {
+                        result = 'Bitte geben Sie gültige Werte für R1, R2 und Vcc ein.';
+                    } else {
+                        const Vh = (r2 / (r1 + r2)) * vcc;
+                        result = `Hysterese: ±${Vh.toFixed(2)}V`;
+                    }
+                    break;
+                default:
+                    result = 'Unbekannter Schaltungstyp.';
+            }
+
+            if (opv === 'invertierenderSchmittTrigger' || opv === 'nichtinvertierenderSchmittTrigger') {
+                document.getElementById('resultMitkopplungen').innerHTML = result;
+            } else {
+                document.getElementById('result').innerHTML = result;
+            }
+        }
+    </script>
+    <script src="../scripts.js"></script>
+</body>
+</html>

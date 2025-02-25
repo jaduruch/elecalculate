@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HST | Ausgangsstufen</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+    img {
+        border-width: 1.5px;
+        border-style: solid; /* Wichtig: Border-Stil hinzufügen */
+        border-color: rgb(77, 77, 77);
+        width: 100px;
+        height: auto; /* Optional: Höhe automatisch setzen */
+        border-radius: 5px;
+    }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <ul class="main-menu">
+            <li><a href="#hst">HST</a></li>
+            <li><a href="Massvorsaetze_Binaer.html">Massvors&auml;tze Bin&auml;r</a></li>
+            <li><a class="active" href="Ausgangs_Stufen.html">Ausgangs Stufen</a></li>
+            <li><a href="Gatter.html">Gatter</a></li>
+            <li><a href="Objekt_Orinetiert.html">Objekt Orinetiert</a></li>
+            <li><a href="C_Syntax.html">C-Syntax</a></li>
+        </ul>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="#hst">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+            <h1><br>Ausg&auml;nge</h1>
+        </div>
+        <div>
+            <h3>Invertierender Ausgang</h3>
+            <img src="../Pictures/InvertierenderAusgang.png" alt="Invertierender Eingang Schaltsymbol"><br>
+            <!--Ausgang kann neben HIGH und LOW auch einen Hochohmigen Zustand Z annehmen.-->
+        <div>
+        <div>
+            <h3>Tri State</h3>
+            <img src="../Pictures/Tristate.png" alt="Tristate Schaltsymbol"><br>
+            <!--Ausgang kann neben HIGH und LOW auch einen Hochohmigen Zustand Z annehmen.-->
+        <div>
+            <h3>Open Collector</h3>
+            <img src="../Pictures/OpenCollector.png" alt="OC Schaltsymbol"><br>
+            <!--Der Kollektor/Drain des Transistors wird floatend auf den Ausgang gelegt, <br>
+            hier wird ein Pull-up Widerstand ben&ouml;tigt.-->
+        </div>
+        <div>
+            <h3>Retardierter Ausgang</h3>
+            <img src="../Pictures/RetardierterAusgang.png" alt="Retardierter Ausgang"><br>
+            <!--Ausgang wird Zeitverz&ouml;gert auf die N&auml;chste Flanke geschalten.-->
+        </div>
+        <div>
+            <h3>Treiber Baustein</h3>
+            <img src="../Pictures/TreiberBaustein.png" alt="Retardierter Ausgang"><br>
+            <!--Ausgang wird Zeitverz&ouml;gert auf die N&auml;chste Flanke geschalten.-->
+        </div>
+        <div>
+            <h1><br>Eing&auml;nge</h1>
+        </div>
+        <div>
+            <h3>Invertierender Eingang</h3>
+            <img src="../Pictures/InvertierenderEingang.png" alt="Invertierender Eingang Schaltsymbol"><br>
+            <!--Ausgang kann neben HIGH und LOW auch einen Hochohmigen Zustand Z annehmen.-->
+        
+        <div>
+            <h3>Flankengesteuerter Eingang</h3>
+            <img src="../Pictures/PositiveFlanke.png" alt="Flankengesteuerter Eingang Schaltsymbol"><br>
+            <!--Der Kollektor/Drain des Transistors wird floatend auf den Ausgang gelegt, <br>
+            hier wird ein Pull-up Widerstand ben&ouml;tigt.-->
+        </div>
+        <div>
+            <h3>Negative Flanke</h3>
+            <img src="../Pictures/NegativeFlanke.png" alt="Negativ-Flankengesteuerter Eingang"><br>
+            <!--Ausgang wird Zeitverz&ouml;gert auf die N&auml;chste Flanke geschalten.-->
+        </div>
+        </main>
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    <script src="../scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Daten von elektrischen Spulen einfach berechnen">
+	<!-- Stichworte für Suchmaschinen -->
+    <meta name="keywords" content="Spule, Induktivität, Blindwiderstand, Windungen, Elektronik">
+    <title>Elektrotechnik | Spulen</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="Gleichstrom.html">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a class="active" href="#Spule">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Spule</h1>
+            </div>
+            <div>
+                <h2>Spulen berechnungen</h2>
+                <h3>gegeben:</h3>
+                <div>
+                    <button style="background-color: var(--Strom)">Strom [I]</button>
+                    <button style="background-color: var(--Zeitkonstante)">Zeitkonstante [&tau;]</button>
+                    <button style="background-color: var(--Widerstand)">Widerstand [R]</button>
+                    <button style="background-color: var(--Induktivitaet)">Induktivit&auml;t [L]</button>
+                    <button style="background-color: var(--Permeabilitaetszahl)">Permeabilitaet [&mu;r]</button>
+                    <button style="background-color: var(--Windungszahl)">Windungszahl [N]</button>
+                    <button style="background-color: var(--Mag_Fluss)">Magnetischer Fluss [&Phi;]</button>
+                    <button style="background-color: var(--Spannung)">Spannung [U]</button>
+                    <button style="background-color: var(--Spulenkonstante)">Spuhlenkontante [A_L]</button>
+                    <button style="background-color: var(--Laenge)">L&auml;nge [l]</button>
+                    <button style="background-color: var(--Mag_Flussdichte)">Magnetische Flussdichte [B]</button> 
+                    <button style="background-color: var(--Zeit)">Zeit [t]</button>
+                </div>
+            </div>
+            <div>
+                <h2>Spule an Wechselstrom</h2>
+            </div>
+            <div>
+                <h2>RL Glied</h2>
+            </div>
+            <br>
+            <div>
+                Development in progress...
+            </div>
+            <br>
+        </main>
+    
+        <footer>
+            &copy 2025 Elecalculate
+        </footer>
+    </div>
+    
+    <script src="../scripts.js"></script>
+</body>
+</html>

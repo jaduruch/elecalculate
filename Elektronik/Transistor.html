@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Rechentool für Transistor berechnungen">
+	<!-- Stichworte fuer Suchmaschinen -->
+    <meta name="keywords" content="Transistor, NPN, Basisstrom, Lastwiderstand, Ausgangsspannung, Transitor als Schalter, Berechnen">
+    <title>Elektronik | Transistor</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #535353;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        /*input:checked + .slider {
+            background-color: #22aca0;
+        }*/
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            border: 3px solid;
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        .dropdown-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #000;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .dropdown-header:hover {
+            background-color: #181818;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+
+        .dropdown.open .arrow {
+            transform: rotate(-180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px 20px;
+            background-color: #000000;
+            border-top: 1px solid #ddd;
+
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Stil fuer die tiefergestellten Zeichen */
+        sub {
+            vertical-align: sub;
+            font-size: smaller;
+        }
+
+        .transistorForm{
+            /*padding: 10px;*/
+            max-width: 150px;
+        }
+
+        /***************/
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            border: 3px solid;
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 600px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+        img{
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektronik.html">Elektronik</a></li>
+                <li><a href="Dioden.html">Dioden</a></li>
+                <li><a class="active" href="#Transistor">Transistoren</a></li>
+                <li><a href="FETs.html">FETs</a></li>
+                <li><a href="OPV.html">OPVs</a></li>
+                <li><a href="Aktiv_Filter.html">Aktiv Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="#Elektronik">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Transistor</h1>
+            </div>
+            <div class="dropdown-container">
+                <div class="dropdown">
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Transistor als Schalter<span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <h2>Schaltung</h2>
+                                <img src="../Pictures/Transistor_Schalter.png" alt="Transistor Schaltung" style="max-width: 450px;">
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                            </div>
+
+                            <!-- Kollektorstrom IC -->
+                            <div class="form-row">
+                                <label>Kollektorstrom I<sub>C</sub></label>
+                                <input type="text" id="IC" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <!-- Basisstrom IB -->
+                            <div class="form-row">
+                                <label>Basisstrom I<sub>B</sub></label>
+                                <input type="text" id="IB" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+
+                            <!-- Lastwiderstand RL -->
+                            <div class="form-row">
+                                <label>Lastwiderstand R<sub>L</sub></label>
+                                <input type="text" id="RL" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <!--Widerstand RB-->
+                            <div class="form-row">
+                                <label>Widerstand R<sub>B</sub></label>
+                                <input type="text" id="RB" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+
+                            <!-- Speisespannung USpeisung -->
+                            <div class="form-row">
+                                <label>Speisespannung U<sub>b</sub></label>
+                                <input type="text" id="USpeisung" style="border-color: var(--Spannung);">
+                                <label>U [Volt]</label>
+                            </div>
+
+                            <!-- Eingangsspannung UB -->
+                            <div class="form-row">
+                                <label>Basisspannung U<sub>B</sub></label>
+                                <input type="text" id="UB" style="border-color: var(--Spannung);">
+                                <label>U [Volt]</label>
+                            </div>
+
+                            <!-- Basis-Emitter-Spannung UBE -->
+                            <div class="form-row">
+                                <label>Basis-Emitter-Spannung U<sub>BE</sub></label>
+                                <input type="text" id="UBE" placeholder="0.7"style="border-color: var(--Spannung);">
+                                <label>U [Volt]</label>
+                            </div>
+
+                            <!-- Kollektor-Emitter-Spannung UCE -->
+                            <div class="form-row">
+                                <label>Kollektor-Emitter-Spannung U<sub>CE</sub></label>
+                                <input type="text" id="UCE" placeholder="0.2" style="border-color: var(--Spannung);">
+                                <label>U [Volt]</label>
+                            </div>
+
+
+                            <!-- Basisstromverstaerkung B -->
+                            <div class="form-row">
+                                <label>Basisstromverst&auml;rkung B</label>
+                                <input type="text" id="B" style="border-color: var(--Verstaerkungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <!-- Uebersteuerungsfaktor ue -->
+                            <div class="form-row">
+                                <label>&Uuml;bersteuerungsfaktor &uuml;</label>
+                                <input type="text" id="ue" placeholder="3" style="border-color: var(--Verstaerkungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateTransistorAsSwitch()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result"></p>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Transistor als Verst&auml;rker <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            development in progress
+                        </div>
+                    
+                    </div>
+                </div>
+                <!--<div class="divider"></div>-->
+ 
+            </div>
+
+       
+
+        </main>
+
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    
+    <script>
+    function calculateTransistorAsSwitch() 
+        {
+            
+            let result = ``;
+
+            const IC = document.getElementById("IC").value;
+            const IB = document.getElementById("IB").value;
+            const RL = document.getElementById("RL").value;
+            const RB = document.getElementById("RB").value;
+            const USpeisung = document.getElementById("USpeisung").value;
+            const UB = document.getElementById("UB").value;
+            const UBE = document.getElementById("UBE").value;
+            const UCE = document.getElementById("UCE").value;
+            const B = document.getElementById("B").value;
+            const ue = document.getElementById("ue").value;
+            //debugger;
+            
+
+            if(!IC)       // Berechnungen fuer Strom IC
+            {
+                if(IB && B && ue)       // IC = (IB * B)/ue
+                {
+                    result += `
+                        Kollektorstrom I<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> I<sub>B</sub> &times; B </span><br>
+                            <span>&uuml;</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${IB}A &times; ${B}</span><br>
+                            <span>${ue}</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(IB) * parseInput(B))/ parseInput(ue), "A")}<br>`;
+                }
+
+                if(USpeisung && UCE && RL)  // IC = (USpeisung - UCE) / RL
+                {
+
+                    result += `
+                        Kollektorstrom I<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> U<sub>b</sub> - U<sub>CE</sub></span><br>
+                            <span>R<sub>L</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${USpeisung}V - ${UCE}V</span><br>
+                            <span>${RL}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(USpeisung) - parseInput(UCE))/ parseInput(RL), "A")}<br>`;
+                }
+
+                if(UB && UBE && B && ue && RB)    // (UB-UBE)*B/(ue*RB);
+                {
+                    result += `
+                        Kollektorstrom I<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) &times; B</span><br>
+                            <span>&uuml; &times; R<sub>B</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> (${UB}V - ${UBE}V) &times; ${B}</span><br>
+                            <span>${ue} &times; ${RB}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix(((parseInput(UB) - parseInput(UBE)) * parseInput(B))/ (parseInput(ue * parseInput(RB))), "A")}<br>`;
+                }
+            }
+
+            if(!IB)     // Berechnungen fuer Strom IB
+            {
+                if(ue && IC && B)       // IB = (ue * IC) / B
+                {
+                    result += `
+                        Basisstrom I<sub>B</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> I<sub>C</sub> &times; &uuml; </span><br>
+                            <span>B</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${IC}A &times; ${ue}</span><br>
+                            <span>${B}</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(IC) * parseInput(ue))/ parseInput(B), "A")}<br>`;
+                }
+
+                if(UB && UBE && RB)     // IB = (UB - UBE) / RB
+                {
+                    result += `
+                        Basisstrom I<sub>B</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> U<sub>B</sub> - U<sub>BE</sub></span><br>
+                            <span>R<sub>B</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${UB}V - ${UBE}V</span><br>
+                            <span>${RB}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(UB) - parseInput(UBE))/ parseInput(RB), "A")}<br>`;
+                }
+            }
+
+            if(!RL && USpeisung && UCE && IC)     // RL = (USpeisung - UCE) / IC
+            {
+                result += `
+                    Lastwiderstand R<sub>L</sub> = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>b</sub> - U<sub>CE</sub></span><br>
+                        <span>I<sub>C</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${USpeisung}V - ${UCE}V</span><br>
+                        <span>${IC}A</span>
+                    </div> 
+                = ${formatWithPrefix((parseInput(USpeisung) - parseInput(UCE))/ parseInput(IC), "&Omega;")}<br>`;
+            }
+
+            if(!RB && UB && UBE && B && ue && IC) // RB = (UB - UBE) * B * ue / IC
+            {
+                result += `
+                    Basiswiderstand R<sub>B</sub> = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) &times; B &times; &uuml;</span><br>
+                        <span>I<sub>C</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> (${UB}V - ${UBE}V) &times; ${B} &times ${ue}</span><br>
+                        <span>${IC}A</span>
+                    </div> 
+                = ${formatWithPrefix(((parseInput(UB) - parseInput(UBE))*parseInput(B)*parseInput(ue))/ parseInput(IC), "&Omega;")}<br>`;
+            }
+
+            if(!USpeisung && IC && RL && UCE)       // USpeisung = IC * RL + UCE
+            {
+                result += `
+                            Speisespannung U<sub>b</sub> =
+                            I<sub>C</sub> &times; R<sub>L</sub> + U<sub>CE</sub>
+                        =
+                            ${IC}A &times; ${RL}&Omega; + ${UCE}V
+                        = ${formatWithPrefix(parseInput(IC) * parseInput(RC) + parseInput(UCE), "V")}<br>`;
+            }
+
+            if(!UB && IC && RB && ue && B && UBE)        // UB = IC * RB * ue / B + UBE
+            {
+                // UB = IB * RB + UBE
+                if(RB && IB && UBE)
+                {
+                    result += `
+                            Basisspannung U<sub>B</sub> =
+                            I<sub>B</sub> &times; R<sub>B</sub> + U<sub>BE</sub>
+                        =
+                            ${IB}A &times; ${RB}&Omega; + ${UBE}V
+                        = ${formatWithPrefix(parseInput(IB) * parseInput(RB) + parseInput(UBE), "V")}<br>`;
+                }
+            }
+            
+            document.getElementById('result').innerHTML = result;
+        }
+
+
+    /*Dropdown menu*/
+            function toggleDropdown(element) {
+                const dropdown = element.parentElement;
+                dropdown.classList.toggle("open");
+            }
+
+    </script>
+    <script src="../scripts.js"></script>
+</body>
+</html>
