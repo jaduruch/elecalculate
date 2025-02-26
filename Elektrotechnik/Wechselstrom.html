@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Effektivwert von Wechselspannungen berechnen.">
+	<!-- Stichworte fuer Suchmaschinen -->
+    <meta name="keywords" content="Elecalculate, Elektrotechnik, Berechnungen, Wecheselstrom, Sinus, Recheck, Dreieck, PWM, Effektivwert">
     <title>Elektrotechnik | Wechselstrom</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
     <style>
-        .waveform-button {
+        
+        /***********/
+        .img-button {
             position: relative;
             width: 100px; /* Adjust as needed */
             height: 100px; /* Adjust as needed */
@@ -18,21 +24,21 @@
             cursor: pointer;
         }
         
-        .waveform-button img {
+        .img-button img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .waveform-button:hover {
+        .img-button:hover {
             border-color: grey; /* grey border for hovered button */
         }
         
-        .waveform-button.selected {
+        .img-button.selected {
             border-color: white; /* White border for selected button */
         }
         
-        .waveform-button span {
+        .img-button span {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -42,6 +48,97 @@
             color: white;
             font-size: 14px;
             padding: 2px 0;
+        }
+        /***********/
+        
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            /*border: 3px solid;*/
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 600px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .RAD-Button 
+        {
+            background: none;
+            /*border: 1px solid var(--Winkel);
+            border-radius: 3px;
+            /*margin-top: 10px;
+            min-width: 50px;
+            height: 29px;*/
+            color: inherit;
+            padding: 0;
+            cursor: pointer;
+            flex: 3;
+            text-align: left;
+        }
+
+        .RAD-Button:hover{
+            text-decoration: underline;
+        }
+
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            margin-bottom: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denominator {
+            border-top: 1px solid;
+        }
+
+        img{
+            width: 80%;
+            max-width: 600px;
         }
     </style>
 </head>
@@ -80,133 +177,1112 @@
             <div>
                 <h1><br>Wechselstrom</h1>
             </div>
-            <div id="waveformButtons">
-                <button class="waveform-button" type="button" onclick="selectWaveform('sinus', this)">
+            <div>
+                <button class="img-button" type="button" onclick="toggleSelection(this, 'Sinus')">
                     <img src="../Pictures/Sinus.jpg" alt="Sinus">
                     <span>Sinus</span>
                 </button>
-                <button class="waveform-button" type="button" onclick="selectWaveform('rectangle', this)">
-                    <img src="../Pictures/Rechteck.jpg" alt="Rechteck (Symmetrisch)">
+                <button class="img-button" type="button" onclick="toggleSelection(this, 'Rechteck')">
+                    <img src="../Pictures/Rechteck.jpg" alt="Rechteck">
                     <span>Rechteck</span>
                 </button>
-                <button class="waveform-button" type="button" onclick="selectWaveform('triangle', this)">
-                    <img src="../Pictures/Dreieck.jpg" alt="Dreieck/Sägezahn">
+                <button class="img-button" type="button" onclick="toggleSelection(this, 'Dreieck')">
+                    <img src="../Pictures/Dreieck.jpg" alt="Dreieck">
                     <span>Dreieck</span>
                 </button>
-                <button class="waveform-button" type="button" onclick="selectWaveform('pwm', this)">
+                <button class="img-button" type="button" onclick="toggleSelection(this, 'PWM')">
                     <img src="../Pictures/PWM.jpg" alt="PWM">
                     <span>PWM</span>
                 </button>
             </div>
-            <div id="inputFields">
-                <!-- Input fields will be dynamically generated here -->
+
+            <!--Sinus------------------------------------------------------------------------------------------------->
+            <div id="Sinus" style="display:none;" class="input-numbers">
+                <h2>Sinus</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. U<sub>eff</sub> = 20mV &rarr; Eingabe: 20m (nicht 20mV)<br>
+                    Mit einem Klick auf die Einheit das Winkels kann zwischen RAD und DEG umgestellt werden<br>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Momentanwert u(t)</label>
+                    <input type="text" id="ut-Sinus" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Peakspannung u<sub>p</sub> / &ucirc;</label>
+                    <input type="text" id="up-Sinus" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Peak-Peakspannung u<sub>pp</sub></label>
+                    <input type="text" id="upp-Sinus" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--<div class="form-row">
+                    <label>DC-Offsetspannung U<sub>DC</sub></label>
+                    <input type="text" id="Udc-Sinus" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>-->
+
+                <div class="form-row">
+                    <label>Effektivspannung U<sub>eff</sub></label>
+                    <input type="text" id="Ueff-Sinus" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-Sinus" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Zeit-->
+                <div class="form-row">
+                    <label>aktueller Zeitpunkt t</label>
+                    <input type="text" id="t-Sinus" style="border-color: var(--Zeit);">
+                    <label>s [sekunden] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Periodendauer T</label>
+                    <input type="text" id="T-Sinus" style="border-color: var(--Zeit);">
+                    <label>s [sekunden] </label>
+                </div>
+
+                <!-- Winkel phi -->
+                <div class="form-row">
+                    <label>Winkel &phi;</label>
+                    <input type="text" id="Winkel-Sinus" style="border-color: var(--Winkel);">
+                    <label><button id="Rad-Button" class="RAD-Button" onclick="toggleRAD()">2&pi;</button></label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_Sinus()">
+
+                <!-- Canvas für Sinuskurve -->
+                <!--<canvas id="sinusCanvas" width="600" height="200" style="margin-top: 10px;"></canvas>-->
+
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_Sinus"></p>
             </div>
-            <div id="result">
-                <!-- Result will be displayed here -->
+
+            <!--Rechteck------------------------------------------------------------------------------------------------->
+            <div id="Rechteck" style="display:none;" class="input-numbers">
+                <h2>Rechteck</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. U<sub>eff</sub> = 20mV &rarr; Eingabe: 20m (nicht 20mV)<br><br>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Peakspannung u<sub>p</sub> / &ucirc;</label>
+                    <input type="text" id="up-Rechteck" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Peak-Peakspannung u<sub>pp</sub></label>
+                    <input type="text" id="upp-Rechteck" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Effektivspannung U<sub>eff</sub></label>
+                    <input type="text" id="Ueff-Rechteck" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_Rechteck()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_Rechteck"></p>
             </div>
-            <div id="sinusVoltageCalculator">
-                <!-- Sinus voltage calculator will be dynamically generated here -->
+
+            <!--Dreieck------------------------------------------------------------------------------------------------->
+            <div id="Dreieck" style="display:none;" class="input-numbers">
+                <h2>Dreieck / S&auml;gezahn</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. U<sub>eff</sub> = 20mV &rarr; Eingabe: 20m (nicht 20mV)<br><br>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Peakspannung u<sub>p</sub> / &ucirc;</label>
+                    <input type="text" id="up-Dreieck" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Peak-Peakspannung u<sub>pp</sub></label>
+                    <input type="text" id="upp-Dreieck" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Effektivspannung U<sub>eff</sub></label>
+                    <input type="text" id="Ueff-Dreieck" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_Dreieck()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_Dreieck"></p>
             </div>
+
+            <!--PWM------------------------------------------------------------------------------------------------->
+            <div id="PWM" style="display:none;" class="input-numbers">
+                <h2>PWM</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. U<sub>eff</sub> = 20mV &rarr; Eingabe: 20m (nicht 20mV)<br>
+                    Mit einem Klick auf die Einheit das Duty-Cycles kann zwischen % und ganzzahlig umgestellt werden<br>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Peakspannung u<sub>p</sub> / &ucirc;</label>
+                    <input type="text" id="up-PWM" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Effektivspannung U<sub>eff</sub></label>
+                    <input type="text" id="Ueff-PWM" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-PWM" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Zeit-->
+                <div class="form-row">
+                    <label>Impulsdauer t<sub>in</sub></label>
+                    <input type="text" id="tin-PWM" style="border-color: var(--Zeit);">
+                    <label>s [sekunden] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Periodendauer T</label>
+                    <input type="text" id="T-PWM" style="border-color: var(--Zeit);">
+                    <label>s [sekunden] </label>
+                </div>
+
+                <!--Duty cylce-->
+                <div class="form-row">
+                    <label>Duty-Cycle g</sub></label>
+                    <input type="text" id="g-PWM" style="border-color: gray;">
+                    <label><button id="Duty-Button" class="RAD-Button" onclick="toggleDuty()">%</button></label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_PWM()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_PWM"></p>
+            </div>
+
             <br>
         </main>
-        <div>
-            <footer>&copy 2025 Elecalculate</footer>
-        </div>
+
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
     </div>
-    <script src="../scripts.js"></script> <!-- Link to the burger menu JavaScript file -->
     <script>
-        function selectWaveform(waveform, button) {
-            // Remove 'selected' class from all buttons
-            const buttons = document.querySelectorAll('.waveform-button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
+        let selectedButton = null;
+
+        function toggleSelection(button, sectionId) {
+            const section = document.getElementById(sectionId);
             
-            // Add 'selected' class to the clicked button
-            button.classList.add('selected');
-
-            const inputFields = document.getElementById('inputFields');
-            if (waveform === 'pwm') {
-                inputFields.innerHTML = `
-                    <label for="peakVoltage">Spitzenwert der Spannung (V):</label>
-                    <input type="number" id="peakVoltage"><br>
-                    <label for="dutyCycle">Duty Cycle (%):</label>
-                    <input type="number" id="dutyCycle"><br>
-                    <button type="button" onclick="calculateRMS('${waveform}')">Berechnen</button>
-                `;
+            if (selectedButton === button) {
+                // Deselect if the same button is clicked again
+                button.classList.remove('selected');
+                section.style.display = 'none';
+                selectedButton = null;
             } else {
-                inputFields.innerHTML = `
-                    <label for="peakVoltage">Spitzenwert der Spannung (V):</label>
-                    <input type="number" id="peakVoltage"><br>
-                    <button type="button" onclick="calculateRMS('${waveform}')">Berechnen</button>
-                `;
-            }
-            document.getElementById('result').innerHTML = ''; // Clear previous result
+                // Remove selection from the previously selected button
+                if (selectedButton) {
+                    selectedButton.classList.remove('selected');
+                }
+                
+                // Select the new button
+                button.classList.add('selected');
+                selectedButton = button;
 
-            if (waveform === 'sinus') {
-                const sinusVoltageCalculator = document.getElementById('sinusVoltageCalculator');
-                sinusVoltageCalculator.innerHTML = `
-                    <label for="frequency">Frequenz (Hz):</label>
-                    <input type="number" id="frequency"><br>
-                    <label for="time">Zeit (s):</label>
-                    <input type="number" id="time"><br>
-                    <button type="button" onclick="calculateSinusVoltage()">Berechnen</button>
-                    <div id="sinusVoltageResult"></div>
-                `;
-            } else {
-                document.getElementById('sinusVoltageCalculator').innerHTML = '';
+                // Show the selected section and hide the other
+                if (sectionId === 'Sinus') {
+                    document.getElementById('Sinus').style.display = 'block';
+                    document.getElementById('Rechteck').style.display = 'none';
+                    document.getElementById('Dreieck').style.display = 'none';
+                    document.getElementById('PWM').style.display = 'none';
+                } else if(sectionId === 'Rechteck') {
+                    document.getElementById('Sinus').style.display = 'none';
+                    document.getElementById('Rechteck').style.display = 'block';
+                    document.getElementById('Dreieck').style.display = 'none';
+                    document.getElementById('PWM').style.display = 'none';
+                } else if (sectionId === 'Dreieck') {
+                    document.getElementById('Sinus').style.display = 'none';
+                    document.getElementById('Rechteck').style.display = 'none';
+                    document.getElementById('Dreieck').style.display = 'block';
+                    document.getElementById('PWM').style.display = 'none';
+                } else if (sectionId === 'PWM') {
+                    document.getElementById('Sinus').style.display = 'none';
+                    document.getElementById('Rechteck').style.display = 'none';
+                    document.getElementById('Dreieck').style.display = 'none';
+                    document.getElementById('PWM').style.display = 'block';
+                }
             }
         }
 
-        function calculateRMS(waveform) {
-            const peakVoltage = parseFloat(document.getElementById('peakVoltage').value);
-            if (isNaN(peakVoltage)) {
-                document.getElementById('result').innerHTML = 'Bitte geben Sie einen gültigen Spitzenwert ein.';
-                return;
+        let isRADactive = true; // Standard: Radian (2π)
+        function toggleRAD() 
+        {
+            let button = document.getElementById("Rad-Button");
+
+            if (isRADactive) {
+                button.innerHTML = "360&deg;"; // Wechselt zu Grad
+                isRADactive = false;
+            } else {
+                button.innerHTML = "2&pi;"; // Wechselt zurück zu Radian
+                isRADactive = true;
+            }
+        }
+
+        let isPercent = true;
+        function toggleDuty() 
+        {
+            let button = document.getElementById("Duty-Button");
+
+            if (isPercent) {
+                button.innerHTML = "1"; // Wechselt zu Grad
+                isPercent = false;
+            } else {
+                button.innerHTML = "%"; // Wechselt zurück zu Radian
+                isPercent = true;
+            }
+        }
+
+        function calculate_Sinus() 
+        {
+            let result_Sinus = ``;
+
+            const ut = document.getElementById("ut-Sinus").value;
+            const up = document.getElementById("up-Sinus").value;
+            const upp = document.getElementById("upp-Sinus").value;
+            //const Udc = document.getElementById("Udc-Sinus").value;
+            const Ueff = document.getElementById("Ueff-Sinus").value;
+            const f = document.getElementById("f-Sinus").value;
+            const t = document.getElementById("t-Sinus").value;
+            const T = document.getElementById("T-Sinus").value;
+            const phi = document.getElementById("Winkel-Sinus").value;
+
+            if(!ut)     // Momentanwert
+            {
+                if(up && f && t)
+                {
+                    result_Sinus += `
+                    Momentanwert u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
+                =
+                    ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
+                = ${formatWithPrefix(parseInput(up)*Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+                }
+
+                if(up && phi && isRADactive)
+                {
+                    result_Sinus += `
+                    Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
+                =
+                    ${up}V &lowast; sin(${phi})
+                = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(up && phi && !isRADactive)
+                {
+                    result_Sinus += `
+                    Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
+                =
+                    ${up}V &lowast; sin(${phi}&deg;)
+                = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
+                }
             }
 
-            let rmsVoltage;
-            switch (waveform) {
-                case 'sinus':
-                    rmsVoltage = peakVoltage / Math.sqrt(2);
-                    break;
-                case 'rectangle':
-                    rmsVoltage = peakVoltage;
-                    break;
-                case 'triangle':
-                    rmsVoltage = peakVoltage / Math.sqrt(3);
-                    break;
-                case 'pwm':
-                    const dutyCycle = parseFloat(document.getElementById('dutyCycle').value) / 100;
-                    if (isNaN(dutyCycle) || dutyCycle < 0 || dutyCycle > 1) {
-                        document.getElementById('result').innerHTML = 'Bitte geben Sie einen gültigen Duty Cycle ein (0-100%).';
-                        return;
+            if(!up)     // peak wert
+            {
+                if(ut && f && t)
+                {
+                    result_Sinus += `
+                        Peakspannung &ucirc; = 
+                        <div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">sin(2&pi; &lowast; f &lowast; t)</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(ut)/Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+                }
+
+                if(ut && phi && isRADactive)
+                {
+                    result_Sinus += `
+                        Peakspannung &ucirc; = 
+                        <div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">sin(&phi)</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">sin(${phi})</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)), "V")}<br>`;
+                }
+                if(ut && phi && !isRADactive)
+                {
+                    result_Sinus += `
+                        Peakspannung &ucirc; = 
+                        <div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">sin(&phi)</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">sin(${phi}&deg;)</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
+                }
+
+                if(upp)
+                {
+                    result_Sinus += `
+                        Peakspannung &ucirc; = 
+                        <div class ="fraction">
+                            <span> u<sub>pp</sub> </span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${upp}V<br>
+                            <span class="fraction-denominator">2</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
+                }
+            }
+
+            if(!upp)     // Peak-Peak wert
+            {
+                if(up)
+                {
+                    result_Sinus += `
+                    Peak-Peakspannung u<sub>pp</sub> = &ucirc; &lowast; 2
+                =
+                    ${up}V &lowast; 2
+                = ${formatWithPrefix(parseInput(up)*2, "V")}<br>`;
+                }
+
+                if(Ueff)
+                {
+                    
+                    result_Sinus += `
+                    Peak-Peakspannung u<sub>pp</sub> = U<sub>eff</sub> &lowast; 2 &lowast; &radic;2
+                =
+                    ${Ueff}V &lowast; 2 &lowast; &radic;2
+                = ${formatWithPrefix(parseInput(Ueff)*2*Math.pow(2,0.5), "V")}<br>`;
+                }
+            }
+            
+            if(!Ueff)      // Effektivwert
+            {
+                if(up)
+                {
+                    result_Sinus += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> &ucirc; </span><br>
+                            <span class="fraction-denominator">&radic;2</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${up}V<br>
+                            <span class="fraction-denominator">&radic;2</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(up)/Math.pow(2, 0.5), "V")}<br>`;
+                }
+
+                if(upp)
+                {
+                    result_Sinus += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> u<sub>pp</sub> </span><br>
+                            <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${upp}V<br>
+                            <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(upp)/(2 * Math.pow(2, 0.5)), "V")}<br>`;
+                }
+            }
+
+            if(!f)      // frequnez
+            {
+                if(T)
+                {
+                    result_Sinus += `
+                        Frequnez f = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">T</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1<br>
+                            <span class="fraction-denominator">${T}s</span>
+                        </div> 
+                    = ${formatWithPrefix(1/parseInput(T), "Hz")}<br>`;
+                }
+
+                if(up && t && ut)
+                {
+                    result_Sinus += `
+                        Frequnez f = 
+                        <div class ="fraction">
+                            <span> arcsin(<div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">&ucirc;</span>
+                        </div>) </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; t</span>
+                        </div> 
+                    = <div class ="fraction">
+                            <span> arcsin(<div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">${up}V</span>
+                        </div>) <br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
+                }
+
+                if(phi && isRADactive && t)
+                {
+                    result_Sinus += `
+                        Frequnez f = 
+                        <div class ="fraction">
+                            <span> &phi; </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; t</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${phi}<br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
+                }
+
+                if(phi && !isRADactive && t)
+                {
+                    result_Sinus += `
+                        Frequnez f = 
+                        <div class ="fraction">
+                            <span> &phi; </span><br>
+                            <span class="fraction-denominator">360&deg; &lowast; t</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${phi}&deg;<br>
+                            <span class="fraction-denominator">360&deg; &lowast; ${t}s</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(t)), "Hz")}<br>`;
+                }
+            }
+
+            if(!t)      // aktueller Zeitpunkt
+            {
+                if(up && f && ut)
+                {
+                    result_Sinus += `
+                        aktueller Zeitpunkt t = 
+                        <div class ="fraction">
+                            <span> arcsin(<div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">&ucirc;</span>
+                        </div> ) </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f</span>
+                        </div> 
+                    = <div class ="fraction">
+                            <span><div class ="fraction">
+                            <span>${ut}<br>
+                            <span class="fraction-denominator">${up}V</span>
+                        </div> <br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
+                }
+
+                if(phi && isRADactive && f)
+                {
+                    result_Sinus += `
+                        aktueller Zeitpunkt t = 
+                        <div class ="fraction">
+                            <span> &phi; </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${phi}<br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(f)), "s")}<br>`;
+                }
+
+                if(phi && !isRADactive && f)
+                {
+                    result_Sinus += `
+                        aktueller Zeitpunkt t = 
+                        <div class ="fraction">
+                            <span> &phi; </span><br>
+                            <span class="fraction-denominator">360&deg; &lowast; f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${phi}&deg;<br>
+                            <span class="fraction-denominator">360&deg; &lowast; ${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(f)), "s")}<br>`;
+                }
+            }
+
+            if(!T)      // Periodenzeit
+            {
+                if(f)
+                {
+                    result_Sinus += `
+                        Periodendauer T = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1<br>
+                            <span class="fraction-denominator">${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(1/parseInput(f), "s")}<br>`;
+                }
+            }
+
+            if(!phi)    // winkel
+            {
+                if(f && t)
+                {
+                    result_Sinus += `
+                    Winkel &phi;<sub>RAD</sub> = 2&pi; &lowast; f &lowast; t
+                =
+                    2&pi; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>
+
+                Winkel &phi;<sub>DEG</sub> = 360&deg; &lowast; f &lowast; t
+                =
+                    360&deg; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(360 * parseInput(f) * parseInput(t),"&deg;")}<br>`;
+                }
+
+                if(ut && up)
+                {
+                    result_Sinus += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arcsin(<div class ="fraction">
+                            <span>u(t)</span><br>
+                            <span class="fraction-denominator">&ucirc;</span>
+                        </div>)
+                    =
+                        arcsin(<div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">${up}V</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up)), "")}<br>
+
+                    Winkel &phi;<sub>DEG</sub> = 
+                        arcsin(<div class ="fraction">
+                            <span>u(t)</span><br>
+                            <span class="fraction-denominator">&ucirc;</span>
+                        </div>)
+                    =
+                        arcsin(<div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">${up}V</span>
+                        </div>)
+                    = ${formatWithPrefix(180 * (Math.asin(parseInput(ut)/parseInput(up))/Math.PI), "&deg;")}<br>`;
+                }
+            }
+
+ 
+            document.getElementById('result_Sinus').innerHTML = result_Sinus;
+
+            //drawSinus(up);
+        }
+
+        /*function drawSinus(up) 
+        {
+            let canvas = document.getElementById("sinusCanvas");
+            let ctx = canvas.getContext("2d");
+
+            // Canvas leeren
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Sicherstellen, dass Werte vorhanden sind
+            //up = parseFloat(up) // Standard: 1V
+            //f = parseFloat(f) || 1; // Standard: 1Hz
+            //phi = parseFloat(phi) || 0; // Standard: 0°
+            up = parseInput(up)
+
+            if(up)
+            {
+                let width = canvas.width;
+                let height = canvas.height;
+                let midY = height / 2;
+                let scaleX = width / (1 / 1 * 2); // Zeitskalierung: let scaleX = width / (1 / f * 2); 2 Perioden
+                let scaleY = midY / (up * 1.2); // Spannungsskalierung (etwas mehr Platz)
+
+                // **Achsen zeichnen**
+                ctx.strokeStyle = "gray";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, midY); // Horizontale Achse (Zeit)
+                ctx.lineTo(width, midY);
+                ctx.moveTo(1, 0); // Vertikale Achse (Spannung)
+                ctx.lineTo(1, height);
+                ctx.stroke();
+
+                // **Achsenbeschriftung**
+                ctx.fillStyle = "white";
+                ctx.font = "12px Arial";
+                ctx.fillText("Zeit (ms)", width - 50, midY + 15);
+                // ctx.fillText("Spannung (V)", 5, 15);
+
+                // **Sinuskurve zeichnen**
+                ctx.beginPath();
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 2;
+
+                for (let x = 0; x < width; x++) {
+                    let t = x / scaleX; // Zeitwert
+                    let y = up * Math.sin(2 * Math.PI * 1 * t ); // Sinusberechnung: let y = up * Math.sin(2 * Math.PI * f * t );
+                    let plotY = midY - y * scaleY; // Umrechnung in Canvas-Koordinaten
+                    if (x === 0) {
+                        ctx.moveTo(0, plotY); // Startpunkt der Sinuskurve
+                    } else {
+                        ctx.lineTo(x, plotY);
                     }
-                    rmsVoltage = peakVoltage * Math.sqrt(dutyCycle);
-                    break;
-                default:
-                    rmsVoltage = NaN;
+                }
+
+                ctx.stroke();
+
+                // **Markierungen für Peakwerte**
+                ctx.fillText(`${formatWithPrefix(up, "V")}`, 5, midY - up * scaleY);
+                ctx.fillText(`-${formatWithPrefix(up, "V")}`, 5, midY + up * scaleY);
             }
 
-            if (!isNaN(rmsVoltage)) {
-                document.getElementById('result').innerHTML = `Effektivwert der Spannung: ${rmsVoltage.toFixed(2)} V`;
-            } else {
-                document.getElementById('result').innerHTML = 'Unbekannter Wellenformtyp.';
+            if (!up)
+            {
+                up = 1;
+                debugger;
+                width = canvas.width;
+                let height = canvas.height;
+                let midY = height / 2;
+                let scaleX = width / (1 / 1 * 2); // Zeitskalierung
+                let scaleY = midY / (up * 1.3); // Spannungsskalierung
+
+                ctx.beginPath();
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 2;
+
+                for (let x = 0; x < width; x++) {
+                    let t = x / scaleX;
+                    let y = up * Math.sin(2 * Math.PI * 1 * t + (0 * Math.PI / 180));
+                    let plotY = midY - y * scaleY;
+                    if (x === 0) {
+                        ctx.moveTo(x, plotY);
+                    } else {
+                        ctx.lineTo(x, plotY);
+                    }
+                }
+
+                ctx.stroke();
             }
+            
+        }*/
+
+        function calculate_Rechteck()
+        {
+            let result_Rechteck = ``;
+
+            const ut = document.getElementById("ut-Rechteck").value;
+
+            if(!ut)     // Momentanwert
+            {
+                if(up && f && t)
+                {
+                    result_Rechteck += `
+                    Momentanwert u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
+                =
+                    ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
+                = ${formatWithPrefix(parseInput(up)*Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+                }
+            }
+
+            document.getElementById('result_Rechteck').innerHTML = result_Rechteck;
         }
 
-        function calculateSinusVoltage() {
-            const peakVoltage = parseFloat(document.getElementById('peakVoltage').value);
-            const frequency = parseFloat(document.getElementById('frequency').value);
-            const time = parseFloat(document.getElementById('time').value);
-            if (isNaN(peakVoltage) || isNaN(frequency) || isNaN(time)) {
-                document.getElementById('sinusVoltageResult').innerHTML = 'Bitte geben Sie gültige Werte für Spitzenwert, Frequenz und Zeit ein.';
-                return;
+        function calculate_Dreieck()
+        {
+            let result_Dreieck = ``;
+
+            const Ueff = document.getElementById("Ueff-Dreieck").value;
+            const up = document.getElementById("up-Dreieck").value;
+            const upp = document.getElementById("upp-Dreieck").value;
+
+            if(!up)     // Peakwert
+            {
+                if(upp)
+                {
+                    result_Dreieck += `
+                        Peakspannung &ucirc; = 
+                        <div class ="fraction">
+                            <span> u<sub>pp</sub> </span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${upp}V<br>
+                            <span class="fraction-denominator">2</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
+                }
+
+                if(Ueff)
+                {
+                    result_Dreieck += `
+                        Peakspannung &ucirc; = U<sub>eff</sub> &lowast; &radic;3
+                    =
+                        ${Ueff}V &lowast; &radic;3
+                    = ${formatWithPrefix(parseInput(Ueff)*Math.pow(3, 0.5), "V")}<br>`;
+                }
             }
 
-            const angularFrequency = 2 * Math.PI * frequency;
-            const currentVoltage = peakVoltage * Math.sin(angularFrequency * time);
+            if(!upp)        // Peak-Peakwert
+            {
+                if(up)
+                {
+                    result_Dreieck += `
+                        Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 
+                    =
+                        ${Ueff}V &lowast; 2 &lowast;
+                    = ${formatWithPrefix(parseInput(Ueff)*2, "V")}<br>`;
+                }
 
-            document.getElementById('sinusVoltageResult').innerHTML = `Aktueller Spannungswert: ${currentVoltage.toFixed(2)} V`;
+                if(Ueff)
+                {
+                    result_Dreieck += `
+                        Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 &lowast; &radic;3
+                    =
+                        ${Ueff}V &lowast; 2 &lowast; &radic;3
+                    = ${formatWithPrefix(parseInput(Ueff)*2*Math.pow(3, 0.5), "V")}<br>`;
+                }
+            }
+
+            if(!Ueff)      // Effektivwert
+            {
+                if(up)
+                {
+                    result_Dreieck += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> &ucirc; </span><br>
+                            <span class="fraction-denominator">&radic;3</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${up}V<br>
+                            <span class="fraction-denominator">&radic;3</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(up)/Math.pow(3, 0.5), "V")}<br>`;
+                }
+
+                if(upp)
+                {
+                    result_Dreieck += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> u<sub>pp</sub> </span><br>
+                            <span class="fraction-denominator">2 &lowast; &radic;3</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${upp}V<br>
+                            <span class="fraction-denominator">2 &lowast; &radic;3</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(upp)/(2 * Math.pow(3, 0.5)), "V")}<br>`;
+                }
+            }
+
+            document.getElementById('result_Dreieck').innerHTML = result_Dreieck;
         }
+
+        function calculate_PWM()
+        {
+            let result_PWM = ``;
+
+            const up = document.getElementById("up-PWM").value;
+            const Ueff = document.getElementById("Ueff-PWM").value;
+            const f = document.getElementById("f-PWM").value;
+            const tin = document.getElementById("tin-PWM").value;
+            const T = document.getElementById("T-PWM").value;
+            const g = document.getElementById("g-PWM").value;
+
+            if(!up)     // Peakwert
+            {
+                if(up && g && isPercent)
+                { 
+                    result_PWM += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> U<sub>eff</sub> </span><br>
+                            <span class="fraction-denominator">&radic;g</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${Ueff}V<br>
+                            <span class="fraction-denominator">&radic;${g}%</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(Ueff)/(Math.pow(parseInput(g)/100, 0.5)), "V")}<br>`;
+                }
+
+                if(up && g && !isPercent)
+                { 
+                    result_PWM += `
+                        Effektivspannung U<sub>eff</sub> = 
+                        <div class ="fraction">
+                            <span> U<sub>eff</sub> </span><br>
+                            <span class="fraction-denominator">&radic;g</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${Ueff}V<br>
+                            <span class="fraction-denominator">&radic;${g}</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(Ueff)/(Math.pow(parseInput(g), 0.5)), "V")}<br>`;
+                }
+            }
+
+            if(!Ueff)     // Effektivwert
+            {
+                if(up && g && isPercent)
+                { 
+                    result_PWM += `
+                    Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
+                =
+                    ${up}V &lowast; &radic;${g}%
+                = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g)/100, 0.5), "V")}<br>`;
+                }
+
+                if(up && g && !isPercent)
+                { 
+                    result_PWM += `
+                    Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
+                =
+                    ${up}V &lowast; &radic;${g}
+                = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g), 0.5), "V")}<br>`;
+                }
+            }
+
+            if(!f)      // frequenz
+            {
+                if(T)
+                {
+                    result_PWM += `
+                        Frequnez f = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">T</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1<br>
+                            <span class="fraction-denominator">${T}s</span>
+                        </div> 
+                    = ${formatWithPrefix(1/parseInput(T), "Hz")}<br>`;
+                }
+            }
+
+            if(!tin)        // Impulsdauer
+            {
+                if(T && g && isPercent)
+                { 
+                    result_PWM += `
+                    Impulsdauer t<sub>in</sub> = T &lowast; g
+                =
+                    ${T}s &lowast; ${g}%
+                = ${formatWithPrefix(parseInput(T) * parseInput(g)/100, "s")}<br>`;
+                }
+
+                if(T && g && !isPercent)
+                { 
+                    result_PWM += `
+                    Impulsdauer t<sub>in</sub> = T &lowast; g
+                =
+                    ${T}s &lowast; ${g}
+                = ${formatWithPrefix(parseInput(T) * parseInput(g), "s")}<br>`;
+                }
+
+                if(f && g && isPercent)
+                { 
+                    result_PWM += `
+                        Impulsdauer t<sub>in</sub> = 
+                        <div class ="fraction">
+                            <span> g </span><br>
+                            <span class="fraction-denominator">f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${g}%<br>
+                            <span class="fraction-denominator">${f}Hz</span>
+                        </div> 
+                = ${formatWithPrefix(parseInput(g)/(parseInput(f) * 100), "s")}<br>`;
+                }
+
+                if(f && g && !isPercent)
+                { 
+                    result_PWM += `
+                        Impulsdauer t<sub>in</sub> = 
+                        <div class ="fraction">
+                            <span> g </span><br>
+                            <span class="fraction-denominator">f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${g}<br>
+                            <span class="fraction-denominator">${f}Hz</span>
+                        </div> 
+                = ${formatWithPrefix(parseInput(g)/parseInput(f), "s")}<br>`;
+                }
+            }
+
+            if(!T)      // Periodenzeit
+            {
+                if(f)
+                {
+                    result_PWM += `
+                        Periodendauer T = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">f</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1<br>
+                            <span class="fraction-denominator">${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(1/parseInput(f), "s")}<br>`;
+                }
+
+                // g = tin/T -> T = tin/g
+
+                if(tin && g && isPercent)
+                { 
+                    result_PWM += `
+                        Periodenzeit = 
+                        <div class ="fraction">
+                            <span> t<sub>in</sub> </span><br>
+                            <span class="fraction-denominator">g</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${tin}s<br>
+                            <span class="fraction-denominator">${g}%</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(tin)/(parseInput(g) / 100), "s")}<br>`;
+                }
+
+                if(tin && g && !isPercent)
+                { 
+                    result_PWM += `
+                        Periodenzeit = 
+                        <div class ="fraction">
+                            <span> t<sub>in</sub> </span><br>
+                            <span class="fraction-denominator">g</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${tin}s<br>
+                            <span class="fraction-denominator">${g}</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(tin)/parseInput(g), "s")}<br>`;
+                }
+            }
+
+            // g = (Ueff/up)^2
+            if(!g)
+            {
+                if(tin && T)
+                {
+                    result_PWM += `
+                        Duty-Cycle g = 
+                        <div class ="fraction">
+                            <span> t<sub>in</sub> </span><br>
+                            <span class="fraction-denominator">T</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${tin}s<br>
+                            <span class="fraction-denominator">${T}s</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(tin)/parseInput(T), "")}
+                    = ${formatWithPrefix(parseInput(tin) *100/parseInput(T), "%")}<br>`;
+                }
+
+                if(Ueff && up)
+                {
+                    result_PWM += `
+                        Duty-Cycle g = 
+                        (<div class ="fraction">
+                            <span> U<sub>eff</sub> </span><br>
+                            <span class="fraction-denominator">&ucirc;</span>
+                        </div>)<sup>2</sup>
+                    =
+                        (<div class ="fraction">
+                            <span>${Ueff}V<br>
+                            <span class="fraction-denominator">${up}V</span>
+                        </div>)<sup>2</sup>
+                    = ${formatWithPrefix(Math.pow(parseInput(Ueff)/parseInput(up),2), "")}
+                    = ${formatWithPrefix(100 * Math.pow(parseInput(Ueff)/parseInput(up),2), "%")}<br>`;
+                }
+            }
+
+
+            document.getElementById('result_PWM').innerHTML = result_PWM;
+        }
+
+  
     </script>
+    <script src="../scripts.js"></script>
 </body>
 </html>
