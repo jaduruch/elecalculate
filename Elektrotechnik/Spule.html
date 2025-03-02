@@ -6,10 +6,178 @@
     <!-- Beschreibung der Seite -->
     <meta name="description" content="Daten von elektrischen Spulen einfach berechnen">
 	<!-- Stichworte für Suchmaschinen -->
-    <meta name="keywords" content="Spule, Induktivität, Blindwiderstand, Windungen, Elektronik">
+    <meta name="keywords" content="Spule, Induktivität, Blindwiderstand, Windungen, Elektronik, Eleclculate">
     <title>Elektrotechnik | Spulen</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #535353;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        /*input:checked + .slider {
+            background-color: #22aca0;
+        }*/
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            border: 3px solid;
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+  
+
+        .dropdown-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #000;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .dropdown-header:hover {
+            background-color: #181818;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+
+        .dropdown.open .arrow {
+            transform: rotate(-180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px 20px;
+            background-color: #000000;
+            border-top: 1px solid #ddd;
+
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* Stil fuer das Formular und Layout */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 700px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            /*max-width: 150px;*/
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        .form-row input[type="number"], .form-row select {
+            flex: 1.5;
+            margin-right: 5px;
+        }
+
+        .form-row .unit {
+            flex: 0.8;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denominator {
+            border-top: 1px solid;
+        }
+
+    </style>
 </head>
 <body>
     <header>
@@ -43,38 +211,152 @@
     </header>
     <div class="wrapper">
         <main>
-            <div>
-                <h1><br>Spule</h1>
-            </div>
-            <div>
-                <h2>Spulen berechnungen</h2>
-                <h3>gegeben:</h3>
-                <div>
-                    <button style="background-color: var(--Strom)">Strom [I]</button>
-                    <button style="background-color: var(--Zeitkonstante)">Zeitkonstante [&tau;]</button>
-                    <button style="background-color: var(--Widerstand)">Widerstand [R]</button>
-                    <button style="background-color: var(--Induktivitaet)">Induktivit&auml;t [L]</button>
-                    <button style="background-color: var(--Permeabilitaetszahl)">Permeabilitaet [&mu;r]</button>
-                    <button style="background-color: var(--Windungszahl)">Windungszahl [N]</button>
-                    <button style="background-color: var(--Mag_Fluss)">Magnetischer Fluss [&Phi;]</button>
-                    <button style="background-color: var(--Spannung)">Spannung [U]</button>
-                    <button style="background-color: var(--Spulenkonstante)">Spuhlenkontante [A_L]</button>
-                    <button style="background-color: var(--Laenge)">L&auml;nge [l]</button>
-                    <button style="background-color: var(--Mag_Flussdichte)">Magnetische Flussdichte [B]</button> 
-                    <button style="background-color: var(--Zeit)">Zeit [t]</button>
+            <br><h1>Spulen</h1>
+            <div class="dropdown-container">
+                <div class="dropdown">      <!--Kondensator-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Spulen berechnungen<span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 15&mu;H &rarr; Eingabe: 15u (nicht 15uF)<br><br>
+                            </div>
+
+                            <!-- Strom I -->
+                            <div class="form-row">
+                                <label>Strom I</label>
+                                <input type="text" id="I" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <!-- Induktivitaet L -->
+                            <div class="form-row">
+                                <label>Induktivit&auml;t L</label>
+                                <input type="text" id="L" style="border-color: var(--Induktivitaet);">
+                                <label>H [Henri]</label>
+                            </div>
+
+                            <!-- Permeabilitaet ur -->
+                            <div class="form-row">
+                                <label>Permeabilit&auml;tszahl &mu;<sub>r</sub></label>
+                                <input type="text" id="ur" style="border-color: var(--Dielektrizitaetszahl);">
+                                <label>1</label>
+                            </div>
+
+                              <!-- Windungszahl N -->
+                              <div class="form-row">
+                                <label>Windungszahl N</label>
+                                <input type="text" id="N" style="border-color: var(--Windungszahl);">
+                                <label>1</label>
+                            </div>
+
+                            <!-- Geschwindigkeit v -->
+                            <div class="form-row">
+                                <label>Geschwindigkeit v</label>
+                                <input type="text" id="v" style="border-color: var(--Geschwindigkeit);">
+                                <label>m/s [meter/sekunde]</label>
+                            </div>
+
+                            <!-- Flaeche A -->
+                            <div class="form-row">
+                                <label>Fl&auml;che A</label>
+                                <input type="text" id="A" style="border-color: var(--Flaeche);">
+                                <label>m<sup>2</sup> [Quadratmeter]</label>
+                            </div>
+
+                            <!-- Magnetischer Fluss  -->
+                            <div class="form-row">
+                                <label>Magnetischer Fluss &Phi;</label>
+                                <input type="text" id="Phi" style="border-color: var(--Mag_Fluss);">
+                                <label>Weber [Wb]</label>
+                            </div>
+
+                            <!-- Spannung U -->
+                            <div class="form-row">
+                                <label>Spannung U</label>
+                                <input type="text" id="U" style="border-color: var(--Spannung);">
+                                <label>V [Volt]</label>
+                            </div>
+
+                            <!-- Energie W -->
+                            <div class="form-row">
+                                <label>Spulenkonstante A<sub>L</sub></label>
+                                <input type="text" id="Al" style="border-color: var(--Spulenkonstante);">
+                                <label>Vs/A</label>
+                            </div>
+
+                            <!-- Laenge l -->
+                            <div class="form-row">
+                                <label>L&auml;nge l</label>
+                                <input type="text" id="l" style="border-color: var(--Laenge);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <!-- Ladung Q -->
+                            <div class="form-row">
+                                <label>Magnetische Flussdichte B</label>
+                                <input type="text" id="B" style="border-color: var(--Mag_Flussdichte);">
+                                <label>T [Tesla]</label>
+                            </div>
+
+                            <!-- Zeit t -->
+                            <div class="form-row">
+                                <label>Zeit t</label>
+                                <input type="text" id="t" style="border-color: var(--Zeit);">
+                                <label>s [sekunden]</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateInductorParameters()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result"></p>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Spule an Wechselstrom <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            development in progress
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Serie- Parallelschaltung <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            development in progress
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--RL Glied-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        RL-Glied <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            development in progress
+                        </div>
+                    
+                    </div>
                 </div>
             </div>
-            <div>
-                <h2>Spule an Wechselstrom</h2>
-            </div>
-            <div>
-                <h2>RL Glied</h2>
-            </div>
-            <br>
-            <div>
-                Development in progress...
-            </div>
-            <br>
+
         </main>
     
         <footer>
@@ -82,6 +364,562 @@
         </footer>
     </div>
     
+    <script>
+        // C Paramenter berechnen
+            function calculateInductorParameters() 
+            {
+                let result = ``;
+
+                const I = document.getElementById("I").value;
+                const L = document.getElementById("L").value;
+                const ur = document.getElementById("ur").value;
+                const N = document.getElementById("N").value;
+                const v = document.getElementById("v").value;
+                const A = document.getElementById("A").value;
+                const Phi = document.getElementById("Phi").value;
+                const U = document.getElementById("U").value;
+                const Al = document.getElementById("Al").value;
+                const l = document.getElementById("l").value;
+                const B = document.getElementById("B").value;
+                const t = document.getElementById("t").value;
+                
+                if(!I)          // Berechnungen fuer Strom I
+                {
+                    if(Phi && N && L)
+                    {
+                        result += `
+                            Strom I = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&Phi; &lowast; N</span><br>
+                                <span>L</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${Phi}Wb &lowast; ${N}</span><br>
+                                <span>${L}H</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(Phi) * parseInput(N))/ parseInput(L), "A")}<br>`;
+                    }
+
+                    if(U && t && L)
+                    {
+                        result += `
+                            Strom&auml;nderung &Delta;I = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">-u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>L</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> -${U}V &lowast; ${t}s</span><br>
+                                <span>${L}H</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(L), "A")}<br>`;
+                    }
+                }
+
+                if(!L)      // Induktivitaet L
+                {
+                    if(ur && N && A && l)
+                    {
+                        result += `
+                            Induktivit&auml;t L = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup> &lowast; A</span><br>
+                                <span>l</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
+                                <span>${l}m</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(ur) * 1.257e-6 * Math.pow(parseInput(N), 2) * parseInputsquare(A))/ parseInput(l), "H")}<br>`;
+                    }
+
+                    if(Al && N)
+                    {
+                        result += `
+                            Induktivit&auml;t L =
+                            A<sub>L</sub> &lowast; N<sup>2</sup>
+                        =
+                            ${Al}Vs/A &lowast; (${N})<sup>2</sup>
+                        = ${formatWithPrefix(parseInput(Al) * Math.pow(parseInput(N), 2), "H")}<br>`;
+                    }
+
+                    if(Phi && N && I)
+                    {
+                        result += `
+                            Induktivit&auml;t L = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&Phi; &lowast; N</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${Phi}Wb &lowast; ${N}</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(Phi) * parseInput(N))/ parseInput(I), "H")}<br>`;
+                    }
+
+                    if(U && t && I)
+                    {
+                        result += `
+                            Induktivit&auml;t L = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">-u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>&Delta;I</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> -${U}V &lowast; ${t}s</span><br>
+                                <span>&Delta;${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(I), "H")}<br>`;
+                    }
+                }
+
+                if(!N)      // Windungszahl N
+                {
+                    if(L && l && ur && A)
+                    {
+                        result += `
+                            Windungszahl N = &radic; 
+                            (<div class ="fraction">
+                                <span>L &lowast; l</span><br>
+                                <span class="fraction-denominator">&mu;<sub>0</sub> &lowast; &mu;<sub>r</sub> &lowast; A</span>
+                            </div>)
+                        = &radic; 
+                            (<div class ="fraction">
+                                <span>${L}H &lowast; ${l}m</span><br>
+                                <span class="fraction-denominator">${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; ${A}m<sup>2</sup></span>
+                            </div>)
+                        = ${formatWithPrefix(Math.pow((parseInput(L) * parseInput(l))/(parseInput(ur) * 1.257e-6 *parseInputsquare(A)),0.5), "")}<br>`;
+                    }
+
+                    if(L && Al)
+                    {
+                        result += `
+                            Windungszahl N = &radic; 
+                            (<div class ="fraction">
+                                <span>L</span><br>
+                                <span class="fraction-denominator">A<sub>L</sub></span>
+                            </div>)
+                        = &radic;
+                            (<div class ="fraction">
+                                <span>${L}H</span><br>
+                                <span class="fraction-denominator">${Al}Vs/A</span>
+                            </div>)
+                        = ${formatWithPrefix(Math.pow(parseInput(L)/parseInput(Al),0.5), "")}<br>`;
+                    }
+
+                    if(Phi && L && I)
+                    {
+                        result += `
+                            Windungszahl N = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">L &lowast; I</span><br>
+                                <span>&Phi;</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${L}H &lowast; ${I}A</span><br>
+                                <span>${Phi}Wb</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(L) * parseInput(I))/ parseInput(Phi), "")}<br>`;
+                    }
+
+                    if(U && t && Phi)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">-u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>&Delta;&Phi;</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                                <span>${Phi}Wb</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
+                    }
+                }
+
+                if(!Phi)    // Magnetischer Fluss
+                {
+                    if(L && I && N)
+                    {
+                        result += `
+                            Magnetischer Fluss &Phi; = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">L &lowast; I</span><br>
+                                <span>N</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${L}H &lowast; ${I}A</span><br>
+                                <span>${N}</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(L) * parseInput(I))/ parseInput(N), "Wb")}<br>`;
+                    }
+
+                    if(U && t && N)
+                    {
+                        result += `
+                            &auml;nderung des Magnetischen Flusses &Delta;&Phi; = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>N</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                                <span>${N}</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(N), "Wb")}<br>`;
+                    }
+                }
+
+                if(!U)      // Spannung U
+                {
+                    if(Phi && t && N)
+                    {
+                        result += `
+                            Induzierte Spannung u<sub>0</sub> = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">N &lowast; &Delta;Phi;</span><br>
+                                <span>&Delta;t</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${N} &lowast; ${Phi}Wb</span><br>
+                                <span>${t}s</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(N) * parseInput(Phi))/ parseInput(t), "V")}<br>`;
+                    }
+
+                    if(L && I && t)
+                    {
+                        result += `
+                            Induzierte Spannung u<sub>0</sub> = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">L &lowast; &Delta;I</span><br>
+                                <span>&Delta;t</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${L}H &lowast; ${I}A</span><br>
+                                <span>${t}s</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(L) * parseInput(I))/ parseInput(t), "V")}<br>`;
+                    }
+
+                    if(B && l && v)
+                    {
+                        result += `
+                            Induzierte Spannung u<sub>0</sub> =
+                            B &lowast; l &lowast; v
+                        =
+                            ${B}T &lowast; ${l}m &lowast; ${v}m/s
+                        = ${formatWithPrefix(parseInput(B) * parseInput(l) * parseInput(v), "V")}<br>`;
+                    }
+                }
+
+                if(!l)  // Leiterlaenge l
+                {
+                    if(ur && N && A && L)
+                    {
+                        result += `
+                            Leiterl&auml;nge l = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup> &lowast; A</span><br>
+                                <span>L</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
+                                <span>${L}H</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(ur) * 1.257e-6 * Math.pow(parseInput(N), 2) * parseInputsquare(A))/ parseInput(L), "m")}<br>`;
+                    }
+
+                    if(U && B && v)
+                    {
+                        result += `
+                            Leiterl&auml;nge l =  
+                            <div class ="fraction">
+                                <span>u<sub>0</sub></span><br>
+                                <span class="fraction-denominator">B &lowast; v</span>
+                            </div>
+                        = 
+                            <div class ="fraction">
+                                <span>${U}V</span><br>
+                                <span class="fraction-denominator">${B}T &lowast; ${v}m/s</span>
+                            </div>
+                        = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(v)), "")}<br>`;
+                    }
+                }
+
+                if(!t)  // Zeit t
+                {
+                    if(Phi && U && N)
+                    {
+                        result += `
+                            Zeit &Delta;t = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">N &lowast; &Delta;Phi;</span><br>
+                                <span> u<sub>0</sub></span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${N} &lowast; ${Phi}Wb</span><br>
+                                <span>${U}V</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(N) * parseInput(Phi))/ parseInput(U), "s")}<br>`;
+                    }
+
+                    if(L && U && t)
+                    {
+                        result += `
+                            Zeit &Delta;t =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">L &lowast; &Delta;I</span><br>
+                                <span> u<sub>0</sub></span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${L}H &lowast; ${I}A</span><br>
+                                <span>${U}V</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(L) * parseInput(I))/ parseInput(U), "s")}<br>`;
+                    }
+                }
+
+                if(!ur && L && l && A && N)     // Permeabilitaet ur
+                {
+                    result += `
+                        Leiterl&auml;nge l = 
+                        <div class ="fraction">
+                            <span>L &lowast; l</span><br>
+                            <span class="fraction-denominator">A &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${L}H &lowast; ${l}m</span><br>
+                            <span class="fraction-denominator">${A}m<sup>2</sup> &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(L) * parseInput(l)) / (parseInputsquare(A) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
+                }
+
+                if(!A && L && l && ur && N)     // Flaeche A
+                {
+                    result += `
+                        Leiterl&auml;nge l = 
+                        <div class ="fraction">
+                            <span>L &lowast; l</span><br>
+                            <span class="fraction-denominator">&mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${L}H &lowast; ${l}m</span><br>
+                            <span class="fraction-denominator">${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefixsquare((parseInput(L) * parseInput(l)) / (parseInput(ur) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
+                }
+
+                if(!v && U && B && l)       //Geschwindigkeit v
+                {
+                    result += `
+                        Geschwindigkeit v =  
+                        <div class ="fraction">
+                            <span>u<sub>0</sub></span><br>
+                            <span class="fraction-denominator">B &lowast; l</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${U}V</span><br>
+                            <span class="fraction-denominator">${B}T &lowast; ${l}m</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
+                }
+
+                if(!Al && L && N)   // Sulenkonstante Al  
+                {
+                    result += `
+                        Spulenkonstante A<sub>L</sub>=  
+                        <div class ="fraction">
+                            <span>L</span><br>
+                            <span class="fraction-denominator">N<sup>2</sup></span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${L}H</span><br>
+                            <span class="fraction-denominator">(${N})<sup>2</sup></span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(L) / Math.pow(praseInput(N), 2), "Vs/A")}<br>`;
+                }
+
+                if(!v && U && B && l)       //Geschwindigkeit v
+                {
+                    result += `
+                        Magnetische Flussdichte B =  
+                        <div class ="fraction">
+                            <span>u<sub>0</sub></span><br>
+                            <span class="fraction-denominator">l &lowast; v</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${U}V</span><br>
+                            <span class="fraction-denominator">${l}m &lowast; ${v}m/S</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(U) / (praseInput(l) * parseInput(v)), "T")}<br>`;
+                }
+
+                
+                document.getElementById('result').innerHTML = result;
+            }
+        // RC-Glied berechnungen
+            document.getElementById("modeSwitch").addEventListener("change", function () {
+                const modeLabel = document.getElementById("modeLabel");
+                const circuitImage = document.getElementById("circuitImage");
+
+                if (this.checked) {
+                    modeLabel.textContent = "Entladen";
+                    circuitImage.src = "../Pictures/RC_Discharge.png";
+                } else {
+                    modeLabel.textContent = "Laden";
+                    circuitImage.src = "../Pictures/RC_Charge.png";
+                }
+            });
+
+            function generate_e_curve() 
+            {
+                const R = parseFloat(document.getElementById("RCresistance").value) || 1000; // Standardwert 1kOhm
+                const C = parseFloat(document.getElementById("RCcapacitance").value) || 0.000001; // Standardwert 1uF
+                const V = parseFloat(document.getElementById("RCvoltage").value) || 1; // Standardspannung ist 1V
+                const isDischarging = document.getElementById("modeSwitch").checked;
+
+                const tau = R * C; // Zeitkonstante
+                const maxTime = 5 * tau; // Maximale Zeit fuer die Simulation
+                const stepCount = 100; // Anzahl der Berechnungsschritte
+
+                // Spannungskurve zeichnen
+                /*drawCurve("voltageCanvas", (t) => {
+                    return isDischarging 
+                        ? V * Math.exp(-t / tau) // Entladen
+                        : V * (1 - Math.exp(-t / tau)); // Laden
+                }, V, "Spannung (V)", maxTime, stepCount);
+
+                // Stromkurve zeichnen
+                drawCurve("currentCanvas", (t) => {
+                    //return (V / R) * Math.exp(-t / tau); // Strom bei Laden und Entladen
+                    return isDischarging 
+                        ? (V/R) * ( - Math.exp(-t / tau)) // Entladen
+                        : (V/R) * Math.exp(-t / tau);        // Laden
+                        
+
+                }, V / R, "Strom (A)", maxTime, stepCount);*/
+                drawCurve("voltageCanvas", (t) => {
+                    return isDischarging 
+                        ? V * Math.exp(-t / tau) // Entladen
+                        : V * (1 - Math.exp(-t / tau)); // Laden
+                }, V, "Spannung (V)", maxTime, stepCount, isDischarging, V, R);
+
+                drawCurve("currentCanvas", (t) => {
+                    return isDischarging 
+                        ? -(V / R) * Math.exp(-t / tau) // Entladen (negativer Strom)
+                        : (V / R) * Math.exp(-t / tau); // Laden (positiver Strom)
+                }, V / R, "Strom (A)", maxTime, stepCount, isDischarging, V, R);
+            }
+
+            function drawCurve(canvasId, valueFunction, maxY, yLabel, maxTime, stepCount, isDischarging, V, R) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext("2d");
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const margin = 50;
+            const width = canvas.width - 2 * margin;
+            const height = canvas.height - 2 * margin;
+
+            // Falls Stromkurve beim Entladen, Y-Achse von -Uin/R bis 0A setzen
+            if (canvasId === "currentCanvas" && isDischarging) {
+                maxY = V / R;  // Maximalwert ist jetzt positiv
+            }
+
+            // Achsen zeichnen
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, canvas.height - margin);
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Achsenbeschriftung
+            ctx.font = "14px Arial";
+            ctx.fillStyle = "white";
+            ctx.fillText(yLabel, 10, margin / 2);
+            ctx.fillText("Zeit (s)", canvas.width - margin, canvas.height+10 - margin / 2);
+
+
+            // Achsenskalierung und Beschriftung
+            for (let i = 0; i <= 5; i++) {
+                // Zeitbeschriftung
+                const x = margin + (i / 5) * width;
+                const timeLabel = (i * maxTime / 5).toFixed(2) + " s";
+                ctx.fillText(timeLabel, x - 15, canvas.height - margin + 20);
+
+                // Wertbeschriftung (Spannung oder Strom)
+                let valueLabel = (i * maxY / 5).toFixed(2);
+                let y;
+                
+                if (canvasId === "currentCanvas" && isDischarging) {
+                    y = canvas.height - margin - (height * (1 - (i / 5)));
+                    valueLabel = (- (i * (V / R) / 5)).toFixed(2); // Werte von -Uin/R bis 0A
+                } else {
+                    y = canvas.height - margin - (i / 5) * height;
+                }
+
+                ctx.fillText(valueLabel, margin - 40, y + 5);
+            }
+
+            // Kurve zeichnen
+            ctx.beginPath();
+            ctx.moveTo(margin, canvas.height - margin); 
+
+            for (let i = 0; i <= stepCount; i++) {
+                const t = (i / stepCount) * maxTime;
+                const value = valueFunction(t);
+
+                const x = margin + (t / maxTime) * width;
+                let y;
+
+                if (canvasId === "currentCanvas" && isDischarging) {
+                    y = canvas.height - margin - (height * ((value + V / R) / (V / R))); // Negativ skalieren
+                } else {
+                    y = canvas.height - margin - (value / maxY) * height;
+                }
+
+                ctx.lineTo(x, y);
+            }
+
+            ctx.strokeStyle = canvasId === "voltageCanvas" ? "#0070C0" : "#C00000";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+    /*Dropdown menu*/
+
+            function toggleDropdown(element) {
+                const dropdown = element.parentElement;
+                dropdown.classList.toggle("open");
+            }
+
+
+
+    </script>
     <script src="../scripts.js"></script>
 </body>
 </html>
