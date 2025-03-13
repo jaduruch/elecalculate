@@ -6,7 +6,7 @@
     <!-- Beschreibung der Seite -->
     <meta name="description" content="Daten von elektrischen Spulen einfach berechnen">
 	<!-- Stichworte für Suchmaschinen -->
-    <meta name="keywords" content="Spule, Induktivität, Blindwiderstand, Windungen, Elektronik, Eleclculate">
+    <meta name="keywords" content="Spule, Induktivität, Blindwiderstand, Windungen, Elektronik">
     <title>Elektrotechnik | Spulen</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
@@ -383,7 +383,7 @@
                 const B = document.getElementById("B").value;
                 const t = document.getElementById("t").value;
                 
-                if(!I)          // Berechnungen fuer Strom I
+                if(!I)          // Strom I
                 {
                     if(Phi && N && L)
                     {
@@ -479,6 +479,22 @@
                     }
                 }
 
+                if(!ur && L && l && A && N)     // Permeabilitaet ur
+                {
+                    result += `
+                        Leiterl&auml;nge l = 
+                        <div class ="fraction">
+                            <span>L &lowast; l</span><br>
+                            <span class="fraction-denominator">A &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${L}H &lowast; ${l}m</span><br>
+                            <span class="fraction-denominator">${A}m<sup>2</sup> &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(L) * parseInput(l)) / (parseInputsquare(A) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
+                }
+
                 if(!N)      // Windungszahl N
                 {
                     if(L && l && ur && A)
@@ -543,6 +559,40 @@
                                 <span>${Phi}Wb</span>
                             </div> 
                         = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
+                    }
+                }
+    
+                if(!v && U && B && l)       //Geschwindigkeit v
+                {
+                    result += `
+                        Geschwindigkeit v =  
+                        <div class ="fraction">
+                            <span>u<sub>0</sub></span><br>
+                            <span class="fraction-denominator">B &lowast; l</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${U}V</span><br>
+                            <span class="fraction-denominator">${B}T &lowast; ${l}m</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
+                }
+
+                if(!A)       // Flaeche A todo
+                {
+                    if(Phi && B)
+                    {
+                        
+                    }
+                    
+                    if(F && B)
+                    {
+
+                    }
+
+                    if(I && Rm && ur)
+                    {
+
                     }
                 }
 
@@ -626,6 +676,22 @@
                     }
                 }
 
+                if(!Al && L && N)   // Sulenkonstante Al  
+                {
+                    result += `
+                        Spulenkonstante A<sub>L</sub>=  
+                        <div class ="fraction">
+                            <span>L</span><br>
+                            <span class="fraction-denominator">N<sup>2</sup></span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${L}H</span><br>
+                            <span class="fraction-denominator">(${N})<sup>2</sup></span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(L) / Math.pow(praseInput(N), 2), "Vs/A")}<br>`;
+                }
+
                 if(!l)  // Leiterlaenge l
                 {
                     if(ur && N && A && L)
@@ -658,6 +724,24 @@
                                 <span class="fraction-denominator">${B}T &lowast; ${v}m/s</span>
                             </div>
                         = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(v)), "")}<br>`;
+                    }
+                }
+
+                if(!B)  // Magnetischeflussdichte B
+                {
+                    if(Phi && A)
+                    {
+                        
+                    }
+
+                    if(ur && H)
+                    {
+
+                    }
+
+                    if(F && A)
+                    {
+                        
                     }
                 }
 
@@ -696,85 +780,6 @@
                     }
                 }
 
-                if(!ur && L && l && A && N)     // Permeabilitaet ur
-                {
-                    result += `
-                        Leiterl&auml;nge l = 
-                        <div class ="fraction">
-                            <span>L &lowast; l</span><br>
-                            <span class="fraction-denominator">A &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${L}H &lowast; ${l}m</span><br>
-                            <span class="fraction-denominator">${A}m<sup>2</sup> &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
-                        </div> 
-                    = ${formatWithPrefix((parseInput(L) * parseInput(l)) / (parseInputsquare(A) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
-                }
-
-                if(!A && L && l && ur && N)     // Flaeche A
-                {
-                    result += `
-                        Leiterl&auml;nge l = 
-                        <div class ="fraction">
-                            <span>L &lowast; l</span><br>
-                            <span class="fraction-denominator">&mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${L}H &lowast; ${l}m</span><br>
-                            <span class="fraction-denominator">${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
-                        </div> 
-                    = ${formatWithPrefixsquare((parseInput(L) * parseInput(l)) / (parseInput(ur) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
-                }
-
-                if(!v && U && B && l)       //Geschwindigkeit v
-                {
-                    result += `
-                        Geschwindigkeit v =  
-                        <div class ="fraction">
-                            <span>u<sub>0</sub></span><br>
-                            <span class="fraction-denominator">B &lowast; l</span>
-                        </div>
-                    = 
-                        <div class ="fraction">
-                            <span>${U}V</span><br>
-                            <span class="fraction-denominator">${B}T &lowast; ${l}m</span>
-                        </div>
-                    = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
-                }
-
-                if(!Al && L && N)   // Sulenkonstante Al  
-                {
-                    result += `
-                        Spulenkonstante A<sub>L</sub>=  
-                        <div class ="fraction">
-                            <span>L</span><br>
-                            <span class="fraction-denominator">N<sup>2</sup></span>
-                        </div>
-                    = 
-                        <div class ="fraction">
-                            <span>${L}H</span><br>
-                            <span class="fraction-denominator">(${N})<sup>2</sup></span>
-                        </div>
-                    = ${formatWithPrefix(parseInput(L) / Math.pow(praseInput(N), 2), "Vs/A")}<br>`;
-                }
-
-                if(!v && U && B && l)       //Geschwindigkeit v
-                {
-                    result += `
-                        Magnetische Flussdichte B =  
-                        <div class ="fraction">
-                            <span>u<sub>0</sub></span><br>
-                            <span class="fraction-denominator">l &lowast; v</span>
-                        </div>
-                    = 
-                        <div class ="fraction">
-                            <span>${U}V</span><br>
-                            <span class="fraction-denominator">${l}m &lowast; ${v}m/S</span>
-                        </div>
-                    = ${formatWithPrefix(parseInput(U) / (praseInput(l) * parseInput(v)), "T")}<br>`;
-                }
 
                 
                 document.getElementById('result').innerHTML = result;
