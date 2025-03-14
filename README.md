@@ -1,7 +1,7 @@
 # Elecalculate
 
-<a href="https://elecalculate.netlify.app">
-    <img src="https://elecalculate.netlify.app/Pictures/favicon.png" alt="Elecalculate.com" width="100" height="100">
+<a href="https://elecalculate.com">
+    <img src="https://elecalculate.com/Pictures/favicon.png" alt="Elecalculate.com" width="100" height="100">
 </a>
 
 **Elecalculate** is a website designed to help you calculate various electronics parameters.
@@ -14,8 +14,8 @@
 - Updated regularly
 
 ## Follow Elecalculate
-Stay updated by following our [Instagram page](https://www.instagram.com/elecalculate).
+Stay updated by following elecalculate on Social Media:
 
 <a href="https://www.instagram.com/elecalculate">
-    <img src="https://elecalculate.netlify.app/Pictures/instagram-logo.jpg" alt="Follow us on Instagram" width="60" height="60">
+    <img src="https://elecalculate.com/Pictures/instagram-logo.jpg" alt="Follow us on Instagram" width="60" height="60">
 </a>
