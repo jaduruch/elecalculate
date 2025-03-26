@@ -3,88 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elektrotechnik | Gleichstrom</title>
+	<!-- Beschreibung der Seite -->
+    <meta name="description" content="Online Rechner f&uuml;r Elektrische Verst&auml;rkung in dB umrechnen, mit allgemeiner Formel und Lösungsweg.">
+	<!-- Stichworte für Suchmaschinen -->
+    <meta name="keywords" content="Elecalculate, Elektrotechnik, Verstaerkung, Daemfung, dB, V, Online Rechner, Verstaerkungsmass, Daempungsmass">
+    <title>Elektrotechnik | Verst&auml;rkung/D&auml;mpfung</title>
     <link rel="stylesheet" href="../style.css">
-    <meta name="description" content="Online Rechner f&uuml;r Spannung, Strom, Widerstand und Leistung inklusive L&ouml;sungsweg, Parallel und Serie Widerst&auml;nde">
-    <meta name="keywords" content="Elektronik Rechner, Ohmsches Gesetz, URI Rechner, Widerstand, Spannung, Strom, 
-    Elektrotechnik, Online Rechner, Serie Schaltung, Parallel Schaltung">
-    <meta name="author" content="Jana Ruch">
-    <meta name="robots" content="index, follow">
-
-    <!-- Canonical URL (verhindert Duplicate Content) -->
-    <link rel="canonical" href="https://elecalculate.com/Elektrotechnik/Gleichstrom.html">
-
-    <!-- Open Graph (Facebook, LinkedIn) -->
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="Elektrotechnik | Gleichstrom">
-    <meta property="og:description" content="Elektronik Rechner, Ohmsches Gesetz, URI Rechner, Widerstand, Spannung, Strom, Elektrotechnik">
-    <meta property="og:url" content="https://elecalculate.com/Elektrotechnik/Gleichstrom.html">
-    <meta property="og:image" content="https://elecalculate.com/Pictures/favicon.png">
-
-    <!-- Favicon -->
-    <link rel="icon" href="https://elecalculate.com/Pictures/favicon.png" type="image/png">
-
-    <!-- Structured Data (Google Rich Snippets) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "URI-Rechner",
-      "url": "https://elecalculate.com/Elektrotechnik/Gleichstrom.html",
-      "description": "Berechne Spannung, Strom und Widerstand online mit dem URI-Rechner.",
-      "image": "https://elecalculate.com/Pictures/favicon.png",
-      "creator": {
-        "@type": "Person",
-        "name": "Jana Ruch"
-      },
-      "sameAs": [
-        "https://www.instagram.com/elecalculate"
-      ]
-    }
-    </script>
+    <link rel="icon" type="image/png" href="Pictures/favicon.png">
 
     <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 34px;
-            height: 20px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #535353;
-            transition: .2s;
-            border-radius: 20px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .2s;
-            border-radius: 50%;
-        }
-
-        /*input:checked + .slider {
-            background-color: #22aca0;
-        }*/
-
         input:checked + .slider:before {
             transform: translateX(14px);
         }
@@ -95,68 +22,26 @@
         }
 
         input:focus {
+            border: 3px solid;
             outline: none; /* Entfernt den Standard-Umrandungsring */
         }
 
-  
-
-        .dropdown-container {
-            width: 800px;
-            max-width: 90%;
-            margin: 20px auto;
-            background-color: #000;
-        }
-
-        .dropdown-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #ffffff;
-        }
-
-        .dropdown-header:hover {
-            background-color: #181818;
-        }
-
-        .dropdown-header .arrow {
-            font-size: 18px;
-            transform: rotate(0deg);
-            transition: transform 0.5s;
-        }
-
-        .dropdown.open .arrow {
-            transform: rotate(-180deg);
-        }
-
-        .dropdown-content {
-            display: none;
-            padding: 15px 20px;
-            background-color: #000000;
-            border-top: 1px solid #ddd;
-
-        }
-
-        .dropdown.open .dropdown-content {
-            display: block;
-        }
-
-        .divider {
-            border-bottom: 1px solid #ddd;
-        }
-
-
         /* Stil fuer das Formular und Layout */
-        form {
+        .input-numbers {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             margin-bottom: 20px;
-            max-width: 700px; /* Setzt eine maximale Breite */
+            max-width: 600px; /* Setzt eine maximale Breite */
             margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
         }
 
         .form-row {
@@ -164,22 +49,15 @@
             align-items: center;
             margin-bottom: 10px;
             width: 100%;
-            /*max-width: 150px;*/
+            margin-left: 10px;
+            
         }
 
         .form-row label {
             flex: 3;
             text-align: left;
             margin-right: 10px;
-        }
 
-        .form-row input[type="number"], .form-row select {
-            flex: 1.5;
-            margin-right: 5px;
-        }
-
-        .form-row .unit {
-            flex: 0.8;
         }
 
         h3 {
@@ -204,72 +82,10 @@
             padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
             display: inline-block; /* Macht die Anpassungen besser sichtbar */
         }
-
-        .fraction-denumerator {
-            border-top: 1px solid white;
+        img{
+            width: 80%;
+            max-width: 600px;
         }
-
-        .opv-button {
-            position: relative;
-            width: 150px; /* Adjust as needed */
-            height: 150px; /* Adjust as needed */
-            border: 2px solid transparent; /* Initially transparent */
-            padding: 0;
-            margin: 10px;
-            background-color: transparent;
-            cursor: pointer;
-        }
-        
-        .opv-button img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .opv-button:hover {
-            border-color: grey; /* grey border for hovered button */
-        }
-        
-        .opv-button.selected {
-            border-color: white; /* White border for selected button */
-        }
-        
-        .opv-button span {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 14px;
-            padding: 2px 0;
-        }
-        
-        .input-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .input-container label, .input-container input, .input-container select, .input-container button {
-            display: block;
-            margin: 5px auto;
-        }
-        
-        .input-group {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .input-group input {
-            margin-right: 5px;
-        }
-        
-        .input-group select {
-            margin-left: 5px;
-        }
-
     </style>
 </head>
 <body>
@@ -282,14 +98,14 @@
         <div class="scroll-container">
             <ul class="main-menu">
                 <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
-                <li><a class="active" href="#Gleichstrom">Gleichstrom</a></li>
+                <li><a href="Gleichstrom.html">Gleichstrom</a></li>
                 <li><a href="Wechselstrom.html">Wechselstrom</a></li>
                 <li><a href="Transformator.html">Transformator</a></li>
                 <li><a href="Magnetismus.html">Magnetismus</a></li>
                 <li><a href="Kondensator.html">Kondensator</a></li>
                 <li><a href="Spule.html">Spule</a></li>
                 <li><a href="Schwingkreis.html">Schwingkreis</a></li>
-                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a class="active" href="#Verstaerkung_Daempfung">Verst&auml;rkung/D&auml;mpfung</a></li>
                 <li><a href="Filter.html">Filter</a></li>
             </ul>
         </div>
@@ -304,441 +120,796 @@
     </header>
     <div class="wrapper">
         <main>
-            <br>
-            <h1>Gleichstrom</h1>
-            <div class="dropdown-container">
-                <div class="dropdown">      <!--URI-->
-                    <div class="dropdown-header" onclick="toggleDropdown(this)">
-                        Ohmsches Gesetz (URI)<span class="arrow">&#9660;</span>
-                    </div>
-                    <div class="dropdown-content"> 
-                        <div>
-                            <div class="comment">
-                                Werte mit Massvorsatz eingeben z.B. I = 20mA &rarr; Eingabe: 20m (nicht 20mA)<br><br>
-                            </div>
-
-                                <img src="../Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik" width="80%">
-                            </div>
-                            <div class="input-numbers">
-                                <div class="comment">
-                                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
-                                </div>
-                                <!-- Strom I -->
-                                <div class="form-row">
-                                    <label>Strom I</label>
-                                    <input type="text" id="I" style="border-color: var(--Strom);">
-                                    <label>A [Ampere]</label>
-                                </div>
-                
-                                <!-- Widerstand R -->
-                                <div class="form-row">
-                                    <label>Widerstand R</label>
-                                    <input type="text" id="R" style="border-color: var(--Widerstand);">
-                                    <label>&Omega; [Ohm]</label>
-                                </div>
-                
-                                <!-- Leistung P -->
-                                <div class="form-row">
-                                    <label>Leistung P</label>
-                                    <input type="text" id="P" style="border-color: var(--Leistung);">
-                                    <label>P [Watt]</label>
-                                </div>
-                
-                                <!-- Spannung U -->
-                                <div class="form-row">
-                                    <label>Spannung U</label>
-                                    <input type="text" id="U" style="border-color: var(--Spannung);">
-                                    <label>V [Volt]</label>
-                                </div>
-                            </div>
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersURI()">
-                            
-                            
-                            <p id="result"></p>
-                
-                            <br>
-                    
-                    </div>
-                </div>
-                <div class="divider"></div>
-
-                <div class="dropdown">      <!--Spannungsteiler-->
-                    <div class="dropdown-header" onclick="toggleDropdown(this)">
-                        Spannungsteiler <span class="arrow">&#9660;</span>
-                    </div>
-                    <div class="dropdown-content"> 
-                    <!--<div>
-                            <label class="switch">
-                                <input type="checkbox" id="modeSwitch">
-                                <span class="slider round"></span>
-                            </label><br><br>
-                            <span id="modeLabel">unbelastet</span>
-                        </div>
-                        <div id="circuitDiagram">
-                            <img id="circuitImage" src="../Pictures/Spanungsteiler_unbelastet.png" alt="Schaltbild RC Glied" style="width:500px; height:auto;">
-                        </div>-->
-                    development in progress
-                    </div>
-                </div>
-                <div class="divider"></div>
-
-                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
-                    <div class="dropdown-header" onclick="toggleDropdown(this)">
-                        Serie- und Parallelschaltung <span class="arrow">&#9660;</span>
-                    </div>
-                    <div class="dropdown-content"> 
-                        <div id="opvButtonsMitkopplungen">
-                            <button class="opv-button" type="button" onclick="selectOPV('serie_schaltung', this)">
-                                <img src="../Pictures/R_Serie.png" alt="Serie Schaltung">
-                                <span>Serie</span>
-                            </button>
-                            <button class="opv-button" type="button" onclick="selectOPV('parallel_schaltung', this)">
-                                <img src="../Pictures/R_Parallel.png" alt="Parallel Schaltung">
-                                <span>Parallel</span>
-                            </button>
-                        </div>
-                        <div id="inputFieldsSerieParallel">
-                            <!-- Input fields will be dynamically generated here -->
-                        </div>
-                        <div id="result_S_P">
-                            <!-- Result will be displayed here -->
-                        </div>
-                        <br>
-                    </div>
-                </div>
-                <div class="divider"></div>
-
-                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
-                    <div class="dropdown-header" onclick="toggleDropdown(this)">
-                        Stern- Dreickschaltung <span class="arrow">&#9660;</span>
-                    </div>
-                    <div class="dropdown-content"> 
-                        <div>
-                            development in progress
-                        </div>
-                    
-                    </div>
-                </div>
-                <div class="divider"></div>
-
+            <div>
+                <h1>Verst&auml;rkung und D&auml;mpfung</h1>
             </div>
 
+            <div class="input-numbers">
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                </div>
+                <!-- Eingagsstrom I1 -->
+                <div class="form-row">
+                    <label>Strom I<sub>1</sub></label>
+                    <input type="text" id="I1" style="border-color: var(--Strom);">
+                    <label>A [Ampere]</label>
+                </div>
 
+                <!-- Ausgangsstrom I2 -->
+                <div class="form-row">
+                    <label>Strom I<sub>2</sub></label>
+                    <input type="text" id="I2" style="border-color: var(--Strom);">
+                    <label>A [Ampere]</label>
+                </div>
 
+                <!-- Verstaerkungsmass g -->
+                <div class="form-row">
+                    <label>Verst&auml;rkungsmass g</label>
+                    <input type="text" id="g" style="border-color: var(--Verstaerkungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Daempfungsmass a -->
+                <div class="form-row">
+                    <label>D&auml;mpfungssmass a</label>
+                    <input type="text" id="a" style="border-color: var(--Daempfungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Eingangsleistung P1 -->
+                <div class="form-row">
+                    <label>Leistung P<sub>1</sub></label>
+                    <input type="text" id="P1" style="border-color: var(--Leistung);">
+                    <label>W [Watt]</label>
+                </div>
+
+                <!-- Ausgangsleistung P2 -->
+                <div class="form-row">
+                    <label>Leistung P<sub>2</sub></label>
+                    <input type="text" id="P2" style="border-color: var(--Leistung);">
+                    <label>W [Watt]</label>
+                </div>
+
+                <!-- Eingangsspannung U1 -->
+                <div class="form-row">
+                    <label>Spannung U<sub>1</sub></label>
+                    <input type="text" id="U1" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Eingangsspannung U1 -->
+                <div class="form-row">
+                    <label>Spannung U<sub>2</sub></label>
+                    <input type="text" id="U2" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Verstaerkungsfaktor V -->
+                <div class="form-row">
+                    <label>Verst&auml;rkungsfaktor V</label>
+                    <input type="text" id="V" style="border-color: var(--Verstaerkungsfaktor);">
+                    <label>1</label>
+                </div>
+                <!-- Daempfungsfaktor D -->
+                <div class="form-row">
+                    <label>D&auml;mpfungsfaktor D</label>
+                    <input type="text" id="D" style="border-color: var(--Daempfungsfaktor);">
+                    <label>1</label>
+                </div>
+            </div>
+            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParameters()">
+            
+            <h3>Resultate</h3>
+            <p id="result"></p>
+
+            <br>
+
+            <br>
         </main>
-        <footer>
-            &copy 2025 Elecalculate
-        </footer>
+        <div>
+            <footer>&copy 2025 Elecalculate</footer>
+        </div>
     </div>
-
-    <script>
-
-    document.getElementById("modeSwitch").addEventListener("change", function () {
-        const modeLabel = document.getElementById("modeLabel");
-        const circuitImage = document.getElementById("circuitImage");
-
-        if (this.checked) {
-            modeLabel.textContent = "belastet";
-            circuitImage.src = "../Pictures/Spanungsteiler_belastet.png";
-        } else {
-            modeLabel.textContent = "unbelastet";
-            circuitImage.src = "../Pictures/Spanungsteiler_unbelastet.png";
-        }
-    });
-
-    function calculateParametersURI() 
-    {
-        let result = ``;
-
-        const I = document.getElementById("I").value;
-        const R = document.getElementById("R").value;
-        const P = document.getElementById("P").value;
-        const U = document.getElementById("U").value;
-
-        if(U && R && !I && !P)
-        {
-            // I = U/R
-            // P = U^2/R
-            result += `
-                Strom I = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U </span><br>
-                    <span>R</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> ${U}V </span><br>
-                    <span>${R}&Omega;</span>
-                </div> 
-            = ${formatWithPrefix(parseInput(U) / parseInput(R), "A")}<br>
-
-            Leistung P = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U<sup>2</sup> </span><br>
-                    <span>R</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
-                    <span>${R}&Omega;</span>
-                </div> 
-            = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(R), "W")}<br>`;
-
-
-        }
-
-        if(P && U && !R && !I)
-        {
-            // I = P/U
-            // R = U^2/P
-            result += `
-                Strom I = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> P </span><br>
-                    <span>U</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> ${P}W </span><br>
-                    <span>${U}V</span>
-                </div> 
-            = ${formatWithPrefix(parseInput(P) / parseInput(U), "A")}<br>
-
-            Widerstand R = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U<sup>2</sup> </span><br>
-                    <span>P</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
-                    <span>${P}W</span>
-                </div> 
-            = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(P), "&Omega;")}<br>`;
-        }
-
-        if(P && R && !I && !U)
-        {
-            // I = sqrt(P/R)
-            // U = sqrt(P*R)
-            result += `
-                Strom I = 
-                &radic;	<div class ="fraction">
-                    <span class="fraction-numerator"> P </span><br>
-                    <span>R</span>
-                </div> 
-            =
-                &radic;	 <div class ="fraction">
-                    <span class="fraction-numerator">${P}W </span><br>
-                    <span>${R}&Omega;</span>
-                </div> 
-            = ${formatWithPrefix( Math.pow((parseInput(P))/parseInput(R), 0.5), "A")}<br>
-
-
-            Spannung U =
-                    &radic; P &times; R
-                =
-                    &radic; ${P}W &times; ${R}&Omega;
-                = ${formatWithPrefix( Math.pow((parseInput(P))*parseInput(R), 0.5), "V")}<br>`;
-        }
-
-        if(I && R && !P && !U)
-        {
-            // U = I * R
-            // P = I^2 *R
-            result += `
-                    Spannung U =
-                    I &times; R
-                =
-                    ${I}A &times; ${R}&Omega;
-                = ${formatWithPrefix(parseInput(I) * parseInput(R), "V")}<br>
-
-                Leistung P =
-                    I<sup>2</sup> &times; R
-                =
-                    (${I}A)<sup>2</sup> &times; ${R}&Omega;
-                = ${formatWithPrefix(Math.pow(parseInput(I), 2) * parseInput(R), "W")}<br>`;
-        }
-        
-        if(P && I && !R && !U)
-        {
-            // R = P/I^2
-            // U = P/I
-            result += `
-                Widerstand R = 
-                <div class ="fraction">
-                    <span class="fraction-numerator">P</span><br>
-                    <span>I<sup>2</sup> </span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator">  ${P}W</span><br>
-                    <span>(${I}A)<sup>2</sup></span>
-                </div> 
-            = ${formatWithPrefix( parseInput(P)/ Math.pow(parseInput(I), 2), "&Omega;")}<br>
-
-            Spannung U = 
-                <div class ="fraction">
-                    <span class="fraction-numerator">P</span><br>
-                    <span>I</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator">  ${P}W</span><br>
-                    <span>${I}A</span>
-                </div> 
-            = ${formatWithPrefix( parseInput(P)/parseInput(I), "V")}<br>`;
-        }
-
-        if(U && I && !P && !R)
-        {
-            // P = U * I
-            // R = U/I
-            result += `
-                    Leistung P =
-                    U &times; I
-                =
-                    ${U}V &times; ${I}A;
-                = ${formatWithPrefix(parseInput(U) * parseInput(I), "W")}<br>
-
-                Widerstand R = 
-                <div class ="fraction">
-                    <span class="fraction-numerator">U</span><br>
-                    <span>I</span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator">${U}V</span><br>
-                    <span>${I}A</span>
-                </div> 
-            = ${formatWithPrefix( parseInput(U)/parseInput(I), "&Omega;")}<br>`;
-        }
-        
-
-        document.getElementById('result').innerHTML = result;
-    }   
-
-    /*Dropdown menu*/
-
-    function toggleDropdown(element) 
-    {
-        const dropdown = element.parentElement;
-        dropdown.classList.toggle("open");
-    }
-
-    // Serie Parallel
-    function selectOPV(opv, button) {
-            const buttonGroup = button.closest('div');
-            const buttons = buttonGroup.querySelectorAll('.opv-button');
-            const inputFields = document.getElementById('inputFieldsSerieParallel');
-
-            if (button.classList.contains('selected')) {
-                // If the button is already selected, deselect it
-                button.classList.remove('selected');
-                inputFields.innerHTML = ''; // Clear input fields
-                document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
-            } else {
-                // Remove 'selected' class from all buttons in the same group
-                buttons.forEach(btn => btn.classList.remove('selected'));
-
-                // Add 'selected' class to the clicked button
-                button.classList.add('selected');
-
-                let inputHTML = '';
-                
-                switch (opv) {          // if else anstelle von switch case
-                    case 'serie_schaltung':
-                    case 'parallel_schaltung':
-                        // debugger;
-                        inputHTML = `
-                            <div class="form-row">
-                                <label>Widerstand R<sub>1</sub></label>
-                                <input type="text" id="r1" style="border-color: var(--Widerstand);">
-                                <label>&Omega; [Ohm]</label>
-                            </div>
-                            <div class="form-row">
-                                <label>Widerstand R<sub>2</sub></label>
-                                <input type="text" id="r2" style="border-color: var(--Widerstand);">
-                                <label>&Omega; [Ohm]</label>
-                            </div>
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate('${opv}')">
-                            <br><br><div id="result_S_P"></div>
-                        `;
-                        break;
-                    default:
-                        inputHTML = '';
-                }
-                inputFields.innerHTML = inputHTML;
-                 document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
-            }
-        }
-
-        function calculate(opv) 
-        {
-            let result_S_P  = ``;
-            // const r1 = parseFloat(document.getElementById('r1').value);
-            // const r2 = parseFloat(document.getElementById('r2').value);
-            const r1 = document.getElementById("r1").value;
-            const r2 = document.getElementById("r2").value;
-
-            // debugger;
-            if(opv === 'serie_schaltung')
-            {
-                if(r1 && r2)
-                {
-                    debugger;
-                    result_S_P += `
-                        R<sub>ges</sub> = 
-                        R<sub>1</sub> + R<sub>2</sub>
-                    =
-                        ${r1}&Omega; + ${r2}&Omega;
-                    = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
-                }
-            }
-
-            if(opv === 'parallel_schaltung')
-            {
-                if(r1 && r2)
-                {
-                    result_S_P += `
-                    Widerstand R<sub>ges</sub> = 
-                        <div class ="fraction">
-                            <span >1</span><br>
-                            <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
-                            <div style="border-top: 1px solid white;"><div class ="fraction">
-                                <span >1</span><br>
-                                <span class="fraction-denumerator">R<sub>1</sub></span>
-                            </div>  
-                        + 
-                            <div class ="fraction">
-                                <span >1</span><br>
-                                <span class="fraction-denumerator">R<sub>2</sub></span>
-                            </div></div> </span>
-                        </div> 
-                    =
-                    <div class ="fraction">
-                        <span >1</span><br>
-                        <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
-                        <div style="border-top: 1px solid white;"><div class ="fraction">
-                            <span >1</span><br>
-                            <span class="fraction-denumerator">${r1}&Omega;</span>
-                        </div>  
-                    + 
-                        <div class ="fraction">
-                            <span >1</span><br>
-                            <span class="fraction-denumerator">${r2}&Omega;</span>
-                        </div></div> </span>
-                    </div>
-                    = ${formatWithPrefix(1/((1/parseInput(r1)) + (1/parseInput(r2))), "&Omega;")}<br>`;
-                }
-            }
-
-            document.getElementById('result_S_P').innerHTML = result_S_P;
-            debugger;
-        }
-
-    </script>
     <script src="../scripts.js"></script>
+    <script>
+ 
+        function calculateParameters() 
+            {
 
+                let result = ``;
+
+                const I1 = document.getElementById("I1").value;
+                const I2 = document.getElementById("I2").value;
+                const g = document.getElementById("g").value;
+                const a = document.getElementById("a").value;
+                const P1 = document.getElementById("P1").value;
+                const P2 = document.getElementById("P2").value;
+                const U1 = document.getElementById("U1").value;
+                const U2 = document.getElementById("U2").value;
+                const V = document.getElementById("V").value;
+                const D = document.getElementById("D").value;
+		/*add:
+  		U2 = U1*10^(g/20)
+    		U2 = U1*10^(-a/20)
+		U1 = U2/(10^(g/20)
+		U1 = U2/(10^(-a/20)
+		
+		I2 = I1*10^(g/20)
+		I1 = I2/(10^(g/20)
+		I2 = I1*10^(-a/20)
+		I1 = I2/(10^(-a/20)
+		
+		P2 = P1*10^(g/10)
+		P1 = P2/(10^(g/10)
+		P2 = P1*10^(-a/10)
+		P1 = P2/(10^(-a/10)*/
+
+                if(!I1)
+                {
+                    if(I2 && V)
+                    {
+                        //debugger;
+                        result += `
+                            Strom I<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> I<sub>2</sub> </span><br>
+                                <span>V</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${I2}A </span><br>
+                                <span>${V}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(I2) / parseInput(V), "A")}<br>`;
+
+                    }
+
+                    if(I2 && D)
+                    {
+                        result += `
+                            Strom I<sub>1</sub> = 
+                            I<sub>2</sub> &times; D
+                        =
+                            ${I2}A &times; ${D}
+                        = ${formatWithPrefix(parseInput(I2) * parseInput(D), "A")}<br>`;
+                    }
+
+                    if(U1 && P1)
+                    {
+                        result += `
+                            Strom I<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>1</sub> </span><br>
+                                <span>U<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P1}W </span><br>
+                                <span>${U1}V</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P1) / parseInput(U1), "A")}<br>`;
+                    }
+
+                    // I1 = I2 * (10^(-g/20))
+		    if(I2 && g)
+                    {
+			// debugger;
+
+			result += `
+                            Strom I<sub>1</sub> = 
+                            I<sub>2</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> -g </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${I2} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> -${g}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(I2) * Math.pow(10, -(parseInput(g)/20)), "A")}<br>`;
+                    }
+
+                    // I1 = I2 * 10^(a/20)
+		    if(I2 && a)
+                    {
+			// debugger;
+
+			result += `
+                            Strom I<sub>1</sub> = 
+                            I<sub>2</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> a </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${I2} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> ${a}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(I2) * Math.pow(10, (parseInput(a)/20)), "A")}<br>`;
+                    }
+                }
+
+
+                if(!I2)
+                {
+                    if(I1 && V)
+                    {
+                        result += `
+                            Strom I<sub>2</sub> = 
+                            I<sub>1</sub> &times; V
+                        =
+                            ${I1}A &times; ${V}
+                        = ${formatWithPrefix(parseInput(I1) * parseInput(V), "A")}<br>`;
+                    }
+
+                    if(I1 && D)
+                    {
+                        result += `
+                            Strom I<sub>2</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> I<sub>1</sub> </span><br>
+                                <span>D</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${I1}A </span><br>
+                                <span>${D}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(I1) / parseInput(D), "A")}<br>`;
+                    }
+
+                    if(U2 && P2)
+                    {
+                        result += `
+                            Strom I<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>2</sub> </span><br>
+                                <span>U<sub>2</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P2}W </span><br>
+                                <span>${U2}V</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / parseInput(U2), "A")}<br>`;
+                    }
+
+                    // I2 = I1 * (10^(g/20))
+                    if(I1 && g)
+		    {
+			result += `
+                            Strom I<sub>2</sub> = 
+                            I<sub>1</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> g </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${I1} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> ${g}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(I1) * Math.pow(10, (parseInput(g)/20)), "A")}<br>`;
+                    }
+
+                    // I2 = I1 * 10^(-a/20)
+		    if(I1 && a)
+		    {
+			result += `
+                            Strom I<sub>2</sub> = 
+                            I<sub>1</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> g </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${I1} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> -${a}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(I1) * Math.pow(10, -(parseInput(a)/20)), "A")}<br>`;
+                    }
+                }
+
+                if(!g)
+                {
+                    if(V)
+                    {
+                        result += `
+                            Verst&auml;rkungsmass g = 
+                            20 &times; log<sub>10</sub>(V)
+                        =
+                            20 &times; log<sub>10</sub>(${V})
+                        = ${formatWithPrefix(20 * getlg(parseInput(V)), "dB")}<br>`;
+                    }
+
+                    if(D)
+                    {
+                        result += `
+                            Verst&auml;rkungsmass g = 
+                            20 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator"> 1 </span><br>
+                                <span>D</span> 
+                            </div>)
+                        =   20 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator"> 1 </span><br>
+                                <span>${D}</span>   
+                            </div>)
+                        = ${formatWithPrefix(20 * getlg(1 / parseInput(D)), "dB")}<br>`;
+                    }
+
+                    if(a)
+                    {
+                        // debugger;
+                        result += `
+                            Verst&auml;rkungsmass g = 
+                            - a
+                         = - ${a} dB<br>`;
+                    }
+
+                    if(I1 && I2)
+                    {
+                        result += `
+                            Verst&auml;rkungsmass g<sub>I</sub> = 
+                            20 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator">I<sub>2</sub></span><br>
+                                <span>I<sub>1</sub></span> 
+                            </div>)
+                        =   20 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator">${I2}A</span><br>
+                                <span>${I1}A</span>   
+                            </div>)
+                        = ${formatWithPrefix(20 * getlg(parseInput(I2) / parseInput(I1)), "dB")}<br>`;
+                    }
+
+                    if(U1 && U2)
+                    {
+                        result += `
+                            Verst&auml;rkungsmass g<sub>U</sub> = 
+                            20 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator">U<sub>2</sub></span><br>
+                                <span>U<sub>1</sub></span> 
+                            </div>)
+                        =   20 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator">${U2}V</span><br>
+                                <span>${U1}V</span>   
+                            </div>)
+                        = ${formatWithPrefix(20 * getlg(parseInput(U2) / parseInput(U1)), "dB")}<br>`;
+                    }
+
+                    if(P1 && P2)
+                    {
+                        result += `
+                            Verst&auml;rkungsmass g<sub>P</sub> = 
+                            10 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator">P<sub>2</sub></span><br>
+                                <span>P<sub>1</sub></span> 
+                            </div>)
+                        =   10 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator">${P2}W</span><br>
+                                <span>${P1}W</span>   
+                            </div>)
+                        = ${formatWithPrefix(10 * getlg(parseInput(P2) / parseInput(P1)), "dB")}<br>`;
+                    }
+                }
+
+                if(!a)
+                {
+                    if(D)
+                    {
+                        result += `
+                            D&auml;mpfungsmass a = 
+                            20 &times; log<sub>10</sub>(D)
+                        =
+                            20 &times; log<sub>10</sub>(${D})
+                        = ${formatWithPrefix(20 * getlg(parseInput(D)), "dB")}<br>`;
+                    }
+
+                    if(V)
+                    {
+                        result += `
+                            D&auml;mpfungsmass a = 
+                            20 &times; log<sub>10</sub> ( <div class ="fraction">
+                                <span class="fraction-numerator"> 1 </span><br>
+                                <span>V</span> 
+                            </div> )
+                        =   20 &times; log<sub>10</sub>
+                            ( <div class ="fraction"> 
+                                <span class="fraction-numerator"> 1 </span><br>
+                                <span>${V}</span>   
+                            </div> )
+                        = ${formatWithPrefix(20 * getlg(1 / parseInput(V)), "dB")}<br>`;
+                    }
+
+                    if(g)
+                    {
+                        // debugger;
+                        result += `
+                            D&auml;mpfungsmass a = 
+                            - g
+                         = - ${g} dB<br>`;
+                    }
+
+                    if(I1 && I2)
+                    {
+                        result += `
+                            D&auml;mpfungsmass a<sub>I</sub> = 
+                            20 &times; log<sub>10</sub> ( <div class ="fraction">
+                                <span class="fraction-numerator">I<sub>1</sub></span><br>
+                                <span>I<sub>2</sub></span> 
+                            </div> )
+                        =   20 &times; log<sub>10</sub>
+                            ( <div class ="fraction"> 
+                                <span class="fraction-numerator">${I1}A</span><br>
+                                <span>${I2}A</span>   
+                            </div> )
+                        = ${formatWithPrefix(20 * getlg(parseInput(I1) / parseInput(I2)), "dB")}<br>`;
+                    }
+
+                    if(U1 && U2)
+                    {
+                        result += `
+                            D&auml;mpfungsmass a<sub>U</sub> = 
+                            20 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator">U<sub>1</sub></span><br>
+                                <span>U<sub>2</sub></span> 
+                            </div>)
+                        =   20 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator">${U1}V</span><br>
+                                <span>${U2}V</span>   
+                            </div>)
+                        = ${formatWithPrefix(20 * getlg(parseInput(U1) / parseInput(U2)), "dB")}<br>`;
+                    }
+
+                    if(P1 && P2)
+                    {
+                        result += `
+                            D&auml;mpfungsmass a<sub>P</sub> = 
+                            10 &times; log<sub>10</sub> (<div class ="fraction">
+                                <span class="fraction-numerator">P<sub>1</sub></span><br>
+                                <span>P<sub>2</sub></span> 
+                            </div>)
+                        =   10 &times; log<sub>10</sub>
+                            (<div class ="fraction"> 
+                                <span class="fraction-numerator">${P1}W</span><br>
+                                <span>${P2}W</span>   
+                            </div>)
+                        = ${formatWithPrefix(10 * getlg(parseInput(P1) / parseInput(P2)), "dB")}<br>`;
+                    }
+                }
+
+                if(!U1)
+                {
+                    if(U2 && V)
+                    {
+                        result += `
+                            Spannung U<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> U<sub>2</sub> </span><br>
+                                <span>V</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${U2}V </span><br>
+                                <span>${V}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U2) / parseInput(V), "V")}<br>`;
+                    }
+
+                    if(U2 && D)
+                    {
+                        result += `
+                            Spannung U<sub>1</sub> = 
+                            I<sub>2</sub> &times; D
+                        =
+                            ${U2}V &times; ${D}
+                        = ${formatWithPrefix(parseInput(U2) * parseInput(D), "V")}<br>`;
+                    }
+
+                    if(I1 && P1)
+                    {
+                        result += `
+                            Spannung U<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>1</sub> </span><br>
+                                <span>I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P1}W </span><br>
+                                <span>${I1}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P1) / parseInput(I1), "V")}<br>`;
+                    }
+
+                    // U1 = U2 * (10^(-g/20))
+
+                    // U1 = U2 * 10^(a/20)
+                }
+
+                if(!U2)
+                {
+                    if(U1 && V)
+                    {
+                        result += `
+                            Spannung U<sub>2</sub> = 
+                            U<sub>1</sub> &times; V
+                        =
+                            ${U1}V &times; ${V}
+                        = ${formatWithPrefix(parseInput(U1) * parseInput(V), "V")}<br>`;
+                    }
+
+                    if(U1 && D)
+                    {
+                        result += `
+                            Spannung U<sub>2</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> U<sub>1</sub> </span><br>
+                                <span>D</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${U1}V </span><br>
+                                <span>${D}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U1) / parseInput(D), "V")}<br>`;
+                    }
+
+                    if(I2 && P2)
+                    {
+                        result += `
+                            Spannung U<sub>2</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>2</sub> </span><br>
+                                <span>I<sub>2</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P2}W </span><br>
+                                <span>${I2}V</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / parseInput(I2), "V")}<br>`;
+                    }
+
+                    // U2 = U1 * (10^(g/20))
+		    if(U1 && g)
+		    {
+			result += `
+                            Spannung U<sub>2</sub> = 
+                            U<sub>1</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> g </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${U1} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> ${g}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(U1) * Math.pow(10, (parseInput(g)/20)), "V")}<br>`;
+                    }
+
+
+                    // U2 = U1 * 10^(-a/20)
+		    if(U1 && a)
+		    {
+			result += `
+                            Spannung U<sub>2</sub> = 
+                            U<sub>1</sub> &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> a </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        =
+                            ${U1} &lowast; 10 <sup>(<div class ="fraction">
+                                <span class="fraction-numerator"> -${a}dB </span><br>
+                                <span>20</span>
+                            </div>) </sup>
+                        = ${formatWithPrefix(parseInput(U1) * Math.pow(10, -(parseInput(a)/20)), "V")}<br>`;
+                    }
+                }
+
+                if(!P1)
+                {
+                    if(P2 && V)
+                    {
+                        result += `
+                            Leistung P<sub>1</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>2</sub> </span><br>
+                                <span>V</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P2}W </span><br>
+                                <span>${V}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / parseInput(V), "W")}<br>`;
+                    }
+
+                    if(P2 && D)
+                    {
+                        result += `
+                            Leistung P<sub>1</sub> = 
+                            P<sub>2</sub> &times; D
+                        =
+                            ${P2}W &times; ${D}
+                        = ${formatWithPrefix(parseInput(P2) * parseInput(D), "W")}<br>`;
+                    }
+
+                    if(I1 && U1)
+                    {
+                        result += `
+                            Leistung P<sub>1</sub> = 
+                            U<sub>1</sub> &times; I<sub>1</sub>
+                        =
+                            ${U1}V &times; ${I1}A
+                        = ${formatWithPrefix(parseInput(U1) * parseInput(I1), "W")}<br>`;
+                    }
+
+                    // P1 = P2 * (10^(-g/10))
+
+                    // P1 = P2 * 10^(a/10)
+                }
+
+                if(!P2)
+                {
+                    if(P1 && V)
+                    {
+                        result += `
+                            Leistung P<sub>2</sub> = 
+                            P<sub>1</sub> &times; V
+                        =
+                            ${P1}W &times; ${V}
+                        = ${formatWithPrefix(parseInput(P1) * parseInput(V), "W")}<br>`;
+                    }
+
+                    if(P1 && D)
+                    {
+                        result += `
+                            Leistung P<sub>2</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>1</sub> </span><br>
+                                <span>D</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P1}W </span><br>
+                                <span>${D}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P1) / parseInput(D), "W")}<br>`;
+                    }
+
+                    if(I2 && U2)
+                    {
+                        result += `
+                            Leistung P<sub>2</sub> = 
+                            U<sub>2</sub> &times; I<sub>2</sub>
+                        =
+                            ${U2}V &times; ${I2}A
+                        = ${formatWithPrefix(parseInput(U2) * parseInput(I2), "W")}<br>`;
+                    }
+
+                    // P2 = P1 * (10^(g/10))
+
+                    // P2 = P1 * 10^(-a/10)
+                }
+
+                if(!V)
+                {
+                    if(I1 && I2)
+                    {
+                        result += `
+                            Verst&auml;rkungsfaktor V<sub>I</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> I<sub>2</sub> </span><br>
+                                <span>I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${I2}A </span><br>
+                                <span>${I1}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(I2) / parseInput(I1), "")}<br>`;
+                    }
+
+                    if(U1 && U2)
+                    {
+                        result += `
+                            Verst&auml;rkungsfaktor V<sub>U</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> U<sub>2</sub> </span><br>
+                                <span>U<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${U2}V </span><br>
+                                <span>${U1}V</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U2) / parseInput(U1), "")}<br>`;
+                    }
+
+                    if(P1 && P2)
+                    {
+                        result += `
+                            Verst&auml;rkungsfaktor V<sub>P</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>2</sub> </span><br>
+                                <span>P<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P2}W </span><br>
+                                <span>${P1}W</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / parseInput(P1), "")}<br>`;
+                    }                    
+
+                    // V = (10^(g/20))
+                }
+
+                if(!D)
+                {
+                    if(I1 && I2)
+                    {
+                        result += `
+                            D&auml;mpfungsfaktor D<sub>I</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> I<sub>1</sub> </span><br>
+                                <span>I<sub>2</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${I1}A </span><br>
+                                <span>${I2}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(I1) / parseInput(I2), "")}<br>`;
+                    }
+
+                    if(U1 && U2)
+                    {
+                        result += `
+                            D&auml;mpfungsfaktor D<sub>U</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> U<sub>1</sub> </span><br>
+                                <span>U<sub>2</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${U1}V </span><br>
+                                <span>${U2}V</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U1) / parseInput(U2), "")}<br>`;
+                    }
+
+                    if(P1 && P2)
+                    {
+                        result += `
+                            D&auml;mpfungsfaktor D<sub>P</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> P<sub>1</sub> </span><br>
+                                <span>P<sub>2</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P1}W </span><br>
+                                <span>${P2}W</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P1) / parseInput(P2), "")}<br>`;
+                    }                    
+
+                    // D = (10^(a/20))
+                }
+                
+
+                document.getElementById('result').innerHTML = result;
+            }
+
+            function getlg(x)           // function for lag base 10
+            {
+                return Math.log(x) / Math.log(10);
+            }
+    </script>
 </body>
 </html>
