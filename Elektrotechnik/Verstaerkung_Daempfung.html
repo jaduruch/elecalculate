@@ -228,7 +228,21 @@
                 const U2 = document.getElementById("U2").value;
                 const V = document.getElementById("V").value;
                 const D = document.getElementById("D").value;
-
+		/*add:
+  		U2 = U1*10^(g/20)
+    		U2 = U1*10^(-a/20)
+		U1 = U2/(10^(g/20)
+		U1 = U2/(10^(-a/20)
+		
+		I2 = I1*10^(g/20)
+		I1 = I2/(10^(g/20)
+		I2 = I1*10^(-a/20)
+		I1 = I2/(10^(-a/20)
+		
+		P2 = P1*10^(g/10)
+		P1 = P2/(10^(g/10)
+		P2 = P1*10^(-a/10)
+		P1 = P2/(10^(-a/10)*/
 
                 if(!I1)
                 {
@@ -277,7 +291,21 @@
                     }
 
                     // I1 = I2 * (10^(-g/20))
-
+		    if(U1 && P1)
+                    {
+                        result += `
+                            Strom I<sub>1</sub> = 
+                            I<sub>1</sub> &lowast; 10 <sup><div class ="fraction">
+                                <span class="fraction-numerator"> -g </span><br>
+                                <span>20</span>
+                            </div> </sup>
+                        =
+                            ${I2} &lowast; 10 <sup><div class ="fraction">
+                                <span class="fraction-numerator"> -${g}dB </span><br>
+                                <span>20</span>
+                            </div> </sup>
+                        = ${formatWithPrefix(parseInput(I2) * Math.pow(10, (parseInput(-g)/20), "A")}<br>`;
+                    }
                     // I1 = I2 * 10^(a/20)
                 }
 
