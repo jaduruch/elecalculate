@@ -367,7 +367,6 @@
                         Spannungsteiler <span class="arrow">&#9660;</span>
                     </div>
                     <div class="dropdown-content"> 
-                    <div>
                         <!--hier einfuegen-->
                         <label class="switch">
                             <input type="checkbox" id="modeSwitch">
@@ -481,7 +480,7 @@
         
                                 <div class="form-row">
                                     <label>Spannung U<sub>out</sub></label>
-                                    <input type="text" id="Uout" style="border-color: var(--Spannung);">
+                                    <input type="text" id="Uout_bel" style="border-color: var(--Spannung);">
                                     <label>V [Volt]</label>
                                 </div>
                             <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersBel_Spannungsteiler()"> 
@@ -795,23 +794,34 @@
         const U1 = document.getElementById("U1_bel").value;
         const Uout = document.getElementById("Uout_bel").value;
 
-        /*if(U && R && !I && !P)
+        if(!Uout && Uin && R1 && R2 && RL)
         {
-            // I = U/R
-            // P = U^2/R
             result_bel += `
-                Strom I = 
+
+                Spannung U<sub>out</sub> = 
                 <div class ="fraction">
-                    <span class="fraction-numerator"> U </span><br>
-                    <span>R</span>
+                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
+                </div> </span><br>
+                    <span>R<sub>1</sub> + <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
+                </div> </span>
                 </div> 
             =
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${U}V </span><br>
-                    <span>${R}&Omega;</span>
+                    <span class="fraction-numerator"> ${Uin}V &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
+                </div> </span><br>
+                    <span>${R1}&Omega; + <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
+                </div> </span>
                 </div> 
-            = ${formatWithPrefix(parseInput(U) / parseInput(R), "A")}<br>`;
-        }*/
+            = ${formatWithPrefix((parseInput(Uin) * ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL))))/(parseInput(R1) + ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL)))) , "V")}<br>`;
+        }
 
 
         document.getElementById('result_bel').innerHTML = result_bel;
