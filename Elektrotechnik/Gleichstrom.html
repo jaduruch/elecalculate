@@ -773,6 +773,26 @@
             = ${formatWithPrefix(parseInput(Uin)/(parseInput(R1) + parseInput(R2)) , "A")}<br>`;
         }
 
+        if(!R2 && Uin && Uout && R1)
+        {
+            // R2 = Uout * R1 / (Uin - Uout)
+            // I = (Uin - Uout)/R1
+            // R2 = Uout / I
+
+            result_unb += `
+                Widerstand R<sub>2</sub> =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sub>out</sub> &lowast; R<sub>1</sub></span><br>
+                    <span>U<sub>in</sub> - U<sub>out</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uout}V &lowast; ${R1}&Omega;</span><br>
+                    <span>${Uin}V - ${Uout}V</span>
+                </div> 
+            = ${formatWithPrefix((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)) , "&Omega;")}<br>`;
+        }
+
 
         document.getElementById('result_unb').innerHTML = result_unb;
     }
