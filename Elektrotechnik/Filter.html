@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- Beschreibung der Seite -->
-    <meta name="description" content="Online Rechner für Hochpass und Tiefpassfilter 1. Ordung. Rechenmodelle für RC und RL filter.">
-	<!-- Stichworte für Suchmaschinen -->
-    <meta name="keywords" content="Elecalculate, Elektrotechnik, Online Rechner, Hochpass RL, Tiefpass RL, Hochpass RC, Tiefpass RC, Kondensator, Spule, XL, XC">
     <title>Elektrotechnik | Filter</title>
     <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/png" href="Pictures/favicon.png">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
     <style>
         .filter-button {
             position: relative;
@@ -783,6 +779,26 @@
                 }
             }
 
+            if(!Uout)
+            {
+                if(R && C && Uin && C && f)
+                {
+                    // U1 / (sqrt(1 + (2pi * R * C)^2))
+                    result_TP_RC += `
+                        Spannung   U<sub>out</sub> = 
+                        <div class ="fraction">
+                            <span> U<sub>1</sub> </span><br>
+                            <span class="fraction-denominator">&radic;(1 + (2&pi; &lowast; F &lowast; R &lowast; C)<sup>2</sup>)</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${Uin}V</span><br>
+                            <span class="fraction-denominator">&radic;(1 + (2&pi; &lowast; ${f}Hz &lowast; ${R}&Omega; &lowast; ${C}F)<sup>2</sup>)</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(Uin)/(Math.pow(1 + Math.pow( 2 * Math.PI * parseInput(f) * parseInput(R) * parseInput(C) , 2), 0.5)), "V")}<br>`;
+                }
+            }
+
             if(!fg)
             {
                 if(R && C)
@@ -801,6 +817,8 @@
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(R) * parseInput(C)), "Hz")}<br>`;
                 }
             }
+
+
             
             document.getElementById('result_TP_RC').innerHTML = result_TP_RC;
         }
