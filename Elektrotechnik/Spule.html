@@ -62,7 +62,6 @@
         }
 
         input:focus {
-            border: 3px solid;
             outline: none; /* Entfernt den Standard-Umrandungsring */
         }
 
@@ -515,6 +514,7 @@
 
                     if(L && Al)
                     {
+                        debugger;
                         result += `
                             Windungszahl N = &radic; 
                             (<div class ="fraction">
@@ -578,7 +578,7 @@
                     = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
                 }
 
-                if(!A)       // Flaeche A todo
+                /*if(!A)       // Flaeche A todo
                 {
                     if(Phi && B)
                     {
@@ -594,7 +594,7 @@
                     {
 
                     }
-                }
+                }*/
 
                 if(!Phi)    // Magnetischer Fluss
                 {
@@ -727,7 +727,7 @@
                     }
                 }
 
-                if(!B)  // Magnetischeflussdichte B
+                /*if(!B)  // Magnetischeflussdichte B
                 {
                     if(Phi && A)
                     {
@@ -743,7 +743,7 @@
                     {
                         
                     }
-                }
+                }*/
 
                 if(!t)  // Zeit t
                 {
@@ -785,135 +785,7 @@
                 document.getElementById('result').innerHTML = result;
             }
         // RC-Glied berechnungen
-            document.getElementById("modeSwitch").addEventListener("change", function () {
-                const modeLabel = document.getElementById("modeLabel");
-                const circuitImage = document.getElementById("circuitImage");
-
-                if (this.checked) {
-                    modeLabel.textContent = "Entladen";
-                    circuitImage.src = "../Pictures/RC_Discharge.png";
-                } else {
-                    modeLabel.textContent = "Laden";
-                    circuitImage.src = "../Pictures/RC_Charge.png";
-                }
-            });
-
-            function generate_e_curve() 
-            {
-                const R = parseFloat(document.getElementById("RCresistance").value) || 1000; // Standardwert 1kOhm
-                const C = parseFloat(document.getElementById("RCcapacitance").value) || 0.000001; // Standardwert 1uF
-                const V = parseFloat(document.getElementById("RCvoltage").value) || 1; // Standardspannung ist 1V
-                const isDischarging = document.getElementById("modeSwitch").checked;
-
-                const tau = R * C; // Zeitkonstante
-                const maxTime = 5 * tau; // Maximale Zeit fuer die Simulation
-                const stepCount = 100; // Anzahl der Berechnungsschritte
-
-                // Spannungskurve zeichnen
-                /*drawCurve("voltageCanvas", (t) => {
-                    return isDischarging 
-                        ? V * Math.exp(-t / tau) // Entladen
-                        : V * (1 - Math.exp(-t / tau)); // Laden
-                }, V, "Spannung (V)", maxTime, stepCount);
-
-                // Stromkurve zeichnen
-                drawCurve("currentCanvas", (t) => {
-                    //return (V / R) * Math.exp(-t / tau); // Strom bei Laden und Entladen
-                    return isDischarging 
-                        ? (V/R) * ( - Math.exp(-t / tau)) // Entladen
-                        : (V/R) * Math.exp(-t / tau);        // Laden
-                        
-
-                }, V / R, "Strom (A)", maxTime, stepCount);*/
-                drawCurve("voltageCanvas", (t) => {
-                    return isDischarging 
-                        ? V * Math.exp(-t / tau) // Entladen
-                        : V * (1 - Math.exp(-t / tau)); // Laden
-                }, V, "Spannung (V)", maxTime, stepCount, isDischarging, V, R);
-
-                drawCurve("currentCanvas", (t) => {
-                    return isDischarging 
-                        ? -(V / R) * Math.exp(-t / tau) // Entladen (negativer Strom)
-                        : (V / R) * Math.exp(-t / tau); // Laden (positiver Strom)
-                }, V / R, "Strom (A)", maxTime, stepCount, isDischarging, V, R);
-            }
-
-            function drawCurve(canvasId, valueFunction, maxY, yLabel, maxTime, stepCount, isDischarging, V, R) {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext("2d");
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const margin = 50;
-            const width = canvas.width - 2 * margin;
-            const height = canvas.height - 2 * margin;
-
-            // Falls Stromkurve beim Entladen, Y-Achse von -Uin/R bis 0A setzen
-            if (canvasId === "currentCanvas" && isDischarging) {
-                maxY = V / R;  // Maximalwert ist jetzt positiv
-            }
-
-            // Achsen zeichnen
-            ctx.beginPath();
-            ctx.moveTo(margin, margin);
-            ctx.lineTo(margin, canvas.height - margin);
-            ctx.lineTo(canvas.width - margin, canvas.height - margin);
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            // Achsenbeschriftung
-            ctx.font = "14px Arial";
-            ctx.fillStyle = "white";
-            ctx.fillText(yLabel, 10, margin / 2);
-            ctx.fillText("Zeit (s)", canvas.width - margin, canvas.height+10 - margin / 2);
-
-
-            // Achsenskalierung und Beschriftung
-            for (let i = 0; i <= 5; i++) {
-                // Zeitbeschriftung
-                const x = margin + (i / 5) * width;
-                const timeLabel = (i * maxTime / 5).toFixed(2) + " s";
-                ctx.fillText(timeLabel, x - 15, canvas.height - margin + 20);
-
-                // Wertbeschriftung (Spannung oder Strom)
-                let valueLabel = (i * maxY / 5).toFixed(2);
-                let y;
-                
-                if (canvasId === "currentCanvas" && isDischarging) {
-                    y = canvas.height - margin - (height * (1 - (i / 5)));
-                    valueLabel = (- (i * (V / R) / 5)).toFixed(2); // Werte von -Uin/R bis 0A
-                } else {
-                    y = canvas.height - margin - (i / 5) * height;
-                }
-
-                ctx.fillText(valueLabel, margin - 40, y + 5);
-            }
-
-            // Kurve zeichnen
-            ctx.beginPath();
-            ctx.moveTo(margin, canvas.height - margin); 
-
-            for (let i = 0; i <= stepCount; i++) {
-                const t = (i / stepCount) * maxTime;
-                const value = valueFunction(t);
-
-                const x = margin + (t / maxTime) * width;
-                let y;
-
-                if (canvasId === "currentCanvas" && isDischarging) {
-                    y = canvas.height - margin - (height * ((value + V / R) / (V / R))); // Negativ skalieren
-                } else {
-                    y = canvas.height - margin - (value / maxY) * height;
-                }
-
-                ctx.lineTo(x, y);
-            }
-
-            ctx.strokeStyle = canvasId === "voltageCanvas" ? "#0070C0" : "#C00000";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
+           
 
     /*Dropdown menu*/
 
