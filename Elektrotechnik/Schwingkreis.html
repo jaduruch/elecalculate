@@ -249,6 +249,7 @@
                     <input type="text" id="f-serie" style="border-color: var(--Frequenz);">
                     <label>Hz [Hertz] </label>
                 </div>
+                
 
                 <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateSerie()">
 
@@ -332,6 +333,12 @@
                 <div class="form-row">
                     <label>Frequenz f</label>
                     <input type="text" id="f-parallel" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Bandbreite b</label>
+                    <input type="text" id="b-parallel" style="border-color: var(--Frequenz);">
                     <label>Hz [Hertz] </label>
                 </div>
 
@@ -726,6 +733,7 @@
             const Q = document.getElementById("Q-parallel").value;
             const C = document.getElementById("C-parallel").value;
             const f = document.getElementById("f-parallel").value;
+            const b = document.getElementById("b-parallel").value;
 
             if(!I)
             {
@@ -846,7 +854,7 @@
                 if(!IL && I)
                 {
                     result_parallel += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> I<sub>L</sub> </span><br>
                             <span>I</span>
@@ -862,7 +870,7 @@
                 if(!IC && I)
                 {
                     result_parallel += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> I<sub>C</sub> </span><br>
                             <span>I</span>
@@ -878,7 +886,7 @@
                 if(XL && R)
                 {
                     result_parallel += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> R </span><br>
                             <span>X<sub>L</sub></span>
@@ -894,7 +902,7 @@
                 if(XC && R)
                 {
                     result_parallel += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> R </span><br>
                             <span>X<sub>C</sub></span>
@@ -910,7 +918,7 @@
                 if(L && C && Q)
                 {
                     result_parallel += `
-                        (Kreis) G&uuml;te Q> = 
+                        (Kreis) G&uuml;te Q = 
                         R<sub>v</sub> &lowast; &radic;(
                         <div class ="fraction">
                             <span>L</span><br>
@@ -923,6 +931,38 @@
                             <span class="fraction-denominator">${C}F</span>
                         </div> )
                     = ${formatWithPrefix(parseInput(R) * (2 * Math.PI * Math.pow(parseInput(L) / parseInput(C), 0.5)), "")}<br>`;
+                }
+
+                if(L && C && b)
+                {
+                    result_parallel += `
+                        (Kreis) G&uuml;te Q = 
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; b &radic;(C &lowast; L)</span>
+                        </div>
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${b}Hz &radic;(${C}F &lowast; ${L}H)</span>
+                        </div> 
+                    = ${formatWithPrefix(1/ (2 * Math.PI * parseInput(b) * Math.pow(parseInput(L) * parseInput(C), 0.5)), "")}<br>`;
+                }
+
+                if(f && b)
+                {
+                    result_parallel += `
+                        (Kreis) G&uuml;te Q = 
+                        <div class ="fraction">
+                            <span>f</span><br>
+                            <span class="fraction-denominator">b</span>
+                        </div>
+                    =
+                        <div class ="fraction">
+                            <span>${f}Hz</span><br>
+                            <span class="fraction-denominator">${b}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(f) / parseInput(b), "")}<br>`;
                 }
             }
 
