@@ -879,7 +879,29 @@
                             <span>${R}&Omega;</span><br>
                             <span class="fraction-denominator">2&pi; &lowast; ${fg}Hz</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(fg)), "F")}<br>`;
+                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(fg)), "H")}<br>`;
+                }
+
+                if(R && Uin && Uout && f)
+                {
+                    // UL = sqrt(Uin^2 - Uout^2)
+                    // XL = R * UL /Uout
+                    // L = XL/(2pi * f)
+
+                    // L = R * sqrt(Uin^2 - Uout^2) /(2pi * f * Uout)
+                    
+                    result_TP_RL += `
+                        Induktivit&auml;t L = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> R &lowast; &radic;(U<sub>in</sub><sup>2</sup> - U<sub>out</sub><sup>2</sup>)</span><br>
+                            <span>2&pi; &lowast;  f &lowast; U<sub>out</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${R}&Omega; &lowast; &radic;((${Uin}V)<sup>2</sup> - (${Uout}V)<sup>2</sup>)</span><br>
+                            <span>2&pi; &lowast; ${f}Hz f &lowast; ${Uout}V</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(R) * Math.pow(Math.pow(parseInput(Uin) , 2) - Math.pow(parseInput(Uout) , 2), 0.5))/(2 * Math.PI * parseInput(f) * parseInput(Uout)), "H")}<br>`;
                 }
             }
 
