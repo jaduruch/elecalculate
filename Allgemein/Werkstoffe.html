@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allgemein | Werkstoffe</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        .dropdown-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #000;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .dropdown-header:hover {
+            background-color: #181818;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+
+        .dropdown.open .arrow {
+            transform: rotate(-180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px 20px;
+            background-color: #000000;
+            border-top: 1px solid #ddd;
+
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* Stil fuer das Formular und Layout */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 700px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            /*max-width: 150px;*/
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        .form-row input[type="number"], .form-row select {
+            flex: 1.5;
+            margin-right: 5px;
+        }
+
+        .form-row .unit {
+            flex: 0.8;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denumerator {
+            border-top: 1px solid;
+            padding-top: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="E-Reihe.html">E-Reihe</a></li>
+                <li><a href="Mathe.html">Mathe</a></li>
+                <li><a href="Widerstandstabelle.html">Widerstandstabelle</a></li>
+                <li><a href="Glossar.html">Glossar</a></li>
+                <li><a href="Massvorsaetze.html">Massvors&auml;tze</a></li>
+                <li><a class="active" href="#Werkstoffe">Werkstoffe</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="#Allgemein">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Werkstoffe</h1>
+            </div>
+            <div class="dropdown-container">
+                <div class="dropdown">      <!--Spezifischer Widerstand-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Spezifischer Widerstand<span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Gesamtwiderstand R<sub>ges</sub></label>
+                                <input type="text" id="R" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Spezifischer Leitwert K<sub>20</sub></label>
+                                <input type="text" id="K" style="border-color: gray;">
+                                <label>m/(&Omega; &lowast; mm<sup>2</sup>)</label>
+                            </div>
+
+                            <!-- Flaeche A -->
+                            <div class="form-row">
+                                <label>Leiterquerschnitt A</label>
+                                <input type="text" id="A" style="border-color: var(--Flaeche);">
+                                <label>m<sup>2</sup> [Quadratmeter]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Leiterdurchmesser d</label>
+                                <input type="text" id="d" style="border-color: var(--Flaeche);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <!--Laenge l-->
+                            <div class="form-row">
+                                <label>Leiterl&auml;nge l</label>
+                                <input type="text" id="l" style="border-color: var(--Laenge);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateLeitfaehigkeit()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result_Leiter"></p>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Temperaturabh&auml;ngigkeit Widerst&auml;nde <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Widerstand R<sub>20</sub></label>
+                                <input type="text" id="R20" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Warmwiderstand R<sub>&thetasym;</sub></label>
+                                <input type="text" id="Rw" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <!-- Flaeche A -->
+                            <div class="form-row">
+                                <label>Temperaturbeiwert &alpha;</label>
+                                <input type="text" id="alpha" style="border-color: gray;">
+                                <label>K<sup>-1</sup> [Klevin <sup>-1</sup>]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Leiterdurchmesser d</label>
+                                <input type="text" id="d" style="border-color: var(--Flaeche);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <!--Laenge l-->
+                            <div class="form-row">
+                                <label>Leiterl&auml;nge l</label>
+                                <input type="text" id="l" style="border-color: var(--Laenge);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateTemperaturwiderstand()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result_Temp"></p>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            &copy 2025 Elecalculate
+        </footer>
+    </div>
+    <script src="../scripts.js"></script>
+    <script>
+        function toggleDropdown(element) {
+                const dropdown = element.parentElement;
+                dropdown.classList.toggle("open");
+            }
+
+            function calculateLeitfaehigkeit() 
+            {
+                let result_Leiter = ``;
+
+                const R = document.getElementById("R").value;
+                const K = document.getElementById("K").value;
+                const A = document.getElementById("A").value;
+                const d = document.getElementById("d").value;
+                const l = document.getElementById("l").value;
+                
+                
+                if(!K && l && R && A)       // Berechnungen fuer Leitfaehigkeit
+                {
+                    debugger;
+                    result_Leiter += `
+                        Spezifischer Leitwert K<sub>20</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> l </span><br>
+                            <span>R &lowast; A</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${l}m </span><br>
+                            <span>${R}&Omega; &lowast; ${A}m<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(l) / (parseInput(R) * parseInputsquare(A) * 1e-6), "m/(&Omega; &lowast; mm<sup>2</sup>)")}<br>`; // falscher Wer
+                }
+
+                if(!R && l && K && A)       // Berechnungen fuer Gesamtwiderstand
+                {
+                    debugger;
+                    result_Leiter += `
+                        Widerstand R<sub>ges</sub> = 
+                        <div class ="fraction">
+                            <span> l </span><br>
+                            <span class="fraction-denumerator">K<sub>20</sub> &lowast; A</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span> ${l}m </span><br>
+                            <span class="fraction-denumerator">${K}&m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${A}m<sup>2</sup></span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(l) / (parseInput(K) * 1e6 * parseInputsquare(A)), "&Omega;")}<br>`;
+                }
+
+                if(!l && R && K && A)       // Berechnungen fuer Leiterlaenge
+                {
+                    // l = K * R * A
+                    debugger;
+                    result_Leiter += `
+                        Leiterl&auml;nge l = 
+                        K<sub>20</sub> &lowast; R &lowast; A
+                    =
+                        ${K}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega; &lowast; ${A}m<sup>2</sup>
+                    = ${formatWithPrefix(parseInput(K) * parseInput(R) * parseInputsquare(A) * 1e6, "m")}<br>`;
+                }
+
+                if(!A && l && K && R)       // Berechnungen fuer Flaeche
+                {
+                    debugger;
+                    result_Leiter += `
+                        Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span> l </span><br>
+                            <span class="fraction-denumerator">K<sub>20</sub> &lowast; R</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span> ${l}m </span><br>
+                            <span class="fraction-denumerator">${K}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefixsquare(parseInput(l) / (parseInput(K) * 1e6 * parseInputsquare(R)), "m<sup>2</sup>")}<br>`;
+                }
+
+                document.getElementById('result_Leiter').innerHTML = result_Leiter;
+            }
+    </script>
+
+</body>
+</html>
