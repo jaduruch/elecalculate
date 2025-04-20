@@ -302,8 +302,28 @@ button {
     color: black;
 }
 
+/*************************calculations*****************/
 .result {
     margin-top: 20px;
+}
+
+.fraction
+{
+    display: inline-block; 
+    vertical-align: middle; 
+    text-align: center;
+    margin-top: 1px;
+    line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+}
+
+.fraction-numerator{
+    border-bottom: 1px solid;
+    padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+    display: inline-block; /* Macht die Anpassungen besser sichtbar */
+}
+
+.fraction-denumerator {
+    border-top: 1px solid white;
 }
 
 .comment{
