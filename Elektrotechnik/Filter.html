@@ -60,7 +60,7 @@
             flex-direction: column;
             align-items: flex-start;
             margin-bottom: 20px;
-            max-width: 600px; /* Setzt eine maximale Breite */
+            max-width: 800px; /* Setzt eine maximale Breite */
             margin: 0 auto; /* Zentriert das Formular */
             /*margin-left: 10px;*/
         }
@@ -902,6 +902,27 @@
                             <span>2&pi; &lowast; ${f}Hz f &lowast; ${Uout}V</span>
                         </div> 
                     = ${formatWithPrefix((parseInput(R) * Math.pow(Math.pow(parseInput(Uin) , 2) - Math.pow(parseInput(Uout) , 2), 0.5))/(2 * Math.PI * parseInput(f) * parseInput(Uout)), "H")}<br>`;
+                }
+            }
+
+            if(!Uin)
+            {
+                if(Uout && f && L && R)
+                {
+                    // Uin = sqrt((Uout)^2 + ((Uout * 2 * Pi * f * L)/R)^2)
+                    result_TP_RL += `
+                        Eingangsspannung U<sub>in</sub> = &radic;((U<sub>out</sub>)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>out</sub> &lowast; 2&pi; &lowast; f &lowast; L</span><br>
+                            <span>R</span>
+                        </div>)<sup>2</sup>)
+                    = &radic;(${Uout}V)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">${Uout}V &lowast; 2&pi; &lowast; ${f}Hz &lowast; ${L}H</span><br>
+                            <span>${R}&Omega;</span>
+                        </div>)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow( Math.pow(parseInput(Uout), 2) + Math.pow(((parseInput(Uout) * 2 * Math.PI * parseInput(f) * parseInput(L))/R), 2),0.5), "V")}<br>`;
+
                 }
             }
 
