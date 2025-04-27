@@ -268,6 +268,54 @@
                     
                     </div>
                 </div>
+
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Stromdichte <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Strom I</label>
+                                <input type="text" id="I_J" style="border-color: var(--Widerstand);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+
+                            <div class="form-row">
+                                <label>Leiterdurchmesser d</label>
+                                <input type="text" id="d_J" style="border-color: var(--Flaeche);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Querschnittsfl&auml;che A</label>
+                                <input type="text" id="A_J" style="border-color: var(--Flaeche);">
+                                <label>m<sup>2</sup> [Quadratmeter]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Stromdichte J</label>
+                                <input type="text" id="J" style="border-color: gray;">
+                                <label>A/mm<sup>2</sup></label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateStromdichte()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result_Stromd"></p>
+                        </div>
+                    
+                    </div>
+                </div>
             </div>
         </main>
         <footer>
@@ -356,6 +404,35 @@
                 }
 
                 document.getElementById('result_Leiter').innerHTML = result_Leiter;
+            }
+
+            function calculateStromdichte()
+            {
+                let result_Stromd = ``;
+
+                const I = document.getElementById("I_J").value;
+                const d = document.getElementById("d_J").value;
+                const A = document.getElementById("A_J").value;
+                const J = document.getElementById("J").value;
+
+                if(!d && I && J)       // Berechnungen fuer Flaeche
+                {
+                    // d = sqrt((4 * I)/(Pi * J))
+                    debugger;
+                    result_Stromd += `
+                        Durchmesser d = 
+                        &radic;(<div class ="fraction"> 
+                            <span> 4 &lowast; I </span><br>
+                            <span class="fraction-denumerator">&pi; &lowast; J</span>
+                        </div>)
+                    =
+                        &radic;(<div class ="fraction"> 
+                            <span>4 &lowast; ${I}A </span><br>
+                            <span class="fraction-denumerator">&pi; &lowast; ${J}A/mm<sup>2</sup></span>
+                        </div>)
+                    = ${formatWithPrefix(Math.pow((4 * parseInput(I)) / (Math.PI * parseInput(J) * 1e6), 0.5), "m")}<br>`;
+                }
+                document.getElementById('result_Stromd').innerHTML = result_Stromd;
             }
     </script>
 
