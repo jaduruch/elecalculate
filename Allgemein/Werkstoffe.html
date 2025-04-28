@@ -179,9 +179,15 @@
 
                             <!-- Widerstand R -->
                             <div class="form-row">
-                                <label>Spezifischer Leitwert K<sub>20</sub></label>
-                                <input type="text" id="K" style="border-color: gray;">
+                                <label>Leitf&auml;higkeit &chi;</label>
+                                <input type="text" id="x" style="border-color: gray;">
                                 <label>m/(&Omega; &lowast; mm<sup>2</sup>)</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>spezifischer Widerstand &rho;</label>
+                                <input type="text" id="p" style="border-color: gray;">
+                                <label>(&Omega; &lowast; mm<sup>2</sup>)/m</label>
                             </div>
 
                             <!-- Flaeche A -->
@@ -334,17 +340,18 @@
                 let result_Leiter = ``;
 
                 const R = document.getElementById("R").value;
-                const K = document.getElementById("K").value;
+                const x = document.getElementById("x").value;
+                const p = document.getElementById("p").value;
                 const A = document.getElementById("A").value;
                 const d = document.getElementById("d").value;
                 const l = document.getElementById("l").value;
                 
                 
-                if(!K && l && R && A)       // Berechnungen fuer Leitfaehigkeit
+                if(!x && l && R && A)       // Berechnungen fuer Leitfaehigkeit
                 {
                     debugger;
                     result_Leiter += `
-                        Spezifischer Leitwert K<sub>20</sub> = 
+                        Leitf&auml;higkeit x = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> l </span><br>
                             <span>R &lowast; A</span>
@@ -357,50 +364,70 @@
                     = ${formatWithPrefix(parseInput(l) / (parseInput(R) * parseInputsquare(A) * 1e-6), "m/(&Omega; &lowast; mm<sup>2</sup>)")}<br>`; // falscher Wer
                 }
 
-                if(!R && l && K && A)       // Berechnungen fuer Gesamtwiderstand
+                if(!R && l && x && A)       // Berechnungen fuer Gesamtwiderstand
                 {
                     debugger;
                     result_Leiter += `
                         Widerstand R<sub>ges</sub> = 
                         <div class ="fraction">
                             <span> l </span><br>
-                            <span class="fraction-denumerator">K<sub>20</sub> &lowast; A</span>
+                            <span class="fraction-denumerator">&chi; &lowast; A</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span> ${l}m </span><br>
-                            <span class="fraction-denumerator">${K}&m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${A}m<sup>2</sup></span>
+                            <span class="fraction-denumerator">${x}&m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${A}m<sup>2</sup></span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(l) / (parseInput(K) * 1e6 * parseInputsquare(A)), "&Omega;")}<br>`;
+                    = ${formatWithPrefix(parseInput(l) / (parseInput(x) * 1e6 * parseInputsquare(A)), "&Omega;")}<br>`;
                 }
 
-                if(!l && R && K && A)       // Berechnungen fuer Leiterlaenge
+                if(!l)                          // Berechnungen fuer Leiterlaenge
                 {
-                    // l = K * R * A
-                    debugger;
-                    result_Leiter += `
-                        Leiterl&auml;nge l = 
-                        K<sub>20</sub> &lowast; R &lowast; A
-                    =
-                        ${K}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega; &lowast; ${A}m<sup>2</sup>
-                    = ${formatWithPrefix(parseInput(K) * parseInput(R) * parseInputsquare(A) * 1e6, "m")}<br>`;
-                }
+                    if(R && x && A)       
+                    {
+                        // l = x * R * A
+                        debugger;
+                        result_Leiter += `
+                            Leiterl&auml;nge l = 
+                            &chi; &lowast; R &lowast; A
+                        =
+                            ${x}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega; &lowast; ${A}m<sup>2</sup>
+                        = ${formatWithPrefix(parseInput(x) * parseInput(R) * parseInputsquare(A) * 1e6, "m")}<br>`;
+                    }
 
-                if(!A && l && K && R)       // Berechnungen fuer Flaeche
+                    if(d && R && p)
+                    {
+                        result_Leiter += `
+                        Widerstand R<sub>ges</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup> &lowast; R</span><br>
+                            <span>4 &lowast; &rho;</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &pi; &lowast; (${d}m)<sup>2</sup> &lowast; ${R}&Omega; </span><br>
+                            <span>4 &lowast; ${p}(&Omega; &lowast; mm<sup>2</sup>)/m</span>
+                        </div> 
+                    = ${formatWithPrefix((Math.PI * Math.pow(parseInput(d), 2) * parseInput(R))/(4 * parseInput(p) * 1e-6), "m")}<br>`;
+                    }
+                }
+                
+
+                if(!A && l && x && R)       // Berechnungen fuer Flaeche
                 {
                     debugger;
                     result_Leiter += `
                         Fl&auml;che A = 
                         <div class ="fraction">
                             <span> l </span><br>
-                            <span class="fraction-denumerator">K<sub>20</sub> &lowast; R</span>
+                            <span class="fraction-denumerator">&chi; &lowast; R</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span> ${l}m </span><br>
-                            <span class="fraction-denumerator">${K}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega;</span>
+                            <span class="fraction-denumerator">${x}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega;</span>
                         </div> 
-                    = ${formatWithPrefixsquare(parseInput(l) / (parseInput(K) * 1e6 * parseInputsquare(R)), "m<sup>2</sup>")}<br>`;
+                    = ${formatWithPrefixsquare(parseInput(l) / (parseInput(x) * 1e6 * parseInputsquare(R)), "m<sup>2</sup>")}<br>`;
                 }
 
                 document.getElementById('result_Leiter').innerHTML = result_Leiter;

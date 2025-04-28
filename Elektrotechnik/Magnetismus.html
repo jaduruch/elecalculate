@@ -32,12 +32,6 @@
             /*margin-left: 10px;*/
         }
 
-        .comment{
-            font-size: smaller;
-            font-style: italic;
-            color:rgb(179, 179, 179);
-            margin-left: 10px;
-        }
 
         .form-row {
             display: flex;
@@ -59,28 +53,7 @@
             margin-top: 20px;
         }
 
-        .results{
-            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
-        }
 
-        .fraction
-        {
-            display: inline-block; 
-            vertical-align: middle; 
-            text-align: center;
-            margin-top: 1px;
-            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction-numerator{
-            border-bottom: 1px solid;
-            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
-            display: inline-block; /* Macht die Anpassungen besser sichtbar */
-        }
-        img{
-            width: 80%;
-            max-width: 600px;
-        }
     </style>
 </head>
 <body>
@@ -296,14 +269,19 @@
                 /*if(!H)       //Feldstaerke H
                 {
 
-                }
+                }*/
 
-                if(!Theta)   // Durchflutung
+                if(!Theta && H && l)   // Durchflutung
                 {
-
+                    result += `
+                            Durchflutung &Theta; =
+                            H &lowast; l
+                        =
+                            ${H}A/m &lowast; ${l}m
+                        = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
                 }
 
-                if(!ur)  // Permeabilitaetszahl ur
+                /*if(!ur)  // Permeabilitaetszahl ur
                 {
 
                 }*/
