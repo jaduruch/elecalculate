@@ -249,6 +249,12 @@
                     <input type="text" id="f-serie" style="border-color: var(--Frequenz);">
                     <label>Hz [Hertz] </label>
                 </div>
+
+                <div class="form-row">
+                    <label>Bandbreite b</label>
+                    <input type="text" id="b-serie" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
                 
 
                 <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateSerie()">
@@ -405,6 +411,7 @@
             const UL = document.getElementById("UL-serie").value;
             const UC = document.getElementById("UC-serie").value;
             const f = document.getElementById("f-serie").value;
+            const b = document.getElementById("b-serie").value;
 
             debugger;
 
@@ -515,7 +522,7 @@
                 if(!UL && U)
                 {
                     result += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> U<sub>L</sub> </span><br>
                             <span>U</span>
@@ -531,7 +538,7 @@
                 if(UC && U)
                 {
                     result += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> U<sub>C</sub> </span><br>
                             <span>U</span>
@@ -547,7 +554,7 @@
                 if(XL && R)
                 {
                     result += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> X<sub>L</sub> </span><br>
                             <span>R</span>
@@ -563,7 +570,7 @@
                 if(XC && R)
                 {
                     result += `
-                        (Kreis) G&uuml;te Q> =  = 
+                        (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
                             <span class="fraction-numerator"> X<sub>C</sub> </span><br>
                             <span>R</span>
@@ -576,10 +583,10 @@
                     = ${formatWithPrefix(parseInput(XC) / parseInput(R), " ")}<br>`;
                 }
 
-                if(L && C && Q)
+                if(L && C && R)
                 {
                     result += `
-                        (Kreis) G&uuml;te Q> = 
+                        (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span> 1 </span><br>
                             <span class="fraction-denominator">R<sub>v</sub></span>
@@ -597,7 +604,23 @@
                             <span>${L}H</span><br>
                             <span class="fraction-denominator">${C}F</span>
                         </div> )
-                    = ${formatWithPrefix(1/parseInput(R) * (2 * Math.PI * Math.pow(parseInput(L) / parseInput(C), 0.5)), "")}<br>`;
+                    = ${formatWithPrefix(1/parseInput(R) * (Math.pow(parseInput(L) / parseInput(C), 0.5)), "")}<br>`;
+                }
+
+                if(f && b)
+                {
+                    result += `
+                        (Kreis) G&uuml;te Q> =  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> f<sub>g</sub> </span><br>
+                            <span>b</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${f}Hz </span><br>
+                            <span>${b}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(f) / parseInput(b), " ")}<br>`;
                 }
             }
 

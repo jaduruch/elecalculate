@@ -228,6 +228,12 @@
                 </div>
 
                 <div class="form-row">
+                    <label>Spannung U<sub>C</sub></label>
+                    <input type="text" id="Uc-HP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
                     <label>Spannung U<sub>out</sub></label>
                     <input type="text" id="Uout-HP_RC" style="border-color: var(--Spannung);">
                     <label>V [Volt] </label>
@@ -540,12 +546,46 @@
             const R = document.getElementById("R-HP_RC").value;
             const XC = document.getElementById("XC-HP_RC").value;
             const C = document.getElementById("C-HP_RC").value;
-            const Uin = document.getElementById("Uin-HP_RC").value;
+            const Uin = document.getElementById("Uin-HP_RC").value; 
+            const Uc = document.getElementById("Uc-HP_RC").value;
             const Uout = document.getElementById("Uout-HP_RC").value;
             const fg = document.getElementById("fg-HP_RC").value;
             const f = document.getElementById("f-HP_RC").value;
 
             // debugger;
+            if(!phi)
+            {
+                if(Uc && Uin)
+                {
+                    result_HP_RC += `
+                        Winkel &phi;<sub>RAD</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin)), "")}<br>
+                    
+
+                    Winkel &phi;<sub>DEG</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin))*180 / Math.PI, "&deg;")}<br>
+                    `;
+                }
+            }
+
             if(!R)
             {
                 if(fg && C)

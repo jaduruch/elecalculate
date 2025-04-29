@@ -80,6 +80,8 @@ function parseInput(value) {
         "n": 1e-9,    // Nano
         "u": 1e-6,    // Mikro
         "m": 1e-3,    // Milli
+        "c": 1e-2,    // Centi
+        "d": 1e-1,    // Dezi
         "k": 1e3,     // Kilo
         "M": 1e6,     // Mega
         "G": 1e9,     // Giga
@@ -87,7 +89,7 @@ function parseInput(value) {
     };
 
     // Regulaerer Ausdruck erlaubt jetzt negative Zahlen
-    const match = value.match(/^(-?\d*\.?\d+)\s*([pnumkMGT]?)$/);
+    const match = value.match(/^(-?\d*\.?\d+)\s*([pnumcdkMGT]?)$/);
     if (!match) return NaN;
 
     const num = parseFloat(match[1]);
@@ -111,11 +113,11 @@ function formatWithPrefix(value, unit) {
 
     for (let i = 0; i < prefixes.length; i++) {
         if (Math.abs(value) >= prefixes[i].factor) {
-            return (value / prefixes[i].factor).toFixed(2) + " " + prefixes[i].prefix + unit;
+            return (value / prefixes[i].factor).toFixed(2) + prefixes[i].prefix + unit;
         }
     }
 
-    return value.toFixed(2) + " " + unit;
+    return value.toFixed(2) + unit;
 }
 
 
@@ -127,6 +129,8 @@ function parseInputsquare(value) {
         "n": 1e-18,    // Nano
         "u": 1e-12,    // Mikro
         "m": 1e-6,    // Milli
+        "c": 1e-4,    // Centi
+        "d": 1e-2,    // Dezi
         "k": 1e6,     // Kilo
         "M": 1e12,     // Mega
         "G": 1e18,     // Giga
@@ -134,7 +138,7 @@ function parseInputsquare(value) {
         //"P": 1e30     // Peta
     };
 
-    const match = value.match(/^(\d*\.?\d+)\s*([pnumkMGT]?)$/);
+    const match = value.match(/^(\d*\.?\d+)\s*([pnumcdkMGT]?)$/);
     if (!match) return NaN;
 
     const num = parseFloat(match[1]);

@@ -221,7 +221,7 @@
                 </div>
                 <div class="divider"></div>
 
-                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                <div class="dropdown">      <!--Temperatur R-->
                     <div class="dropdown-header" onclick="toggleDropdown(this)">
                         Temperaturabh&auml;ngigkeit Widerst&auml;nde <span class="arrow">&#9660;</span>
                     </div>
@@ -233,7 +233,7 @@
 
                             <!-- Widerstand R -->
                             <div class="form-row">
-                                <label>Widerstand R<sub>20</sub></label>
+                                <label>Kaltwiderstand R</label>
                                 <input type="text" id="R20" style="border-color: var(--Widerstand);">
                                 <label>&Omega; [Ohm]</label>
                             </div>
@@ -249,20 +249,13 @@
                             <div class="form-row">
                                 <label>Temperaturbeiwert &alpha;</label>
                                 <input type="text" id="alpha" style="border-color: gray;">
-                                <label>K<sup>-1</sup> [Klevin <sup>-1</sup>]</label>
+                                <label>K<sup>-1</sup> [1/Klevin]</label>
                             </div>
 
                             <div class="form-row">
-                                <label>Leiterdurchmesser d</label>
-                                <input type="text" id="d" style="border-color: var(--Flaeche);">
-                                <label>m [meter]</label>
-                            </div>
-
-                            <!--Laenge l-->
-                            <div class="form-row">
-                                <label>Leiterl&auml;nge l</label>
-                                <input type="text" id="l" style="border-color: var(--Laenge);">
-                                <label>m [meter]</label>
+                                <label>Temperatur&auml;nderung &Delta;T</label>
+                                <input type="text" id="T" style="border-color: var(--Temperatur);">
+                                <label>K [Kelvin]</label>
                             </div>
 
                             <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateTemperaturwiderstand()">
@@ -277,7 +270,7 @@
 
                 <div class="divider"></div>
 
-                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                <div class="dropdown">      <!--Stromdichte-->
                     <div class="dropdown-header" onclick="toggleDropdown(this)">
                         Stromdichte <span class="arrow">&#9660;</span>
                     </div>
@@ -290,7 +283,7 @@
                             <!-- Widerstand R -->
                             <div class="form-row">
                                 <label>Strom I</label>
-                                <input type="text" id="I_J" style="border-color: var(--Widerstand);">
+                                <input type="text" id="I_J" style="border-color: var(--Strom);">
                                 <label>A [Ampere]</label>
                             </div>
 
@@ -398,7 +391,7 @@
                     if(d && R && p)
                     {
                         result_Leiter += `
-                        Widerstand R<sub>ges</sub> = 
+                        Leiterl&auml;nge l = 
                         <div class ="fraction">
                             <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup> &lowast; R</span><br>
                             <span>4 &lowast; &rho;</span>
@@ -413,10 +406,11 @@
                 }
                 
 
-                if(!A && l && x && R)       // Berechnungen fuer Flaeche
+                if(!A)       // Berechnungen fuer Flaeche
                 {
-                    debugger;
-                    result_Leiter += `
+                    if(l && x && R)
+                    {
+                        result_Leiter += `
                         Fl&auml;che A = 
                         <div class ="fraction">
                             <span> l </span><br>
@@ -424,13 +418,54 @@
                         </div> 
                     =
                         <div class ="fraction">
-                            <span> ${l}m </span><br>
-                            <span class="fraction-denumerator">${x}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega;</span>
+                            <span class="fraction-numerator"> ${l}m </span><br>
+                            <span>${x}m/(&Omega; &lowast; mm<sup>2</sup>) &lowast; ${R}&Omega;</span>
                         </div> 
                     = ${formatWithPrefixsquare(parseInput(l) / (parseInput(x) * 1e6 * parseInputsquare(R)), "m<sup>2</sup>")}<br>`;
+                    }
+                    
+                    if(p && l && R)
+                    {
+                        result_Leiter += `
+                        Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span>&rho; &lowast; l </span><br>
+                            <span class="fraction-denumerator">R</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${p}(&Omega; &lowast; mm<sup>2</sup>)/m &lowast; ${l}m </span><br>
+                            <span> ${R}&Omega;</span>
+                        </div> 
+                    = ${formatWithPrefixsquare(parseInput(p) * 1e-6 *parseInput(l) / parseInputsquare(R), "m<sup>2</sup>")}<br>`;
+                    }
                 }
 
                 document.getElementById('result_Leiter').innerHTML = result_Leiter;
+            }
+
+            function calculateTemperaturwiderstand()
+            {
+                
+                let result_Temp = ``;
+
+                const Rw = document.getElementById("Rw").value;
+                const R = document.getElementById("R20").value;
+                const alpha = document.getElementById("alpha").value;
+                const T = document.getElementById("T").value;
+
+                if(!Rw && R && alpha && T)       // Berechnungen fuer Flaeche
+                {
+                    // Rw = R * (1 + alpha * T)
+                    result_Temp += `
+                        Warmwiderstand R<sub>&thetasym;</sub> = 
+                        R &lowast; (1 + &alpha; &lowast; &Delta;T)
+                    =
+                        ${R}&Omega; &lowast; (1 + ${alpha}K<sup>-1</sup> &lowast; ${T}K)
+                    = ${formatWithPrefix(parseInput(R) * (1 + parseInput(alpha) * parseInput(T)), "&Omega;")}<br>`;
+                }
+
+                document.getElementById('result_Temp').innerHTML = result_Temp;
             }
 
             function calculateStromdichte()
@@ -459,6 +494,25 @@
                         </div>)
                     = ${formatWithPrefix(Math.pow((4 * parseInput(I)) / (Math.PI * parseInput(J) * 1e6), 0.5), "m")}<br>`;
                 }
+
+                if(!d && I && J)       // Berechnungen fuer Flaeche
+                {
+                    // A = I/J
+                    debugger;
+                    result_Stromd += `
+                        Querschnitt A21 = 
+                        <div class ="fraction"> 
+                            <span> 4 &lowast; I </span><br>
+                            <span class="fraction-denumerator">&pi; &lowast; J</span>
+                        </div>
+                    =
+                        <div class ="fraction"> 
+                            <span>${I}A </span><br>
+                            <span class="fraction-denumerator">${J}A/mm<sup>2</sup></span>
+                        </div>
+                    = ${formatWithPrefixsquare(parseInput(I) * 1e-6/parseInput(J), "m<sup>2</sup>")}<br>`;
+                }
+
                 document.getElementById('result_Stromd').innerHTML = result_Stromd;
             }
     </script>
