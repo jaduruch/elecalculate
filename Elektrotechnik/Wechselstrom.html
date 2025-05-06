@@ -728,13 +728,34 @@
                             <span class="fraction-denominator">2&pi; &lowast; f</span>
                         </div> 
                     = <div class ="fraction">
-                            <span><div class ="fraction">
-                            <span>${ut}<br>
+                            <span>arcsin(<div class ="fraction">
+                            <span>${ut}V<br>
                             <span class="fraction-denominator">${up}V</span>
-                        </div> <br>
+                        </div> ) <br>
                             <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
                         </div> 
                     = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
+                }
+
+                if(ut && f && Ueff)           //////////////////////////////////////////////////////////////////////////////////////////
+                {
+                    result_Sinus += `
+                        aktueller Zeitpunkt t = 
+                        <div class ="fraction">
+                            <span> arcsin(<div class ="fraction">
+                            <span> u(t) </span><br>
+                            <span class="fraction-denominator">U<sub>eff</sub> &lowast; &radic;2</span>
+                        </div> ) </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f</span>
+                        </div> 
+                    = <div class ="fraction">
+                            <span>arcsin(<div class ="fraction">
+                            <span>${ut}V<br>
+                            <span class="fraction-denominator">${Ueff}V &lowast; &radic;2</span>
+                        </div> ) <br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(ut)/(parseInput(Ueff) * Math.pow(2, 0.5)))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
                 }
 
                 if(phi && isRADactive && f)
