@@ -481,15 +481,31 @@
                         result += `
                             Wirkungsgrad &eta; = 
                             <div class ="fraction">
-                                <span class="fraction-numerator">R<sub>2</sub> &lowast; (i<sub>2</sub>)<sup>2</sup></span><br>
+                                <span class="fraction-numerator">R<sub>2</sub> &lowast; (I<sub>2</sub>)<sup>2</sup></span><br>
                                 <span>U<sub>1</sub> &lowast; I<sub>1</sub></span>
                             </div> 
                         =
                             <div class ="fraction">
                                 <span class="fraction-numerator"> ${R2}&Omega; &lowast; (${I2}A)<sup>2</sup></span><br>
-                                <span>${U1}V &lowast;${I1}A</span>
+                                <span>${U1}V &lowast; ${I1}A</span>
                             </div> 
                         = ${formatWithPrefix((parseInput(R2) * Math.pow(parseInput(I2), 2)) / (parseInput(U1) * parseInput(I1)), "")}<br>`;
+                    }
+
+                    if(U1 && ue && R2 && I1)
+                    {
+                        result += `
+                            Wirkungsgrad &eta; = 
+                            <div class ="fraction">
+                                <span>U<sub>1</sub></span><br>
+                                <span class="fraction-denumerator">(&uuml;)<sup>2</sup> R<sub>2</sub> &lowast; I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span> ${U1}V </span><br>
+                                <span class="fraction-denumerator">${ue}<sup>2</sup> ${R2}&Omega; &lowast; ${I1}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U1)/ ( Math.pow(parseInput(ue), 2) * parseInput(R2) * parseInput(I1)), "")}<br>`;
                     }
                 }
 
