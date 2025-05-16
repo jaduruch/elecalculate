@@ -258,6 +258,18 @@
                                 <label>K [Kelvin]</label>
                             </div>
 
+                            <div class="form-row">
+                                <label>Warmwert T<sub>w</sub></label>
+                                <input type="text" id="Tw" style="border-color: var(--Temperatur);">
+                                <label>&deg;C [Celsius]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Kaltwert T<sub>k</sub></label>
+                                <input type="text" id="Tk" style="border-color: var(--Temperatur);">
+                                <label>&deg;C [Celsius]</label>
+                            </div>
+
                             <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateTemperaturwiderstand()">
                         <!--</form>-->
 
@@ -453,8 +465,10 @@
                 const R = document.getElementById("R20").value;
                 const alpha = document.getElementById("alpha").value;
                 const T = document.getElementById("T").value;
+                const Tw = document.getElementById("Tw").value;
+                const Tk = document.getElementById("Tk").value;
 
-                if(!Rw && R && alpha && T)       // Berechnungen fuer Flaeche
+                if(!Rw && R && alpha && T)       // Berechnungen fuer Warmwiderstand
                 {
                     // Rw = R * (1 + alpha * T)
                     result_Temp += `
@@ -463,6 +477,27 @@
                     =
                         ${R}&Omega; &lowast; (1 + ${alpha}K<sup>-1</sup> &lowast; ${T}K)
                     = ${formatWithPrefix(parseInput(R) * (1 + parseInput(alpha) * parseInput(T)), "&Omega;")}<br>`;
+                }
+
+                if(!Tw)
+                {
+                    if(Rw && R && alpha && Tk)
+                    {
+                        debugger;
+                        // Tw = (Rw -R20)/(R20 * alpha) -Tk
+                        result_Temp += `
+                        Warmwert T<sub>w</sub> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">R<sub>&thetasym;</sub> - R<sub>20</sub></span><br>
+                                <span>R<sub>20</sub> &lowast; &alpha;</span>
+                            </div> - T<sub>k</sub>
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${Rw}&Omega; - ${R}&Omega;</span><br>
+                                <span>${R}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
+                            </div> - ${Tk}&deg;C
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(R))/(parseInput(R) * parseInput(alpha)) - parseInput(Tk), "&deg;C")}<br>`;
+                    }
                 }
 
                 document.getElementById('result_Temp').innerHTML = result_Temp;
@@ -495,15 +530,15 @@
                     = ${formatWithPrefix(Math.pow((4 * parseInput(I)) / (Math.PI * parseInput(J) * 1e6), 0.5), "m")}<br>`;
                 }
 
-                if(!d && I && J)       // Berechnungen fuer Flaeche
+                if(!A && I && J)       // Berechnungen fuer Flaeche
                 {
                     // A = I/J
                     debugger;
                     result_Stromd += `
-                        Querschnitt A21 = 
+                        Querschnitt A = 
                         <div class ="fraction"> 
-                            <span> 4 &lowast; I </span><br>
-                            <span class="fraction-denumerator">&pi; &lowast; J</span>
+                            <span> I </span><br>
+                            <span class="fraction-denumerator"> J </span>
                         </div>
                     =
                         <div class ="fraction"> 
@@ -511,6 +546,26 @@
                             <span class="fraction-denumerator">${J}A/mm<sup>2</sup></span>
                         </div>
                     = ${formatWithPrefixsquare(parseInput(I) * 1e-6/parseInput(J), "m<sup>2</sup>")}<br>`;
+                }
+
+                if(!I)       // Berechnungen fuer Strom
+                {
+                    if(d && J)                
+                    {
+                        // I = d^2/4 * pi * J
+                        result_Stromd += `
+                            Strom I = 
+                            <div class ="fraction"> 
+                                <span class="fraction-numerator"> d<sup>2</sup> &lowast; &pi; &lowast; J</span><br>
+                                <span>4</span>
+                            </div> 
+                        =
+                            <div class ="fraction"> 
+                                <span class="fraction-numerator">(${d}m)<sup>2</sup> &lowast; &pi; &lowast; ${J}A/mm<sup>2</sup></span><br>
+                                <span>4</span>
+                            </div> 
+                        = ${formatWithPrefix((Math.pow(parseInput(d), 2) / 4) * Math.PI  * 1e6 * parseInput(J), "A")}<br>`;
+                    }
                 }
 
                 document.getElementById('result_Stromd').innerHTML = result_Stromd;

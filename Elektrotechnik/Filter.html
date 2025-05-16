@@ -779,6 +779,30 @@
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(fg) * parseInput(C)), "&Omega;")}<br>`;
                 }
+
+                if(f && C && phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span>tan(&phi;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>tan(${phi}&deg;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180))/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
+                }
+
+                if(XC&& phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = tan(&phi;) &lowast; X<sub>C</sub>
+                    = tan(${phi}&deg;) &lowast; ${XC}&Omega;
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180)) * (parseInput(XC)), "&Omega;")}<br>`;
+                }
             }
 
             if(!XC)

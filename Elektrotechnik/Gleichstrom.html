@@ -793,6 +793,27 @@
             = ${formatWithPrefix((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)) , "&Omega;")}<br>`;
         }
 
+        if(!Uin)
+        {
+            if(Uout && R1 && R2)
+            {
+                // (Uout * (R1 + R2))/R2
+                    result_unb += `
+                    Spannung U<sub>in</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> &lowast; (R<sub>1</sub> + R<sub>2</sub>)</span><br>
+                        <span>R<sub>2</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V &lowast; (${R1}&Omega; + ${R2}&Omega;)</span><br>
+                        <span>${R2}&Omega;</span>
+                    </div> 
+                = ${formatWithPrefix((parseInput(Uout) * (parseInput(R1) + parseInput(R2)))/parseInput(R2) , "V")}<br>`;
+
+            }
+        }
+
 
         document.getElementById('result_unb').innerHTML = result_unb;
     }
