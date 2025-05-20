@@ -8,8 +8,7 @@
 
 ## Features
 - Fully functional offline
-- Developed with assistance from ChatGPT.
-- tested by humans
+- no AI
 - Generates each step to reach the solution
 - Updated regularly
 
