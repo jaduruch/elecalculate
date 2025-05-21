@@ -952,21 +952,70 @@
             
         }*/
 
-        function calculate_Rechteck()
-        {
+        function calculate_Rechteck() {
             let result_Rechteck = ``;
 
-            const ut = document.getElementById("ut-Rechteck").value;
+            const up = document.getElementById("up-Rechteck").value;
+            const upp = document.getElementById("upp-Rechteck").value;
+            const Ueff = document.getElementById("Ueff-Rechteck").value;
 
-            if(!ut)     // Momentanwert
-            {
-                if(up && f && t)
-                {
+            // Calculate missing up (peak)
+            if (!up) {
+                if (upp) {
                     result_Rechteck += `
-                    Momentanwert u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
-                =
-                    ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
-                = ${formatWithPrefix(parseInput(up)*Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+                        Peakspannung &ucirc; =
+                        <div class="fraction">
+                            <span>u<sub>pp</sub></span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div>
+                        = <div class="fraction">
+                            <span>${upp}V</span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div>
+                        = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
+                }
+                if (Ueff) {
+                    result_Rechteck += `
+                        Peakspannung &ucirc; = U<sub>eff</sub>
+                        = ${Ueff}V<br>`;
+                }
+            }
+
+            // Calculate missing upp (peak-peak)
+            if (!upp) {
+                if (up) {
+                    result_Rechteck += `
+                        Peak-Peakspannung u<sub>pp</sub> = 2 &lowast; &ucirc;
+                        = 2 &lowast; ${up}V
+                        = ${formatWithPrefix(2 * parseInput(up), "V")}<br>`;
+                }
+                if (Ueff) {
+                    result_Rechteck += `
+                        Peak-Peakspannung u<sub>pp</sub> = 2 &lowast; U<sub>eff</sub>
+                        = 2 &lowast; ${Ueff}V
+                        = ${formatWithPrefix(2 * parseInput(Ueff), "V")}<br>`;
+                }
+            }
+
+            // Calculate missing Ueff (RMS)
+            if (!Ueff) {
+                if (up) {
+                    result_Rechteck += `
+                        Effektivspannung U<sub>eff</sub> = &ucirc;
+                        = ${up}V<br>`;
+                }
+                if (upp) {
+                    result_Rechteck += `
+                        Effektivspannung U<sub>eff</sub> =
+                        <div class="fraction">
+                            <span>u<sub>pp</sub></span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div>
+                        = <div class="fraction">
+                            <span>${upp}V</span><br>
+                            <span class="fraction-denominator">2</span>
+                        </div>
+                        = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
                 }
             }
 
