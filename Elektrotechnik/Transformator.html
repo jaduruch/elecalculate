@@ -430,22 +430,6 @@
                     = ${formatWithPrefix(parseInput(P2) / parseInput(eta) , "W")}<br>`;
                 }
 
-                if(!eta && P1 && P2)
-                {
-                    result += `
-                        Wirkungsgrad &eta; = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">P<sub>2</sub></span><br>
-                            <span>P<sub>1</sub></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${P2}W</span><br>
-                            <span>${P1}W</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(P2) / parseInput(P1) , "")}<br>`;
-                }
-
                 if(!P2 && P1 && eta)
                 
                 {
@@ -455,6 +439,74 @@
                     =
                         ${P1}W &lowast; ${eta}
                     = ${formatWithPrefix(parseInput(P1) * parseInput(eta) , "W")}<br>`;
+                }
+                
+                // Wirkungsgrad
+                if(!eta)
+                {
+                    if(P1 && P2)
+                    {
+                        result += `
+                            Wirkungsgrad &eta; = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">P<sub>2</sub></span><br>
+                                <span>P<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${P2}W</span><br>
+                                <span>${P1}W</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / parseInput(P1) , "")}<br>`;
+                    }
+
+                    if(P2 && U1 && I1)
+                    {
+                        result += `
+                            Wirkungsgrad &eta; = 
+                            <div class ="fraction">
+                                <span>P<sub>2</sub></span><br>
+                                <span class="fraction-denumerator">U<sub>1</sub> &lowast; I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span> ${P2}W</span><br>
+                                <span class="fraction-denumerator">${U1}V &lowast; ${I1}A </span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(P2) / (parseInput(U1) * parseInput(I1)), "")}<br>`;
+                    }
+
+                    if(R2 && I2 && U1 && U1)
+                    {
+                        result += `
+                            Wirkungsgrad &eta; = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">R<sub>2</sub> &lowast; (I<sub>2</sub>)<sup>2</sup></span><br>
+                                <span>U<sub>1</sub> &lowast; I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${R2}&Omega; &lowast; (${I2}A)<sup>2</sup></span><br>
+                                <span>${U1}V &lowast; ${I1}A</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(R2) * Math.pow(parseInput(I2), 2)) / (parseInput(U1) * parseInput(I1)), "")}<br>`;
+                    }
+
+                    if(U1 && ue && R2 && I1)
+                    {
+                        result += `
+                            Wirkungsgrad &eta; = 
+                            <div class ="fraction">
+                                <span>U<sub>1</sub></span><br>
+                                <span class="fraction-denumerator">(&uuml;)<sup>2</sup> R<sub>2</sub> &lowast; I<sub>1</sub></span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span> ${U1}V </span><br>
+                                <span class="fraction-denumerator">${ue}<sup>2</sup> ${R2}&Omega; &lowast; ${I1}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(U1)/ ( Math.pow(parseInput(ue), 2) * parseInput(R2) * parseInput(I1)), "")}<br>`;
+                    }
                 }
 
                 // Widerstand

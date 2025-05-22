@@ -22,7 +22,6 @@
         }
 
         input:focus {
-            border: 3px solid;
             outline: none; /* Entfernt den Standard-Umrandungsring */
         }
 
@@ -685,7 +684,7 @@
                                 <span>20</span>
                             </div>) </sup>
                         =
-                            ${U1} &lowast; 10 <sup>(<div class ="fraction">
+                            ${U1}V &lowast; 10 <sup>(<div class ="fraction">
                                 <span class="fraction-numerator"> ${g}dB </span><br>
                                 <span>20</span>
                             </div>) </sup>
@@ -793,7 +792,7 @@
                     }
 
                     // P2 = P1 * (10^(g/10))
-                    if(U1 && g)
+                    if(P1 && g)
                     {
                         result += `
                             Leistung P<sub>2</sub> = 
@@ -802,7 +801,7 @@
                                 <span>10</span>
                             </div>) </sup>
                         =
-                            ${U1} &lowast; 10 <sup>(<div class ="fraction">
+                            ${P1}W &lowast; 10 <sup>(<div class ="fraction">
                                 <span class="fraction-numerator"> ${g}dB </span><br>
                                 <span>10</span>
                             </div>) </sup>
@@ -810,20 +809,20 @@
                     }
 
                     // P2 = P1 * 10^(-a/10)
-                    if(U1 && g)
+                    if(P1 && a)
                     {
                         result += `
                             Leistung P<sub>2</sub> = 
                             P<sub>1</sub> &lowast; 10 <sup>(<div class ="fraction">
-                                <span class="fraction-numerator"> g </span><br>
+                                <span class="fraction-numerator"> -a </span><br>
                                 <span>10</span>
                             </div>) </sup>
                         =
-                            ${U1} &lowast; 10 <sup>(<div class ="fraction">
+                            ${P1}W &lowast; 10 <sup>(<div class ="fraction">
                                 <span class="fraction-numerator"> ${-a}dB </span><br>
                                 <span>10</span>
                             </div>) </sup>
-                        = ${formatWithPrefix(parseInput(P1) * Math.pow(10, (parseInput(a)/10)), "W")}<br>`;
+                        = ${formatWithPrefix(parseInput(P1) * Math.pow(10, -(parseInput(a)/10)), "W")}<br>`;
                     }
 
 

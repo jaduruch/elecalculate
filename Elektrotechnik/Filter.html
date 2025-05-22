@@ -60,7 +60,7 @@
             flex-direction: column;
             align-items: flex-start;
             margin-bottom: 20px;
-            max-width: 600px; /* Setzt eine maximale Breite */
+            max-width: 800px; /* Setzt eine maximale Breite */
             margin: 0 auto; /* Zentriert das Formular */
             /*margin-left: 10px;*/
         }
@@ -224,6 +224,12 @@
                 <div class="form-row">
                     <label>Spannung U<sub>in</sub></label>
                     <input type="text" id="Uin-HP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>C</sub></label>
+                    <input type="text" id="Uc-HP_RC" style="border-color: var(--Spannung);">
                     <label>V [Volt]</label>
                 </div>
 
@@ -540,12 +546,46 @@
             const R = document.getElementById("R-HP_RC").value;
             const XC = document.getElementById("XC-HP_RC").value;
             const C = document.getElementById("C-HP_RC").value;
-            const Uin = document.getElementById("Uin-HP_RC").value;
+            const Uin = document.getElementById("Uin-HP_RC").value; 
+            const Uc = document.getElementById("Uc-HP_RC").value;
             const Uout = document.getElementById("Uout-HP_RC").value;
             const fg = document.getElementById("fg-HP_RC").value;
             const f = document.getElementById("f-HP_RC").value;
 
             // debugger;
+            if(!phi)
+            {
+                if(Uc && Uin)
+                {
+                    result_HP_RC += `
+                        Winkel &phi;<sub>RAD</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin)), "")}<br>
+                    
+
+                    Winkel &phi;<sub>DEG</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin))*180 / Math.PI, "&deg;")}<br>
+                    `;
+                }
+            }
+
             if(!R)
             {
                 if(fg && C)
@@ -739,6 +779,30 @@
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(fg) * parseInput(C)), "&Omega;")}<br>`;
                 }
+
+                if(f && C && phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span>tan(&phi;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>tan(${phi}&deg;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180))/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
+                }
+
+                if(XC&& phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = tan(&phi;) &lowast; X<sub>C</sub>
+                    = tan(${phi}&deg;) &lowast; ${XC}&Omega;
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180)) * (parseInput(XC)), "&Omega;")}<br>`;
+                }
             }
 
             if(!XC)
@@ -902,6 +966,27 @@
                             <span>2&pi; &lowast; ${f}Hz f &lowast; ${Uout}V</span>
                         </div> 
                     = ${formatWithPrefix((parseInput(R) * Math.pow(Math.pow(parseInput(Uin) , 2) - Math.pow(parseInput(Uout) , 2), 0.5))/(2 * Math.PI * parseInput(f) * parseInput(Uout)), "H")}<br>`;
+                }
+            }
+
+            if(!Uin)
+            {
+                if(Uout && f && L && R)
+                {
+                    // Uin = sqrt((Uout)^2 + ((Uout * 2 * Pi * f * L)/R)^2)
+                    result_TP_RL += `
+                        Eingangsspannung U<sub>in</sub> = &radic;((U<sub>out</sub>)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>out</sub> &lowast; 2&pi; &lowast; f &lowast; L</span><br>
+                            <span>R</span>
+                        </div>)<sup>2</sup>)
+                    = &radic;(${Uout}V)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">${Uout}V &lowast; 2&pi; &lowast; ${f}Hz &lowast; ${L}H</span><br>
+                            <span>${R}&Omega;</span>
+                        </div>)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow( Math.pow(parseInput(Uout), 2) + Math.pow(((parseInput(Uout) * 2 * Math.PI * parseInput(f) * parseInput(L))/R), 2),0.5), "V")}<br>`;
+
                 }
             }
 

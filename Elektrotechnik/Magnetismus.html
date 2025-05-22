@@ -32,12 +32,6 @@
             /*margin-left: 10px;*/
         }
 
-        .comment{
-            font-size: smaller;
-            font-style: italic;
-            color:rgb(179, 179, 179);
-            margin-left: 10px;
-        }
 
         .form-row {
             display: flex;
@@ -59,28 +53,7 @@
             margin-top: 20px;
         }
 
-        .results{
-            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
-        }
 
-        .fraction
-        {
-            display: inline-block; 
-            vertical-align: middle; 
-            text-align: center;
-            margin-top: 1px;
-            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction-numerator{
-            border-bottom: 1px solid;
-            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
-            display: inline-block; /* Macht die Anpassungen besser sichtbar */
-        }
-        img{
-            width: 80%;
-            max-width: 600px;
-        }
     </style>
 </head>
 <body>
@@ -279,13 +252,13 @@
                     if(B && A)
                     {
                         result += `
-                            Windungszahl N  = 
-                            -<div class ="fraction">
+                            Kraft F  = 
+                            - <div class ="fraction">
                                 <span class="fraction-numerator">B<sup>2</sup> &lowast; A</span><br>
                                 <span>2 &lowast; &mu;<sub>0</sub></span>
                             </div> 
                         =
-                            -<div class ="fraction">
+                            - <div class ="fraction">
                                 <span class="fraction-numerator">(${B}T)<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
                                 <span>2 &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am</span>
                             </div> 
@@ -296,14 +269,19 @@
                 /*if(!H)       //Feldstaerke H
                 {
 
-                }
+                }*/
 
-                if(!Theta)   // Durchflutung
+                if(!Theta && H && l)   // Durchflutung
                 {
-
+                    result += `
+                            Durchflutung &Theta; =
+                            H &lowast; l
+                        =
+                            ${H}A/m &lowast; ${l}m
+                        = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
                 }
 
-                if(!ur)  // Permeabilitaetszahl ur
+                /*if(!ur)  // Permeabilitaetszahl ur
                 {
 
                 }*/
@@ -340,6 +318,22 @@
                                 <span>${Phi}Wb</span>
                             </div> 
                         = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
+                    }
+
+                    if(H && l && I)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">H &lowast; l</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(H) * parseInput(l))/ parseInput(I), "")}<br>`;
                     }
                 }
                 
