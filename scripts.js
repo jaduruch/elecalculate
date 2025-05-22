@@ -7,6 +7,9 @@ function changeSlide(n) {
 
 function showSlides(n) {
     let slides = document.getElementsByClassName("slide");
+    // Guard clause: If there are no elements with class "slide", exit early.
+    if (slides.length === 0) return;
+
     if (n > slides.length) { slideIndex = 1 }
     if (n < 1) { slideIndex = slides.length }
     for (let i = 0; i < slides.length; i++) {
