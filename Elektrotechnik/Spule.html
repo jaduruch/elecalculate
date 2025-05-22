@@ -1005,12 +1005,12 @@
                         result_RL += `
                             Strom i(t) = I &lowast; (1 - e<sup> 
                             <div class ="fraction">
-                                <span class="fraction-numerator">- t &lowast; L</span><br>
-                                <span>R</span>
+                                <span class="fraction-numerator">- t &lowast; R</span><br>
+                                <span>L</span>
                             </div></sup>)
                         = ${I}A &lowast; (1 - e<sup>
                             <div class ="fraction">
-                                <span class="fraction-denumerator">- ${t}s &lowast; ${R}&Omega;</span><br>
+                                <span class="fraction-numerator">- ${t}s &lowast; ${R}&Omega;</span><br>
                                 <span>${L}H</span>
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(I) * (1 - Math.pow(Math.E, -(parseInput(t) * parseInput(R)/parseInput(L)))), "A")}<br>`;
