@@ -51,7 +51,6 @@ header {
     --Kapazitaet: #1D9F52;
     --Mag_Fluss: #34A7B6;
     --Spannung: #0070C0;
-    --Temperatur: #2453ff;
     --Energie: #0000FF;
     --Spulenkonstante: #0000FF;
     --Laenge: #7030A0;
@@ -78,9 +77,6 @@ body {
 
 /* Horizontal scroll bar */
 header {
-    /*------------------Normal Dark Mode*/
-    /*background: #333;*/
-
     width: 100%;
     height: 55px;
     box-sizing: border-box;
@@ -391,5 +387,145 @@ footer {
     left: 0; 
 }
 
+/*********** Drop down Menu ****************/
+.dropdown-container {
+    width: 800px;
+    max-width: 90%;
+    margin: 20px auto;
+    background-color: #000;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.dropdown-header:hover {
+    background-color: #181818;
+}
+
+.dropdown-header .arrow {
+    font-size: 18px;
+    transform: rotate(0deg);
+    transition: transform 0.5s;
+}
+
+.dropdown.open .arrow {
+    transform: rotate(-180deg);
+}
+
+.dropdown-content {
+    display: none;
+    padding: 15px 20px;
+    background-color: #000000;
+    border-top: 1px solid #ddd;
+
+}
+
+.dropdown.open .dropdown-content {
+    display: block;
+}
+
+.divider {
+    border-bottom: 1px solid #ddd;
+}
+
+/************ Input fields **********************************/
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    max-width: 700px; /* Setzt eine maximale Breite */
+    margin: 0 auto; /* Zentriert das Formular */
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    /*max-width: 150px;*/
+}
+
+.form-row label {
+    flex: 3;
+    text-align: left;
+    margin-right: 10px;
+}
+
+.form-row input[type="number"], .form-row select {
+    flex: 1.5;
+    margin-right: 5px;
+}
+
+.form-row .unit {
+    flex: 0.8;
+}
+
+
+input {
+    border: 2px solid;
+    border-radius: 3px;
+}
+
+input:focus {
+    outline: none; /* Entfernt den Standard-Umrandungsring */
+}
+
+/********************** slider ******************************/
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #535353;
+    transition: .2s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+/*input:checked + .slider {
+    background-color: #22aca0;
+}*/
+
+input:checked + .slider:before {
+    transform: translateX(14px);
+}
 
 
