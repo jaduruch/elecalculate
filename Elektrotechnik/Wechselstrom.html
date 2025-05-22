@@ -1063,10 +1063,10 @@
                 if(up)
                 {
                     result_Dreieck += `
-                        Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 
+                        Peak-Peakspannung u<sub>pp</sub> =  u<sub>p</sub> &lowast; 2 
                     =
-                        ${Ueff}V &lowast; 2 &lowast;
-                    = ${formatWithPrefix(parseInput(Ueff)*2, "V")}<br>`;
+                        ${up}V &lowast; 2 
+                    = ${formatWithPrefix(parseInput(up)*2, "V")}<br>`;
                 }
 
                 if(Ueff)
