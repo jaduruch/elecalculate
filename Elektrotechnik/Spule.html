@@ -479,7 +479,7 @@
                         <span>${U}V</span><br>
                         <span class="fraction-denominator">${B}T &lowast; ${l}m</span>
                     </div>
-                = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
+                = ${formatWithPrefix(parseInput(U) / (parseInput(B) * parseInput(l)), "m/s")}<br>`;
             }
 
             /*if(!A)       // Flaeche A todo
@@ -593,7 +593,7 @@
                         <span>${L}H</span><br>
                         <span class="fraction-denominator">(${N})<sup>2</sup></span>
                     </div>
-                = ${formatWithPrefix(parseInput(L) / Math.pow(praseInput(N), 2), "Vs/A")}<br>`;
+                = ${formatWithPrefix(parseInput(L) / Math.pow(parseInput(N), 2), "Vs/A")}<br>`;
             }
 
             if(!l)  // Leiterlaenge l
@@ -627,7 +627,7 @@
                             <span>${U}V</span><br>
                             <span class="fraction-denominator">${B}T &lowast; ${v}m/s</span>
                         </div>
-                    = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(v)), "")}<br>`;
+                    = ${formatWithPrefix(parseInput(U) / (parseInput(B) * parseInput(v)), "")}<br>`;
                 }
             }
 
