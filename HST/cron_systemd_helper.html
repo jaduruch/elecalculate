@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HST | Cron & Systemd Timer Helper</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .helper-container {
+            max-width: 650px;
+            margin: 2em auto;
+            background: #222;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0004;
+        }
+        label, select, input {
+            display: block;
+            margin-bottom: 1em;
+            font-size: 1em;
+        }
+        .output {
+            background: #181818;
+            padding: 1em 1em 1em 1em;
+            border-radius: 6px;
+            margin-bottom: 1.5em;
+            font-family: monospace;
+            color: #fff;
+            position: relative;
+            min-height: 2.5em;
+            display: flex;
+            align-items: center;
+        }
+        .output-label {
+            flex: 0 0 auto;
+            margin-right: 0.5em;
+        }
+        .output-content {
+            flex: 1 1 auto;
+            word-break: break-all;
+        }
+        .copy-btn {
+            flex: 0 0 auto;
+            margin-left: 0.5em;
+            font-size: 0.9em;
+            padding: 0.2em 0.8em;
+            background: #444;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            align-self: flex-start;
+            height: 2em;
+        }
+        .copy-btn:hover {
+            background: #555;
+        }
+        .copy-btn:focus {
+            outline: 2px solid #3a8dde;
+        }
+        .sim-list {
+            margin: 0.5em 0 0 1em;
+            color: #fff;
+            font-family: monospace;
+            line-height: 1.6;
+        }
+        .sim-list li {
+            margin-bottom: 0.3em;
+            padding: 0.2em 0;
+        }
+        .sim-list .sim-date {
+            color: #3a8dde;
+            font-weight: bold;
+        }
+        .sim-list .sim-time {
+            color: #5aa3e8;
+        }
+        .sim-list .sim-relative {
+            color: #888;
+            font-size: 0.9em;
+            margin-left: 1em;
+        }
+        .info {
+            background: #1a1a1a;
+            border-left: 4px solid #3a8dde;
+            padding: 1em;
+            margin-bottom: 2em;
+            border-radius: 6px;
+            color: #cce6ff;
+        }
+        .tooltip {
+            border-bottom: 1px dotted #3a8dde;
+            cursor: help;
+        }
+        .weekday-group,
+        .monthday-group {
+            padding: 0.7em 0.5em;
+            background: #232323;
+            border-radius: 6px;
+            margin-bottom: 1.2em;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        .weekday-group label,
+        .monthday-group label {
+            background: #333;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0.2em 0.6em;
+            cursor: pointer;
+            font-size: 0.98em;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .weekday-group input[type="checkbox"],
+        .monthday-group input[type="checkbox"] {
+            margin-right: 0.2em;
+            margin-bottom: 0;
+        }
+        .desc {
+            color: #b3e6ff;
+            margin-bottom: 1em;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .invalid {
+            border: 2px solid #f66 !important;
+        }
+        .warn {
+            color: #ffb347;
+            font-size: 1em;
+            margin-bottom: 0.5em;
+        }
+        .toast {
+            position: fixed;
+            bottom: 2em;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3a8dde;
+            color: #fff;
+            padding: 0.7em 2em;
+            border-radius: 6px;
+            font-size: 1.1em;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .examples-toggle {
+            background: none;
+            border: none;
+            color: #3a8dde;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 0.5em;
+            text-decoration: underline;
+        }
+        .examples-toggle:hover {
+            color: #5aa3e8;
+        }
+        .examples-content {
+            background: #181818;
+            border-radius: 6px;
+            padding: 1em;
+            margin-bottom: 1em;
+            color: #cce6ff;
+            display: none;
+        }
+        .examples-content.show {
+            display: block;
+        }
+        .time-field {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            background: #232323;
+            border-radius: 4px;
+            padding: 0.5em;
+            margin-bottom: 1.2em;
+            width: fit-content;
+        }
+        .time-field select {
+            margin-bottom: 0;
+            padding: 0.3em 0.5em;
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 1em;
+            min-width: 60px;
+        }
+        .time-field .time-separator {
+            color: #fff;
+            font-family: monospace;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .advanced-cron {
+            margin-top: 1.2em;
+            margin-bottom: 1.2em;
+        }
+        button {
+            background: #3a8dde;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 1em;
+        }
+        button:hover {
+            background: #5aa3e8;
+        }
+        select, input[type="text"], input[type="number"] {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0.5em;
+        }
+        select:focus, input:focus {
+            outline: 2px solid #3a8dde;
+            border-color: #3a8dde;
+        }
+        @media (max-width: 700px) {
+            .helper-container {
+                padding: 1em;
+            }
+            .monthday-group,
+            .weekday-group {
+                gap: 0.2em;
+            }
+            .time-field {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="hst.html">HST</a></li>
+                <li><a href="Massvorsaetze_Binaer.html">Massvors&auml;tze Bin&auml;r</a></li>
+                <li><a href="Ausgangs_Stufen.html">Ausgangs Stufen</a></li>
+                <li><a href="Gatter.html">Gatter</a></li>
+                <li><a href="Objekt_Orinetiert.html">Objekt Orinetiert</a></li>
+                <li><a href="C_Syntax.html">C-Syntax</a></li>
+                <li><a class="active" href="#">Cron & Systemd Helper</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Cron & Systemd Timer Helper</h1>
+                <div class="info">
+                    <b>Was ist das?</b><br>
+                    Dieses Tool hilft dir, <span class="tooltip" title="Cron ist ein Zeitplanungsdienst unter Unix/Linux, um Aufgaben automatisch auszuführen.">Cron</span>- und <span class="tooltip" title="Systemd-Timer sind die moderne Alternative zu Cron auf vielen Linux-Systemen.">Systemd-Timer</span>-Syntax einfach zu erstellen.<br>
+                    <br>
+                    <b>Wofür ist es nützlich?</b>
+                    <div>Automatisiere Backups, Skripte oder Wartungsaufgaben auf Servern.</div>
+                    <div>Vermeide Syntaxfehler und überprüfe, wann deine Aufgaben wirklich ausgeführt werden.</div>
+                    <div>Vergleiche Cron und Systemd-Timer direkt.</div>
+                    <br>
+                    <b>Wie funktioniert es?</b><br>
+                    Wähle eine Zeit und Wiederholung, optional mehrere Wochentage oder Intervalle, und erhalte sofort die passenden Zeitpläne. Mit "Simulation" siehst du die nächsten 5 Ausführungszeiten.
+                </div>
+                <button class="examples-toggle" onclick="toggleExamples()" aria-expanded="false" aria-controls="examples-content">
+                    Beispiele anzeigen
+                </button>
+                <div class="examples-content" id="examples-content" aria-hidden="true">
+                    <b>Beispiel 1:</b> <br>
+                    <i>Backup jeden Sonntag um 02:00 Uhr</i><br>
+                    <b>Cron:</b> <code>0 2 * * 0</code><br>
+                    <b>Systemd:</b> <code>Sun 02:00</code><br><br>
+                    <b>Beispiel 2:</b> <br>
+                    <i>Script alle 15 Minuten</i><br>
+                    <b>Cron:</b> <code>*/15 * * * *</code><br>
+                    <b>Systemd:</b> <code>*-*-* *:0/15:00</code><br><br>
+                    <b>Beispiel 3:</b> <br>
+                    <i>Wartung am 1. und letzten Tag jedes Monats um 03:30 Uhr</i><br>
+                    <b>Cron:</b> <code>30 3 1,L * *</code><br>
+                    <b>Systemd:</b> <code>1..1,Last 03:30</code>
+                </div>
+            </div>
+            <div class="helper-container">
+                <label for="recurrence">Wiederholung:</label>
+                <select id="recurrence" onchange="toggleInputs()" aria-label="Wiederholung auswählen">
+                    <option value="daily">Täglich</option>
+                    <option value="weekly">Wöchentlich (Mo)</option>
+                    <option value="monthly">Monatlich</option>
+                    <option value="custom">Benutzerdefiniert (Wochentage)</option>
+                    <option value="everyXmin">Alle X Minuten</option>
+                    <option value="everyXhour">Alle X Stunden</option>
+                </select>
+
+                <div id="timeFieldContainer">
+                    <label for="hourSelect">Zeit (24h Format):</label>
+                    <div class="time-field">
+                        <select id="hourSelect" aria-label="Stunde auswählen">
+                            <!-- Hours will be populated by JS -->
+                        </select>
+                        <span class="time-separator">:</span>
+                        <select id="minuteSelect" aria-label="Minute auswählen">
+                            <!-- Minutes will be populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="weekday-group" id="weekdayGroup" style="display:none;">
+                    <label><input type="checkbox" value="1"> Mo</label>
+                    <label><input type="checkbox" value="2"> Di</label>
+                    <label><input type="checkbox" value="3"> Mi</label>
+                    <label><input type="checkbox" value="4"> Do</label>
+                    <label><input type="checkbox" value="5"> Fr</label>
+                    <label><input type="checkbox" value="6"> Sa</label>
+                    <label><input type="checkbox" value="0"> So</label>
+                </div>
+
+                <div class="monthday-group" id="monthdayGroup" style="display:none;">
+                    <label><input type="checkbox" value="L"> Letzter Tag</label>
+                    <!-- Days 1-31 will be added by JS -->
+                </div>
+
+                <div id="intervalGroup" style="display:none;">
+                    <label for="intervalValue" id="intervalLabel">Intervall:</label>
+                    <input type="number" id="intervalValue" min="1" max="59" value="5" style="width:80px;" aria-label="Intervall eingeben">
+                </div>
+
+                <div class="advanced-cron" id="advancedCronGroup" style="display:none;">
+                    <label for="advancedCron">Erweiterte Cron-Syntax (optional):</label>
+                    <input type="text" id="advancedCron" placeholder="z.B. 0 8-18/2 * * 1-5" aria-label="Erweiterte Cron-Syntax">
+                </div>
+
+                <div class="desc" id="desc"></div>
+                <div class="warn" id="warn"></div>
+
+                <div class="output" id="cronOutput">
+                    <span class="output-label tooltip" title="Cron-Syntax: Minute Stunde Tag Monat Wochentag">
+                        Cron:
+                        <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener" aria-label="Cron Dokumentation (neuer Tab)">[?]</a>
+                    </span>
+                    <span class="output-content" id="cronText"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('cron')" aria-label="Cron kopieren">Kopieren</button>
+                </div>
+                <div class="output" id="systemdOutput">
+                    <span class="output-label tooltip" title="Systemd OnCalendar-Syntax, z.B. 'Mon 08:00' oder 'Mon,Wed,Fri 08:00'">
+                        Systemd:
+                        <a href="https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#" target="_blank" rel="noopener" aria-label="Systemd Dokumentation (neuer Tab)">[?]</a>
+                    </span>
+                    <span class="output-content" id="systemdText"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('systemd')" aria-label="Systemd kopieren">Kopieren</button>
+                </div>
+                <button onclick="simulateSchedule()" aria-label="Simulation starten">Simulation</button>
+                <div class="output" id="simOutput"></div>
+            </div>
+        </main>
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../scripts.js"></script>
+    <script>
+        // --- Utility Functions ---
+        function pad(n) { return n < 10 ? '0' + n : n; }
+
+        // --- Custom Time Picker ---
+        function createTimeDropdowns() {
+            const hourSelect = document.getElementById('hourSelect');
+            const minuteSelect = document.getElementById('minuteSelect');
+
+            // Clear existing options
+            hourSelect.innerHTML = '';
+            minuteSelect.innerHTML = '';
+
+            // Populate hours (00-23)
+            for (let h = 0; h < 24; h++) {
+                const option = document.createElement('option');
+                option.value = h;
+                option.textContent = pad(h);
+                hourSelect.appendChild(option);
+            }
+
+            // Populate minutes (00, 15, 30, 45) - perfect for cron scheduling
+            const minutes = [0, 15, 30, 45];
+            minutes.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m;
+                option.textContent = pad(m);
+                minuteSelect.appendChild(option);
+            });
+
+            // Set default to 08:00
+            hourSelect.value = 8;
+            minuteSelect.value = 0;
+
+            // Add event listeners
+            hourSelect.addEventListener('change', updateAll);
+            minuteSelect.addEventListener('change', updateAll);
+        }
+
+        function getTimeValue() {
+            const hour = document.getElementById('hourSelect').value;
+            const minute = document.getElementById('minuteSelect').value;
+            return `${pad(hour)}:${pad(minute)}`;
+        }
+
+        function parseTime(timeString) {
+            const [h, m] = timeString.split(':').map(Number);
+            return { h, m };
+        }
+
+        function formatTime24(h, m) {
+            return `${pad(h)}:${pad(m)}`;
+        }
+
+        // --- Monthday Logic ---
+        function createMonthdayCheckboxes() {
+            let group = document.getElementById("monthdayGroup");
+            group.innerHTML = `<label><input type="checkbox" value="L"> Letzter Tag</label>`;
+            for (let d = 1; d <= 31; d++) {
+                let label = document.createElement("label");
+                label.innerHTML = `<input type="checkbox" value="${d}"> ${d}.`;
+                group.appendChild(label);
+            }
+            // Add event listeners to new checkboxes
+            group.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', updateAll);
+            });
+        }
+
+        function getSelectedMonthdays() {
+            let days = [];
+            document.querySelectorAll("#monthdayGroup input[type='checkbox']").forEach(cb => {
+                if (cb.checked) days.push(cb.value);
+            });
+            return days;
+        }
+
+        // --- Weekday Logic ---
+        function getSelectedWeekdays() {
+            const checkboxes = document.querySelectorAll('#weekdayGroup input[type="checkbox"]');
+            let days = [];
+            checkboxes.forEach(cb => { if (cb.checked) days.push(cb.value); });
+            return days;
+        }
+
+        // --- Date/Time Utilities ---
+        function getLastDayOfMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function formatDateGerman(date) {
+            const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+            const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                           'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+
+            return `${days[date.getDay()]}, ${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function getRelativeTime(date) {
+            const now = new Date();
+            const diffMs = date.getTime() - now.getTime();
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (diffDays > 0) {
+                return `in ${diffDays} Tag${diffDays > 1 ? 'en' : ''}`;
+            } else if (diffHours > 0) {
+                return `in ${diffHours} Stunde${diffHours > 1 ? 'n' : ''}`;
+            } else if (diffMinutes > 0) {
+                return `in ${diffMinutes} Minute${diffMinutes > 1 ? 'n' : ''}`;
+            } else {
+                return 'jetzt';
+            }
+        }
+
+        // --- Simulation Logic ---
+        function simulateSchedule() {
+            const recurrence = document.getElementById('recurrence').value;
+            const simOutput = document.getElementById('simOutput');
+
+            let executions = [];
+            const now = new Date();
+
+            try {
+                switch (recurrence) {
+                    case 'daily':
+                        executions = simulateDaily();
+                        break;
+                    case 'weekly':
+                        executions = simulateWeekly();
+                        break;
+                    case 'monthly':
+                        executions = simulateMonthly();
+                        break;
+                    case 'custom':
+                        executions = simulateCustom();
+                        break;
+                    case 'everyXmin':
+                        executions = simulateEveryXMinutes();
+                        break;
+                    case 'everyXhour':
+                        executions = simulateEveryXHours();
+                        break;
+                    default:
+                        executions = [];
+                }
+
+                if (executions.length === 0) {
+                    simOutput.innerHTML = '<span class="output-label">Simulation:</span><span class="output-content">Keine gültigen Ausführungszeiten gefunden.</span>';
+                    return;
+                }
+
+                // Sort executions by date
+                executions.sort((a, b) => a.getTime() - b.getTime());
+
+                // Take only next 5 executions
+                executions = executions.slice(0, 5);
+
+                let html = '<span class="output-label">Nächste 5 Ausführungen:</span><div class="sim-list"><ol>';
+                executions.forEach(date => {
+                    const dateStr = formatDateGerman(date);
+                    const timeStr = formatTime24(date.getHours(), date.getMinutes());
+                    const relativeStr = getRelativeTime(date);
+
+                    html += `<li><span class="sim-date">${dateStr}</span> um <span class="sim-time">${timeStr}</span><span class="sim-relative">${relativeStr}</span></li>`;
+                });
+                html += '</ol></div>';
+
+                simOutput.innerHTML = html;
+            } catch (error) {
+                simOutput.innerHTML = '<span class="output-label">Simulation:</span><span class="output-content">Fehler bei der Simulation: ' + error.message + '</span>';
+            }
+        }
+
+        function simulateDaily() {
+            const executions = [];
+            const { h, m } = parseTime(getTimeValue());
+            const now = new Date();
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(now);
+                date.setDate(now.getDate() + i);
+                date.setHours(h, m, 0, 0);
+
+                if (date > now) {
+                    executions.push(new Date(date));
+                }
+            }
+
+            return executions;
+        }
+
+        function simulateWeekly() {
+            const executions = [];
+            const { h, m } = parseTime(getTimeValue());
+            const now = new Date();
+
+            // Monday is day 1 in our system, but JavaScript uses 0=Sunday
+            const targetDay = 1; // Monday
+
+            for (let week = 0; week < 5; week++) {
+                const date = new Date(now);
+                const currentDay = date.getDay();
+                const daysUntilTarget = (targetDay - currentDay + 7) % 7;
+
+                date.setDate(now.getDate() + daysUntilTarget + (week * 7));
+                date.setHours(h, m, 0, 0);
+
+                if (date > now) {
+                    executions.push(new Date(date));
+                }
+            }
+
+            return executions;
+        }
+
+        function simulateMonthly() {
+            const executions = [];
+            const { h, m } = parseTime(getTimeValue());
+            const selectedDays = getSelectedMonthdays();
+            const now = new Date();
+
+            if (selectedDays.length === 0) return [];
+
+            for (let monthOffset = 0; monthOffset < 6; monthOffset++) {
+                const date = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+                const year = date.getFullYear();
+                const month = date.getMonth();
+
+                selectedDays.forEach(day => {
+                    let targetDate;
+
+                    if (day === 'L') {
+                        // Last day of month
+                        const lastDay = getLastDayOfMonth(year, month + 1);
+                        targetDate = new Date(year, month, lastDay, h, m, 0, 0);
+                    } else {
+                        const dayNum = parseInt(day);
+                        const lastDay = getLastDayOfMonth(year, month + 1);
+
+                        if (dayNum <= lastDay) {
+                            targetDate = new Date(year, month, dayNum, h, m, 0, 0);
+                        }
+                    }
+
+                    if (targetDate && targetDate > now) {
+                        executions.push(new Date(targetDate));
+                    }
+                });
+            }
+
+            return executions;
+        }
+
+        function simulateCustom() {
+            const executions = [];
+            const { h, m } = parseTime(getTimeValue());
+            const selectedWeekdays = getSelectedWeekdays();
+            const now = new Date();
+
+            if (selectedWeekdays.length === 0) return [];
+
+            for (let day = 0; day < 35; day++) { // Check next 5 weeks
+                const date = new Date(now);
+                date.setDate(now.getDate() + day);
+                date.setHours(h, m, 0, 0);
+
+                const dayOfWeek = date.getDay();
+
+                if (selectedWeekdays.includes(dayOfWeek.toString()) && date > now) {
+                    executions.push(new Date(date));
+                }
+            }
+
+            return executions;
+        }
+
+        function simulateEveryXMinutes() {
+            const executions = [];
+            const interval = parseInt(document.getElementById('intervalValue').value) || 5;
+            const now = new Date();
+
+            if (interval < 1 || interval > 59) return [];
+
+            // Start from next interval boundary
+            const nextExecution = new Date(now);
+            const currentMinutes = nextExecution.getMinutes();
+            const nextMinutes = Math.ceil(currentMinutes / interval) * interval;
+
+            if (nextMinutes >= 60) {
+                nextExecution.setHours(nextExecution.getHours() + 1);
+                nextExecution.setMinutes(0);
+            } else {
+                nextExecution.setMinutes(nextMinutes);
+            }
+            nextExecution.setSeconds(0);
+            nextExecution.setMilliseconds(0);
+
+            for (let i = 0; i < 5; i++) {
+                const execution = new Date(nextExecution);
+                execution.setMinutes(execution.getMinutes() + (i * interval));
+                executions.push(execution);
+            }
+
+            return executions;
+        }
+
+        function simulateEveryXHours() {
+            const executions = [];
+            const interval = parseInt(document.getElementById('intervalValue').value) || 1;
+            const now = new Date();
+
+            if (interval < 1 || interval > 23) return [];
+
+            // Start from next hour boundary
+            const nextExecution = new Date(now);
+            const currentHours = nextExecution.getHours();
+            const nextHours = Math.ceil(currentHours / interval) * interval;
+
+            if (nextHours >= 24) {
+                nextExecution.setDate(nextExecution.getDate() + 1);
+                nextExecution.setHours(0);
+            } else {
+                nextExecution.setHours(nextHours);
+            }
+            nextExecution.setMinutes(0);
+            nextExecution.setSeconds(0);
+            nextExecution.setMilliseconds(0);
+
+            for (let i = 0; i < 5; i++) {
+                const execution = new Date(nextExecution);
+                execution.setHours(execution.getHours() + (i * interval));
+                executions.push(execution);
+            }
+
+            return executions;
+        }
+
+        // --- Schedule Generation ---
+        function toggleInputs() {
+            const recurrence = document.getElementById('recurrence').value;
+            document.getElementById('weekdayGroup').style.display = (recurrence === 'custom') ? 'flex' : 'none';
+            document.getElementById('monthdayGroup').style.display = (recurrence === 'monthly') ? 'flex' : 'none';
+            document.getElementById('timeFieldContainer').style.display = (recurrence === 'everyXmin' || recurrence === 'everyXhour') ? 'none' : 'block';
+            document.getElementById('intervalGroup').style.display = (recurrence === 'everyXmin' || recurrence === 'everyXhour') ? 'block' : 'none';
+            document.getElementById('advancedCronGroup').style.display = (recurrence === 'custom') ? 'block' : 'none';
+
+            // Update interval label and limits
+            const intervalLabel = document.getElementById('intervalLabel');
+            const intervalValue = document.getElementById('intervalValue');
+            if (recurrence === 'everyXmin') {
+                intervalLabel.textContent = 'Minuten:';
+                intervalValue.max = 59;
+            } else if (recurrence === 'everyXhour') {
+                intervalLabel.textContent = 'Stunden:';
+                intervalValue.max = 23;
+            }
+
+            updateAll();
+        }
+
+        function updateAll() {
+            generateSchedule();
+            simulateSchedule();
+        }
+
+        function generateSchedule() {
+            const recurrence = document.getElementById('recurrence').value;
+            let cron = '';
+            let systemd = '';
+            let desc = '';
+            let warn = '';
+            let valid = true;
+
+            // Remove invalid highlight
+            document.getElementById('intervalValue').classList.remove('invalid');
+
+            let timeValue = getTimeValue();
+            let { h, m } = parseTime(timeValue);
+
+            if (recurrence === 'daily') {
+                cron = `${m} ${h} * * *`;
+                systemd = `${pad(h)}:${pad(m)}`;
+                desc = `Jeden Tag um ${formatTime24(h, m)} Uhr.`;
+            } else if (recurrence === 'weekly') {
+                cron = `${m} ${h} * * 1`;
+                systemd = `Mon ${pad(h)}:${pad(m)}`;
+                desc = `Jeden Montag um ${formatTime24(h, m)} Uhr.`;
+            } else if (recurrence === 'monthly') {
+                let days = getSelectedMonthdays();
+                if (days.length === 0) {
+                    cron = 'Bitte mindestens einen Tag wählen!';
+                    systemd = '';
+                    desc = '';
+                    valid = false;
+                } else {
+                    days.sort((a, b) => {
+                        if (a === "L") return 1;
+                        if (b === "L") return -1;
+                        return Number(a) - Number(b);
+                      });
+                    cron = `${m} ${h} ${days.join(',')} * *`;
+                    systemd = days.map(d => {
+                        if (d === "L") return `Last ${pad(h)}:${pad(m)}`;
+                        else return `${d}..${d} ${pad(h)}:${pad(m)}`;
+                    }).join(', ');
+                    desc = `Am ${days.map(d => d === "L" ? "letzten Tag" : d + ".").join(', ')} jedes Monats um ${formatTime24(h, m)} Uhr.`;
+                }
+            } else if (recurrence === 'custom') {
+                let days = getSelectedWeekdays();
+                let advanced = document.getElementById('advancedCron').value.trim();
+                if (advanced) {
+                    cron = advanced;
+                    systemd = '(benutzerdefiniert)';
+                    desc = 'Erweiterte Cron-Syntax verwendet.';
+                } else if (days.length === 0) {
+                    cron = 'Bitte mindestens einen Wochentag wählen!';
+                    systemd = '';
+                    desc = '';
+                    valid = false;
+                } else {
+                    cron = `${m} ${h} * * ${days.join(',')}`;
+                    const dayNames = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+                    const sysDays = days.map(d => dayNames[parseInt(d)]).join(', ');
+                    const sysDaysEn = days.map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][parseInt(d)]).join(',');
+                    systemd = `${sysDaysEn} ${pad(h)}:${pad(m)}`;
+                    desc = `Jeden ${sysDays} um ${formatTime24(h, m)} Uhr.`;
+                }
+            } else if (recurrence === 'everyXmin') {
+                const val = parseInt(document.getElementById('intervalValue').value) || 1;
+                if (val < 1 || val > 59) {
+                    cron = 'Ungültiges Minutenintervall (1-59)!';
+                    systemd = '';
+                    desc = '';
+                    valid = false;
+                    document.getElementById('intervalValue').classList.add('invalid');
+                } else {
+                    cron = `*/${val} * * * *`;
+                    systemd = `*-*-* *:0/${val}:00`;
+                    desc = `Alle ${val} Minute${val > 1 ? 'n' : ''}.`;
+                    if (val === 1) warn = "Warnung: 'Jede Minute' kann Systeme stark belasten!";
+                }
+            } else if (recurrence === 'everyXhour') {
+                const val = parseInt(document.getElementById('intervalValue').value) || 1;
+                if (val < 1 || val > 23) {
+                    cron = 'Ungültiges Stundenintervall (1-23)!';
+                    systemd = '';
+                    desc = '';
+                    valid = false;
+                    document.getElementById('intervalValue').classList.add('invalid');
+                } else {
+                    cron = `0 */${val} * * *`;
+                    systemd = `*-*-* 0/${val}:00:00`;
+                    desc = `Alle ${val} Stunde${val > 1 ? 'n' : ''}.`;
+                }
+            }
+
+            setOutputs(cron, systemd, desc, warn);
+        }
+
+        function setOutputs(cron, systemd, desc, warn) {
+            document.getElementById('cronText').textContent = cron;
+            document.getElementById('systemdText').textContent = systemd;
+            document.getElementById('desc').textContent = desc;
+            document.getElementById('warn').textContent = warn || '';
+        }
+
+        // --- Copy to Clipboard ---
+        function copyToClipboard(type) {
+            let text = '';
+            if (type === 'cron') text = document.getElementById('cronText').textContent;
+            if (type === 'systemd') text = document.getElementById('systemdText').textContent;
+
+            if (!text || text.includes('Bitte') || text.includes('Ungültig')) {
+                showToast('Nichts zu kopieren!');
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(type.charAt(0).toUpperCase() + type.slice(1) + " kopiert!");
+                }).catch(() => {
+                    fallbackCopyToClipboard(text, type);
+                });
+            } else {
+                fallbackCopyToClipboard(text, type);
+            }
+        }
+
+        function fallbackCopyToClipboard(text, type) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(type.charAt(0).toUpperCase() + type.slice(1) + " kopiert!");
+            } catch (err) {
+                showToast('Kopieren fehlgeschlagen!');
+            }
+            textArea.remove();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        function toggleExamples() {
+            const btn = document.querySelector('.examples-toggle');
+            const content = document.getElementById('examples-content');
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', !expanded);
+            content.setAttribute('aria-hidden', expanded);
+            content.classList.toggle('show');
+            btn.textContent = expanded ? "Beispiele anzeigen" : "Beispiele ausblenden";
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            createTimeDropdowns();
+            createMonthdayCheckboxes();
+
+            // Add event listeners
+            document.getElementById('recurrence').addEventListener('change', toggleInputs);
+            document.getElementById('intervalValue').addEventListener('input', updateAll);
+            document.getElementById('advancedCron').addEventListener('input', updateAll);
+
+            // Add event listeners to weekday checkboxes
+            document.querySelectorAll('#weekdayGroup input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', updateAll);
+            });
+
+            // Initial update
+            toggleInputs();
+            updateAll();
+        });
+    </script>
+</body>
+</html>
