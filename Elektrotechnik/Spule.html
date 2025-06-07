@@ -388,12 +388,12 @@
                     Leiterl&auml;nge l = 
                     <div class ="fraction">
                         <span>L &lowast; l</span><br>
-                        <span class="fraction-denominator">A &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
+                        <span class="fraction-denumerator">A &lowast; &mu;<sub>0</sub> &lowast; N<sup>2</sup></span>
                     </div> 
                 =
                     <div class ="fraction">
                         <span>${L}H &lowast; ${l}m</span><br>
-                        <span class="fraction-denominator">${A}m<sup>2</sup> &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
+                        <span class="fraction-denumerator">${A}m<sup>2</sup> &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; (${N})<sup>2</sup></span>
                     </div> 
                 = ${formatWithPrefix((parseInput(L) * parseInput(l)) / (parseInputsquare(A) * 1.257e-6 * Math.pow(parseInput(N), 2)), "m")}<br>`;
             }
@@ -406,12 +406,12 @@
                         Windungszahl N = &radic; 
                         (<div class ="fraction">
                             <span>L &lowast; l</span><br>
-                            <span class="fraction-denominator">&mu;<sub>0</sub> &lowast; &mu;<sub>r</sub> &lowast; A</span>
+                            <span class="fraction-denumerator">&mu;<sub>0</sub> &lowast; &mu;<sub>r</sub> &lowast; A</span>
                         </div>)
                     = &radic; 
                         (<div class ="fraction">
                             <span>${L}H &lowast; ${l}m</span><br>
-                            <span class="fraction-denominator">${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; ${A}m<sup>2</sup></span>
+                            <span class="fraction-denumerator">${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am &lowast; ${A}m<sup>2</sup></span>
                         </div>)
                     = ${formatWithPrefix(Math.pow((parseInput(L) * parseInput(l))/(parseInput(ur) * 1.257e-6 *parseInputsquare(A)),0.5), "")}<br>`;
                 }
@@ -423,12 +423,12 @@
                         Windungszahl N = &radic; 
                         (<div class ="fraction">
                             <span>L</span><br>
-                            <span class="fraction-denominator">A<sub>L</sub></span>
+                            <span class="fraction-denumerator">A<sub>L</sub></span>
                         </div>)
                     = &radic;
                         (<div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denominator">${Al}Vs/A</span>
+                            <span class="fraction-denumerator">${Al}Vs/A</span>
                         </div>)
                     = ${formatWithPrefix(Math.pow(parseInput(L)/parseInput(Al),0.5), "")}<br>`;
                 }
@@ -472,14 +472,14 @@
                     Geschwindigkeit v =  
                     <div class ="fraction">
                         <span>u<sub>0</sub></span><br>
-                        <span class="fraction-denominator">B &lowast; l</span>
+                        <span class="fraction-denumerator">B &lowast; l</span>
                     </div>
                 = 
                     <div class ="fraction">
                         <span>${U}V</span><br>
-                        <span class="fraction-denominator">${B}T &lowast; ${l}m</span>
+                        <span class="fraction-denumerator">${B}T &lowast; ${l}m</span>
                     </div>
-                = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(l)), "m/s")}<br>`;
+                = ${formatWithPrefix(parseInput(U) / (parseInput(B) * parseInput(l)), "m/s")}<br>`;
             }
 
             /*if(!A)       // Flaeche A todo
@@ -586,14 +586,14 @@
                     Spulenkonstante A<sub>L</sub>=  
                     <div class ="fraction">
                         <span>L</span><br>
-                        <span class="fraction-denominator">N<sup>2</sup></span>
+                        <span class="fraction-denumerator">N<sup>2</sup></span>
                     </div>
                 = 
                     <div class ="fraction">
                         <span>${L}H</span><br>
-                        <span class="fraction-denominator">(${N})<sup>2</sup></span>
+                        <span class="fraction-denumerator">(${N})<sup>2</sup></span>
                     </div>
-                = ${formatWithPrefix(parseInput(L) / Math.pow(praseInput(N), 2), "Vs/A")}<br>`;
+                = ${formatWithPrefix(parseInput(L) / Math.pow(parseInput(N), 2), "Vs/A")}<br>`;
             }
 
             if(!l)  // Leiterlaenge l
@@ -620,14 +620,14 @@
                         Leiterl&auml;nge l =  
                         <div class ="fraction">
                             <span>u<sub>0</sub></span><br>
-                            <span class="fraction-denominator">B &lowast; v</span>
+                            <span class="fraction-denumerator">B &lowast; v</span>
                         </div>
                     = 
                         <div class ="fraction">
                             <span>${U}V</span><br>
-                            <span class="fraction-denominator">${B}T &lowast; ${v}m/s</span>
+                            <span class="fraction-denumerator">${B}T &lowast; ${v}m/s</span>
                         </div>
-                    = ${formatWithPrefix(parseInput(U) / (praseInput(B) * parseInput(v)), "")}<br>`;
+                    = ${formatWithPrefix(parseInput(U) / (parseInput(B) * parseInput(v)), "")}<br>`;
                 }
             }
 
@@ -1005,12 +1005,12 @@
                         result_RL += `
                             Strom i(t) = I &lowast; (1 - e<sup> 
                             <div class ="fraction">
-                                <span class="fraction-numerator">- t &lowast; L</span><br>
-                                <span>R</span>
+                                <span class="fraction-numerator">- t &lowast; R</span><br>
+                                <span>L</span>
                             </div></sup>)
                         = ${I}A &lowast; (1 - e<sup>
                             <div class ="fraction">
-                                <span class="fraction-denumerator">- ${t}s &lowast; ${R}&Omega;</span><br>
+                                <span class="fraction-numerator">- ${t}s &lowast; ${R}&Omega;</span><br>
                                 <span>${L}H</span>
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(I) * (1 - Math.pow(Math.E, -(parseInput(t) * parseInput(R)/parseInput(L)))), "A")}<br>`;
