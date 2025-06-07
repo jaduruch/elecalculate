@@ -8,153 +8,63 @@
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
 
     <style>
-        .switch {
+        /***********/
+        .img-button {
             position: relative;
-            display: inline-block;
-            width: 34px;
-            height: 20px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
+            width: 100px; /* Adjust as needed */
+            height: 100px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #535353;
-            transition: .2s;
-            border-radius: 20px;
         }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .2s;
-            border-radius: 50%;
-        }
-
-        /*input:checked + .slider {
-            background-color: #22aca0;
-        }*/
-
-        input:checked + .slider:before {
-            transform: translateX(14px);
-        }
-
-        input {
-            border: 2px solid;
-            border-radius: 3px;
-        }
-
-        input:focus {
-            outline: none; /* Entfernt den Standard-Umrandungsring */
-        }
-
-  
-
-        .dropdown-container {
-            width: 800px;
-            max-width: 90%;
-            margin: 20px auto;
-            background-color: #000;
-        }
-
-        .dropdown-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #ffffff;
-        }
-
-        .dropdown-header:hover {
-            background-color: #181818;
-        }
-
-        .dropdown-header .arrow {
-            font-size: 18px;
-            transform: rotate(0deg);
-            transition: transform 0.5s;
-        }
-
-        .dropdown.open .arrow {
-            transform: rotate(-180deg);
-        }
-
-        .dropdown-content {
-            display: none;
-            padding: 15px 20px;
-            background-color: #000000;
-            border-top: 1px solid #ddd;
-
-        }
-
-        .dropdown.open .dropdown-content {
-            display: block;
-        }
-
-        .divider {
-            border-bottom: 1px solid #ddd;
-        }
-
-
-        /* Stil fuer das Formular und Layout */
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            max-width: 700px; /* Setzt eine maximale Breite */
-            margin: 0 auto; /* Zentriert das Formular */
-        }
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        
+        .img-button img {
             width: 100%;
-            /*max-width: 150px;*/
+            height: 100%;
+            object-fit: cover;
         }
 
-        .form-row label {
+        .img-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .img-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .img-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        /***********/
+
+        .RAD-Button 
+        {
+            background: none;
+            /*border: 1px solid var(--Winkel);
+            border-radius: 3px;
+            /*margin-top: 10px;
+            min-width: 50px;
+            height: 29px;*/
+            color: inherit;
+            padding: 0;
+            cursor: pointer;
             flex: 3;
             text-align: left;
-            margin-right: 10px;
         }
 
-        .form-row input[type="number"], .form-row select {
-            flex: 1.5;
-            margin-right: 5px;
+        .RAD-Button:hover{
+            text-decoration: underline;
         }
-
-        .form-row .unit {
-            flex: 0.8;
-        }
-
-        h3 {
-            margin-top: 20px;
-        }
-
-        .results{
-            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-
     </style>
 </head>
 <body>
@@ -291,7 +201,7 @@
                         <p id="result"></p>
                         </div>
                     
-                    </div>
+                    </div>  
                 </div>
                 <div class="divider"></div>
 
@@ -300,10 +210,235 @@
                         Kondensator an Wechselstrom <span class="arrow">&#9660;</span>
                     </div>
                     <div class="dropdown-content"> 
-                        <div>
-                            development in progress
+
+                        <button class="img-button" type="button" onclick="toggleSelection(this, 'Serie')">
+                            <img src="../Pictures/Serie_RC.PNG" alt="Sinus">
+                            <span>Serie</span>
+                        </button>
+                        <button class="img-button" type="button" onclick="toggleSelection(this, 'Parallel')">
+                            <img src="../Pictures/Parallel_RC.png" alt="Rechteck">
+                            <span>Parallel</span>
+                        </button>
+
+                        <div id="Serie" style="display:none;" class="input-numbers">
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br>
+                                Mit einem Klick auf die Einheit das Winkels kann zwischen RAD und DEG umgestellt werden<br><br>
+                            </div>
+
+                            <!-- Winkel Phi -->
+                            <div class="form-row">
+                                <label>Winkel &phi;</label>
+                                <input type="text" id="phi_AC" style="border-color: var(--Winkel);">
+                                 <label><button id="Rad-Button" class="RAD-Button" onclick="toggleRAD()">360&deg;</button></label>
+                            </div>
+
+                            <!-- Strom I -->
+                            <div class="form-row">
+                                <label>Gesamtstrom I</label>
+                                <input type="text" id="I_AC" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Wirkwiderstand R</label>
+                                <input type="text" id="R_AC" style="border-color: var(--Widerstand);">
+                                <label>&Omega;[Ohm]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindwiderstand X<sub>C</sub></label>
+                                <input type="text" id="Xc_AC" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Scheinwiderstand Z</label>
+                                <input type="text" id="Z_AC" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+
+                            <!-- Kapazitaet C -->
+                            <div class="form-row">
+                                <label>Kapazit&auml;t C</label>
+                                <input type="text" id="C_AC" style="border-color: var(--Kapazitaet);">
+                                <label>F [Farad]</label>
+                            </div>
+
+                            <!-- Leistung P -->
+                            <div class="form-row">
+                                <label>Wirkleistung P</label>
+                                <input type="text" id="P_AC" style="border-color: var(--Leistung);">
+                                <label>W [Watt]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindleistung Q<sub>C</sub></label>
+                                <input type="text" id="Qc_AC" style="border-color: var(--Leistung);">
+                                <label>var</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Scheinleistung S</label>
+                                <input type="text" id="S_AC" style="border-color: var(--Leistung);">
+                                <label>VA [Volt &times; Ampere]</label>
+                            </div>
+
+                            <!-- Spannung U -->
+                            <div class="form-row">
+                                <label>Wirkspannung U<sub>R</sub></label>
+                                <input type="text" id="Ur_AC" style="border-color: var(--Spannung);">
+                                <label>V [Volt]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindspannung U<sub>C</sub></label>
+                                <input type="text" id="Uc_AC" style="border-color: var(--Spannung);">
+                                <label>V [Volt]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Gesamtspannung U</label>
+                                <input type="text" id="U_AC" style="border-color: var(--Spannung);">
+                                <label>V [Volt]</label>
+                            </div>
+
+                            <!-- frequenz f -->
+                            <div class="form-row">
+                                <label>Frequenz f</label>
+                                <input type="text" id="f_AC" style="border-color: var(--Frequenz);">
+                                <label>Hz [Herz]</label>
+                            </div>
+
+                            <!-- faktoren -->
+                            <div class="form-row">
+                                <label>Wirkfaktor cos(&phi;)</label>
+                                <input type="text" id="cosphi_AC" style="border-color: var(--Daempfungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindfaktor sin(&phi;)</label>
+                                <input type="text" id="sinphi_AC" style="border-color: var(--Daempfungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateSerieAC()">
+
+                            <h3>Berechnete Ergebnisse</h3>
+                            <p id="result_Serie_AC"></p>
                         </div>
-                    
+
+                        <div id="Parallel" style="display:none;" class="input-numbers">
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br>
+                                Mit einem Klick auf die Einheit das Winkels kann zwischen RAD und DEG umgestellt werden<br><br>
+                            </div>
+
+                            <!-- Winkel Phi -->
+                            <div class="form-row">
+                                <label>Winkel &phi;</label>
+                                <input type="text" id="I_ACp" style="border-color: var(--Winkel);">
+                                <label><button id="Rad-Buttonp" class="RAD-Button" onclick="toggleRADp()">360&deg;</button></label>
+                            </div>
+
+                            <!-- Strom I -->
+                             <div class="form-row">
+                                <label>Wirkstrom I<sub>R</sub></label>
+                                <input type="text" id="Ir_ACp" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindstrom I</label>
+                                <input type="text" id="Ic_ACp" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Gesamtstrom I</label>
+                                <input type="text" id="I_ACp" style="border-color: var(--Strom);">
+                                <label>A [Ampere]</label>
+                            </div>
+
+                            <!-- Widerstand R -->
+                            <div class="form-row">
+                                <label>Wirkleitwert G</label>
+                                <input type="text" id="G_ACp" style="border-color: var(--Widerstand);">
+                                <label>S [Siemens]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindleitwert B</label>
+                                <input type="text" id="Xc_ACp" style="border-color: var(--Widerstand);">
+                                <label>S [Siemens]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Scheinleitwert Y</label>
+                                <input type="text" id="Y_ACp" style="border-color: var(--Widerstand);">
+                                <label>S [Siemens]</label>
+                            </div>
+
+                            <!-- Kapazitaet C -->
+                            <div class="form-row">
+                                <label>Kapazit&auml;t C</label>
+                                <input type="text" id="C_ACp" style="border-color: var(--Kapazitaet);">
+                                <label>F [Farad]</label>
+                            </div>
+
+                            <!-- Leistung P -->
+                            <div class="form-row">
+                                <label>Wirkleistung P</label>
+                                <input type="text" id="P_ACp" style="border-color: var(--Leistung);">
+                                <label>W [Watt]</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindleistung Q<sub>C</sub></label>
+                                <input type="text" id="Q_ACp" style="border-color: var(--Leistung);">
+                                <label>var</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Scheinleistung S</label>
+                                <input type="text" id="S_ACp" style="border-color: var(--Leistung);">
+                                <label>VA [Volt &times; Ampere]</label>
+                            </div>
+
+                            <!-- Spannung U -->
+                            <div class="form-row">
+                                <label>Spannung U</label>
+                                <input type="text" id="U_ACp" style="border-color: var(--Spannung);">
+                                <label>V [Volt]</label>
+                            </div>
+
+                            <!-- frequenz f -->
+                            <div class="form-row">
+                                <label>Frequenz f</label>
+                                <input type="text" id="f_ACp" style="border-color: var(--Frequenz);">
+                                <label>Hz [Herz]</label>
+                            </div>
+
+                            <!-- faktoren -->
+                            <div class="form-row">
+                                <label>Wirkfaktor cos(&phi;)</label>
+                                <input type="text" id="cosphi_ACp" style="border-color: var(--Daempfungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Blindfaktor sin(&phi;)</label>
+                                <input type="text" id="sinphi_ACp" style="border-color: var(--Daempfungsfaktor);">
+                                <label>1</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParallelAC()">
+
+                            <h3>Berechnete Ergebnisse</h3>
+                            <p id="result_Serie_AC"></p>
+                        </div>
                     </div>
                 </div>
                 <div class="divider"></div>
@@ -803,6 +938,981 @@
 
             document.getElementById('result').innerHTML = result;
         }
+
+        
+        // RC an Wechselstrom
+        let selectedButton = null;
+
+        function toggleSelection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            
+            if (selectedButton === button) {
+                // Deselect if the same button is clicked again
+                button.classList.remove('selected');
+                section.style.display = 'none';
+                selectedButton = null;
+            } else {
+                // Remove selection from the previously selected button
+                if (selectedButton) {
+                    selectedButton.classList.remove('selected');
+                }
+                
+                // Select the new button
+                button.classList.add('selected');
+                selectedButton = button;
+
+                // Show the selected section and hide the other
+                if (sectionId === 'Serie') {
+                    document.getElementById('Serie').style.display = 'block';
+                    document.getElementById('Parallel').style.display = 'none';
+                } else if(sectionId === 'Parallel') {
+                    document.getElementById('Serie').style.display = 'none';
+                    document.getElementById('Parallel').style.display = 'block';
+                }
+            }
+        }
+
+        let isRADactive_Serie = false; // Standard: deg (360)
+        function toggleRAD() 
+        {
+            let button = document.getElementById("Rad-Button");
+
+            if (isRADactive_Serie) {
+                button.innerHTML = "360&deg;"; // Wechselt zu Grad
+                isRADactive_Serie = false;
+            } else {
+                button.innerHTML = "2&pi;"; // Wechselt zurück zu Radian
+                isRADactive_Serie = true;
+            }
+        }
+
+        function calculateSerieAC()
+        {
+
+            let result_Serie_AC = ``;
+
+            const phi = document.getElementById("phi_AC").value;
+            const I = document.getElementById("I_AC").value;
+            const R = document.getElementById("R_AC").value;
+            const Xc = document.getElementById("Xc_AC").value;
+            const Z = document.getElementById("Z_AC").value;
+            const C = document.getElementById("C_AC").value;
+            const P = document.getElementById("P_AC").value;
+            const Qc = document.getElementById("Qc_AC").value;
+            const S = document.getElementById("S_AC").value;
+            const Ur = document.getElementById("Ur_AC").value;
+            const Uc = document.getElementById("Uc_AC").value;
+            const U = document.getElementById("U_AC").value;
+            const f = document.getElementById("f_AC").value;
+            const cosphi = document.getElementById("cosphi_AC").value;
+            const sinphi = document.getElementById("sinphi_AC").value;
+            
+            if(!phi)
+            {
+                if(Xc && Z)
+                {
+                    // phi = arcsin(Xc/Z)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arcsin(<div class ="fraction">
+                            <span class="fraction-numerator">X<sub>C</sub></span><br>
+                            <span>Z</span>
+                        </div>)
+                    =
+                        arcsin(<div class ="fraction">
+                            <span class="fraction-numerator">${Xc}&Omega;</span><br>
+                            <span>${Z}&Omega;</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.asin(parseInput(Xc)/parseInput(Z)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Xc)/parseInput(Z)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(Uc && U)
+                {
+                    // phi = arcsin(Uc/U)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arcsin(<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>C</sub></span><br>
+                            <span>U</span>
+                        </div>)
+                    =
+                        arcsin(<div class ="fraction">
+                            <span class="fraction-numerator">${Uc}V</span><br>
+                            <span>${U}V</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc)/parseInput(U)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub>
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc)/parseInput(U)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(R && Z)
+                {
+                    // phi = arccos(R/Z)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arccos(<div class ="fraction">
+                            <span class="fraction-numerator">R</span><br>
+                            <span>Z</span>
+                        </div>)
+                    =
+                        arccos(<div class ="fraction">
+                            <span class="fraction-numerator">${R}&Omega;</span><br>
+                            <span>${Z}&Omega;</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.acos(parseInput(R)/parseInput(Z)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub> 
+                    = ${formatWithPrefix(Math.acos(parseInput(R)/parseInput(Z)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(Ur && U)
+                {
+                    // phi = arcsin(Uc/U)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arccos(<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>R</sub></span><br>
+                            <span>U</span>
+                        </div>)
+                    =
+                        arccos(<div class ="fraction">
+                            <span class="fraction-numerator">${Ur}V</span><br>
+                            <span>${U}V</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.acos(parseInput(Ur)/parseInput(U)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub>
+                    = ${formatWithPrefix(Math.acos(parseInput(Ur)/parseInput(U)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(Xc && R)
+                {
+                    // phi = arctan(Xc/R)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arctan(<div class ="fraction">
+                            <span class="fraction-numerator">X<sub>C</sub></span><br>
+                            <span>R</span>
+                        </div>)
+                    =
+                        arctan(<div class ="fraction">
+                            <span class="fraction-numerator">${Xc}&Omega;</span><br>
+                            <span>${R}&Omega;</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.atan(parseInput(Xc)/parseInput(R)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub> 
+                    = ${formatWithPrefix(Math.atan(parseInput(Xc)/parseInput(R)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(Uc && Ur)
+                {
+                    // phi = arctan(Uc/Ur)
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arctan(<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>C</sub></span><br>
+                            <span>U<sub>R</sub></span>
+                        </div>)
+                    =
+                        arctan(<div class ="fraction">
+                            <span class="fraction-numerator">${Uc}V</span><br>
+                            <span>${Ur}V</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.atan(parseInput(Uc)/parseInput(Ur)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub>
+                    = ${formatWithPrefix(Math.atan(parseInput(Uc)/parseInput(Ur)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(sinphi)
+                {
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arcsin(sin(&phi;))
+                    =
+                        arcsin(${sinphi})
+                    = ${formatWithPrefix(Math.sin(parseInput(sinphi)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub>
+                    = ${formatWithPrefix(Math.asin(parseInput(sinphi)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+
+                if(cosphi)
+                {
+                    result_Serie_AC += `
+                        Winkel &phi;<sub>RAD</sub> = 
+                        arccso(cos(&phi;))
+                    =
+                        arcsin(${cosphi})
+                    = ${formatWithPrefix(Math.cos(parseInput(cosphi)), "")} &rarr;
+
+                    &phi;<sub>DEG</sub>
+                    = ${formatWithPrefix(Math.cos(parseInput(cosphi)) * 180 / Math.PI, "&deg;")}<br>`;
+                }
+            }
+
+            if(!I)      // Strom I
+            {
+                if(Ur && R)
+                {
+                    // I = Ur/R
+                    result_Serie_AC += `
+                        Strom I =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>R</sub></span><br>
+                            <span>R</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Ur}V</span><br>
+                            <span>${R}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / parseInput(R), "A")}<br>`;
+                }
+
+                if(Uc && Xc)
+                {
+                    // I = Uc/Xc
+                    result_Serie_AC += `
+                        Strom I =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>C</sub></span><br>
+                            <span>X<sub>C</sub></span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Uc}V</span><br>
+                            <span>${Xc}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / parseInput(Xc), "A")}<br>`;
+                }
+                
+                if(U && Z)
+                {
+                    // I = U/Z
+                    result_Serie_AC += `
+                        Strom I =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U</span><br>
+                            <span>Z</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${U}V</span><br>
+                            <span>${Z}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(U) / parseInput(Z), "A")}<br>`;
+                }
+            }
+
+            if(!R)      // Widerstand R
+            {
+                if(Ur && I)
+                {
+                    // R = Ur/I
+                    result_Serie_AC += `
+                        Widerstand R =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>R</sub></span><br>
+                            <span>I</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Ur}V</span><br>
+                            <span>${I}A</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / parseInput(I), "&Omega;")}<br>`;
+                }
+
+                if(Z && Xc)
+                {
+                    result_Serie_AC += `
+                        Widerstand R = 
+                        &radic;(Z<sup>2</sup> - X<sub>C</sub><sup>2</sup>) = 
+                        &radic;((${Z}&Omega;)<sup>2</sup> - (${Xc}&Omega;)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(Z), 2) - Math.pow(parseInput(Xc), 2)), 0.5), "&Omega;")}<br>`;
+                }   
+
+                if(Z && cosphi)
+                {
+                    // R = Z * cos(phi)
+                    result_Serie_AC += `
+                        Widerstand R = 
+                        Z &lowast; cos(&phi;) = 
+                        ${Z}&Omega; &lowast; ${cosphi}
+                    = ${formatWithPrefix(parseInput(Z) * parseInput(cosphi), "&Omega;")}<br>`;
+                }
+
+                if(Z && phi && isRADactive_Serie)
+                {
+                    // R = Z * cos(phi)
+                    result_Serie_AC += `
+                        Widerstand R = 
+                        Z &lowast; cos(&phi;) = 
+                        ${Z}&Omega; &lowast; cos(${phi})
+                    = ${formatWithPrefix(parseInput(Z) * Math.cos(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(Z && phi && !isRADactive_Serie)
+                {
+                    // R = Z * cos(phi)
+                    result_Serie_AC += `
+                        Widerstand R = 
+                        Z &lowast; cos(&phi;) = 
+                        ${Z}&Omega; &lowast; cos(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(Z) * Math.cos(parseInput(phi)*Math.PI/180), "&Omega;")}<br>`;
+                }
+
+                if(Xc && phi && isRADactive_Serie)
+                {
+                    // R = Xc/tan(phi)
+                    result_Serie_AC += `
+                        Widerstand R =
+                        <div class ="fraction">
+                            <span>X<sub>c</sub></span><br>
+                            <span class="fraction-denumerator">tan(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Xc}&Omega;</span><br>
+                            <span class="fraction-denumerator">tan(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / Math.tan(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(Xc && phi && !isRADactive_Serie)
+                {
+                    // R = Xc/tan(phi)
+                    result_Serie_AC += `
+                        Widerstand R =
+                        <div class ="fraction">
+                            <span>X<sub>c</sub></span><br>
+                            <span class="fraction-denumerator">tan(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Xc}&Omega;</span><br>
+                            <span class="fraction-denumerator">tan(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / Math.tan(parseInput(phi) * Math.PI / 180), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!Xc)     // Blindwiderstand Xc
+            {
+                if(Uc && I)
+                {
+                    // Xc = Uc/I
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>C</sub></span><br>
+                            <span>I</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Uc}V</span><br>
+                            <span>${I}A</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / parseInput(I), "&Omega;")}<br>`;
+                }
+
+                if(Z && R)
+                {
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        &radic;(Z<sup>2</sup> - R<sup>2</sup>) = 
+                        &radic;((${R}&Omega;)<sup>2</sup> - (${R}&Omega;)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(R), 2) - Math.pow(parseInput(R), 2)), 0.5), "&Omega;")}<br>`;
+                }
+                
+                if(Z && sinphi)
+                {
+                    // Xc = Z * sin(phi)
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        Z &lowast; sin(&phi;) = 
+                        ${Z}&Omega; &lowast; ${sinphi}
+                    = ${formatWithPrefix(parseInput(Z) * parseInput(sinphi), "&Omega;")}<br>`;
+                }
+
+                if(Z && phi && isRADactive_Serie)
+                {
+                    // Xc = Z * sin(phi)
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        Z &lowast; sin(&phi;) = 
+                        ${Z}&Omega; &lowast; sin(${phi})
+                    = ${formatWithPrefix(parseInput(Z) * Math.sin(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(Z && phi && !isRADactive_Serie)
+                {
+                    // Xc = Z * sin(phi)
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        Z &lowast; sin(&phi;) = 
+                        ${Z}&Omega; &lowast; sin(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(Z) * Math.sin(parseInput(phi)*Math.PI/180), "&Omega;")}<br>`;
+                }
+
+                if(R && phi && isRADactive_Serie)
+                {
+                    // Xc = R * tan(phi)
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        R &lowast; tan(&phi;) = 
+                        ${R}&Omega; &lowast; tan(${phi})
+                    = ${formatWithPrefix(parseInput(R) * Math.tan(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(R && phi && !isRADactive_Serie)
+                {
+                    // Xc = R * tan(phi)
+                    result_Serie_AC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        R &lowast; tan(&phi;) = 
+                        ${R}&Omega; &lowast; tan(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(R) * Math.tan(parseInput(phi)*Math.PI/180), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!Z)     // Scheinwiderstand Z
+            {
+                if(U && I)
+                {
+                    // Xc = Uc/I
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U</span><br>
+                            <span>I</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${U}V</span><br>
+                            <span>${I}A</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(U) / parseInput(I), "&Omega;")}<br>`;
+                }
+
+                if(R && Xc)
+                {
+                    result_Serie_AC += `
+                        Scheinwiderstand Z = 
+                        &radic;(R<sup>2</sup> + X<sub>C</sub><sup>2</sup>)) = 
+                        &radic;((${R}&Omega;)<sup>2</sup> + (${Xc}&Omega;)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(R), 2) + Math.pow(parseInput(Xc), 2)), 0.5), "&Omega;")}<br>`;
+                }
+                
+                if(R && cosphi)
+                {
+                    // Z = R / cos(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>R</span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denumerator">${cosphi}</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(R) / parseInput(cosphi), "&Omega;")}<br>`;
+                }
+
+                if(R && phi && isRADactive_Serie)
+                {
+                    // Z = R / cos(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>R</span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denumerator">cos(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(R) / Math.cos(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(R && phi && !isRADactive_Serie)
+                {
+                    // Z = R / cos(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>R</span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denumerator">cos(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(R) / Math.cos(parseInput(phi) * Math.PI / 180), "&Omega;")}<br>`;
+                }
+
+
+                if(Xc && sinphi)
+                {
+                    // Z = Xc / sin(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>X<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Xc}&Omega;</span><br>
+                            <span class="fraction-denumerator">${sinphi}</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / parseInput(sinphi), "&Omega;")}<br>`;
+                }
+
+                if(Xc && phi && isRADactive_Serie)
+                {
+                    // Z = Xc / sin(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>X<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Xc}&Omega;</span><br>
+                            <span class="fraction-denumerator">sin(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / Math.sin(parseInput(phi)), "&Omega;")}<br>`;
+                }
+
+                if(Xc && phi && !isRADactive_Serie)
+                {
+                    // Z = Xc / sin(phi)
+                    result_Serie_AC += `
+                        Scheinwiderstand Z =
+                        <div class ="fraction">
+                            <span>X<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Xc}&Omega;</span><br>
+                            <span class="fraction-denumerator">sin(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / Math.sin(parseInput(phi) * Math.PI / 180), "&Omega;")}<br>`;
+                }
+            }
+
+            // C
+            // P
+            // Qc
+            // S
+
+            if(!Ur)
+            {
+                if(R && I)
+                {
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> = 
+                        R &lowast; I = 
+                        ${R}&Omega; &lowast; ${I}A
+                    = ${formatWithPrefix(parseInput(R) * parseInput(I), "V")}<br>`;
+                }
+
+                if(U && Uc)
+                {
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> = 
+                        &radic;(U<sup>2</sup> + U<sub>C</sub><sup>2</sup>) = 
+                        &radic;((${U}V)<sup>2</sup> - (${Uc}V)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(U), 2) - Math.pow(parseInput(Uc), 2)), 0.5), "V")}<br>`;
+                }
+
+                if(U && cosphi)
+                {
+                    // Ur = U * cos(phi)
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> = 
+                        U &lowast; cos(&phi;) = 
+                        ${U}V &lowast; ${cosphi}
+                    = ${formatWithPrefix(parseInput(U) * parseInput(cosphi), "V")}<br>`;
+                }
+
+                if(U && phi && isRADactive_Serie)
+                {
+                    // Ur = U * cos(phi)
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> = 
+                        U &lowast; cos(&phi;) = 
+                        ${U}V &lowast; cos(${phi})
+                    = ${formatWithPrefix(parseInput(U) * Math.cos(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(U && phi && !isRADactive_Serie)
+                {
+                    // Ur = U * cos(phi)
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> = 
+                        U &lowast; cos(&phi;) = 
+                        ${U}V &lowast; cos(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(U) * Math.cos(parseInput(phi)*Math.PI/180), "V")}<br>`;
+                }
+
+                // Ur = Uc/tan(phi)
+                if(Uc && phi && isRADactive_Serie)
+                {
+                    // Ur = Uc/tan(phi)
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> =
+                        <div class ="fraction">
+                            <span>U<sub>c</sub></span><br>
+                            <span class="fraction-denumerator">tan(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denumerator">tan(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / Math.tan(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(Uc && phi && !isRADactive_Serie)
+                {
+                    // Ur = Uc/tan(phi)
+                    result_Serie_AC += `
+                        Wirkspannung U<sub>R</sub> =
+                        <div class ="fraction">
+                            <span>U<sub>c</sub></span><br>
+                            <span class="fraction-denumerator">tan(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denumerator">tan(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / Math.tan(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+                }
+            }
+
+            if(!Uc)
+            {
+                if(Xc && I)
+                {
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        X<sub>C>/sub> &lowast; I = 
+                        ${Xc}&Omega; &lowast; ${I}A
+                    = ${formatWithPrefix(parseInput(Xc) * parseInput(I), "V")}<br>`;
+                }
+
+                if(U && Ur)  // ToDo
+                {
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        &radic;(U<sup>2</sup> - U<sub>R</sub><sup>2</sup>) = 
+                        &radic;((${U}V)<sup>2</sup> - (${Ur}V)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(U), 2) - Math.pow(parseInput(Ur), 2)), 0.5), "V")}<br>`;
+                }
+                
+                if(U && sinphi)
+                {
+                    // Uc = U * sin(phi)
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        U &lowast; sin(&phi;) = 
+                        ${U}V &lowast; ${sinphi}
+                    = ${formatWithPrefix(parseInput(U) * parseInput(sinphi), "V")}<br>`;
+                }
+
+                if(U && phi && isRADactive_Serie)
+                {
+                    // Uc = U * sin(phi)
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        U &lowast; sin(&phi;) = 
+                        ${U}V &lowast; sin(${phi})
+                    = ${formatWithPrefix(parseInput(U) * Math.sin(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(U && phi && !isRADactive_Serie)
+                {
+                    // Uc = U * sin(phi)
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        U &lowast; sin(&phi;) = 
+                        ${U}V &lowast; sin(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(U) * Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
+                }
+
+                if(Ur && phi && isRADactive_Serie)
+                {
+                    // Uc = Ur * tan(phi)
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        U<sub>R</sub> &lowast; tan(&phi;) = 
+                        ${Ur}&Omega; &lowast; tan(${phi})
+                    = ${formatWithPrefix(parseInput(Ur) * Math.tan(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(Ur && phi && !isRADactive_Serie)
+                {
+                    // Uc = Ur * tan(phi)
+                    result_Serie_AC += `
+                        Blindspannung U<sub>C</sub> = 
+                        U<sub>R</sub> &lowast; tan(&phi;) = 
+                        ${Ur}&Omega; &lowast; tan(${phi}&deg;)
+                    = ${formatWithPrefix(parseInput(Ur) * Math.tan(parseInput(phi)*Math.PI/180), "V")}<br>`;
+                }
+            }
+
+            if(!U)
+            {
+                if(Z && I)
+                {
+                    // U = Z * I
+                    result_Serie_AC += `
+                        Gesamtspannung U = 
+                        Z &lowast; I = 
+                        ${Z}&Omega; &lowast; ${I}A
+                    = ${formatWithPrefix(parseInput(Z) * parseInput(I), "V")}<br>`;
+                }
+
+                if(Ur && Uc)
+                {
+                    result_Serie_AC += `
+                        Gesamtspannung U = 
+                        &radic;(U<sub>R</sub><sup>2</sup> + U<sub>C</sub><sup>2</sup>)) = 
+                        &radic;((${Ur}V)<sup>2</sup> + (${Uc}V)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow((Math.pow(parseInput(Ur), 2) + Math.pow(parseInput(Uc), 2)), 0.5), "V")}<br>`;
+                }
+                
+                if(Ur && cosphi)
+                {
+                    // U = Ur / cos(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>R</sub></span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Ur}V</span><br>
+                            <span class="fraction-denumerator">${cosphi}</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / parseInput(cosphi), "V")}<br>`;
+                }
+
+                if(Ur && phi && isRADactive_Serie)
+                {
+                    // U = Ur / cos(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>R</sub></span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Ur}V</span><br>
+                            <span class="fraction-denumerator">cos(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / Math.cos(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(Ur && phi && !isRADactive_Serie)
+                {
+                    // U = Ur / cos(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>R</sub></span><br>
+                            <span class="fraction-denumerator">cos(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Ur}V</span><br>
+                            <span class="fraction-denumerator">cos(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / Math.cos(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+                }
+
+
+                if(Uc && sinphi)
+                {
+                    // U = Uc / sin(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denumerator">${sinphi}</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / parseInput(sinphi), "V")}<br>`;
+                }
+
+                if(Uc && phi && isRADactive_Serie)
+                {
+                    // U = Uc / sin(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denumerator">sin(${phi})</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / Math.sin(parseInput(phi)), "V")}<br>`;
+                }
+
+                if(Uc && phi && !isRADactive_Serie)
+                {
+                    // U = Uc / sin(phi)
+                    result_Serie_AC += `
+                        Gesamtspannung U =
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denumerator">sin(&phi;)</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denumerator">sin(${phi}&deg;)</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / Math.sin(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+                }
+            }
+
+            if(!f)      // frequenz f
+            {
+                if(Xc && C)
+                {
+                    // f = 1 / 2 pi * Xc * C
+                    result_Serie_AC += `
+                        Frequnez =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denumerator">2&pi; &lowast; X<sub>C</sub> &lowast; C</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denumerator">2&pi; &lowast; ${Xc}&Omega; &lowast; ${C}F</span>
+                        </div>
+                    = ${formatWithPrefix(1 / (2 * Math.PI * parseInput(Xc) * parseInput(C)), "Hz")}<br>`;
+                }
+            }
+
+            if(!cosphi)     // Wirkfaktor cos(phi)
+            {
+                if(R && Z)
+                {
+                    // cos(phi) = R / Z
+                    result_Serie_AC += `
+                        Wirkfaktor cos(&phi;) =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">R</span><br>
+                            <span>Z</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${R}&Omega;</span><br>
+                            <span>${Z}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(R) / parseInput(Z), "")}<br>`;
+                }
+
+                if(Ur && U)
+                {
+                    // cos(phi) = Ur / U
+                    result_Serie_AC += `
+                        Wirkfaktor cos(&phi;) =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>R</sub></span><br>
+                            <span>U</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Ur}V</span><br>
+                            <span>${U}V</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Ur) / parseInput(U), "")}<br>`;
+                }
+            }
+
+            if(!sinphi)     // Blindfaktor sin(phi)
+            {
+                if(Xc && Z)
+                {
+                    // sin(phi) = Xc / Z
+                    result_Serie_AC += `
+                        Blindfaktor sin(&phi;) =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">X<sub>C</sub></span><br>
+                            <span>Z</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Xc}&Omega;</span><br>
+                            <span>${Z}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Xc) / parseInput(Z), "")}<br>`;
+                }
+
+                if(Ur && U)
+                {
+                    // cos(phi) = Uc / U
+                    result_Serie_AC += `
+                        Blindfaktor sin(&phi;) =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">U<sub>C</sub></span><br>
+                            <span>U</span>
+                        </div>
+                    = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Uc}V</span><br>
+                            <span>${U}V</span>
+                        </div>
+                    = ${formatWithPrefix(parseInput(Uc) / parseInput(U), "")}<br>`;
+                }
+            }
+
+
+            document.getElementById('result_Serie_AC').innerHTML = result_Serie_AC;
+        }
+
+        let isRADactive_Parallel = false; // Standard: deg (360)
+        function toggleRADp() 
+        {
+            let button = document.getElementById("Rad-Buttonp");
+
+            if (isRADactive_Parallel) {
+                button.innerHTML = "360&deg;"; // Wechselt zu Grad
+                isRADactive_Parallel = false;
+            } else {
+                button.innerHTML = "2&pi;"; // Wechselt zurück zu Radian
+                isRADactive_Parallel = true;
+            }
+        }
+
 
         // RC-Glied berechnungen
         document.getElementById("modeSwitch").addEventListener("change", function () {
@@ -1552,9 +2662,6 @@
                     }
                 }
             }
-
-
-            
 
             document.getElementById('result_RC').innerHTML = result_RC;
         }
