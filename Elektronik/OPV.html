@@ -384,7 +384,7 @@
                 </div>
 
                 <div class="form-row">
-                    <label>Spannung U<sub>in1</sub></label>
+                    <label>Spannung U<sub>in2</sub></label>
                     <input type="text" id="Uin2-3" style="border-color: var(--Spannung);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Uin2.JPG')">
                     <label>V [Volt]</label>
                 </div>
@@ -912,7 +912,7 @@
 
         function calculate_summier_Verstaeker()
         {
-            let result_nicht_invertierender_Verstaerker = ``;
+            let result_summier_Verstaerker = ``;
 
             const R11 = document.getElementById("R11-3").value;
             const R12 = document.getElementById("R12-3").value;
@@ -948,8 +948,38 @@
                 }
             }*/
 
-            result_summier_Verstaerker = ` 
-                    development in progress <br>`;
+            if(!Uout)
+            {
+                if(R11 && R12 && R2 && Uin1 && Uin2)
+                {
+                    debugger;
+                    // Uout = -R2/R11 * Uin1 - R2/R12 * Uin2
+                    result_summier_Verstaerker += ` 
+                    U<sub>out</sub> =  
+                    - <div class="fraction">
+                            <span class="fraction-numerator">R<sub>2</sub></span><br>
+                            <span>R<sub>11</sub></span>
+                        </div> &lowast; U<sub>in1</sub>
+
+                    - <div class="fraction">
+                            <span class="fraction-numerator">R<sub>2</sub></span><br>
+                            <span>R<sub>12</sub></span>
+                        </div> &lowast; U<sub>in2</sub>    
+                        
+                    = 
+                    - <div class="fraction">
+                            <span class="fraction-numerator">${R2}&Omega;</span><br>
+                            <span>${R11}&Omega;</span>
+                        </div> &lowast; ${Uin1}V
+
+                    - <div class="fraction">
+                            <span class="fraction-numerator">${R2}&Omega;</span><br>
+                            <span>${R12}&Omega;</span>
+                        </div> &lowast; ${Uin2}V   
+                    = ${formatWithPrefix(-(parseInput(R2)/parseInput(R11)) * parseInput(Uin1) - (parseInput(R2)/parseInput(R12)) * parseInput(Uin2), "V")}<br>`;
+
+                }
+            }
 
             document.getElementById('result_summier_Verstaerker').innerHTML = result_summier_Verstaerker;
         }
