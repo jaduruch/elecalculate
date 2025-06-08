@@ -2150,7 +2150,7 @@
                     result_Parallel_AC += `
                         Wirkstrom U<sub>R</sub> = 
                         &radic;(I<sup>2</sup> + I<sub>C</sub><sup>2</sup>) = 
-                        &radic;((${I}A)<sup>2</sup> - (${Ic}AV)<sup>2</sup>)
+                        &radic;((${I}A)<sup>2</sup> - (${Ic}A)<sup>2</sup>)
                     = ${formatWithPrefix(Math.pow((Math.pow(parseInput(I), 2) - Math.pow(parseInput(Ic), 2)), 0.5), "A")}<br>`;
                 }
                 
@@ -2281,12 +2281,12 @@
                     = ${formatWithPrefix(parseInput(Ir) * Math.tan(parseInput(phi)), "A")}<br>`;
                 }
 
-                if(Ur && phi && !isRADactive_Parallel)
+                if(Ir && phi && !isRADactive_Parallel)
                 {
-                    // Uc = Ur * tan(phi)
+                    // Ic = Ir * tan(phi)
                     result_Parallel_AC += `
                         Blindstrom I<sub>C</sub> =  
-                        U<sub>R</sub> &lowast; tan(&phi;) = 
+                        I<sub>R</sub> &lowast; tan(&phi;) = 
                         ${Ir}A &lowast; tan(${phi}&deg;)
                     = ${formatWithPrefix(parseInput(Ir) * Math.tan(parseInput(phi)*Math.PI/180), "A")}<br>`;
                 }
