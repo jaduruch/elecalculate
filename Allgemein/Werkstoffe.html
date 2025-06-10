@@ -234,7 +234,7 @@
                             <!-- Widerstand R -->
                             <div class="form-row">
                                 <label>Kaltwiderstand R</label>
-                                <input type="text" id="R20" style="border-color: var(--Widerstand);">
+                                <input type="text" id="Rk" style="border-color: var(--Widerstand);">
                                 <label>&Omega; [Ohm]</label>
                             </div>
 
@@ -712,26 +712,88 @@
                 let result_Temp = ``;
 
                 const Rw = document.getElementById("Rw").value;
-                const R = document.getElementById("R20").value;
+                const Rk = document.getElementById("Rk").value;
                 const alpha = document.getElementById("alpha").value;
                 const T = document.getElementById("T").value;
                 const Tw = document.getElementById("Tw").value;
                 const Tk = document.getElementById("Tk").value;
 
-                if(!Rw && R && alpha && T)       // Berechnungen fuer Warmwiderstand
+                if(!Rk)       // Berechnungen fuer Kaltwiderstand
                 {
-                    // Rw = R * (1 + alpha * T)
-                    result_Temp += `
-                        Warmwiderstand R<sub>&thetasym;</sub> = 
-                        R &lowast; (1 + &alpha; &lowast; &Delta;T)
-                    =
-                        ${R}&Omega; &lowast; (1 + ${alpha}K<sup>-1</sup> &lowast; ${T}K)
-                    = ${formatWithPrefix(parseInput(R) * (1 + parseInput(alpha) * parseInput(T)), "&Omega;")}<br>`;
+                    if(Rw && alpha && T)
+                    {
+                        // R = Rw / (1 + alpha * T)
+                        result_Temp += `
+                        Kaltwiderstand R = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">R<sub>&thetasym;</sub></span><br>
+                                <span>1 + &alpha; &lowast; &Delta;T</span>
+                            </div>
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${Rw}&Omega;</span><br>
+                                <span>1 + ${alpha}K<sup>-1</sup> &lowast; ${T}K</span>
+                            </div>
+                        = ${formatWithPrefix((parseInput(Rw))/(1 + parseInput(alpha) * parseInput(T)), "&Omega;")}<br>`;
+                    }
                 }
+
+                if(!Rw)       // Berechnungen fuer Warmwiderstand
+                {
+                    if(Rk && alpha && T)
+                    {
+                        // Rw = R * (1 + alpha * T)
+                        result_Temp += `
+                            Warmwiderstand R<sub>&thetasym;</sub> = 
+                            R &lowast; (1 + &alpha; &lowast; &Delta;T)
+                        =
+                            ${Rk}&Omega; &lowast; (1 + ${alpha}K<sup>-1</sup> &lowast; ${T}K)
+                        = ${formatWithPrefix(parseInput(Rk) * (1 + parseInput(alpha) * parseInput(T)), "&Omega;")}<br>`;
+                    }
+                }
+
+                if(!alpha)
+                {
+                    if(Rk && Rw && T)
+                    result_Temp += `
+                        Temperaturbeiwert &alpha; = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">R<sub>&thetasym;</sub> - R</span><br>
+                                <span>R &lowast; &Delta;T</span>
+                            </div>
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${Rw}&Omega; - ${Rk}&Omega;</span><br>
+                                <span>${Rk}&Omega; &lowast; ${T}K</span>
+                            </div>
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(Rk) * parseInput(T))      c, "K<sup>-1</sup>")}<br>`;
+                }
+
+                if(!T)
+                {
+                    if(Rw && Rk && alpha)
+                    {
+                        debugger;
+                        // Tw = (Rw -R20)/(R20 * alpha)
+                        result_Temp += `
+                        Temperatur&auml;nderung &Delta;T> = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">R<sub>&thetasym;</sub> - R<sub>20</sub></span><br>
+                                <span>R<sub>20</sub> &lowast; &alpha;</span>
+                            </div>
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator"> ${Rw}&Omega; - ${R}&Omega;</span><br>
+                                <span>${Rk}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
+                            </div>
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(R) * parseInput(alpha)), "&K")}<br>`;
+                    }
+                }
+                
 
                 if(!Tw)
                 {
-                    if(Rw && R && alpha && Tk)
+                    if(Rw && Rk && alpha && Tk)
                     {
                         debugger;
                         // Tw = (Rw -R20)/(R20 * alpha) -Tk
@@ -744,9 +806,9 @@
                         =
                             <div class ="fraction">
                                 <span class="fraction-numerator"> ${Rw}&Omega; - ${R}&Omega;</span><br>
-                                <span>${R}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
+                                <span>${Rk}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
                             </div> - ${Tk}&deg;C
-                        = ${formatWithPrefix((parseInput(Rw) - parseInput(R))/(parseInput(R) * parseInput(alpha)) - parseInput(Tk), "&deg;C")}<br>`;
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(R) * parseInput(alpha)) - parseInput(Tk), "&deg;C")}<br>`;
                     }
                 }
 
@@ -761,42 +823,6 @@
                 const d = document.getElementById("d_J").value;
                 const A = document.getElementById("A_J").value;
                 const J = document.getElementById("J").value;
-
-                if(!d && I && J)       // Berechnungen fuer Flaeche
-                {
-                    // d = sqrt((4 * I)/(Pi * J))
-                    debugger;
-                    result_Stromd += `
-                        Durchmesser d = 
-                        &radic;(<div class ="fraction"> 
-                            <span> 4 &lowast; I </span><br>
-                            <span class="fraction-denumerator">&pi; &lowast; J</span>
-                        </div>)
-                    =
-                        &radic;(<div class ="fraction"> 
-                            <span>4 &lowast; ${I}A </span><br>
-                            <span class="fraction-denumerator">&pi; &lowast; ${J}A/mm<sup>2</sup></span>
-                        </div>)
-                    = ${formatWithPrefix(Math.pow((4 * parseInput(I)) / (Math.PI * parseInput(J) * 1e6), 0.5), "m")}<br>`;
-                }
-
-                if(!A && I && J)       // Berechnungen fuer Flaeche
-                {
-                    // A = I/J
-                    debugger;
-                    result_Stromd += `
-                        Querschnitt A = 
-                        <div class ="fraction"> 
-                            <span> I </span><br>
-                            <span class="fraction-denumerator"> J </span>
-                        </div>
-                    =
-                        <div class ="fraction"> 
-                            <span>${I}A </span><br>
-                            <span class="fraction-denumerator">${J}A/mm<sup>2</sup></span>
-                        </div>
-                    = ${formatWithPrefixsquare(parseInput(I) * 1e-6/parseInput(J), "m<sup>2</sup>")}<br>`;
-                }
 
                 if(!I)       // Berechnungen fuer Strom
                 {
@@ -816,7 +842,134 @@
                             </div> 
                         = ${formatWithPrefix((Math.pow(parseInput(d), 2) / 4) * Math.PI  * 1e6 * parseInput(J), "A")}<br>`;
                     }
+
+                    if(A && J)
+                    {
+                        // I = A * J
+                        result_Stromd += `
+                            Strom I = 
+                            A &lowast; J
+                        =
+                            ${A}m<sup>2</sup> &lowast; ${J}A/mm<sup>2</sup>
+                        = ${formatWithPrefix(parseInputsquare(A) * 1e6 * parseInput(J), "A")}<br>`;
+                    }
                 }
+
+                if(!d)       // Berechnungen fuer durchmesser
+                {
+                    if(I && J)
+                    {
+                        // d = sqrt((4 * I)/(Pi * J))
+                    debugger;
+                    result_Stromd += `
+                        Durchmesser d = 
+                        &radic;(<div class ="fraction"> 
+                            <span> 4 &lowast; I </span><br>
+                            <span class="fraction-denumerator">&pi; &lowast; J</span>
+                        </div>)
+                    =
+                        &radic;(<div class ="fraction"> 
+                            <span>4 &lowast; ${I}A </span><br>
+                            <span class="fraction-denumerator">&pi; &lowast; ${J}A/mm<sup>2</sup></span>
+                        </div>)
+                    = ${formatWithPrefix(Math.pow((4 * parseInput(I)) / (Math.PI * parseInput(J) * 1e6), 0.5), "m")}<br>`;
+                    }
+                    
+
+                    if(A)
+                    {
+                        result_Stromd += `
+                        Leiterdurchmesser d = 
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; A</span><br>
+                            <span>&pi;</span>
+                        </div>) 
+                    =
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; ${A}m<sup>2</sup> </span><br>
+                            <span>&pi;</span>
+                        </div>)
+                    = ${formatWithPrefix(Math.pow((4 * (parseInputsquare(A)) / Math.PI), 0.5 ), "m")}<br>`;
+                    }
+                }
+
+                if(!A)       // Berechnungen fuer Flaeche
+                {
+                    if(d)
+                    {
+                        result_Stromd += `
+                        Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup></span><br>
+                            <span>4</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> </span><br>
+                            <span>4</span>
+                        </div> 
+                    = ${formatWithPrefixsquare((Math.PI * Math.pow(parseInput(d), 2) / 4), "m<sup>2</sup>")}<br>`;
+                    }
+
+                    if(I && J)
+                    {
+                        // A = I/J
+                        debugger;
+                        result_Stromd += `
+                            Querschnitt A = 
+                            <div class ="fraction"> 
+                                <span> I </span><br>
+                                <span class="fraction-denumerator"> J </span>
+                            </div>
+                        =
+                            <div class ="fraction"> 
+                                <span>${I}A </span><br>
+                                <span class="fraction-denumerator">${J}A/mm<sup>2</sup></span>
+                            </div>
+                        = ${formatWithPrefixsquare(parseInput(I) * 1e-6/parseInput(J), "m<sup>2</sup>")}<br>`;
+                    }
+                }
+
+                if(!J)
+                {
+                    if(I && A)
+                    {
+                        // J = I/A
+                        debugger;
+                        result_Stromd += `
+                            Stromdichte J = 
+                            <div class ="fraction"> 
+                                <span> I </span><br>
+                                <span class="fraction-denumerator"> A </span>
+                            </div>
+                        =
+                            <div class ="fraction"> 
+                                <span>${I}A </span><br>
+                                <span class="fraction-denumerator">${A}m<sup>2</sup></span>
+                            </div>
+                        = ${formatWithPrefix(parseInput(I) / (parseInputsquare(A) * 1e6), "A/mm<sup>2</sup>")}<br>`;
+                    }
+
+                    if(d && I)                
+                    {
+                        // J = 4 * I / (d^2 * pi)
+                        result_Stromd += `
+                            Strom I = 
+                            <div class ="fraction"> 
+                                <span class="fraction-numerator">4 &lowast; A</span><br>
+                                <span>d<sup>2</sup> &lowast; &pi;</span>
+                            </div> 
+                        =
+                            <div class ="fraction"> 
+                                <span class="fraction-numerator">4 &lowast; ${I}A</span><br>
+                                <span>(${d}m)<sup>2</sup> &lowast; &pi;</span>
+                            </div> 
+                        = ${formatWithPrefix(4 * parseInput(I) / (Math.pow(parseInput(d), 2) * 1e6 * Math.PI), "A/mm<sup>2</sup>")}<br>`;
+                    }
+                }
+                    
+
+                
 
                 document.getElementById('result_Stromd').innerHTML = result_Stromd;
             }

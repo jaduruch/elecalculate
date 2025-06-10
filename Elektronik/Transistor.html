@@ -375,12 +375,12 @@
                     result += `
                         Kollektorstrom I<sub>C</sub> = 
                         <div class ="fraction">
-                            <span class="fraction-numerator"> I<sub>B</sub> &times; B </span><br>
+                            <span class="fraction-numerator"> I<sub>B</sub> lowast; B </span><br>
                             <span>&uuml;</span>
                         </div> 
                     =
                         <div class ="fraction">
-                            <span class="fraction-numerator"> ${IB}A &times; ${B}</span><br>
+                            <span class="fraction-numerator"> ${IB}A lowast; ${B}</span><br>
                             <span>${ue}</span>
                         </div> 
                     = ${formatWithPrefix((parseInput(IB) * parseInput(B))/ parseInput(ue), "A")}<br>`;
@@ -408,13 +408,13 @@
                     result += `
                         Kollektorstrom I<sub>C</sub> = 
                         <div class ="fraction">
-                            <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) &times; B</span><br>
-                            <span>&uuml; &times; R<sub>B</sub></span>
+                            <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) lowast; B</span><br>
+                            <span>&uuml; lowast; R<sub>B</sub></span>
                         </div> 
                     =
                         <div class ="fraction">
-                            <span class="fraction-numerator"> (${UB}V - ${UBE}V) &times; ${B}</span><br>
-                            <span>${ue} &times; ${RB}&Omega;</span>
+                            <span class="fraction-numerator"> (${UB}V - ${UBE}V) lowast; ${B}</span><br>
+                            <span>${ue} lowast; ${RB}&Omega;</span>
                         </div> 
                     = ${formatWithPrefix(((parseInput(UB) - parseInput(UBE)) * parseInput(B))/ (parseInput(ue * parseInput(RB))), "A")}<br>`;
                 }
@@ -427,12 +427,12 @@
                     result += `
                         Basisstrom I<sub>B</sub> = 
                         <div class ="fraction">
-                            <span class="fraction-numerator"> I<sub>C</sub> &times; &uuml; </span><br>
+                            <span class="fraction-numerator"> I<sub>C</sub> lowast; &uuml; </span><br>
                             <span>B</span>
                         </div> 
                     =
                         <div class ="fraction">
-                            <span class="fraction-numerator"> ${IC}A &times; ${ue}</span><br>
+                            <span class="fraction-numerator"> ${IC}A lowast; ${ue}</span><br>
                             <span>${B}</span>
                         </div> 
                     = ${formatWithPrefix((parseInput(IC) * parseInput(ue))/ parseInput(B), "A")}<br>`;
@@ -471,29 +471,30 @@
                 = ${formatWithPrefix((parseInput(USpeisung) - parseInput(UCE))/ parseInput(IC), "&Omega;")}<br>`;
             }
 
-            if(!RB && UB && UBE && B && ue && IC) // RB = (UB - UBE) * B * ue / IC
+            if(!RB && UB && UBE && B && ue && IC) 
             {
+                // RB = (UB - UBE) * B / (IC * ue)
                 result += `
                     Basiswiderstand R<sub>B</sub> = 
                     <div class ="fraction">
-                        <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) &times; B &times; &uuml;</span><br>
-                        <span>I<sub>C</sub></span>
+                        <span class="fraction-numerator"> (U<sub>B</sub> - U<sub>BE</sub>) lowast; B </span><br>
+                        <span>I<sub>C</sub>lowast; &uuml;</span>
                     </div> 
                 =
                     <div class ="fraction">
-                        <span class="fraction-numerator"> (${UB}V - ${UBE}V) &times; ${B} &times ${ue}</span><br>
-                        <span>${IC}A</span>
+                        <span class="fraction-numerator"> (${UB}V - ${UBE}V) lowast; ${B} </span><br>
+                        <span>${IC}Alowast; ${ue}</span>
                     </div> 
-                = ${formatWithPrefix(((parseInput(UB) - parseInput(UBE))*parseInput(B)*parseInput(ue))/ parseInput(IC), "&Omega;")}<br>`;
+                = ${formatWithPrefix(((parseInput(UB) - parseInput(UBE))*parseInput(B))/ (parseInput(IC)*parseInput(ue)), "&Omega;")}<br>`;
             }
 
             if(!USpeisung && IC && RL && UCE)       // USpeisung = IC * RL + UCE
             {
                 result += `
                             Speisespannung U<sub>b</sub> =
-                            I<sub>C</sub> &times; R<sub>L</sub> + U<sub>CE</sub>
+                            I<sub>C</sub> lowast; R<sub>L</sub> + U<sub>CE</sub>
                         =
-                            ${IC}A &times; ${RL}&Omega; + ${UCE}V
+                            ${IC}A lowast; ${RL}&Omega; + ${UCE}V
                         = ${formatWithPrefix(parseInput(IC) * parseInput(RC) + parseInput(UCE), "V")}<br>`;
             }
 
@@ -504,9 +505,9 @@
                 {
                     result += `
                             Basisspannung U<sub>B</sub> =
-                            I<sub>B</sub> &times; R<sub>B</sub> + U<sub>BE</sub>
+                            I<sub>B</sub> lowast; R<sub>B</sub> + U<sub>BE</sub>
                         =
-                            ${IB}A &times; ${RB}&Omega; + ${UBE}V
+                            ${IB}A lowast; ${RB}&Omega; + ${UBE}V
                         = ${formatWithPrefix(parseInput(IB) * parseInput(RB) + parseInput(UBE), "V")}<br>`;
                 }
             }
