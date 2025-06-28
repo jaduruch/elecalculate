@@ -773,20 +773,19 @@
                 {
                     if(Rw && Rk && alpha)
                     {
-                        debugger;
-                        // Tw = (Rw -R20)/(R20 * alpha)
+                        // Tw = (Rw -Rk)/(Rk * alpha)
                         result_Temp += `
-                        Temperatur&auml;nderung &Delta;T> = 
+                        Temperatur&auml;nderung &Delta;T = 
                             <div class ="fraction">
                                 <span class="fraction-numerator">R<sub>&thetasym;</sub> - R<sub>20</sub></span><br>
                                 <span>R<sub>20</sub> &lowast; &alpha;</span>
                             </div>
                         =
                             <div class ="fraction">
-                                <span class="fraction-numerator"> ${Rw}&Omega; - ${R}&Omega;</span><br>
+                                <span class="fraction-numerator"> ${Rw}&Omega; - ${Rk}&Omega;</span><br>
                                 <span>${Rk}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
                             </div>
-                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(R) * parseInput(alpha)), "&K")}<br>`;
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(Rk) * parseInput(alpha)), "K")}<br>`;
                     }
                 }
                 
@@ -795,8 +794,7 @@
                 {
                     if(Rw && Rk && alpha && Tk)
                     {
-                        debugger;
-                        // Tw = (Rw -R20)/(R20 * alpha) -Tk
+                        // Tw = (Rw -Rk)/(Rk * alpha) -Tk
                         result_Temp += `
                         Warmwert T<sub>w</sub> = 
                             <div class ="fraction">
@@ -805,10 +803,10 @@
                             </div> - T<sub>k</sub>
                         =
                             <div class ="fraction">
-                                <span class="fraction-numerator"> ${Rw}&Omega; - ${R}&Omega;</span><br>
+                                <span class="fraction-numerator"> ${Rw}&Omega; - ${Rk}&Omega;</span><br>
                                 <span>${Rk}&Omega; &lowast; ${alpha}K<sup>-1</sup></span>
                             </div> - ${Tk}&deg;C
-                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(R) * parseInput(alpha)) - parseInput(Tk), "&deg;C")}<br>`;
+                        = ${formatWithPrefix((parseInput(Rw) - parseInput(Rk))/(parseInput(Rk) * parseInput(alpha)) - parseInput(Tk), "&deg;C")}<br>`;
                     }
                 }
 
