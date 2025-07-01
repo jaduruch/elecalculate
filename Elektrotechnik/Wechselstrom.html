@@ -487,160 +487,268 @@
         }
 
         /**
-         * Reads all Sinus‐calculator inputs, computes any missing values,
-         * writes the algebraic results into the page, then draws one
-         * period of the sine wave on the canvas.
+         * Reads all Sinus calculator inputs, computes missing values,
+         * writes the algebraic results into the page (with pretty HTML math formatting),
+         * and draws the sine wave with marker and legend.
          */
         function calculate_Sinus() {
-        // 1) Read raw string inputs
-        const utRaw   = document.getElementById("ut-Sinus").value;
-        const upRaw   = document.getElementById("up-Sinus").value;
-        const uppRaw  = document.getElementById("upp-Sinus").value;
-        const UeffRaw = document.getElementById("Ueff-Sinus").value;
-        const fRaw    = document.getElementById("f-Sinus").value;
-        const tRaw    = document.getElementById("t-Sinus").value;
-        const TRaw    = document.getElementById("T-Sinus").value;
-        const phiRaw  = document.getElementById("Winkel-Sinus").value;
+        let result_Sinus = "";
 
-        // 2) Convert to numeric values (parse prefixes)
-        const ut   = parseInput(utRaw);
-        const up   = parseInput(upRaw);
-        const upp  = parseInput(uppRaw);
-        const Ueff = parseInput(UeffRaw);
-        const f    = parseInput(fRaw);
-        const t    = parseInput(tRaw);
-        const T    = parseInput(TRaw);
-        // Always convert phase to radians
-        const phi  = isRADactive
-                    ? parseInput(phiRaw)
-                    : parseInput(phiRaw) * Math.PI / 180;
+        // 1. Read all input values as strings
+        const ut   = document.getElementById("ut-Sinus").value;
+        const up   = document.getElementById("up-Sinus").value;
+        const upp  = document.getElementById("upp-Sinus").value;
+        const Ueff = document.getElementById("Ueff-Sinus").value;
+        const f    = document.getElementById("f-Sinus").value;
+        const t    = document.getElementById("t-Sinus").value;
+        const T    = document.getElementById("T-Sinus").value;
+        const phi  = document.getElementById("Winkel-Sinus").value;
 
-        // 3) Build HTML for all possible computations
-        let html = "";
-
-        // Instantaneous u(t)
-        if (!ut && up && f && t) {
-            const val = up * Math.sin(2 * Math.PI * f * t);
-            html +=
-            `<strong>u(t) = û·sin(2π·f·t)</strong> = ` +
-            `${upRaw}·sin(2π·${fRaw}·${tRaw}) = ` +
-            `${formatWithPrefix(val, "V")}<br>`;
-        }
-        if (!ut && up && phiRaw) {
-            const val = up * Math.sin(phi);
-            html +=
-            `<strong>u(t) = û·sin(φ)</strong> = ` +
-            `${upRaw}·sin(${phiRaw}${isRADactive ? " rad" : "°"}) = ` +
-            `${formatWithPrefix(val, "V")}<br>`;
+        // 2. Compute and format results with pretty HTML
+        // Momentanwert u(t)
+        if (!ut) {
+            if (up && f && t) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
+                = ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
+                = ${formatWithPrefix(parseInput(up) * Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+            }
+            if (up && phi && isRADactive) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(&phi;)
+                = ${up}V &lowast; sin(${phi})
+                = ${formatWithPrefix(parseInput(up) * Math.sin(parseInput(phi)), "V")}<br>`;
+            }
+            if (up && phi && !isRADactive) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(&phi;)
+                = ${up}V &lowast; sin(${phi}&deg;)
+                = ${formatWithPrefix(parseInput(up) * Math.sin(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+            }
         }
 
-        // Peak voltage û
-        if (!up && utRaw && f && t) {
-            const val = ut / Math.sin(2 * Math.PI * f * t);
-            html +=
-            `<strong>û = u(t)/sin(2πft)</strong> = ` +
-            `${utRaw}/${`sin(2π·${fRaw}·${tRaw})`} = ` +
-            `${formatWithPrefix(val, "V")}<br>`;
-        }
-        if (!up && upp) {
-            const val = upp / 2;
-            html +=
-            `<strong>û = u_pp / 2</strong> = ` +
-            `${uppRaw}/2 = ${formatWithPrefix(val, "V")}<br>`;
-        }
-        if (!up && Ueff) {
-            const val = Ueff * Math.SQRT2;
-            html +=
-            `<strong>û = U_eff·√2</strong> = ` +
-            `${UeffRaw}·√2 = ${formatWithPrefix(val, "V")}<br>`;
+        // Peakspannung û
+        if (!up) {
+            if (ut && f && t) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(2&pi; &lowast; f &lowast; t)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
+            }
+            if (ut && phi && isRADactive) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(&phi;)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(${phi})</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(parseInput(phi)), "V")}<br>`;
+            }
+            if (ut && phi && !isRADactive) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(&phi;)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(${phi}&deg;)</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+            }
+            if (upp) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u<sub>pp</sub></span><br>
+                <span class="fraction-denominator">2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${upp}V</span><br>
+                <span class="fraction-denominator">2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(upp) / 2, "V")}<br>`;
+            }
         }
 
-        // Peak‐peak u_pp
-        if (!upp && up) {
-            const val = up * 2;
-            html +=
-            `<strong>u_pp = 2·û</strong> = 2·${upRaw} = ` +
-            `${formatWithPrefix(val, "V")}<br>`;
-        }
-        if (!upp && Ueff) {
-            const val = Ueff * 2 * Math.SQRT2;
-            html +=
-            `<strong>u_pp = 2·U_eff·√2</strong> = ` +
-            `2·${UeffRaw}·√2 = ${formatWithPrefix(val, "V")}<br>`;
-        }
-
-        // Effective U_eff
-        if (!Ueff && up) {
-            const val = up / Math.SQRT2;
-            html +=
-            `<strong>U_eff = û/√2</strong> = ${upRaw}/√2 = ` +
-            `${formatWithPrefix(val, "V")}<br>`;
-        }
-        if (!Ueff && upp) {
-            const val = upp / (2 * Math.SQRT2);
-            html +=
-            `<strong>U_eff = u_pp/(2√2)</strong> = ` +
-            `${uppRaw}/(2√2) = ${formatWithPrefix(val, "V")}<br>`;
+        // Peak-Peakspannung u_pp
+        if (!upp) {
+            if (up) {
+            result_Sinus += `
+                <b>Peak-Peakspannung</b> u<sub>pp</sub> = &ucirc; &lowast; 2
+                = ${up}V &lowast; 2
+                = ${formatWithPrefix(parseInput(up) * 2, "V")}<br>`;
+            }
+            if (Ueff) {
+            result_Sinus += `
+                <b>Peak-Peakspannung</b> u<sub>pp</sub> = U<sub>eff</sub> &lowast; 2 &lowast; &radic;2
+                = ${Ueff}V &lowast; 2 &lowast; &radic;2
+                = ${formatWithPrefix(parseInput(Ueff) * 2 * Math.sqrt(2), "V")}<br>`;
+            }
         }
 
-        // Frequency f
-        if (!f && T) {
-            const val = 1 / T;
-            html +=
-            `<strong>f = 1/T</strong> = 1/${TRaw}s = ` +
-            `${formatWithPrefix(val, "Hz")}<br>`;
+        // Effektivwert U_eff
+        if (!Ueff) {
+            if (up) {
+            result_Sinus += `
+                <b>Effektivspannung</b> U<sub>eff</sub> =
+                <div class="fraction">
+                <span>&ucirc;</span><br>
+                <span class="fraction-denominator">&radic;2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${up}V</span><br>
+                <span class="fraction-denominator">&radic;2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(up) / Math.sqrt(2), "V")}<br>`;
+            }
+            if (upp) {
+            result_Sinus += `
+                <b>Effektivspannung</b> U<sub>eff</sub> =
+                <div class="fraction">
+                <span>u<sub>pp</sub></span><br>
+                <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${upp}V</span><br>
+                <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(upp) / (2 * Math.sqrt(2)), "V")}<br>`;
+            }
         }
 
-        // Period T
+        // Frequenz f
+        if (!f) {
+            if (T) {
+            result_Sinus += `
+                <b>Frequenz</b> f =
+                <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">T</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">${T}s</span>
+                </div>
+                = ${formatWithPrefix(1 / parseInput(T), "Hz")}<br>`;
+            }
+            if (up && t && ut) {
+            result_Sinus += `
+                <b>Frequenz</b> f =
+                <div class="fraction">
+                <span>arcsin(
+                    <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                    </div>
+                )</span><br>
+                <span class="fraction-denominator">2&pi; &lowast; t</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>arcsin(
+                    <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                    </div>
+                )</span><br>
+                <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
+                </div>
+                = ${formatWithPrefix(Math.asin(parseInput(ut) / parseInput(up)) / (2 * Math.PI * parseInput(t)), "Hz")}<br>`;
+            }
+        }
+
+        // Periodendauer T
         if (!T && f) {
-            const val = 1 / f;
-            html +=
-            `<strong>T = 1/f</strong> = 1/${fRaw}Hz = ` +
-            `${formatWithPrefix(val, "s")}<br>`;
+            result_Sinus += `
+            <b>Periodendauer</b> T =
+            <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">f</span>
+            </div>
+            =
+            <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">${f}Hz</span>
+            </div>
+            = ${formatWithPrefix(1 / parseInput(f), "s")}<br>`;
         }
 
         // Phase φ
-        if (!phiRaw && f && t) {
-            const valRad = 2 * Math.PI * f * t;
-            html +=
-            `<strong>φ (rad) = 2πft</strong> = ` +
-            `2π·${fRaw}·${tRaw} = ${valRad.toFixed(3)} rad<br>` +
-            `<strong>φ (°) = 360ft</strong> = ` +
-            `360·${fRaw}·${tRaw} = ${(360 * f * t).toFixed(1)}°<br>`;
-        }
-        if (!phiRaw && ut && up) {
-            const ratio = ut / up;
-            const valRad = Math.asin(ratio);
-            html +=
-            `<strong>φ = arcsin(u(t)/û)</strong> = ` +
-            `arcsin(${utRaw}/${upRaw}) = ` +
-            `${valRad.toFixed(3)} rad (${(valRad*180/Math.PI).toFixed(1)}°)<br>`;
+        if (!phi) {
+            if (f && t) {
+            result_Sinus += `
+                <b>Winkel</b> &phi;<sub>RAD</sub> = 2&pi; &lowast; f &lowast; t
+                = 2&pi; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>
+                <b>Winkel</b> &phi;<sub>DEG</sub> = 360&deg; &lowast; f &lowast; t
+                = 360&deg; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(360 * parseInput(f) * parseInput(t), "&deg;")}<br>`;
+            }
+            if (ut && up) {
+            result_Sinus += `
+                <b>Winkel</b> &phi;<sub>RAD</sub> = arcsin(
+                <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                </div>
+                )
+                = arcsin(
+                <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                </div>
+                )
+                = ${formatWithPrefix(Math.asin(parseInput(ut) / parseInput(up)), "")}<br>
+                <b>Winkel</b> &phi;<sub>DEG</sub> = arcsin(
+                <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                </div>
+                )
+                = arcsin(
+                <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                </div>
+                )
+                = ${formatWithPrefix(180 * (Math.asin(parseInput(ut) / parseInput(up)) / Math.PI), "&deg;")}<br>`;
+            }
         }
 
-        // Time t
-        if (!t && up && ut && f) {
-            const val = Math.asin(ut / up) / (2 * Math.PI * f);
-            html +=
-            `<strong>t = arcsin(u/û)/(2πf)</strong> = ` +
-            `${formatWithPrefix(val, "s")}<br>`;
-        }
-        if (!t && phiRaw && f) {
-            const val = phi / (2 * Math.PI * f);
-            html +=
-            `<strong>t = φ/(2πf)</strong> = ` +
-            `${formatWithPrefix(val, "s")}<br>`;
-        }
+        // 3. Write all results to the page
+        document.getElementById("result_Sinus").innerHTML = result_Sinus;
 
-        // 4) Write all results:
-        document.getElementById("result_Sinus").innerHTML = html;
+        // 4. Draw the sine wave (with marker and legend)
+        // Parse numeric values for drawing
+        const upVal  = parseInput(up);
+        const fVal   = parseInput(f) || 0;
+        const phiVal = isRADactive
+            ? parseInput(phi)
+            : parseInput(phi) * Math.PI / 180;
+        const tVal   = parseInput(t) || 0;
 
-        // 5) Finally draw the sine if we have peak and frequency
-        const tVal = parseInput(document.getElementById("t-Sinus").value) || 0;
-
-        if (up > 0 && f > 0) {
-        // draw exactly 2 periods, using tVal only for the dot:
-        drawSinus(up, f, phi, tVal, 2);
-        }
+        // Draw only if up and f are valid
+        drawSinus(upVal, fVal, phiVal, tVal, 2);
         }
 
         /**
