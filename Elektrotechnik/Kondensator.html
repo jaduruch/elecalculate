@@ -523,21 +523,34 @@
                         <h3>Berechnete Ergebnisse</h3>
                         <p id="result_RC"></p>
                         </div>
-
                         <!--
                             Canvas für die E-Kurve (RC-Glied):
                             - Oben: Spannungskurve U_C(t)
                             - Unten: Stromkurve I(t)
-                            - Werden von generate_e_curve_from_RCinputs() automatisch gezeichnet
+                            - Automatisch gezeichnet von generate_e_curve_from_RCinputs()
+                            - Immer zentriert im Hauptinhalt
                         -->
+                        <div style="
+                            width: 100%;
+                            max-width: 1400px;
+                            margin: 40px auto 0 auto;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0 2vw 60px 2vw;
+                            box-sizing: border-box;
+                        ">
+                            <h3 style="color:#fff; margin-bottom: 8px; text-align: center;">Spannungskurve</h3>
+                            <canvas id="voltageCanvas"
+                                width="1300" height="400"
+                                style="background:#222; border:1px solid #666; display:block; margin:10px auto; border-radius: 16px; max-width: 100%;"></canvas>
 
-                        <h3 style="color:#fff;">Spannungskurve</h3>
-                        <canvas id="voltageCanvas" width="700" height="300"
-                                style="background:#222; border:1px solid #666; display:block; margin:10px auto;"></canvas>
-
-                        <h3 style="color:#fff;">Stromkurve</h3>
-                        <canvas id="currentCanvas" width="700" height="300"
-                                style="background:#222; border:1px solid #666; display:block; margin:10px auto;"></canvas>
+                            <h3 style="color:#fff; margin: 40px 0 8px 0; text-align: center;">Stromkurve</h3>
+                            <canvas id="currentCanvas"
+                                width="1300" height="400"
+                                style="background:#222; border:1px solid #666; display:block; margin:10px auto; border-radius: 16px; max-width: 100%;"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3643,144 +3656,329 @@
 
         /**
          * Generates and draws the E-Kurve (exponential charging/discharging curve)
-         * for voltage and current of an RC circuit, using the main RC-Glied input fields.
-         * The axes and scaling are automatically adjusted to the entered/calculated values.
-         * 
-         * Required HTML input fields:
-         *   - R_RC: Widerstand (Ohm)
-         *   - C_RC: Kapazität (Farad)
-         *   - U_RC: Speisespannung (Volt)
-         *   - modeSwitch: Checkbox (checked = Entladen, unchecked = Laden)
-         * 
-         * Requires two <canvas> elements with IDs:
-         *   - voltageCanvas
-         *   - currentCanvas
+         * for voltage and current of an RC circuit, using all available RC-Glied input fields.
+         * - Uses direct user input if available (e.g. τ, I, t, u(t), i(t))
+         * - Falls back to calculated values if not provided
+         * - Always draws a meaningful curve and warns if input is insufficient
          */
         function generate_e_curve_from_RCinputs() {
-            // 1. Read and parse user input (with fallback defaults)
-            const R = parseInput(document.getElementById("R_RC").value) || 1000;      // Ohm
-            const C = parseInput(document.getElementById("C_RC").value) || 0.000001;  // Farad
-            const V = parseInput(document.getElementById("U_RC").value) || 1;         // Volt
-            const isDischarging = document.getElementById("modeSwitch").checked;      // true = Entladen
+            // 1. Read and parse all relevant RC-Glied inputs
+            const R = parseInput(document.getElementById("R_RC").value) || 1000;
+            const C = parseInput(document.getElementById("C_RC").value) || 0.000001;
+            const U = parseInput(document.getElementById("U_RC").value) || 1;
+            const tMarker = parseInput(document.getElementById("t_RC").value);
+            const isDischarging = document.getElementById("modeSwitch").checked;
 
-            // 2. Calculate time constant and simulation range
-            const tau = R * C;                // Zeitkonstante τ = R·C
-            const maxTime = 5 * tau;          // Simulate up to 5·τ
-            const stepCount = 100;            // Number of points
+            // 2. Calculate derived values
+            const tau = R * C;
+            const maxTime = 5 * tau;
+            const stepCount = 100;
+            const I = U / R;
 
-            /**
-             * Draws a curve (voltage or current) on a canvas with axes, grid, and labels.
-             *
-             * @param {string} canvasId      The id of the canvas element
-             * @param {function} valueFunc   Function of t returning the value to plot
-             * @param {number} maxY          Maximum Y value for scaling
-             * @param {number} minY          Minimum Y value for scaling
-             * @param {string} yLabel        Label for the Y axis
-             * @param {number} maxTime       Maximum time (X axis)
-             * @param {number} stepCount     Number of points to plot
-             * @param {boolean} isDischarging True if discharging, affects current axis
-             * @param {number} V             Input voltage (for scaling)
-             * @param {number} R             Resistance (for scaling)
-             */
-            function drawCurve(canvasId, valueFunc, maxY, minY, yLabel, maxTime, stepCount, isDischarging, V, R) {
-                const canvas = document.getElementById(canvasId);
-                if (!canvas) return;
-                const ctx = canvas.getContext("2d");
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                const margin = 50;
-                const width = canvas.width - 2 * margin;
-                const height = canvas.height - 2 * margin;
-
-                // Draw axes
-                ctx.beginPath();
-                ctx.moveTo(margin, margin);
-                ctx.lineTo(margin, canvas.height - margin);
-                ctx.lineTo(canvas.width - margin, canvas.height - margin);
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                // Axis labels
-                ctx.font = "14px Arial";
-                ctx.fillStyle = "white";
-                ctx.fillText(yLabel, 10, margin / 2);
-                ctx.fillText("Zeit (s)", canvas.width - margin, canvas.height + 10 - margin / 2);
-
-                // Axis ticks and labels
-                for (let i = 0; i <= 5; i++) {
-                    // X axis (time)
-                    const x = margin + (i / 5) * width;
-                    const timeLabel = (i * maxTime / 5).toFixed(2) + " s";
-                    ctx.fillText(timeLabel, x - 15, canvas.height - margin + 20);
-
-                    // Y axis (value)
-                    const value = minY + (i / 5) * (maxY - minY);
-                    const y = canvas.height - margin - ((value - minY) / (maxY - minY)) * height;
-                    ctx.fillText(value.toFixed(2), margin - 40, y + 5);
-                }
-
-                // Draw the curve
-                ctx.beginPath();
-                for (let i = 0; i <= stepCount; i++) {
-                    const t = (i / stepCount) * maxTime;
-                    const value = valueFunc(t);
-
-                    const x = margin + (t / maxTime) * width;
-                    const y = canvas.height - margin - ((value - minY) / (maxY - minY)) * height;
-
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-
-                // Color: blue for voltage, red for current
-                ctx.strokeStyle = canvasId === "voltageCanvas" ? "#0070C0" : "#C00000";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-
-            // 3. Draw voltage curve U_C(t)
-            drawCurve(
+            // 4. Draw voltage curve with all UI/UX features
+            drawCurveDynamic(
                 "voltageCanvas",
                 (t) => isDischarging
-                    ? V * Math.exp(-t / tau)                  // Entladen: U(t) = U0·e^(-t/RC)
-                    : V * (1 - Math.exp(-t / tau)),           // Laden:    U(t) = U0·(1-e^(-t/RC))
-                V,                                            // MaxY for voltage
-                0,                                            // MinY for voltage
+                    ? U * Math.exp(-t / tau)
+                    : U * (1 - Math.exp(-t / tau)),
                 "Spannung (V)",
                 maxTime,
                 stepCount,
-                isDischarging,
-                V,
-                R
+                {
+                    color: "#0070C0",
+                    tMarker: isFinite(tMarker) ? tMarker : undefined,
+                    markerLabel: "u(t) = ",
+                }
             );
 
-            // 4. Draw current curve I(t)
-            drawCurve(
+            // 5. Draw current curve with all UI/UX features
+            drawCurveDynamic(
                 "currentCanvas",
                 (t) => isDischarging
-                    ? -(V / R) * Math.exp(-t / tau)           // Entladen: I(t) = -U0/R·e^(-t/RC)
-                    : (V / R) * Math.exp(-t / tau),           // Laden:    I(t) = U0/R·e^(-t/RC)
-                isDischarging ? 0 : V / R,                    // MaxY for current
-                isDischarging ? -V / R : 0,                   // MinY for current
+                    ? -I * Math.exp(-t / tau)
+                    : I * Math.exp(-t / tau),
                 "Strom (A)",
                 maxTime,
                 stepCount,
-                isDischarging,
-                V,
-                R
+                {
+                    color: "#C00000",
+                    tMarker: isFinite(tMarker) ? tMarker : undefined,
+                    markerLabel: "i(t) = ",
+                }
             );
         }
 
-    /*Dropdown menu*/
+        /**
+         * Draws a warning message in the center of the given canvas.
+         */
+        function showCanvasWarning(canvasId, message) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#e66";
+            ctx.font = "bold 20px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+        }
 
-            function toggleDropdown(element) {
-                const dropdown = element.parentElement;
-                dropdown.classList.toggle("open");
+        /**
+         * Draws a marker (circle) at (t, value) on the given curve canvas.
+         */
+        function drawMarkerOnCurve(canvasId, t, value, maxTime, minY, maxY, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            const margin = 80;
+            const width = canvas.width - 2 * margin;
+            const height = canvas.height - 2 * margin;
+            const x = margin + (t / maxTime) * width;
+            const y = canvas.height - margin - ((value - minY) / (maxY - minY)) * height;
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        /**
+         * Determines the best SI prefix for a given value range.
+         * Returns { factor, prefix }.
+         */
+        function getBestSIPrefix(maxAbsValue) {
+            const prefixes = [
+                { f: 1e9,  p: "G" },
+                { f: 1e6,  p: "M" },
+                { f: 1e3,  p: "k" },
+                { f: 1,    p: ""  },
+                { f: 1e-3, p: "m" },
+                { f: 1e-6, p: "μ" },
+                { f: 1e-9, p: "n" }
+            ];
+            for (const {f, p} of prefixes) {
+                if (maxAbsValue >= f) return { factor: f, prefix: p };
+            }
+            // If value is extremely small
+            return { factor: 1, prefix: "" };
+        }
+
+        /**
+         * Formats a value using a given SI factor and prefix.
+         */
+        function formatWithSIPrefix(value, factor, prefix, unit) {
+            return (value / factor).toFixed(2) + " " + prefix + unit;
+        }
+
+        /**
+         * Draws a voltage or current E-curve for an RC circuit on a canvas.
+         * - Dynamically scales axes to the actual data range.
+         * - Shows a warning in the canvas if the input is missing or not physically meaningful.
+         * - Axis labels use a single SI prefix per axis.
+         * - Draws a marker at tMarker if provided (pink, no glow).
+         * - Draws a watermark logo in the top right.
+         * - All text is white, y-axis label stays on top.
+         * - X and Y axis numbers are rounded to two decimals.
+         *
+         * @param {string} canvasId
+         * @param {function} valueFunc
+         * @param {string} yLabel
+         * @param {number} maxTime
+         * @param {number} stepCount
+         * @param {object} options { color, minY, maxY, tMarker, markerLabel }
+         */
+        function drawCurveDynamic(canvasId, valueFunc, yLabel, maxTime, stepCount, options = {}) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Margins for all sides
+            const marginLeft = 90;
+            const marginRight = 60;
+            const marginTop = 40;
+            const marginBottom = 70;
+            const width = canvas.width - marginLeft - marginRight;
+            const height = canvas.height - marginTop - marginBottom;
+
+            // 1. Input validation
+            if (!maxTime || maxTime <= 0 || typeof valueFunc !== "function") {
+                ctx.fillStyle = "#e66";
+                ctx.font = "bold 24px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("Ungültige Eingaben – keine Kurve darstellbar!", canvas.width / 2, canvas.height / 2);
+                ctx.font = "16px sans-serif";
+                ctx.fillStyle = "#fff";
+                ctx.fillText("Bitte überprüfe R, C, U und Modus.", canvas.width / 2, canvas.height / 2 + 30);
+                return;
             }
 
+            // 2. Compute data points and dynamic Y range
+            let minY = Number.POSITIVE_INFINITY;
+            let maxY = Number.NEGATIVE_INFINITY;
+            const points = [];
+            for (let i = 0; i <= stepCount; i++) {
+                const t = (i / stepCount) * maxTime;
+                const value = valueFunc(t);
+                points.push({ t, value });
+                if (isFinite(value)) {
+                    if (value < minY) minY = value;
+                    if (value > maxY) maxY = value;
+                }
+            }
+            // Always include zero on Y axis
+            minY = Math.min(minY, 0);
+            maxY = Math.max(maxY, 0);
+            if (Math.abs(maxY - minY) < 1e-12) {
+                maxY += 1;
+                minY -= 1;
+            }
+            if (typeof options.minY === "number") minY = options.minY;
+            if (typeof options.maxY === "number") maxY = options.maxY;
 
+            // === SI prefix for the entire Y axis ===
+            const maxAbsY = Math.max(Math.abs(minY), Math.abs(maxY));
+            const { factor: yFactor, prefix: yPrefix } = getBestSIPrefix(maxAbsY);
+
+            // 3. Draw grid lines (oscilloscope style)
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.10)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                // Vertical grid
+                const x = marginLeft + (i / 10) * width;
+                ctx.beginPath();
+                ctx.moveTo(x, marginTop);
+                ctx.lineTo(x, canvas.height - marginBottom);
+                ctx.stroke();
+                // Horizontal grid
+                const y = canvas.height - marginBottom - (i / 10) * height;
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(canvas.width - marginRight, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // 4. Draw axes
+            ctx.strokeStyle = "#aaa";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(marginLeft, marginTop);
+            ctx.lineTo(marginLeft, canvas.height - marginBottom);
+            ctx.lineTo(canvas.width - marginRight, canvas.height - marginBottom);
+            ctx.stroke();
+
+            // 5. Axis labels and ticks (with SI formatting)
+            // Y-axis label (on top, not vertical)
+            ctx.font = "bold 22px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "left";
+            ctx.fillText(yLabel, marginLeft - 60, marginTop - 18);
+
+            // X axis label (centered)
+            let timeUnit = "s", timeFactor = 1;
+            if (maxTime < 1e-3) { timeUnit = "μs"; timeFactor = 1e6; }
+            else if (maxTime < 1) { timeUnit = "ms"; timeFactor = 1000; }
+            ctx.font = "bold 22px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(`Zeit (${timeUnit})`, marginLeft + width / 2, canvas.height - marginBottom + 60);
+
+            // Tick labels (rounded to two decimals)
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            for (let i = 0; i <= 5; i++) {
+                const x = marginLeft + (i / 5) * width;
+                const tVal = (i * maxTime / 5) * timeFactor;
+                let label;
+                if (timeUnit === "s" || timeUnit === "ms" || timeUnit === "μs") {
+                    label = tVal.toFixed(2).replace(/\.00$/, "");
+                }
+                ctx.fillStyle = "#fff";
+                ctx.fillText(label, x, canvas.height - marginBottom + 28);
+            }
+            ctx.textAlign = "right";
+            for (let i = 0; i <= 5; i++) {
+                // Always start at zero
+                const value = minY + (i / 5) * (maxY - minY);
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
+                ctx.fillStyle = "#fff";
+                ctx.fillText(formatWithSIPrefix(value, yFactor, yPrefix, yLabel.includes("A") ? "A" : "V"), marginLeft - 18, y + 7);
+            }
+
+            // 6. Draw the curve
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                const { t, value } = points[i];
+                const x = marginLeft + (t / maxTime) * width;
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = options.color || "#0070C0";
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = options.color || "#0070C0";
+            ctx.shadowBlur = 4;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 7. Draw marker if tMarker is provided
+            if (typeof options.tMarker === "number" && options.tMarker >= 0 && options.tMarker <= maxTime) {
+                const t = options.tMarker;
+                const value = valueFunc(t);
+                const x = marginLeft + (t / maxTime) * width;
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
+
+                ctx.save();
+                ctx.strokeStyle = "#ff69b4";
+                ctx.setLineDash([6, 6]);
+                ctx.lineWidth = 2;
+                // Vertical marker line
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height - marginBottom);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                // Horizontal marker line
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Marker dot (pink, no glow)
+                ctx.fillStyle = "#ff69b4";
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Marker label (large, bold, pink, no outline)
+                ctx.font = "bold 24px sans-serif";
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#ff69b4";
+                ctx.fillText(
+                    (options.markerLabel || "") + formatWithSIPrefix(value, yFactor, yPrefix, yLabel.includes("A") ? "A" : "V"),
+                    x + 22, y - 16
+                );
+                ctx.restore();
+            }
+
+            // 8. Watermark logo (top right)
+            const logo = new Image();
+            logo.src = "../Pictures/favicon.png";
+            logo.onload = function() {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                const size = 70;
+                ctx.drawImage(logo, canvas.width - marginRight - size, marginTop + 10, size, size);
+                ctx.globalAlpha = 1.0;
+                ctx.restore();
+            };
+        }
+    
+    /*Dropdown menu*/
+    function toggleDropdown(element) {
+        const dropdown = element.parentElement;
+        dropdown.classList.toggle("open");
+    }
 
     </script>
     <script src="../scripts.js"></script>
