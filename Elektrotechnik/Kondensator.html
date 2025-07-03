@@ -544,12 +544,12 @@
                             <h3 style="color:#fff; margin-bottom: 8px; text-align: center;">Spannungskurve</h3>
                             <canvas id="voltageCanvas"
                                 width="1300" height="400"
-                                style="background:#222; border:1px solid #666; display:block; margin:10px auto; border-radius: 16px; max-width: 100%;"></canvas>
+                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
 
                             <h3 style="color:#fff; margin: 40px 0 8px 0; text-align: center;">Stromkurve</h3>
                             <canvas id="currentCanvas"
                                 width="1300" height="400"
-                                style="background:#222; border:1px solid #666; display:block; margin:10px auto; border-radius: 16px; max-width: 100%;"></canvas>
+                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -3950,10 +3950,10 @@
                 ctx.arc(x, y, 10, 0, 2 * Math.PI);
                 ctx.fill();
 
-                // Marker label (large, bold, pink, no outline)
+                // Marker label (large, bold, white, no outline)
                 ctx.font = "bold 24px sans-serif";
                 ctx.textAlign = "left";
-                ctx.fillStyle = "#ff69b4";
+                ctx.fillStyle = "#ffffff";
                 ctx.fillText(
                     (options.markerLabel || "") + formatWithSIPrefix(value, yFactor, yPrefix, yLabel.includes("A") ? "A" : "V"),
                     x + 22, y - 16
