@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- Beschreibung der Seite -->
-    <meta name="description" content="Elecalculate ist ein Online Rechner um alles in Elektronik und Elektrotechnik zu berechnen.">
-	<!-- Stichworte für Suchmaschinen -->
-    <meta name="keywords" content="Elecalculate, Elektronik, Elektrotechnik, Berechnungen, Gleichstrom, Wecheselstrom, Transistoren, OPV">
+    <!-- Beschreibung der Seite -->
+    <meta name="description"
+        content="Elecalculate ist ein Online Rechner um alles in Elektronik und Elektrotechnik zu berechnen.">
+    <!-- Stichworte für Suchmaschinen -->
+    <meta name="keywords"
+        content="Elecalculate, Elektronik, Elektrotechnik, Berechnungen, Gleichstrom, Wecheselstrom, Transistoren, OPV">
     <title>Elecalculate</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="Pictures/favicon.png">
-	
+
     <script type="application/ld+json">
 	{
 	  "@context": "https://schema.org",
@@ -52,17 +55,23 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.3); /* Halbtransparentes Schwarz, 30% Deckkraft */
-            z-index: 1; /* Overlay */
+            background-color: rgba(0, 0, 0, 0.3);
+            /* Halbtransparentes Schwarz, 30% Deckkraft */
+            z-index: 1;
+            /* Overlay */
         }
 
         .background-section h2 {
             position: relative;
-            z-index: 2; /* Text bleibt über dem Overlay */
-            color: white; /* Sicherstellen, dass der Text weiß ist */
-            font-size: 2.5rem; /* Größerer Text für den Titel */
+            z-index: 2;
+            /* Text bleibt über dem Overlay */
+            color: white;
+            /* Sicherstellen, dass der Text weiß ist */
+            font-size: 2.5rem;
+            /* Größerer Text für den Titel */
             letter-spacing: 2px;
-            text-transform: uppercase; /* Alle Buchstaben groß */
+            text-transform: uppercase;
+            /* Alle Buchstaben groß */
             margin-bottom: 20px;
         }
 
@@ -122,13 +131,16 @@
         }
 
         .instagram-link a:hover {
-            color: #000; /* Dunkelt den Text beim Hover ab */
+            color: #000;
+            /* Dunkelt den Text beim Hover ab */
         }
 
         footer {
             display: flex;
-            justify-content: space-around; /* Abstand zwischen den Listen */
-            flex-wrap: wrap; /* Ermöglicht Umbruch, falls der Platz nicht ausreicht */
+            justify-content: space-around;
+            /* Abstand zwischen den Listen */
+            flex-wrap: wrap;
+            /* Ermöglicht Umbruch, falls der Platz nicht ausreicht */
             /*background-color: #111;
             color: white;*/
             /*padding: 2rem;*/
@@ -137,25 +149,28 @@
 
         /*footer links*/
         .footer-menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column; /* Stapelt die Listenelemente untereinander */
-        text-align: left; /* Links ausgerichtet */
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            /* Stapelt die Listenelemente untereinander */
+            text-align: left;
+            /* Links ausgerichtet */
         }
 
         .footer-menu li {
             /*margin: 0 10px;*/
-  
-            margin: 5px 0; /* Abstand zwischen den Elementen */
+
+            margin: 5px 0;
+            /* Abstand zwischen den Elementen */
         }
 
         .footer-menu li a {
             color: white;
-            
+
             text-decoration: none;
-           
+
             /*background-color: #33333300;*/
             /*border-radius: none;*/
         }
@@ -163,129 +178,153 @@
         .footer-menu li a:hover {
             text-decoration: underline;
         }
-        
     </style>
 </head>
 
 <body>
-    
-        <header>
-            <div class="burger-menu" onclick="toggleMenu()">
-                <div class="bar1"></div>
-                <div class="bar2"></div>
-                <div class="bar3"></div>
-            </div>
-            <div class="scroll-container">
-                <ul class="main-menu">
-                    <li><a class="active" href="#home">Home</a></li>
-                    <li><a href="Allgemein/E-Reihe.html">E-Reihe</a></li>
-                    <li><a href="Allgemein/Mathe.html">Mathe</a></li>
-                    <li><a href="Allgemein/Widerstandstabelle.html">Widerstandstabelle</a></li>
-                    <li><a href="Allgemein/Glossar.html">Glossar</a></li>
-                    <li><a href="Allgemein/Massvorsaetze.html">Massvors&auml;tze</a></li>
-                    <li><a href="Allgemein/Werkstoffe.html">Werkstoffe</a></li>
-                </ul>
+    <header>
+        <div class="navbar">
+            <div class="dropdown">
+                <a href="index.html" class="dropbtn">Allgemein</a>
+                <div class="dropdown-content">
+                    <a href="Allgemein/E-Reihe.html">E-Reihen</a> <!-- Plural draus gemacht "-->
+                    <a href="Allgemein/Mathe.html">Mathematik</a>
+                    <a href="Allgemein/Widerstandstabelle.html">Widerstandstabelle</a>
+                    <a href="Allgemein/Massvorsaetze.html">Massvorsätze</a> <!-- Meinst du "Maßvorsätze?" -->
+                    <a href="Allgemein/Werkstoffe.html">Werkstoffe</a>
+                </div>
             </div>
 
-            <nav class="dropdown-menu">
-                <ul>
-                    <li><a href="#Allgemein">Allgemein</a></li>
-                    <li><a href="Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
-                    <li><a href="Elektronik/elektronik.html">Elektronik</a></li>
-                    <li><a href="HST/hst.html">HST</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="wrapper">
-            <main>
-                <div>
-                    <h1><br>Home</h1>
+            <div class="dropdown">
+                <a href="Elektrotechnik/elektrotechnik.html" class="dropbtn">Elektrotechnik</a>
+                <div class="dropdown-content">
+                    <a href="Elektrotechnik/Gleichstrom.html">Gleichstrom</a>
+                    <a href="Elektrotechnik/Wechselstrom.html">Wechselstrom</a>
+                    <a href="Elektrotechnik/Transformator.html">Transformator</a>
+                    <a href="Elektrotechnik/Kondensator.html">Kondensator</a>
+                    <a href="Elektrotechnik/Magnetismus.html">Magnetismus</a>
+                    <a href="Elektrotechnik/Spule.html">Spule</a>
+                    <a href="Elektrotechnik/Schwingkreis.html">Swingkreis</a>
+                    <a href="Elektrotechnik/Verstaerkung_Daempfung.html">Verstärkung/Dämpfung</a>
+                    <a href="Elektrotechnik/Filter.html">Filter</a>
                 </div>
+            </div>
 
-                <!-- Hintergrundbereich mit Text -->
-                <div class="background-section">
-                    <h2>Rechner f&uuml;r Elektronik und Elektrotechnik.</h2>
+            <div class="dropdown">
+                <a href="Elektronik/elektronik.html" class="dropbtn">Elektronik</a>
+                <div class="dropdown-content">
+                    <a href="Elektronik/Dioden.html">Dioden</a>
+                    <a href="Elektronik/Transistor.html">Transistoren</a>
+                    <a href="Elektronik/FETs.html">FETs</a>
+                    <a href="Elektronik/OPV.html">OPVs</a>
+                    <a href="Elektronik/Aktiv_Filter.html">Aktiv Filter</a>
                 </div>
-                
-                <br>
-                
-                <!-- Neuer Inhalt -->
-                <div class="content">
-                    <p>Mit Elecalculate kannst du (fast) alles berechnen, was du in der Elektronik-Lehre ben&ouml;tigst.</p>
-                    <p>Keine Grantie f&uuml;r korrekte Berechnungen und Informationen.<br> Solltest du einen Fehler finden kannst du gerne eine Insta DM / E-Mail schreiben oder ein neues Issue auf GitHub er&ouml;ffnen. </p>
-                    <p>Die Formeln zur Berechnung einzelner Parameter basieren auf:</p>
-                    <ul>
-                        <li>Zastrow: Formeln der Elektronik</li>
-                        <li>Europa: Formeln Elektrotechnik PLUS+</li>
-                    </ul>
-                    
+            </div>
+
+            <div class="dropdown">
+                <a href="HST/hst.html" class="dropbtn">Hardware & Software Technik</a>
+                <div class="dropdown-content">
+                    <a href="HST/Massvorsaetze_Binaer.html">Massvorsätze Binär</a> <!-- Siehe oben "-->
+                    <a href="HST/Ausgangs_Stufen.html">Ausgangsstufen</a>
+                    <a href="HST/Gatter.html">Logikgatter</a> <!-- Kleine Änderung am Namen "-->
+                    <a href="HST/Objekt_Orientiert.html">Objektorientierung</a> <!-- Kleine Änderung am Namen "-->
+                    <a href="HST/C_Syntax.html">C-Syntax</a>
                 </div>
-
-                <!-- Instagram-Link -->
-                <div class="instagram-link">
-                    Folge Elecalculate auf SocialMedia:
-                    <br>
-                    <a href="https://www.instagram.com/elecalculate" target="_blank">
-                        <img src="Pictures/instagram-logo.jpg" alt="Instagram Logo">
-                    </a>
-                    <a href="https://github.com/jaduruch/elecalculate" target="_blank">
-                        <img src="Pictures/github-logo.png" alt="Github Logo">
-                    </a>
-                    <a href="mailto:elecalculate@gmail.com" target="_blank">
-                        <img src="Pictures/mail-logo.png" alt="Mail Logo">
-                    </a>
-                </div>
-
-                                   
-            </main>
-    
-            <footer>
-                <ul class="footer-menu">
-                    <li><a href="index.html"><b>Allgemein</b></a></li>
-                    <!--<li><a href="index.html">Home</a></li>-->
-                    <li><a href="Allgemein/E-Reihe.html">E-Reihe</a></li>
-                    <li><a href="Allgemein/Mathe.html">Mathe</a></li>
-                    <li><a href="Allgemein/Widerstandstabelle.html">Widerstandstabelle</a></li>
-                    <li><a href="Allgemein/Glossar.html">Glossar</a></li>
-                    <li><a href="Allgemein/Massvorsaetze.html">Massvorsa&auml;tze</a></li>
-                    <li><a href="Allgemein/Werkstoffe.html">Werkstoffe</a></li>
-                </ul><br>
-
-                <ul class="footer-menu">
-                    <li><a href="Elektrotechnik/elektrotechnik.html"><b>Elektrotechnik</b></a></li>
-                    <li><a href="Elektrotechnik/Gleichstrom.html">Gleichstrom</a></li>
-                    <li><a href="Elektrotechnik/Wechselstrom.html">Wechselstrom</a></li>
-                    <li><a href="Elektrotechnik/Transformator.html">Transformator</a></li>
-                    <li><a href="Elektrotechnik/Magnetismus.html">Magnetismus</a></li>
-                    <li><a href="Elektrotechnik/Kondensator.html">Kondensator</a></li>
-                    <li><a href="Elektrotechnik/Spule.html">Spule</a></li>
-                    <li><a href="Elektrotechnik/Schwingkreis.html">Schwingkreis</a></li>
-                    <li><a href="Elektrotechnik/Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
-                    <li><a href="Elektrotechnik/Filter.html">Filter</a></li>
-                </ul><br>
-
-                <ul class="footer-menu">
-                    <li><a href="Elektronik/elektronik.html"><b>Elektronik</b></a></li>
-                    <li><a href="Elektronik/Dioden.html">Dioden</a></li>
-                    <li><a href="Elektronik/Transistor.html">Transistoren</a></li>
-                    <li><a href="Elektronik/FETs.html">FETs</a></li>
-                    <li><a href="Elektronik/OPV.html">OPVs</a></li>
-                    <li><a href="Elektronik/Aktiv_Filter.html">Aktiv Filter</a></li>
-                </ul><br>
-
-                <ul class="footer-menu">
-                    <li><a href="HST/hst.html"><b>HST</b></a></li>
-                    <li><a href="HST/Massvorsaetze_Binaer.html">Massvors&auml;tze Bin&auml;r</a></li>
-                    <li><a href="HST/Ausgangs_Stufen.html">Ausgangs Stufen</a></li>
-                    <li><a href="HST/Gatter.html">Gatter</a></li>
-                    <li><a href="HST/Objekt_Orientiert.html">Objekt Orientiert</a></li>
-                    <li><a href="HST/C_Syntax.html">C-Syntax</a></li>
-                </ul><br>
-                
-            </footer>
-            <footer>&copy; 2025 Elecalculate</footer>
-
+            </div>
         </div>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>Home</h1>
+            </div>
+
+            <!-- Hintergrundbereich mit Text -->
+            <div class="background-section">
+                <h2>Rechner f&uuml;r Elektronik und Elektrotechnik.</h2>
+            </div>
+
+            <br>
+
+            <!-- Neuer Inhalt -->
+            <div class="content">
+                <p>Mit Elecalculate kannst du (fast) alles berechnen, was du in der Elektronik-Lehre ben&ouml;tigst.</p>
+                <p>Keine Garantie f&uuml;r korrekte Berechnungen und Informationen.<br> Solltest du einen Fehler finden
+                    kannst du gerne eine Insta DM / E-Mail schreiben oder ein neues Issue auf GitHub er&ouml;ffnen. </p>
+                <p>Die Formeln zur Berechnung einzelner Parameter basieren auf:</p>
+                <ul>
+                    <li>Zastrow: Formeln der Elektronik</li>
+                    <li>Europa: Formeln Elektrotechnik PLUS+</li>
+                </ul>
+
+            </div>
+
+            <!-- Instagram-Link -->
+            <div class="instagram-link">
+                Folge Elecalculate auf SocialMedia:
+                <br>
+                <a href="https://www.instagram.com/elecalculate" target="_blank">
+                    <img src="Pictures/instagram-logo.jpg" alt="Instagram Logo">
+                </a>
+                <a href="https://github.com/jaduruch/elecalculate" target="_blank">
+                    <img src="Pictures/github-logo.png" alt="Github Logo">
+                </a>
+                <a href="mailto:elecalculate@gmail.com" target="_blank">
+                    <img src="Pictures/mail-logo.png" alt="Mail Logo">
+                </a>
+            </div>
+
+
+        </main>
+
+        <footer>
+            <ul class="footer-menu">
+                <li><a href="index.html"><b>Allgemein</b></a></li>
+                <!--<li><a href="index.html">Home</a></li>-->
+                <li><a href="Allgemein/E-Reihe.html">E-Reihe</a></li>
+                <li><a href="Allgemein/Mathe.html">Mathe</a></li>
+                <li><a href="Allgemein/Widerstandstabelle.html">Widerstandstabelle</a></li>
+                <li><a href="Allgemein/Glossar.html">Glossar</a></li>
+                <li><a href="Allgemein/Massvorsaetze.html">Massvorsa&auml;tze</a></li>
+                <li><a href="Allgemein/Werkstoffe.html">Werkstoffe</a></li>
+            </ul><br>
+
+            <ul class="footer-menu">
+                <li><a href="Elektrotechnik/elektrotechnik.html"><b>Elektrotechnik</b></a></li>
+                <li><a href="Elektrotechnik/Gleichstrom.html">Gleichstrom</a></li>
+                <li><a href="Elektrotechnik/Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Elektrotechnik/Transformator.html">Transformator</a></li>
+                <li><a href="Elektrotechnik/Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Elektrotechnik/Kondensator.html">Kondensator</a></li>
+                <li><a href="Elektrotechnik/Spule.html">Spule</a></li>
+                <li><a href="Elektrotechnik/Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Elektrotechnik/Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Elektrotechnik/Filter.html">Filter</a></li>
+            </ul><br>
+
+            <ul class="footer-menu">
+                <li><a href="Elektronik/elektronik.html"><b>Elektronik</b></a></li>
+                <li><a href="Elektronik/Dioden.html">Dioden</a></li>
+                <li><a href="Elektronik/Transistor.html">Transistoren</a></li>
+                <li><a href="Elektronik/FETs.html">FETs</a></li>
+                <li><a href="Elektronik/OPV.html">OPVs</a></li>
+                <li><a href="Elektronik/Aktiv_Filter.html">Aktiv Filter</a></li>
+            </ul><br>
+
+            <ul class="footer-menu">
+                <li><a href="HST/hst.html"><b>HST</b></a></li>
+                <li><a href="HST/Massvorsaetze_Binaer.html">Massvors&auml;tze Bin&auml;r</a></li>
+                <li><a href="HST/Ausgangs_Stufen.html">Ausgangs Stufen</a></li>
+                <li><a href="HST/Gatter.html">Gatter</a></li>
+                <li><a href="HST/Objekt_Orientiert.html">Objekt Orientiert</a></li>
+                <li><a href="HST/C_Syntax.html">C-Syntax</a></li>
+            </ul><br>
+
+        </footer>
+        <footer>&copy; 2025 Elecalculate</footer>
+
+    </div>
     <script src="scripts.js"></script>
 </body>
+
 </html>
