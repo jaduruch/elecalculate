@@ -3852,14 +3852,15 @@
             ctx.fillText("y", cx + 10, 24);
             ctx.restore();
 
-            // === 5. Draw triangle vectors with arrowheads and store hitboxes ===
-            // Colors: UR = blue, UC = orange, U = cyan, I = red, φ = yellow
-            const colorUR = "#0070C0";
-            const colorUC = "#ff9900";
-            const colorU = "#00ccff";
-            const colorI = "#ff3333";
-            const colorPhi = "#ffff00";
+            // === 5. Define visually distinct colors ===
+            // Use site orange for UR/R, lighter for UC/Xc, darker for U/Z, red for I, yellow for φ
+            const colorUR = getComputedStyle(document.documentElement).getPropertyValue('--Orange').trim() || "#FFA500";
+            const colorUC = "#FFD580"; // lighter orange
+            const colorU  = "#CC8400"; // darker orange
+            const colorI  = "#FF3333"; // red (dashed)
+            const colorPhi = "#FFD700"; // gold/yellow
 
+            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
             // U_R (horizontal, right)
             drawArrow(ctx, cx, cy, cx + UR * scale, cy, colorUR, phasorHoveredKey === "UR" ? 6 : 3, phasorHoveredKey === "UR");
             hitboxes.push({type: "vector", key: "UR", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy});
@@ -3872,14 +3873,14 @@
             drawArrow(ctx, cx, cy, cx + UR * scale, cy + UC * scale, colorU, phasorHoveredKey === "U" ? 6 : 3, phasorHoveredKey === "U");
             hitboxes.push({type: "vector", key: "U", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy + UC * scale});
 
-            // I (red, same as U_R direction)
-            drawArrow(ctx, cx, cy - 30, cx + UR * scale, cy - 30, colorI, phasorHoveredKey === "I" ? 5 : 2, phasorHoveredKey === "I");
+            // I (red, same as U_R direction, dashed)
+            drawArrow(ctx, cx, cy - 30, cx + UR * scale, cy - 30, colorI, phasorHoveredKey === "I" ? 5 : 2, phasorHoveredKey === "I", true);
             hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy - 30, x2: cx + UR * scale, y2: cy - 30});
 
             // Right angle marker at (cx + UR * scale, cy)
             drawRightAngleMarker(ctx, cx + UR * scale, cy, 1, 1);
 
-            // === 6. Draw phase angle φ at origin ===
+            // === 7. Draw phase angle φ at origin ===
             ctx.save();
             ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
             ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
@@ -3900,13 +3901,13 @@
             ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
             ctx.fill();
 
-            // === 7. Fill legend/info box beside the canvas, with color coding ===
+            // === 8. Fill legend/info box beside the canvas, with color coding ===
             const legend = [
                 { key: "R",   label: `R = ${formatSI(R, "Ω")}`, color: "#fff" },
                 { key: "C",   label: `C = ${formatSI(C, "F")}`, color: "#fff" },
                 { key: "f",   label: `f = ${formatSI(f, "Hz")}`, color: "#fff" },
-                { key: "Xc",  label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: "#fff" },
-                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: "#fff" },
+                { key: "Xc",  label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorUC },
+                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: colorU },
                 { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
                 { key: "UR",  label: `U<sub>R</sub> = ${formatSI(UR, "V")}`, color: colorUR },
@@ -3917,7 +3918,7 @@
                 entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
             ).join("");
 
-            // === 8. Tooltip/hover system: highlight legend and vector on canvas hover ===
+            // === 9. Tooltip/hover system: highlight legend and vector on canvas hover ===
             canvas.onmousemove = function(e) {
                 const rect = canvas.getBoundingClientRect();
                 const scaleX = canvas.width / rect.width;
@@ -3969,7 +3970,7 @@
                 }
             };
 
-            // === 9. Legend hover highlights vector in canvas ===
+            // === 10. Legend hover highlights vector in canvas ===
             for (const div of legendDiv.children) {
                 div.onmouseenter = function() {
                     phasorHoveredKey = this.dataset.key;
@@ -4012,9 +4013,8 @@
                 canvas._downloadHandlerAdded = true;
             }
 
-            // 10. Watermark logo (top right)
+            // 11. Watermark logo (top right)
             drawWatermark(ctx, canvas);
-
         }
 
         /**
@@ -4070,10 +4070,10 @@
             const cx = canvas.width / 2 - (R * scale) / 2;
             const cy = canvas.height / 2 + (Math.abs(Xc) * scale) / 2;
 
-            // === 4. Prepare hitboxes for interactivity ===
+            // --- Store vector/arc positions for tooltips ---
             const hitboxes = [];
 
-            // === 5. Draw axes (dotted, labeled, full width/height) ===
+            // === 4. Draw axes (dotted, labeled, full width/height) ===
             ctx.save();
             ctx.strokeStyle = "#ccc";
             ctx.lineWidth = 2;
@@ -4099,13 +4099,14 @@
             ctx.fillText("y", cx + 10, 24);
             ctx.restore();
 
-            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
-            // Colors: R = blue, Xc = orange, Z = green, φ = yellow
-            const colorR = "#0070C0";
-            const colorXc = "#ff9900";
-            const colorZ = "#00cc66";
-            const colorPhi = "#ffff00";
+            // === 5. Define visually distinct colors ===
+            // Use site orange for R, lighter for Xc, green for Z, yellow for φ
+            const colorR   = getComputedStyle(document.documentElement).getPropertyValue('--Orange').trim() || "#FFA500";
+            const colorXc  = "#FFD580"; // lighter orange
+            const colorZ   = "#00cc66"; // green
+            const colorPhi = "#FFD700"; // gold/yellow
 
+            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
             // R (horizontal, right)
             drawArrow(ctx, cx, cy, cx + R * scale, cy, colorR, phasorHoveredKey === "R" ? 6 : 3, phasorHoveredKey === "R");
             hitboxes.push({type: "vector", key: "R", x1: cx, y1: cy, x2: cx + R * scale, y2: cy});
@@ -4164,7 +4165,7 @@
                 for (const h of hitboxes) {
                     if (h.type === "vector") {
                         const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
-                        if (dist < 10) { found = h.key; break; }
+                        if (dist < 5) { found = h.key; break; }
                     } else if (h.type === "arc") {
                         const dx = mx - h.cx, dy = my - h.cy;
                         const r = Math.sqrt(dx*dx + dy*dy);
@@ -4395,20 +4396,33 @@
 
         /**
          * Draws an arrow from (x1, y1) to (x2, y2) with an arrowhead.
+         * @param {CanvasRenderingContext2D} ctx
+         * @param {number} x1
+         * @param {number} y1
+         * @param {number} x2
+         * @param {number} y2
+         * @param {string} color
+         * @param {number} [width=3]
+         * @param {boolean} [highlight=false]
+         * @param {boolean} [dashed=false] - If true, draws the arrow as dashed.
          */
-        function drawArrow(ctx, x1, y1, x2, y2, color, width = 3, highlight = false) {
+        function drawArrow(ctx, x1, y1, x2, y2, color, width = 3, highlight = false, dashed = false) {
             ctx.save();
             ctx.strokeStyle = color;
             ctx.fillStyle = color;
             ctx.lineWidth = width;
+            if (dashed) {
+            ctx.setLineDash([8, 6]);
+            }
             if (highlight) {
-                ctx.shadowColor = color;
-                ctx.shadowBlur = 16;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 16;
             }
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.stroke();
+            ctx.setLineDash([]); // Reset dash
             ctx.shadowBlur = 0;
             // Arrowhead
             const headlen = 14;
