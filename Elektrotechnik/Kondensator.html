@@ -3766,16 +3766,8 @@
         watermarkLogo.onload = function() { watermarkLoaded = true; };
 
         /**
-         * Draws a visually clean, interactive Spannungsdreieck (voltage phasor triangle)
+         * Draws a interactive Spannungsdreieck (voltage phasor triangle)
          * for a series RC circuit, using main AC input fields: R_AC, C_AC, U_AC, f_AC.
-         *
-         * Features:
-         * - No grid, just axes (dotted, labeled "x" and "y")
-         * - All labels use proper subscripts and Greek letters
-         * - Arrowheads, right angle marker, phase arc
-         * - All text is white or colored, never black
-         * - Legend/info box is outside the canvas, with matching colors
-         * - Interactive: Hovering a vector/arc in the canvas highlights the legend, and vice versa
          *
          * @param {string} [canvasId="phasorCanvasVoltage"] - The canvas to draw on.
          * @param {string} [legendId="phasorLegendVoltage"] - The legend div to fill.
@@ -3936,7 +3928,7 @@
                 for (const h of hitboxes) {
                     if (h.type === "vector") {
                         const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
-                        if (dist < 10) { found = h.key; break; }
+                        if (dist < 5) { found = h.key; break; }
                     } else if (h.type === "arc") {
                         const dx = mx - h.cx, dy = my - h.cy;
                         const r = Math.sqrt(dx*dx + dy*dy);
@@ -4026,16 +4018,8 @@
         }
 
         /**
-         * Draws a visually clean, interactive Widerstandsdreieck (impedance triangle)
+         * Draws a interactive Widerstandsdreieck (impedance triangle)
          * for a series RC circuit, using main AC input fields: R_AC, C_AC, f_AC.
-         *
-         * Features:
-         * - No grid, just axes (dotted, labeled "x" and "y")
-         * - All labels use proper subscripts and Greek letters
-         * - Arrowheads, right angle marker, phase arc
-         * - All text is white or colored, never black
-         * - Legend/info box is outside the canvas, with matching colors
-         * - Interactive: Hovering a vector/arc in the canvas highlights the legend, and vice versa
          *
          * @param {string} [canvasId="phasorCanvasImpedance"] - The canvas to draw on.
          * @param {string} [legendId="phasorLegendImpedance"] - The legend div to fill.
