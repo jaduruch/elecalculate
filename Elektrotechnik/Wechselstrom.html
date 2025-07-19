@@ -259,9 +259,18 @@
 
                 <!-- Phasenverschiebung phi -->
                 <div class="form-row">
-                    <label>Phasenverschiebung &phi;</label>
+                    <label>Phasenverschiebung &phi; (Sinusgenerator)</label>
                     <input type="text" id="phi-Sinus" style="border-color: var(--Winkel);">
-                    <label><button id="Rad-Button" class="RAD-Button" onclick="toggleRAD()">2&pi;</button></label>
+                    <label>
+                        <button id="Rad-Button" class="RAD-Button" onclick="toggleRAD()">2&pi;</button>
+                    </label>
+                </div>
+
+                <!-- Aktualler Zeitpunkt T -->
+                <div class="form-row">
+                    <label>Aktueller Zeitpunkt t</label>
+                    <input type="text" id="t-Sinus" style="border-color: var(--Zeit);">
+                    <label>s [Sekunden]</label>
                 </div>
 
                 <!-- Section for Example Values -->
@@ -540,14 +549,14 @@
             let result_Sinus = "";
 
             // 1. Read all input values
-            const ut = parseInput(document.getElementById("ut-Sinus").value);
-            let up = parseInput(document.getElementById("up-Sinus").value);
-            const upp = parseInput(document.getElementById("upp-Sinus").value);
-            const Ueff = parseInput(document.getElementById("Ueff-Sinus").value);
-            const f = parseInput(document.getElementById("f-Sinus").value);
-            const t = parseInput(document.getElementById("t-Sinus").value);
-            const T = parseInput(document.getElementById("T-Sinus").value);
-            const phi = parseInput(document.getElementById("phi-Sinus").value);
+            const ut = parseInput(document.getElementById("ut-Sinus").value); // Momentanwert
+            let up = parseInput(document.getElementById("up-Sinus").value); // Peakspannung
+            const upp = parseInput(document.getElementById("upp-Sinus").value); // Peak-Peak-Spannung
+            const Ueff = parseInput(document.getElementById("Ueff-Sinus").value); // Effektivspannung
+            const f = parseInput(document.getElementById("f-Sinus").value); // Frequenz
+            const t = parseInput(document.getElementById("t-Sinus").value); // Aktueller Zeitpunkt
+            const T = parseInput(document.getElementById("T-Sinus").value); // Periodendauer
+            const phi = parseInput(document.getElementById("phi-Sinus").value); // Phasenverschiebung
 
             // Convert phase shift to radians if needed
             let phi_rad = phi;
@@ -949,52 +958,36 @@
 
         /**
          * Fills the input fields with example values based on the selected example name.
-         * 
+         *
          * This function defines a set of example data for different scenarios (e.g., household power, function generator)
          * and populates the corresponding input fields in the UI with these values. It also sets the angle unit (degrees or radians)
          * and triggers the calculation automatically after filling the fields.
          *
          * @param {string} exampleName - The name of the example to load (e.g., 'euroNet', 'functionGen').
-         *
-         * Example data structure:
-         * - ut: {string} Instantaneous voltage value
-         * - up: {string} Peak voltage value
-         * - upp: {string} Peak-to-peak voltage value
-         * - Ueff: {string} Effective (RMS) voltage value
-         * - f: {string} Frequency value (can include units, e.g., '1k' for 1 kHz)
-         * - t: {string} Time value (can include units, e.g., '100u' for 100 microseconds)
-         * - T: {string} Period value
-         * - phi: {string} Phase angle value
-         * - angleUnit: {string} Angle unit ('deg' for degrees, 'rad' for radians)
-         *
-         * Side Effects:
-         * - Updates the values of input fields with IDs matching the pattern '{property}-Sinus'.
-         * - Sets the RAD/DEG button state according to the example's angle unit.
-         * - Calls `calculate_Sinus()` to perform calculations with the filled values.
          */
         function fillExampleValues(exampleName) {
             // Define the data for all examples here
             const examples = {
                 'euroNet': {
-                    ut: '',
-                    up: '',
-                    upp: '',
-                    Ueff: '230',
-                    f: '50',
-                    t: '',
-                    T: '',
-                    phi: '0',
+                    ut: '', // Momentanwert left empty to calculate it dynamically
+                    up: '', // Peak voltage will be calculated from Ueff
+                    upp: '', // Peak-to-peak voltage will be calculated
+                    Ueff: '230', // RMS voltage
+                    f: '50', // Frequency in Hz
+                    t: '0.022', // Time in seconds (5 ms, 1/4 of the period)
+                    T: '', // Period will be calculated
+                    phi: '0', // Phase shift in degrees
                     angleUnit: 'deg' // Household power is usually referenced with 0 degrees
                 },
                 'functionGen': {
-                    ut: '',
-                    up: '5',
-                    upp: '',
-                    Ueff: '',
-                    f: '1k', // 1 kHz
-                    t: '100u', // 100 microseconds
-                    T: '',
-                    phi: '-45',
+                    ut: '', // Momentanwert left empty to calculate it dynamically
+                    up: '5', // Peak voltage
+                    upp: '', // Peak-to-peak voltage will be calculated
+                    Ueff: '', // RMS voltage will be calculated
+                    f: '1k', // Frequency in kHz
+                    t: '0.00050', // Time in seconds (250 µs, 1/4 of the period)
+                    T: '', // Period will be calculated
+                    phi: '-45', // Phase shift in degrees
                     angleUnit: 'deg' // A lagging signal
                 }
             };
@@ -1022,6 +1015,7 @@
             // Automatically run the calculation after filling the values
             calculate_Sinus();
         }
+
 
         function calculate_Rechteck() {
             let result_Rechteck = ``;
