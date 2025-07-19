@@ -42,74 +42,112 @@
                 </div>
 
                 <!-- Neuer Bereich zur Berechnung des Kreises -->
-                <div>
-                    <h2>Kreisberechnung</h2>
-                    <label for="radius">Radius eingeben:</label>
-                    <input type="number" id="radius" step="any" placeholder="Radius" onchange="calculateAreaFromRadius()">
-                    <select id="radiusUnit" onchange="calculateAreaFromRadius()">
-                        <option value="0.001">mm</option>
-                        <option value="0.01" selected>cm</option>
-                        <option value="1">m</option>
-                        <option value="1000">km</option>
-                    </select>
-                    <br><br>
-                    <label for="area">Fläche eingeben:</label>
-                    <input type="number" id="area" step="any" placeholder="Fläche" onchange="calculateRadiusFromArea()">
-                    <select id="areaUnit" onchange="calculateRadiusFromArea()">
-                        <option value="1e-6">mm²</option>
-                        <option value="0.0001" selected>cm²</option>
-                        <option value="1">m²</option>
-                        <option value="1e6">km²</option>
-                    </select>
-                    <br><br>
-                    <button onclick="resetFields()">Zurücksetzen</button>
+                <div class="dropdown-container">
+                <div class="dropdown">      <!--Spezifischer Widerstand-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Kreisberechnung<span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <div class="comment">
+                                Werte mit Massvorsatz eingeben z.B. d = 5mm &rarr; Eingabe: 5m (nicht 5mm)<br><br>
+                            </div>
+
+                            <!-- Flaeche A -->
+                            <div class="form-row">
+                                <label>Fl&auml;che A</label>
+                                <input type="text" id="A" style="border-color: var(--Flaeche);">
+                                <label>m<sup>2</sup> [Quadratmeter]</label>
+                            </div>
+
+                            <!--Durchmesser d-->
+                            <div class="form-row">
+                                <label>Durchmesser d</label>
+                                <input type="text" id="d" style="border-color: var(--Laenge);">
+                                <label>m [meter]</label>
+                            </div>
+
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateKreis()">
+                        <!--</form>-->
+
+                        <h3>Berechnete Ergebnisse</h3>
+                        <p id="result_Kreis"></p>
+                        </div>
+                    
+                    </div>
                 </div>
+                <div class="divider"></div>
+
+                <div class="dropdown"> 
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Dreiecksberechnung <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        Development in progress
+                    </div>
+                    
+                </div>
+
+               
+            </div>
                 <br>                 
             </main>
     
         <footer>
-            &copy 2025 Elecalculate
+            &copy; 2025 Elecalculate
         </footer>
 
         </div>
     <script src="../scripts.js"></script>
     <!-- Inline JavaScript zur Kreisberechnung -->
     <script>
-        const pi = Math.PI;
-
-        function calculateAreaFromRadius() {
-            const radius = parseFloat(document.getElementById('radius').value);
-            const radiusUnit = parseFloat(document.getElementById('radiusUnit').value);
-
-            if (!isNaN(radius) && radius > 0) {
-                const radiusInMeters = radius * radiusUnit;
-                const areaInMeters = pi * Math.pow(radiusInMeters, 2);
-                const areaUnit = parseFloat(document.getElementById('areaUnit').value);
-                const areaConverted = areaInMeters / areaUnit;
-
-                document.getElementById('area').value = areaConverted.toFixed(2);
+        function toggleDropdown(element) {
+                const dropdown = element.parentElement;
+                dropdown.classList.toggle("open");
             }
-        }
 
-        function calculateRadiusFromArea() {
-            const area = parseFloat(document.getElementById('area').value);
-            const areaUnit = parseFloat(document.getElementById('areaUnit').value);
+        function calculateKreis()
+        {
+            let result_Kreis = ``;
 
-            if (!isNaN(area) && area > 0) {
-                const areaInMeters = area * areaUnit;
-                const radiusInMeters = Math.sqrt(areaInMeters / pi);
-                const radiusUnit = parseFloat(document.getElementById('radiusUnit').value);
-                const radiusConverted = radiusInMeters / radiusUnit;
+                const A = document.getElementById("A").value;
+                const d = document.getElementById("d").value;
 
-                document.getElementById('radius').value = radiusConverted.toFixed(2);
-            }
-        }
+                if(A && !d)
+                {
+                    result_Kreis += `
+                    Leiterdurchmesser d = 
+                    &radic;(<div class ="fraction">
+                        <span class="fraction-numerator">4 &lowast; A</span><br>
+                        <span>&pi;</span>
+                    </div>) 
+                =
+                    &radic;(<div class ="fraction">
+                        <span class="fraction-numerator">4 &lowast; ${A}m<sup>2</sup> </span><br>
+                        <span>&pi;</span>
+                    </div>)
+                = ${formatWithPrefix(Math.pow((4 * (parseInputsquare(A)) / Math.PI), 0.5 ), "m")}<br>`;
+                }
 
-        function resetFields() {
-            document.getElementById('radius').value = '';
-            document.getElementById('area').value = '';
-            document.getElementById('radiusUnit').selectedIndex = 1;
-            document.getElementById('areaUnit').selectedIndex = 1;
+                if(d && !A)
+                {
+                    result_Kreis += `
+                    Fl&auml;che A = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup></span><br>
+                        <span>4</span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> </span><br>
+                        <span>4</span>
+                    </div> 
+                = ${formatWithPrefixsquare((Math.PI * Math.pow(parseInput(d), 2) / 4), "m<sup>2</sup>")}<br>`;
+                }
+
+            
+            document.getElementById('result_Kreis').innerHTML = result_Kreis;
+            
         }
     </script>
 
