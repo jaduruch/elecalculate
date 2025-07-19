@@ -4,9 +4,7 @@ header {
     /*background-color: #00a085;*/
     background: #333;
     /*------------------Rainbow*/
-    /*background-image: linear-gradient(to right, red , rgb(255, 153, 0),rgb(194, 194, 0),rgb(0, 218, 0),rgb(0, 140, 255), rgb(195, 0, 255), rgb(255, 0, 221));
-    /*------------------Bi Pride Flag*/
-    /*background-image: linear-gradient(to right, rgb(255, 0, 149) , rgb(212, 0, 255), rgb(0, 89, 255));*/
+    /*background-image: linear-gradient(to right, red , rgb(255, 153, 0),rgb(194, 194, 0),rgb(0, 218, 0),rgb(0, 140, 255), rgb(195, 0, 255), rgb(255, 0, 221));*/
 }
 
 .main-menu li a {
@@ -272,7 +270,7 @@ input[type="number"] {
 input[type="text"] {
     padding: 5px;
     margin: 5px;
-    width: 150px;
+    width: 100px;       /*width of input fields*/
 }
 
 button {
@@ -283,7 +281,8 @@ button {
 }
 .Button_Berechnen
 {
-    padding: 20px;
+    /*padding: 20px;*/
+    width: 100px;
     padding-top: 10px;
     padding-bottom: 10px;
     
