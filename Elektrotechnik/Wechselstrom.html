@@ -265,12 +265,22 @@
 
                 <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_Sinus()">
 
-                <!-- Canvas für Sinuskurve -->
-                <!--<canvas id="sinusCanvas" width="600" height="200" style="margin-top: 10px;"></canvas>-->
-
 
                 <h3>Berechnete Ergebnisse</h3>
                 <p id="result_Sinus"></p>
+
+                
+                <!-- Canvas für Sinuskurve -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="font-weight: bold; color: #fff; padding: 6px 0; width: 100%; text-align: center; max-width: 1200px;">
+                        <h3>Grafische Sinuskurve:</h3>
+                    </div>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <canvas id="sinusCanvas" width="1200" height="400"
+                            style="background:#222; border:1px solid #666; display:block; margin:10px auto;">
+                        </canvas>
+                    </div>
+                </div>
             </div>
 
             <!--Rechteck------------------------------------------------------------------------------------------------->
@@ -401,6 +411,7 @@
             &copy; 2025 Elecalculate
         </footer>
     </div>
+    <script src="../scripts.js"></script>
     <script>
         let selectedButton = null;
 
@@ -475,482 +486,461 @@
             }
         }
 
-        function calculate_Sinus() 
-        {
-            let result_Sinus = ``;
+        /**
+         * Reads all Sinus calculator inputs, computes missing values,
+         * writes the algebraic results into the page (with pretty HTML math formatting),
+         * and draws the sine wave with marker and legend.
+         */
+        function calculate_Sinus() {
+        let result_Sinus = "";
 
-            const ut = document.getElementById("ut-Sinus").value;
-            const up = document.getElementById("up-Sinus").value;
-            const upp = document.getElementById("upp-Sinus").value;
-            //const Udc = document.getElementById("Udc-Sinus").value;
-            const Ueff = document.getElementById("Ueff-Sinus").value;
-            const f = document.getElementById("f-Sinus").value;
-            const t = document.getElementById("t-Sinus").value;
-            const T = document.getElementById("T-Sinus").value;
-            const phi = document.getElementById("Winkel-Sinus").value;
+        // 1. Read all input values as strings
+        const ut   = document.getElementById("ut-Sinus").value;
+        const up   = document.getElementById("up-Sinus").value;
+        const upp  = document.getElementById("upp-Sinus").value;
+        const Ueff = document.getElementById("Ueff-Sinus").value;
+        const f    = document.getElementById("f-Sinus").value;
+        const t    = document.getElementById("t-Sinus").value;
+        const T    = document.getElementById("T-Sinus").value;
+        const phi  = document.getElementById("Winkel-Sinus").value;
 
-            if(!ut)     // Momentanwert
-            {
-                if(up && f && t)
-                {
-                    result_Sinus += `
-                    Momentanwert u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
-                =
-                    ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
-                = ${formatWithPrefix(parseInput(up)*Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
-                }
-
-                if(up && phi && isRADactive)
-                {
-                    result_Sinus += `
-                    Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
-                =
-                    ${up}V &lowast; sin(${phi})
-                = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)), "V")}<br>`;
-                }
-
-                if(up && phi && !isRADactive)
-                {
-                    result_Sinus += `
-                    Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
-                =
-                    ${up}V &lowast; sin(${phi}&deg;)
-                = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
-                }
+        // 2. Compute and format results with pretty HTML
+        // Momentanwert u(t)
+        if (!ut) {
+            if (up && f && t) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
+                = ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
+                = ${formatWithPrefix(parseInput(up) * Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
             }
-
-            if(!up)     // peak wert
-            {
-                if(ut && f && t)
-                {
-                    result_Sinus += `
-                        Peakspannung &ucirc; = 
-                        <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(2&pi; &lowast; f &lowast; t)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(ut)/Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
-                }
-
-                if(ut && phi && isRADactive)
-                {
-                    result_Sinus += `
-                        Peakspannung &ucirc; = 
-                        <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(&phi)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(${phi})</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)), "V")}<br>`;
-                }
-                if(ut && phi && !isRADactive)
-                {
-                    result_Sinus += `
-                        Peakspannung &ucirc; = 
-                        <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(&phi)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(${phi}&deg;)</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
-                }
-
-                if(upp)
-                {
-                    result_Sinus += `
-                        Peakspannung &ucirc; = 
-                        <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
-                }
+            if (up && phi && isRADactive) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(&phi;)
+                = ${up}V &lowast; sin(${phi})
+                = ${formatWithPrefix(parseInput(up) * Math.sin(parseInput(phi)), "V")}<br>`;
             }
-
-            if(!upp)     // Peak-Peak wert
-            {
-                if(up)
-                {
-                    result_Sinus += `
-                    Peak-Peakspannung u<sub>pp</sub> = &ucirc; &lowast; 2
-                =
-                    ${up}V &lowast; 2
-                = ${formatWithPrefix(parseInput(up)*2, "V")}<br>`;
-                }
-
-                if(Ueff)
-                {
-                    
-                    result_Sinus += `
-                    Peak-Peakspannung u<sub>pp</sub> = U<sub>eff</sub> &lowast; 2 &lowast; &radic;2
-                =
-                    ${Ueff}V &lowast; 2 &lowast; &radic;2
-                = ${formatWithPrefix(parseInput(Ueff)*2*Math.pow(2,0.5), "V")}<br>`;
-                }
+            if (up && phi && !isRADactive) {
+            result_Sinus += `
+                <b>Momentanwert</b> u(t) = &ucirc; &lowast; sin(&phi;)
+                = ${up}V &lowast; sin(${phi}&deg;)
+                = ${formatWithPrefix(parseInput(up) * Math.sin(parseInput(phi) * Math.PI / 180), "V")}<br>`;
             }
-            
-            if(!Ueff)      // Effektivwert
-            {
-                if(up)
-                {
-                    result_Sinus += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> &ucirc; </span><br>
-                            <span class="fraction-denominator">&radic;2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${up}V<br>
-                            <span class="fraction-denominator">&radic;2</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(up)/Math.pow(2, 0.5), "V")}<br>`;
-                }
-
-                if(upp)
-                {
-                    result_Sinus += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2 &lowast; &radic;2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
-                            <span class="fraction-denominator">2 &lowast; &radic;2</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(upp)/(2 * Math.pow(2, 0.5)), "V")}<br>`;
-                }
-            }
-
-            if(!f)      // frequnez
-            {
-                if(T)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> 1 </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${T}s</span>
-                        </div> 
-                    = ${formatWithPrefix(1/parseInput(T), "Hz")}<br>`;
-                }
-
-                if(up && t && ut)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; t</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
-                }
-
-                if(phi && isRADactive && t)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; t</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}<br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
-                }
-
-                if(phi && !isRADactive && t)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">360&deg; &lowast; t</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}&deg;<br>
-                            <span class="fraction-denominator">360&deg; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(t)), "Hz")}<br>`;
-                }
-            }
-
-            if(!t)      // aktueller Zeitpunkt
-            {
-                if(up && f && ut)
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div> ) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span>arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div> ) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
-                }
-
-                if(ut && f && Ueff)           //////////////////////////////////////////////////////////////////////////////////////////
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">U<sub>eff</sub> &lowast; &radic;2</span>
-                        </div> ) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span>arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${Ueff}V &lowast; &radic;2</span>
-                        </div> ) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/(parseInput(Ueff) * Math.pow(2, 0.5)))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
-                }
-
-                if(phi && isRADactive && f)
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}<br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(f)), "s")}<br>`;
-                }
-
-                if(phi && !isRADactive && f)
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">360&deg; &lowast; f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}&deg;<br>
-                            <span class="fraction-denominator">360&deg; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(f)), "s")}<br>`;
-                }
-            }
-
-            if(!T)      // Periodenzeit
-            {
-                if(f)
-                {
-                    result_Sinus += `
-                        Periodendauer T = 
-                        <div class ="fraction">
-                            <span> 1 </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(1/parseInput(f), "s")}<br>`;
-                }
-            }
-
-            if(!phi)    // winkel
-            {
-                if(f && t)
-                {
-                    result_Sinus += `
-                    Winkel &phi;<sub>RAD</sub> = 2&pi; &lowast; f &lowast; t
-                =
-                    2&pi; &lowast; ${f}Hz &lowast; ${t}s
-                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>
-
-                Winkel &phi;<sub>DEG</sub> = 360&deg; &lowast; f &lowast; t
-                =
-                    360&deg; &lowast; ${f}Hz &lowast; ${t}s
-                = ${formatWithPrefix(360 * parseInput(f) * parseInput(t),"&deg;")}<br>`;
-                }
-
-                if(ut && up)
-                {
-                    result_Sinus += `
-                        Winkel &phi;<sub>RAD</sub> = 
-                        arcsin(<div class ="fraction">
-                            <span>u(t)</span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>)
-                    =
-                        arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>)
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up)), "")}<br>
-
-                    Winkel &phi;<sub>DEG</sub> = 
-                        arcsin(<div class ="fraction">
-                            <span>u(t)</span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>)
-                    =
-                        arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>)
-                    = ${formatWithPrefix(180 * (Math.asin(parseInput(ut)/parseInput(up))/Math.PI), "&deg;")}<br>`;
-                }
-            }
-
- 
-            document.getElementById('result_Sinus').innerHTML = result_Sinus;
-
-            //drawSinus(up);
         }
 
-        /*function drawSinus(up) 
-        {
-            let canvas = document.getElementById("sinusCanvas");
-            let ctx = canvas.getContext("2d");
-
-            // Canvas leeren
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Sicherstellen, dass Werte vorhanden sind
-            //up = parseFloat(up) // Standard: 1V
-            //f = parseFloat(f) || 1; // Standard: 1Hz
-            //phi = parseFloat(phi) || 0; // Standard: 0°
-            up = parseInput(up)
-
-            if(up)
-            {
-                let width = canvas.width;
-                let height = canvas.height;
-                let midY = height / 2;
-                let scaleX = width / (1 / 1 * 2); // Zeitskalierung: let scaleX = width / (1 / f * 2); 2 Perioden
-                let scaleY = midY / (up * 1.2); // Spannungsskalierung (etwas mehr Platz)
-
-                // **Achsen zeichnen**
-                ctx.strokeStyle = "gray";
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(0, midY); // Horizontale Achse (Zeit)
-                ctx.lineTo(width, midY);
-                ctx.moveTo(1, 0); // Vertikale Achse (Spannung)
-                ctx.lineTo(1, height);
-                ctx.stroke();
-
-                // **Achsenbeschriftung**
-                ctx.fillStyle = "white";
-                ctx.font = "12px Arial";
-                ctx.fillText("Zeit (ms)", width - 50, midY + 15);
-                // ctx.fillText("Spannung (V)", 5, 15);
-
-                // **Sinuskurve zeichnen**
-                ctx.beginPath();
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 2;
-
-                for (let x = 0; x < width; x++) {
-                    let t = x / scaleX; // Zeitwert
-                    let y = up * Math.sin(2 * Math.PI * 1 * t ); // Sinusberechnung: let y = up * Math.sin(2 * Math.PI * f * t );
-                    let plotY = midY - y * scaleY; // Umrechnung in Canvas-Koordinaten
-                    if (x === 0) {
-                        ctx.moveTo(0, plotY); // Startpunkt der Sinuskurve
-                    } else {
-                        ctx.lineTo(x, plotY);
-                    }
-                }
-
-                ctx.stroke();
-
-                // **Markierungen für Peakwerte**
-                ctx.fillText(`${formatWithPrefix(up, "V")}`, 5, midY - up * scaleY);
-                ctx.fillText(`-${formatWithPrefix(up, "V")}`, 5, midY + up * scaleY);
+        // Peakspannung û
+        if (!up) {
+            if (ut && f && t) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(2&pi; &lowast; f &lowast; t)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
             }
-
-            if (!up)
-            {
-                up = 1;
-                debugger;
-                width = canvas.width;
-                let height = canvas.height;
-                let midY = height / 2;
-                let scaleX = width / (1 / 1 * 2); // Zeitskalierung
-                let scaleY = midY / (up * 1.3); // Spannungsskalierung
-
-                ctx.beginPath();
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 2;
-
-                for (let x = 0; x < width; x++) {
-                    let t = x / scaleX;
-                    let y = up * Math.sin(2 * Math.PI * 1 * t + (0 * Math.PI / 180));
-                    let plotY = midY - y * scaleY;
-                    if (x === 0) {
-                        ctx.moveTo(x, plotY);
-                    } else {
-                        ctx.lineTo(x, plotY);
-                    }
-                }
-
-                ctx.stroke();
+            if (ut && phi && isRADactive) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(&phi;)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(${phi})</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(parseInput(phi)), "V")}<br>`;
             }
-            
-        }*/
+            if (ut && phi && !isRADactive) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u(t)</span><br>
+                <span class="fraction-denominator">sin(&phi;)</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${ut}V</span><br>
+                <span class="fraction-denominator">sin(${phi}&deg;)</span>
+                </div>
+                = ${formatWithPrefix(parseInput(ut) / Math.sin(parseInput(phi) * Math.PI / 180), "V")}<br>`;
+            }
+            if (upp) {
+            result_Sinus += `
+                <b>Peakspannung</b> &ucirc; =
+                <div class="fraction">
+                <span>u<sub>pp</sub></span><br>
+                <span class="fraction-denominator">2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${upp}V</span><br>
+                <span class="fraction-denominator">2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(upp) / 2, "V")}<br>`;
+            }
+        }
+
+        // Peak-Peakspannung u_pp
+        if (!upp) {
+            if (up) {
+            result_Sinus += `
+                <b>Peak-Peakspannung</b> u<sub>pp</sub> = &ucirc; &lowast; 2
+                = ${up}V &lowast; 2
+                = ${formatWithPrefix(parseInput(up) * 2, "V")}<br>`;
+            }
+            if (Ueff) {
+            result_Sinus += `
+                <b>Peak-Peakspannung</b> u<sub>pp</sub> = U<sub>eff</sub> &lowast; 2 &lowast; &radic;2
+                = ${Ueff}V &lowast; 2 &lowast; &radic;2
+                = ${formatWithPrefix(parseInput(Ueff) * 2 * Math.sqrt(2), "V")}<br>`;
+            }
+        }
+
+        // Effektivwert U_eff
+        if (!Ueff) {
+            if (up) {
+            result_Sinus += `
+                <b>Effektivspannung</b> U<sub>eff</sub> =
+                <div class="fraction">
+                <span>&ucirc;</span><br>
+                <span class="fraction-denominator">&radic;2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${up}V</span><br>
+                <span class="fraction-denominator">&radic;2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(up) / Math.sqrt(2), "V")}<br>`;
+            }
+            if (upp) {
+            result_Sinus += `
+                <b>Effektivspannung</b> U<sub>eff</sub> =
+                <div class="fraction">
+                <span>u<sub>pp</sub></span><br>
+                <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>${upp}V</span><br>
+                <span class="fraction-denominator">2 &lowast; &radic;2</span>
+                </div>
+                = ${formatWithPrefix(parseInput(upp) / (2 * Math.sqrt(2)), "V")}<br>`;
+            }
+        }
+
+        // Frequenz f
+        if (!f) {
+            if (T) {
+            result_Sinus += `
+                <b>Frequenz</b> f =
+                <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">T</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">${T}s</span>
+                </div>
+                = ${formatWithPrefix(1 / parseInput(T), "Hz")}<br>`;
+            }
+            if (up && t && ut) {
+            result_Sinus += `
+                <b>Frequenz</b> f =
+                <div class="fraction">
+                <span>arcsin(
+                    <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                    </div>
+                )</span><br>
+                <span class="fraction-denominator">2&pi; &lowast; t</span>
+                </div>
+                =
+                <div class="fraction">
+                <span>arcsin(
+                    <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                    </div>
+                )</span><br>
+                <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
+                </div>
+                = ${formatWithPrefix(Math.asin(parseInput(ut) / parseInput(up)) / (2 * Math.PI * parseInput(t)), "Hz")}<br>`;
+            }
+        }
+
+        // Periodendauer T
+        if (!T && f) {
+            result_Sinus += `
+            <b>Periodendauer</b> T =
+            <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">f</span>
+            </div>
+            =
+            <div class="fraction">
+                <span>1</span><br>
+                <span class="fraction-denominator">${f}Hz</span>
+            </div>
+            = ${formatWithPrefix(1 / parseInput(f), "s")}<br>`;
+        }
+
+        // Phase φ
+        if (!phi) {
+            if (f && t) {
+            result_Sinus += `
+                <b>Winkel</b> &phi;<sub>RAD</sub> = 2&pi; &lowast; f &lowast; t
+                = 2&pi; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>
+                <b>Winkel</b> &phi;<sub>DEG</sub> = 360&deg; &lowast; f &lowast; t
+                = 360&deg; &lowast; ${f}Hz &lowast; ${t}s
+                = ${formatWithPrefix(360 * parseInput(f) * parseInput(t), "&deg;")}<br>`;
+            }
+            if (ut && up) {
+            result_Sinus += `
+                <b>Winkel</b> &phi;<sub>RAD</sub> = arcsin(
+                <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                </div>
+                )
+                = arcsin(
+                <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                </div>
+                )
+                = ${formatWithPrefix(Math.asin(parseInput(ut) / parseInput(up)), "")}<br>
+                <b>Winkel</b> &phi;<sub>DEG</sub> = arcsin(
+                <div class="fraction">
+                    <span>u(t)</span><br>
+                    <span class="fraction-denominator">&ucirc;</span>
+                </div>
+                )
+                = arcsin(
+                <div class="fraction">
+                    <span>${ut}V</span><br>
+                    <span class="fraction-denominator">${up}V</span>
+                </div>
+                )
+                = ${formatWithPrefix(180 * (Math.asin(parseInput(ut) / parseInput(up)) / Math.PI), "&deg;")}<br>`;
+            }
+        }
+
+        // 3. Write all results to the page
+        document.getElementById("result_Sinus").innerHTML = result_Sinus;
+
+        // 4. Draw the sine wave (with marker and legend)
+        // Parse numeric values for drawing
+        const upVal  = parseInput(up);
+        const fVal   = parseInput(f) || 0;
+        const phiVal = isRADactive
+            ? parseInput(phi)
+            : parseInput(phi) * Math.PI / 180;
+        const tVal   = parseInput(t) || 0;
+
+        // Draw only if up and f are valid
+        drawSinus(upVal, fVal, phiVal, tVal, 2);
+        }
+
+        /**
+        * Draws a labeled sine wave with axes, grid, marker, helper lines, and legend.
+        * If required values are missing or invalid, shows a placeholder message.
+        *
+        * @param {number} up       Peak amplitude [V]
+        * @param {number} f        Frequency [Hz]
+        * @param {number} phi      Phase [rad]
+        * @param {number} tMarker  Time [s] to mark
+        * @param {number} periods  Number of periods to display (default: 2)
+        */
+        function drawSinus(up, f, phi, tMarker, periods = 2) {
+        const canvas = document.getElementById("sinusCanvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const W   = canvas.width, H = canvas.height;
+        const midY = H / 2;
+        const margin = 50, marginR = 20;
+
+        // === 1. Placeholder logic ===
+        // If both up and f are empty/zero, show a neutral prompt.
+        if ((!up && !f) || (up === "" && f === "")) {
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "#888";
+            ctx.font = "bold 20px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+            "Bitte Werte für û (Peak) und f (Frequenz) eingeben.",
+            W / 2, H / 2
+            );
+            return;
+        }
+        // If up or f is missing, zero, or invalid, show an error placeholder.
+        if (!up || !f || isNaN(up) || isNaN(f) || up <= 0 || f <= 0) {
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "#e66";
+            ctx.font = "bold 20px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+            "Sinuskurve kann nicht berechnet werden.",
+            W / 2, H / 2 - 10
+            );
+            ctx.font = "14px sans-serif";
+            ctx.fillStyle = "#fff";
+            ctx.fillText(
+            "Bitte gültige Werte für û (Peak) und f (Frequenz) eingeben.",
+            W / 2, H / 2 + 20
+            );
+            return;
+        }
+
+        // === 2. Prepare plot area and scaling ===
+        const plotW = W - margin - marginR;
+        const Tsec  = 1 / f;                // Period duration in seconds
+        const total = periods * Tsec;       // Total time shown in seconds
+        const pxPerS = plotW / total;       // Pixels per second
+        const scaleY = (midY - 20) / up;    // Pixels per volt (with margin)
+
+        // === 3. Clear canvas ===
+        ctx.clearRect(0, 0, W, H);
+
+        // === 4. Draw fine horizontal grid lines ===
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth   = 0.5;
+        for (let i = -4; i <= 4; i++) {
+            const y = midY - i * (up/4) * scaleY;
+            ctx.beginPath();
+            ctx.moveTo(margin, y);
+            ctx.lineTo(W - marginR, y);
+            ctx.stroke();
+        }
+
+        // === 5. Draw axes ===
+        ctx.strokeStyle = "#888";
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+            ctx.moveTo(margin, midY);
+            ctx.lineTo(W - marginR, midY);
+            ctx.moveTo(margin, 0);
+            ctx.lineTo(margin, H);
+        ctx.stroke();
+
+        // === 6. Draw axis ticks and labels ===
+        ctx.fillStyle = "#888";
+        ctx.font      = "12px sans-serif";
+        ctx.textAlign = "center";
+        // X-axis (time)
+        for (let p = 0; p <= periods; p++) {
+            const x = margin + p*Tsec*pxPerS;
+            ctx.beginPath();
+            ctx.moveTo(x, midY-5);
+            ctx.lineTo(x, midY+5);
+            ctx.stroke();
+            ctx.fillText(`${(p*Tsec*1000).toFixed(0)}ms`, x, midY+20);
+        }
+        // Y-axis (voltage)
+        ctx.textAlign = "right";
+        for (let i = -4; i <= 4; i++) {
+            if (i===0) continue;
+            const y = midY - i*(up/4)*scaleY;
+            ctx.beginPath();
+            ctx.moveTo(margin-5, y);
+            ctx.lineTo(margin+5, y);
+            ctx.stroke();
+            ctx.fillText(`${(i*up/4).toFixed(0)}V`, margin-10, y+4);
+        }
+
+        // === 7. Draw sine curve in blue (var(--Spannung) or fallback) ===
+        const sinusColor = getComputedStyle(document.documentElement)
+                            .getPropertyValue("--Spannung").trim() || "#0070C0";
+        ctx.strokeStyle = sinusColor;
+        ctx.lineWidth   = 2;
+        ctx.beginPath();
+        for (let px = 0; px <= plotW; px++) {
+            const time  = px / pxPerS;
+            const angle = 2*Math.PI*f*time + phi;
+            const yVal  = up * Math.sin(angle);
+            const xPix  = margin + px;
+            const yPix  = midY - yVal * scaleY;
+            px===0 ? ctx.moveTo(xPix,yPix) : ctx.lineTo(xPix,yPix);
+        }
+        ctx.stroke();
+
+        // === 8. Draw marker, helper lines, and labels ===
+        // Wrap tMarker into the visible window
+        const tWrapped = ((tMarker % total) + total) % total;
+        const uAtT     = up * Math.sin(2*Math.PI*f*tWrapped + phi);
+        const xT       = margin + tWrapped*pxPerS;
+        const yT       = midY - uAtT*scaleY;
+
+        if (xT >= margin && xT <= margin+plotW) {
+            // Dashed vertical line (from x-axis to marker)
+            ctx.save();
+            ctx.strokeStyle = "deeppink";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(xT, midY);
+            ctx.lineTo(xT, yT);
+            ctx.stroke();
+
+            // Dashed horizontal line (from y-axis to marker)
+            ctx.beginPath();
+            ctx.moveTo(margin, yT);
+            ctx.lineTo(xT, yT);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // Label for vertical line (time)
+            ctx.save();
+            ctx.fillStyle = "deeppink";
+            ctx.font = "bold 13px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(`t = ${tWrapped.toFixed(4)} s`, xT, midY + 30);
+            ctx.restore();
+
+            // Label for horizontal line (voltage)
+            ctx.save();
+            ctx.fillStyle = "deeppink";
+            ctx.font = "bold 13px sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText(`u(t) = ${uAtT.toFixed(2)} V`, xT + 8, yT - 8);
+            ctx.restore();
+
+            // Draw the pink marker
+            ctx.fillStyle = "deeppink";
+            ctx.beginPath();
+            ctx.arc(xT, yT, 6, 0, 2*Math.PI);
+            ctx.fill();
+        }
+
+        // === 9. Draw legend box with marker explanation ===
+        const lx = margin + 10, ly = 10;
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(lx, ly, 200, 90);
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.font = "12px sans-serif";
+        ctx.fillText(`û = ${up.toFixed(1)} V`,        lx+8, ly+20);
+        ctx.fillText(`f = ${f.toFixed(1)} Hz`,        lx+8, ly+38);
+        ctx.fillText(`φ = ${(phi*180/Math.PI).toFixed(1)}°`, lx+8, ly+56);
+        // Dot legend
+        ctx.fillStyle = "deeppink";
+        ctx.beginPath();
+            ctx.arc(lx+8, ly+76, 6, 0, 2*Math.PI);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("aktueller Zeitpunkt t", lx+20, ly+80);
+        }
 
         function calculate_Rechteck() {
             let result_Rechteck = ``;
@@ -1351,8 +1341,6 @@
             document.getElementById('result_PWM').innerHTML = result_PWM;
         }
 
-  
     </script>
-    <script src="../scripts.js"></script>
 </body>
 </html>
