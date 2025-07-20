@@ -21,62 +21,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # 🛠️ Job 1: Checkout Repository
-  checkout:
-    name: 🛠️ Checkout Repository
+  sync:
+    name: Sync Branch Content to GitHub Pages
     runs-on: ubuntu-latest
-    outputs:
-      branch_name: ${{ steps.get-branch.outputs.branch_name }}
+
     steps:
-      # Step 1.1: Checkout the repository
-      - name: 📦 Checkout Code
+      # Step 1: Checkout the repository
+      - name: 📦 Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all branches to ensure we can access them
 
-      # Step 1.2: Get the current branch name
-      - name: 🔍 Get Current Branch Name
-        id: get-branch
-        run: |
-          branch_name=${GITHUB_REF##*/}
-          echo "branch_name=${branch_name}" >> $GITHUB_ENV
-          echo "::set-output name=branch_name::${branch_name}"
-
-  # 📂 Job 2: Determine Deployment Path
-  determine-path:
-    name: 📂 Determine Deployment Path
-    runs-on: ubuntu-latest
-    needs: checkout
-    outputs:
-      deployment_path: ${{ steps.set-path.outputs.deployment_path }}
-    steps:
-      # Step 2.1: Determine the deployment path based on the branch
-      - name: 🗺️ Set Deployment Path
+      # Step 2: Determine Deployment Path
+      - name: 🗺️ Determine Deployment Path
         id: set-path
         run: |
-          if [ "${{ needs.checkout.outputs.branch_name }}" == "main" ]; then
-            echo "deployment_path=." >> $GITHUB_ENV
-            echo "::set-output name=deployment_path::."
+          branch_name=${GITHUB_REF##*/}
+          echo "Current branch: $branch_name"
+          if [ "$branch_name" == "main" ]; then
+            echo "path=." >> $GITHUB_ENV
             echo "✅ Deploying main branch to root (/)."
-          elif [ "${{ needs.checkout.outputs.branch_name }}" == "development" ]; then
-            echo "deployment_path=dev" >> $GITHUB_ENV
-            echo "::set-output name=deployment_path::dev"
+          elif [ "$branch_name" == "development" ]; then
+            echo "path=dev" >> $GITHUB_ENV
             echo "✅ Deploying development branch to /dev."
           else
-            echo "❌ Error: Unsupported branch '${{ needs.checkout.outputs.branch_name }}'."
+            echo "❌ Error: Unsupported branch '$branch_name'."
             exit 1
           fi
 
-  # 🚀 Job 3: Deploy Content
-  deploy:
-    name: 🚀 Deploy Content to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: determine-path
-    steps:
-      # Step 3.1: Deploy content to GitHub Pages
-      - name: 🚀 Deploy to GitHub Pages
+      # Step 3: Deploy to GitHub Pages
+      - name: 🚀 Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: . # Deploy the root directory
-          destination_dir: ${{ needs.determine-path.outputs.deployment_path }}
+          destination_dir: ${{ env.path }}
