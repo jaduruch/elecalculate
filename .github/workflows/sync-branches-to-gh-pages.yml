@@ -1,4 +1,4 @@
-# 🚀 Workflow for syncing main and development branches to the gh-pages branch
+# Workflow for syncing main and development branches to the gh-pages branch
 name: Sync Main and Development to GitHub Pages
 
 on:
@@ -37,7 +37,10 @@ jobs:
       # Step 1.2: Get the current branch name
       - name: 🔍 Get Current Branch Name
         id: get-branch
-        run: echo "branch_name=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: |
+          branch_name=${GITHUB_REF##*/}
+          echo "branch_name=${branch_name}" >> $GITHUB_ENV
+          echo "::set-output name=branch_name::${branch_name}"
 
   # 📂 Job 2: Determine Deployment Path
   determine-path:
