@@ -27,7 +27,6 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history
           ref: main # Start from the main branch
-          # Ensure all branches are fetched
           fetch-tags: true
 
       - name: 🔍 Debug Workspace After Checkout
@@ -67,14 +66,21 @@ jobs:
             exit 1
           fi
 
-      - name: 🔍 Debug Content Before Deployment
+      - name: 🛠️ Copy Files to Deployment Directory
         run: |
-          echo "Contents of the current directory before deployment:"
-          ls -A
+          mkdir -p deployment
+          cp -r ./* ./deployment
+          echo "Contents of the deployment directory after copying:"
+          ls -A ./deployment
+
+      - name: 🔍 Debug Deployment Directory
+        run: |
+          echo "Contents of the deployment directory before deployment:"
+          ls -A ./deployment
 
       - name: 🚀 Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # Root directory
+          publish_dir: ./deployment # Explicitly use the deployment directory
           destination_dir: ${{ env.path }}
