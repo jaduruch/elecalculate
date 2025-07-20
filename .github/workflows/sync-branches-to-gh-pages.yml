@@ -1,0 +1,79 @@
+# 🚀 Workflow for syncing main and development branches to the gh-pages branch
+name: Sync Main and Development to GitHub Pages
+
+on:
+  # Trigger on pushes to main and development branches
+  push:
+    branches:
+      - main
+      - development
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Ensure only one deployment runs at a time
+concurrency:
+  group: "sync-to-gh-pages"
+  cancel-in-progress: true
+
+jobs:
+  # 🛠️ Job 1: Checkout Repository
+  checkout:
+    name: 🛠️ Checkout Repository
+    runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.get-branch.outputs.branch_name }}
+    steps:
+      # Step 1.1: Checkout the repository
+      - name: 📦 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all branches to ensure we can access them
+
+      # Step 1.2: Get the current branch name
+      - name: 🔍 Get Current Branch Name
+        id: get-branch
+        run: echo "branch_name=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+  # 📂 Job 2: Determine Deployment Path
+  determine-path:
+    name: 📂 Determine Deployment Path
+    runs-on: ubuntu-latest
+    needs: checkout
+    outputs:
+      deployment_path: ${{ steps.set-path.outputs.deployment_path }}
+    steps:
+      # Step 2.1: Determine the deployment path based on the branch
+      - name: 🗺️ Set Deployment Path
+        id: set-path
+        run: |
+          if [ "${{ needs.checkout.outputs.branch_name }}" == "main" ]; then
+            echo "deployment_path=." >> $GITHUB_ENV
+            echo "::set-output name=deployment_path::."
+            echo "✅ Deploying main branch to root (/)."
+          elif [ "${{ needs.checkout.outputs.branch_name }}" == "development" ]; then
+            echo "deployment_path=dev" >> $GITHUB_ENV
+            echo "::set-output name=deployment_path::dev"
+            echo "✅ Deploying development branch to /dev."
+          else
+            echo "❌ Error: Unsupported branch '${{ needs.checkout.outputs.branch_name }}'."
+            exit 1
+          fi
+
+  # 🚀 Job 3: Deploy Content
+  deploy:
+    name: 🚀 Deploy Content to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: determine-path
+    steps:
+      # Step 3.1: Deploy content to GitHub Pages
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: . # Deploy the root directory
+          destination_dir: ${{ needs.determine-path.outputs.deployment_path }}
