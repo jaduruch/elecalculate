@@ -62,7 +62,13 @@ jobs:
             exit 1
           fi
 
-      # Step 4: Deploy to GitHub Pages
+      # Step 4: Debug Content Before Deployment
+      - name: 🔍 Debug Content
+        run: |
+          echo "Contents of the current directory before deployment:"
+          ls -A
+
+      # Step 5: Deploy to GitHub Pages
       - name: 🚀 Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
