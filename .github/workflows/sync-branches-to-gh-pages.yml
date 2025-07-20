@@ -1,0 +1,71 @@
+# Workflow for syncing main and development branches to the gh-pages branch
+name: Sync Main and Development to GitHub Pages
+
+on:
+  # Trigger on pushes to main and development branches
+  push:
+    branches:
+      - main
+      - development
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Ensure only one deployment runs at a time
+concurrency:
+  group: "sync-to-gh-pages"
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync Branch Content to GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: 📦 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all branches to ensure we can access them
+
+      # Step 2: Ensure gh-pages Branch Exists
+      - name: 🛠️ Ensure gh-pages Branch Exists
+        run: |
+          # Check if the gh-pages branch exists
+          if git show-ref --quiet refs/heads/gh-pages; then
+            echo "gh-pages branch exists."
+          else
+            echo "gh-pages branch does not exist. Creating it..."
+            git checkout --orphan gh-pages
+            git reset --hard
+            echo "gh-pages branch created."
+          fi
+
+      # Step 3: Determine Deployment Path
+      - name: 🗺️ Determine Deployment Path
+        id: set-path
+        run: |
+          branch_name=${GITHUB_REF##*/}
+          echo "Current branch: $branch_name"
+          if [ "$branch_name" == "main" ]; then
+            echo "path=." >> $GITHUB_ENV
+            echo "✅ Deploying main branch to root (/)."
+          elif [ "$branch_name" == "development" ]; then
+            echo "path=dev" >> $GITHUB_ENV
+            echo "✅ Deploying development branch to /dev."
+          else
+            echo "❌ Error: Unsupported branch '$branch_name'."
+            exit 1
+          fi
+
+      # Step 4: Deploy to GitHub Pages
+      - name: 🚀 Deploy Content to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: . # Deploy the root directory
+          destination_dir: ${{ env.path }}
