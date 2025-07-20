@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Filter</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        .filter-button {
+            position: relative;
+            width: 150px; /* Adjust as needed */
+            height: 100px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .filter-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+ 
+        .filter-button:hover {
+            border-color: gray; /* Gray border for hovered button */
+        }
+        
+        .filter-button.selected {
+            border-color: white; /* White border for selected button */
+        }     
+        
+        .filter-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            /*border: 3px solid;*/
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 800px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            margin-bottom: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denominator {
+            border-top: 1px solid;
+        }
+
+        img{
+            width: 80%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="Gleichstrom.html">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verts&auml;rkung/D&auml;mpfung</a></li>
+                <li><a class="active" href="#Filter">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <br><h1>Filter</h1>
+            </div>
+            <div>
+                <button class="filter-button" type="button" onclick="toggleSelection(this, 'HP_RC')">
+                    <img src="../Pictures/HP_RC_Schematic.png" alt="Hochpass RC">
+                    <span>Hochpass RC</span>
+                </button>
+                <button class="filter-button" type="button" onclick="toggleSelection(this, 'HP_RL')">
+                    <img src="../Pictures/HP_RL_Schematic.png" alt="Hochpass RL">
+                    <span>Hochpass RL</span>
+                </button>
+                <button class="filter-button" type="button" onclick="toggleSelection(this, 'TP_RC')">
+                    <img src="../Pictures/TP_RC_Schematic.png" alt="Tiefpass RC">
+                    <span>Tiefpass RC</span>
+                </button>
+                <button class="filter-button" type="button" onclick="toggleSelection(this, 'TP_RL')">
+                    <img src="../Pictures/TP_RL_Schematic.png" alt="Tiefpass RL">
+                    <span>Tiefpass RL</span>
+                </button>
+
+                
+            </div>
+
+            <div id="HP_RC" style="display:none;" class="input-numbers">
+                <h2>Hochpass RC</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                </div>
+
+                <!--Winkel phi -->
+                <div class="form-row">
+                    <label>Winkel &phi;</label>
+                    <input type="text" id="Winkel-HP_RC" style="border-color: var(--Winkel);">
+                    <label>&deg; [Grad]</label>
+                </div>
+
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R</label>
+                    <input type="text" id="R-HP_RC" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Bildwiderstand  X<sub>C</sub></label>
+                    <input type="text" id="XC-HP_RC" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm &angle; -90&deg;]</label>
+                </div>
+
+                <!-- Daempfungsmass a -->
+                <div class="form-row">
+                    <label>D&auml;mpfungssmass a</label>
+                    <input type="text" id="a-HP_RC" style="border-color: var(--Daempfungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Kapazitaet C -->
+                <div class="form-row">
+                    <label>Kapazit&auml;t C</label>
+                    <input type="text" id="C-HP_RC" style="border-color: var(--Kapazitaet);">
+                    <label>F [Farad]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-HP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>C</sub></label>
+                    <input type="text" id="Uc-HP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-HP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Grenzfrequenz f<sub>g</sub></label>
+                    <input type="text" id="fg-HP_RC" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-HP_RC" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_HP_RC()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_HP_RC"></p>
+            </div>
+
+            <div id="HP_RL" style="display:none;" class="input-numbers">
+                <h2>Hochpass RL</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                </div>
+
+                <!--Winkel phi -->
+                <div class="form-row">
+                    <label>Winkel &phi;</label>
+                    <input type="text" id="Winkel-HP_RL" style="border-color: var(--Winkel);">
+                    <label>&deg; [Grad]</label>
+                </div>
+
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R</label>
+                    <input type="text" id="R-HP_RL" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Bildwiderstand  X<sub>L</sub></label>
+                    <input type="text" id="XL-HP_RL" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm &angle; +90&deg;]</label>
+                </div>
+
+                <!-- Daempfungsmass a -->
+                <div class="form-row">
+                    <label>D&auml;mpfungssmass a</label>
+                    <input type="text" id="a-HP_RL" style="border-color: var(--Daempfungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Induktivitaet L -->
+                <div class="form-row">
+                    <label>Induktivit&auml;t L</label>
+                    <input type="text" id="L-HP_RL" style="border-color: var(--Induktivitaet);">
+                    <label>H [Henri]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-HP_RL" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-HP_RL" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Grenzfrequenz f<sub>g</sub></label>
+                    <input type="text" id="fg-HP_RL" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-HP_RL" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_HP_RL()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_HP_RL"></p>
+            </div>
+
+            <div id="TP_RC" style="display:none;" class="input-numbers">
+                <h2>Tiefpass RC</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                </div>
+
+                <!--Winkel phi -->
+                <div class="form-row">
+                    <label>Winkel &phi;</label>
+                    <input type="text" id="Winkel-TP_RC" style="border-color: var(--Winkel);">
+                    <label>&deg; [Grad]</label>
+                </div>
+
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R</label>
+                    <input type="text" id="R-TP_RC" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Bildwiderstand  X<sub>C</sub></label>
+                    <input type="text" id="XC-TP_RC" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm &angle; -90&deg;]</label>
+                </div>
+
+                <!-- Daempfungsmass a -->
+                <div class="form-row">
+                    <label>D&auml;mpfungssmass a</label>
+                    <input type="text" id="a-TP_RC" style="border-color: var(--Daempfungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Kapazitaet C -->
+                <div class="form-row">
+                    <label>Kapazit&auml;t C</label>
+                    <input type="text" id="C-TP_RC" style="border-color: var(--Kapazitaet);">
+                    <label>F [Farad]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-TP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-TP_RC" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Grenzfrequenz f<sub>g</sub></label>
+                    <input type="text" id="fg-TP_RC" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-TP_RC" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_TP_RC()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_TP_RC"></p>
+            </div>
+
+            <div id="TP_RL" style="display:none;" class="input-numbers">
+                <h2>Tiefpass RL</h2>
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
+                </div>
+
+                <!--Winkel phi -->
+                <div class="form-row">
+                    <label>Winkel &phi;</label>
+                    <input type="text" id="Winkel-TP_RL" style="border-color: var(--Winkel);">
+                    <label>&deg; [Grad]</label>
+                </div>
+
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R</label>
+                    <input type="text" id="R-TP_RL" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Bildwiderstand  X<sub>L</sub></label>
+                    <input type="text" id="XL-TP_RL" style="border-color: var(--Widerstand);">
+                    <label>&Omega; [Ohm &angle; +90&deg;]</label>
+                </div>
+
+                <!-- Daempfungsmass a -->
+                <div class="form-row">
+                    <label>D&auml;mpfungssmass a</label>
+                    <input type="text" id="a-TP_RL" style="border-color: var(--Daempfungsmass);">
+                    <label>1 [dB]</label>
+                </div>
+
+                <!-- Induktivitaet L -->
+                <div class="form-row">
+                    <label>Induktivit&auml;t L</label>
+                    <input type="text" id="L-TP_RL" style="border-color: var(--Induktivitaet);">
+                    <label>H [Henri]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-TP_RL" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-TP_RL" style="border-color: var(--Spannung);">
+                    <label>V [Volt] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Grenzfrequenz f<sub>g</sub></label>
+                    <input type="text" id="fg-TP_RL" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <!--Frequenz f-->
+                <div class="form-row">
+                    <label>Frequenz f</label>
+                    <input type="text" id="f-TP_RL" style="border-color: var(--Frequenz);">
+                    <label>Hz [Hertz] </label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_TP_RL()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_TP_RL"></p>
+            </div>
+
+            <br>
+        </main>
+
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    <script>
+        let selectedButton = null;
+
+        function toggleSelection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            
+            if (selectedButton === button) {
+                // Deselect if the same button is clicked again
+                button.classList.remove('selected');
+                section.style.display = 'none';
+                selectedButton = null;
+            } else {
+                // Remove selection from the previously selected button
+                if (selectedButton) {
+                    selectedButton.classList.remove('selected');
+                }
+                
+                // Select the new button
+                button.classList.add('selected');
+                selectedButton = button;
+
+                // Show the selected section and hide the other
+                if (sectionId === 'HP_RC') {
+                    document.getElementById('HP_RC').style.display = 'block';
+                    document.getElementById('HP_RL').style.display = 'none';
+                    document.getElementById('TP_RC').style.display = 'none';
+                    document.getElementById('TP_RL').style.display = 'none';
+                } else if(sectionId === 'HP_RL') {
+                    document.getElementById('HP_RC').style.display = 'none';
+                    document.getElementById('HP_RL').style.display = 'block';
+                    document.getElementById('TP_RL').style.display = 'none';
+                    document.getElementById('TP_RC').style.display = 'none';
+                } else if (sectionId === 'TP_RC') {
+                    document.getElementById('HP_RC').style.display = 'none';
+                    document.getElementById('HP_RL').style.display = 'none';
+                    document.getElementById('TP_RC').style.display = 'block';
+                    document.getElementById('TP_RL').style.display = 'none';
+                } else if (sectionId === 'TP_RL') {
+                    document.getElementById('HP_RC').style.display = 'none';
+                    document.getElementById('HP_RL').style.display = 'none';
+                    document.getElementById('TP_RC').style.display = 'none';
+                    document.getElementById('TP_RL').style.display = 'block';
+                }
+            }
+        }
+
+        function calculate_HP_RC() 
+        {
+            
+            let result_HP_RC = ``;
+
+            const phi = document.getElementById("Winkel-HP_RC").value;
+            const R = document.getElementById("R-HP_RC").value;
+            const XC = document.getElementById("XC-HP_RC").value;
+            const C = document.getElementById("C-HP_RC").value;
+            const Uin = document.getElementById("Uin-HP_RC").value; 
+            const Uc = document.getElementById("Uc-HP_RC").value;
+            const Uout = document.getElementById("Uout-HP_RC").value;
+            const fg = document.getElementById("fg-HP_RC").value;
+            const f = document.getElementById("f-HP_RC").value;
+
+            // debugger;
+            if(!phi)
+            {
+                if(Uc && Uin)
+                {
+                    result_HP_RC += `
+                        Winkel &phi;<sub>RAD</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin)), "")}<br>
+                    
+
+                    Winkel &phi;<sub>DEG</sub> = arcsin(
+                        <div class ="fraction">
+                            <span>U<sub>C</sub></span><br>
+                            <span class="fraction-denominator">U<sub>in</sub></span>
+                        </div>)
+                    =
+                        <div class ="fraction">
+                            <span>${Uc}V</span><br>
+                            <span class="fraction-denominator">${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(Math.asin(parseInput(Uc) / parseInput(Uin))*180 / Math.PI, "&deg;")}<br>
+                    `;
+                }
+            }
+
+            if(!R)
+            {
+                if(fg && C)
+                {
+                    result_HP_RC += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f<sub>g</sub> &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${fg}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(fg) * parseInput(C)), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!XC)
+            {
+                if(f && C)
+                {
+                    result_HP_RC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!C)
+            {
+                if(fg && R)
+                {
+                    result_HP_RC += `
+                        Kapazit&auml;t C = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; f<sub>g</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${R}&Omega; &lowast; ${fg}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(R) * parseInput(fg)), "F")}<br>`;
+                }
+            }
+
+            if(!fg)
+            {
+                if(R && C)
+                {
+                    result_HP_RC += `
+                        Grenzfrequnez f<sub>g</sub> = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${R}&Omega; &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(R) * parseInput(C)), "Hz")}<br>`;
+                }
+            }
+            
+            document.getElementById('result_HP_RC').innerHTML = result_HP_RC;
+        }
+
+        function calculate_HP_RL() 
+        {
+            
+            let result_HP_RL = ``;
+
+            const phi = document.getElementById("Winkel-HP_RL").value;
+            const R = document.getElementById("R-HP_RL").value;
+            const XL = document.getElementById("XL-HP_RL").value;
+            const L = document.getElementById("L-HP_RL").value;
+            const Uin = document.getElementById("Uin-HP_RL").value;
+            const Uout = document.getElementById("Uout-HP_RL").value;
+            const fg = document.getElementById("fg-HP_RL").value;
+            const f = document.getElementById("f-HP_RL").value;
+
+            // debugger;
+            if(!R)
+            {
+                if(fg && L)
+                {
+                    result_HP_RL += `
+                        Widerstand R = 
+                        2&pi; &lowast; f<sub>g</sub> &lowast; L
+                    =
+                        2&pi; &lowast; ${fg}Hz &lowast; ${L}H
+                    = ${formatWithPrefix(2 * Math.PI * parseInput(fg) * parseInput(L), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!XL)
+            {
+                if(f && L)
+                {
+                    result_HP_RL += `
+                        Blindwiderstand X<sub>L</sub> = 
+                        2&pi; &lowast; f &lowast; L
+                    =
+                        2&pi; &lowast; ${f}Hz &lowast; ${L}H
+                    = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(L), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!L)
+            {
+                if(fg && R)
+                {
+                    result_HP_RL += `
+                        Induktivit&auml;t L = 
+                        <div class ="fraction">
+                            <span> R </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; f<sub>g</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${fg}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(fg)), "F")}<br>`;
+                }
+            }
+
+            if(!fg)
+            {
+                if(R && L)
+                {
+                    result_HP_RL += `
+                        Grenzfrequnez f<sub>g</sub> = 
+                        <div class ="fraction">
+                            <span> R </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; L</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${L}H</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(L)), "Hz")}<br>`;
+                }
+            }
+            
+            document.getElementById('result_HP_RL').innerHTML = result_HP_RL;
+        }
+
+        function calculate_TP_RC() 
+        {
+            
+            let result_TP_RC = ``;
+
+            const phi = document.getElementById("Winkel-TP_RC").value;
+            const R = document.getElementById("R-TP_RC").value;
+            const XC = document.getElementById("XC-TP_RC").value;
+            const C = document.getElementById("C-TP_RC").value;
+            const Uin = document.getElementById("Uin-TP_RC").value;
+            const Uout = document.getElementById("Uout-TP_RC").value;
+            const fg = document.getElementById("fg-TP_RC").value;
+            const f = document.getElementById("f-TP_RC").value;
+
+            // debugger;
+            if(!R)
+            {
+                if(fg && C)
+                {
+                    result_TP_RC += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f<sub>g</sub> &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${fg}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(fg) * parseInput(C)), "&Omega;")}<br>`;
+                }
+
+                if(f && C && phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = 
+                        <div class ="fraction">
+                            <span>tan(&phi;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>tan(${phi}&deg;)</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180))/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
+                }
+
+                if(XC&& phi)
+                {
+                    result_TP_RC += `
+                        Widerstand R = tan(&phi;) &lowast; X<sub>C</sub>
+                    = tan(${phi}&deg;) &lowast; ${XC}&Omega;
+                    = ${formatWithPrefix((Math.tan(parseInput(phi) * Math.PI/180)) * (parseInput(XC)), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!XC)
+            {
+                if(f && C)
+                {
+                    result_TP_RC += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!C)
+            {
+                if(fg && R)
+                {
+                    result_TP_RC += `
+                        Kapazit&auml;t C = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; f<sub>g</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${R}&Omega; &lowast; ${fg}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(R) * parseInput(fg)), "F")}<br>`;
+                }
+            }
+
+            if(!Uout)
+            {
+                if(R && C && Uin && C && f)
+                {
+                    // U1 / (sqrt(1 + (2pi * R * C)^2))
+                    result_TP_RC += `
+                        Spannung   U<sub>out</sub> = 
+                        <div class ="fraction">
+                            <span> U<sub>1</sub> </span><br>
+                            <span class="fraction-denominator">&radic;(1 + (2&pi; &lowast; F &lowast; R &lowast; C)<sup>2</sup>)</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${Uin}V</span><br>
+                            <span class="fraction-denominator">&radic;(1 + (2&pi; &lowast; ${f}Hz &lowast; ${R}&Omega; &lowast; ${C}F)<sup>2</sup>)</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(Uin)/(Math.pow(1 + Math.pow( 2 * Math.PI * parseInput(f) * parseInput(R) * parseInput(C) , 2), 0.5)), "V")}<br>`;
+                }
+            }
+
+            if(!fg)
+            {
+                if(R && C)
+                {
+                    result_TP_RC += `
+                        Grenzfrequnez f<sub>g</sub> = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${R}&Omega; &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(R) * parseInput(C)), "Hz")}<br>`;
+                }
+            }
+
+
+            
+            document.getElementById('result_TP_RC').innerHTML = result_TP_RC;
+        }
+
+        function calculate_TP_RL() 
+        {
+            
+            let result_TP_RL = ``;
+
+            const phi = document.getElementById("Winkel-TP_RL").value;
+            const R = document.getElementById("R-TP_RL").value;
+            const XL = document.getElementById("XL-TP_RL").value;
+            const L = document.getElementById("L-TP_RL").value;
+            const Uin = document.getElementById("Uin-TP_RL").value;
+            const Uout = document.getElementById("Uout-TP_RL").value;
+            const fg = document.getElementById("fg-TP_RL").value;
+            const f = document.getElementById("f-TP_RL").value;
+
+            // debugger;
+            if(!R)
+            {
+                if(fg && L)
+                {
+                    result_TP_RL += `
+                        Widerstand R = 
+                        2&pi; &lowast; f<sub>g</sub> &lowast; L
+                    =
+                        2&pi; &lowast; ${fg}Hz &lowast; ${L}H
+                    = ${formatWithPrefix(2 * Math.PI * parseInput(fg) * parseInput(L), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!XL)
+            {
+                if(f && L)
+                {
+                    result_TP_RL += `
+                        Blindwiderstand X<sub>L</sub> = 
+                        2&pi; &lowast; f &lowast; L
+                    =
+                        2&pi; &lowast; ${f}Hz &lowast; ${L}H
+                    = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(L), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!L)
+            {
+                if(fg && R)
+                {
+                    result_TP_RL += `
+                        Induktivit&auml;t L = 
+                        <div class ="fraction">
+                            <span> R </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; f<sub>g</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${fg}Hz</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(fg)), "H")}<br>`;
+                }
+
+                if(R && Uin && Uout && f)
+                {
+                    // UL = sqrt(Uin^2 - Uout^2)
+                    // XL = R * UL /Uout
+                    // L = XL/(2pi * f)
+
+                    // L = R * sqrt(Uin^2 - Uout^2) /(2pi * f * Uout)
+                    
+                    result_TP_RL += `
+                        Induktivit&auml;t L = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> R &lowast; &radic;(U<sub>in</sub><sup>2</sup> - U<sub>out</sub><sup>2</sup>)</span><br>
+                            <span>2&pi; &lowast;  f &lowast; U<sub>out</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${R}&Omega; &lowast; &radic;((${Uin}V)<sup>2</sup> - (${Uout}V)<sup>2</sup>)</span><br>
+                            <span>2&pi; &lowast; ${f}Hz f &lowast; ${Uout}V</span>
+                        </div> 
+                    = ${formatWithPrefix((parseInput(R) * Math.pow(Math.pow(parseInput(Uin) , 2) - Math.pow(parseInput(Uout) , 2), 0.5))/(2 * Math.PI * parseInput(f) * parseInput(Uout)), "H")}<br>`;
+                }
+            }
+
+            if(!Uin)
+            {
+                if(Uout && f && L && R)
+                {
+                    // Uin = sqrt((Uout)^2 + ((Uout * 2 * Pi * f * L)/R)^2)
+                    result_TP_RL += `
+                        Eingangsspannung U<sub>in</sub> = &radic;((U<sub>out</sub>)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">U<sub>out</sub> &lowast; 2&pi; &lowast; f &lowast; L</span><br>
+                            <span>R</span>
+                        </div>)<sup>2</sup>)
+                    = &radic;(${Uout}V)<sup>2</sup>
+                        (<div class ="fraction">
+                            <span class="fraction-numerator">${Uout}V &lowast; 2&pi; &lowast; ${f}Hz &lowast; ${L}H</span><br>
+                            <span>${R}&Omega;</span>
+                        </div>)<sup>2</sup>)
+                    = ${formatWithPrefix(Math.pow( Math.pow(parseInput(Uout), 2) + Math.pow(((parseInput(Uout) * 2 * Math.PI * parseInput(f) * parseInput(L))/R), 2),0.5), "V")}<br>`;
+
+                }
+            }
+
+            if(!fg)
+            {
+                if(R && L)
+                {
+                    result_TP_RL += `
+                        Grenzfrequnez f<sub>g</sub> = 
+                        <div class ="fraction">
+                            <span> R </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; R &lowast; L</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>${R}&Omega;</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${L}H</span>
+                        </div> 
+                    = ${formatWithPrefix(parseInput(R)/(2 * Math.PI * parseInput(L)), "Hz")}<br>`;
+                }
+            }
+            
+            document.getElementById('result_TP_RL').innerHTML = result_TP_RL;
+        }
+
+        
+    </script>
+    <script src="../scripts.js"></script>
+</body>
+</html>
