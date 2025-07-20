@@ -32,7 +32,20 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all branches to ensure we can access them
 
-      # Step 2: Determine Deployment Path
+      # Step 2: Ensure gh-pages Branch Exists
+      - name: 🛠️ Ensure gh-pages Branch Exists
+        run: |
+          # Check if the gh-pages branch exists
+          if git show-ref --quiet refs/heads/gh-pages; then
+            echo "gh-pages branch exists."
+          else
+            echo "gh-pages branch does not exist. Creating it..."
+            git checkout --orphan gh-pages
+            git reset --hard
+            echo "gh-pages branch created."
+          fi
+
+      # Step 3: Determine Deployment Path
       - name: 🗺️ Determine Deployment Path
         id: set-path
         run: |
@@ -49,7 +62,7 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Deploy to GitHub Pages
+      # Step 4: Deploy to GitHub Pages
       - name: 🚀 Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
