@@ -25,8 +25,10 @@ jobs:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: main
+          fetch-depth: 0 # Fetch all history
+          ref: main # Start from the main branch
+          # Ensure all branches are fetched
+          fetch-tags: true
 
       - name: 🔍 Debug Workspace After Checkout
         run: |
@@ -35,25 +37,33 @@ jobs:
 
       - name: 🛠️ Ensure gh-pages Branch Exists
         run: |
-          git fetch origin
+          git fetch --all # Fetch all branches
           if git show-ref --quiet refs/heads/gh-pages; then
+            echo "gh-pages branch exists locally. Checking it out..."
             git checkout gh-pages
-          elif git ls-remote --exit-code origin/gh-pages; then
+          elif git ls-remote --exit-code origin gh-pages; then
+            echo "gh-pages branch exists remotely. Creating it locally..."
             git checkout -b gh-pages origin/gh-pages
           else
+            echo "gh-pages branch does not exist. Creating it..."
             git checkout --orphan gh-pages
             git reset --hard
+            echo "gh-pages branch created."
           fi
 
       - name: 🗺️ Determine Deployment Path
         id: set-path
         run: |
           branch_name=${GITHUB_REF##*/}
+          echo "Current branch: $branch_name"
           if [ "$branch_name" == "main" ]; then
             echo "path=." >> $GITHUB_ENV
+            echo "✅ Deploying main branch to root (/)."
           elif [ "$branch_name" == "development" ]; then
             echo "path=dev" >> $GITHUB_ENV
+            echo "✅ Deploying development branch to /dev."
           else
+            echo "❌ Error: Unsupported branch '$branch_name'."
             exit 1
           fi
 
