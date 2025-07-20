@@ -1,13 +1,10 @@
-# Workflow for syncing main and development branches to the gh-pages branch
 name: Sync Main and Development to GitHub Pages
 
 on:
-  # Trigger on pushes to main and development branches
   push:
     branches:
       - main
       - development
-  # Allow manual triggering from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -15,7 +12,6 @@ permissions:
   pages: write
   id-token: write
 
-# Ensure only one deployment runs at a time
 concurrency:
   group: "sync-to-gh-pages"
   cancel-in-progress: true
@@ -26,61 +22,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all branches to ensure we can access them
-          ref: main # Start from the main branch
+          fetch-depth: 0
+          ref: main
 
-      # Step 2: Ensure gh-pages Branch Exists
+      - name: 🔍 Debug Workspace After Checkout
+        run: |
+          echo "Contents of the workspace after checkout:"
+          ls -A
+
       - name: 🛠️ Ensure gh-pages Branch Exists
         run: |
-          # Fetch all remote branches to ensure gh-pages is available
           git fetch origin
-
-          # Check if the gh-pages branch exists locally
           if git show-ref --quiet refs/heads/gh-pages; then
-            echo "gh-pages branch exists locally. Checking it out..."
             git checkout gh-pages
-          # Check if the gh-pages branch exists remotely
           elif git ls-remote --exit-code origin gh-pages; then
-            echo "gh-pages branch exists remotely. Creating it locally..."
             git checkout -b gh-pages origin/gh-pages
           else
-            echo "gh-pages branch does not exist. Creating it..."
             git checkout --orphan gh-pages
             git reset --hard
-            echo "gh-pages branch created."
           fi
 
-      # Step 3: Determine Deployment Path
       - name: 🗺️ Determine Deployment Path
         id: set-path
         run: |
           branch_name=${GITHUB_REF##*/}
-          echo "Current branch: $branch_name"
           if [ "$branch_name" == "main" ]; then
             echo "path=." >> $GITHUB_ENV
-            echo "✅ Deploying main branch to root (/)."
           elif [ "$branch_name" == "development" ]; then
             echo "path=dev" >> $GITHUB_ENV
-            echo "✅ Deploying development branch to /dev."
           else
-            echo "❌ Error: Unsupported branch '$branch_name'."
             exit 1
-          fi
 
-      # Step 4: Debug Content Before Deployment
-      - name: 🔍 Debug Content
+      - name: 🔍 Debug Content Before Deployment
         run: |
           echo "Contents of the current directory before deployment:"
           ls -A
 
-      # Step 5: Deploy to GitHub Pages
       - name: 🚀 Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # Deploy the root directory
+          publish_dir: ./
           destination_dir: ${{ env.path }}
