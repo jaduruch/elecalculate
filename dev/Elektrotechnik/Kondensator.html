@@ -4597,26 +4597,6 @@
             ctx.textAlign = "center";
             ctx.fillText(`Zeit (${timeUnit})`, marginLeft + width / 2, canvas.height - marginBottom + 60);
 
-            // === 5. Define visually distinct colors ===
-            // Use site orange for R, lighter for Xc, green for Z, yellow for φ
-            const colorR   = "#FF9515";
-            const colorXc  = "#ffb029"; // lighter orange
-            const colorZ   = "#e15e00"; // darker orange
-            const colorPhi = "#FFFFFF"; // red
-
-            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
-            // R (horizontal, right)
-            drawArrow(ctx, cx, cy, cx + R * scale, cy, colorR, phasorHoveredKey === "R" ? 6 : 3, phasorHoveredKey === "R");
-            hitboxes.push({type: "vector", key: "R", x1: cx, y1: cy, x2: cx + R * scale, y2: cy});
-
-            // Xc (vertical, down)
-            drawArrow(ctx, cx + R * scale, cy, cx + R * scale, cy + Xc * scale, colorXc, phasorHoveredKey === "Xc" ? 6 : 3, phasorHoveredKey === "Xc");
-            hitboxes.push({type: "vector", key: "Xc", x1: cx + R * scale, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
-
-            // Z (hypotenuse)
-            drawArrow(ctx, cx, cy, cx + R * scale, cy + Xc * scale, colorZ, phasorHoveredKey === "Z" ? 6 : 3, phasorHoveredKey === "Z");
-            hitboxes.push({type: "vector", key: "Z", x1: cx, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
-
             // Tick labels (rounded to two decimals)
             ctx.font = "16px Arial";
             ctx.textAlign = "center";
