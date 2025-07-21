@@ -29,54 +29,7 @@ function toggleMenu() {
         burger.classList.add("change");
     }
 }
-//---------------------------------Eingabe mit Massvorsatz---------------------------------
 
-/*function parseInput(value) {
-    const unitMap = {
-        //"f": 1e-15,   // Femto
-        "p": 1e-12,   // Pico
-        "n": 1e-9,    // Nano
-        "u": 1e-6,    // Mikro
-        "m": 1e-3,    // Milli
-        "k": 1e3,     // Kilo
-        "M": 1e6,     // Mega
-        "G": 1e9,     // Giga
-        "T": 1e12    // Tera
-        //"P": 1e15     // Peta
-    };
-
-    const match = value.match(/^(\d*\.?\d+)\s*([pnumkMGT]?)$/);
-    if (!match) return NaN;
-
-    const num = parseFloat(match[1]);
-    const unit = match[2];
-
-    return num * (unitMap[unit] || 1);
-}
-//---------------------------------Ausgabe mit Massvorsatz---------------------------------
-function formatWithPrefix(value, unit) {
-    const prefixes = [
-        //{ prefix: "P", factor: 1e15 },
-        { prefix: "T", factor: 1e12 },
-        { prefix: "G", factor: 1e9 },
-        { prefix: "M", factor: 1e6 },
-        { prefix: "k", factor: 1e3 },
-        { prefix: "", factor: 1 },
-        { prefix: "m", factor: 1e-3 },
-        { prefix: "&mu;", factor: 1e-6 },
-        { prefix: "n", factor: 1e-9 },
-        { prefix: "p", factor: 1e-12 }//,
-        //{ prefix: "f", factor: 1e-15 }
-    ];
-
-    for (let i = 0; i < prefixes.length; i++) {
-        if (Math.abs(value) >= prefixes[i].factor) {
-            return (value / prefixes[i].factor).toFixed(2) + " " + prefixes[i].prefix + unit;
-        }
-    }
-
-    return value.toFixed(2) + " " + unit;
-}*/
 function parseInput(value) {
     const unitMap = {
         "p": 1e-12,   // Pico
@@ -121,6 +74,29 @@ function formatWithPrefix(value, unit) {
     }
 
     return value.toFixed(3) + unit;
+}
+
+function formatPrefixNoUnit(value)              // dont return Unit of Value
+{
+    const prefixes = [
+        { prefix: "T", factor: 1e12 },
+        { prefix: "G", factor: 1e9 },
+        { prefix: "M", factor: 1e6 },
+        { prefix: "k", factor: 1e3 },
+        { prefix: "", factor: 1 },
+        { prefix: "m", factor: 1e-3 },
+        { prefix: "&mu;", factor: 1e-6 },
+        { prefix: "n", factor: 1e-9 },
+        { prefix: "p", factor: 1e-12 }
+    ];
+
+    for (let i = 0; i < prefixes.length; i++) {
+        if (Math.abs(value) >= prefixes[i].factor) {
+            return (value / prefixes[i].factor).toFixed(3) + prefixes[i].prefix;
+        }
+    }
+
+    return value.toFixed(3);
 }
 
 
