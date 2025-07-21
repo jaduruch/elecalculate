@@ -3931,13 +3931,23 @@
 
             // === 5. Define visually distinct colors ===
             // Use site orange for UR/R, lighter for UC/Xc, darker for U/Z, red for I, yellow for φ
-            const colorUR = getComputedStyle(document.documentElement).getPropertyValue('--Orange').trim() || "#FFA500";
-            const colorUC = "#FFD580"; // lighter orange
-            const colorU  = "#CC8400"; // darker orange
-            const colorI  = "#FF3333"; // red (dashed)
-            const colorPhi = "#FFD700"; // gold/yellow
+            const colorUR = "#0070C0";  // normal blue (same as in style.css)
+            const colorUC = "#2020FF"; // dark blue
+            const colorU  = "#A0A0FF"; // light blue
+            const colorI  = "#C00000"; // dark red (dashed)
+            const colorPhi = "#FFFFFF"; // white
 
             // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
+            // Right angle marker at (cx + UR * scale, cy)
+            drawRightAngleMarker(ctx, cx + UR * scale, cy, 1, 1);
+
+
+            // // I (red, same as U_R direction, dashed)
+            // drawArrow(ctx, cx, cy - 30, cx + UR * scale, cy - 30, colorI, phasorHoveredKey === "I" ? 5 : 2, phasorHoveredKey === "I", true);
+            drawArrow(ctx, cx, cy, cx + UR * scale * 1.25 , cy, colorI, phasorHoveredKey === "I" ? 4 : 2, phasorHoveredKey === "I");
+            // hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy - 30, x2: cx + UR * scale, y2: cy - 30});
+            hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy, x2: cx + UR * scale * 1.25, y2: cy});
+
             // U_R (horizontal, right)
             drawArrow(ctx, cx, cy, cx + UR * scale, cy, colorUR, phasorHoveredKey === "UR" ? 6 : 3, phasorHoveredKey === "UR");
             hitboxes.push({type: "vector", key: "UR", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy});
@@ -3950,12 +3960,9 @@
             drawArrow(ctx, cx, cy, cx + UR * scale, cy + UC * scale, colorU, phasorHoveredKey === "U" ? 6 : 3, phasorHoveredKey === "U");
             hitboxes.push({type: "vector", key: "U", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy + UC * scale});
 
-            // I (red, same as U_R direction, dashed)
-            drawArrow(ctx, cx, cy - 30, cx + UR * scale, cy - 30, colorI, phasorHoveredKey === "I" ? 5 : 2, phasorHoveredKey === "I", true);
-            hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy - 30, x2: cx + UR * scale, y2: cy - 30});
+            
 
-            // Right angle marker at (cx + UR * scale, cy)
-            drawRightAngleMarker(ctx, cx + UR * scale, cy, 1, 1);
+            
 
             // === 7. Draw phase angle φ at origin ===
             ctx.save();
@@ -3980,16 +3987,16 @@
 
             // === 8. Fill legend/info box beside the canvas, with color coding ===
             const legend = [
-                { key: "R",   label: `R = ${formatSI(R, "Ω")}`, color: "#fff" },
+                /*{ key: "R",   label: `R = ${formatSI(R, "Ω")}`, color: "#fff" },
                 { key: "C",   label: `C = ${formatSI(C, "F")}`, color: "#fff" },
                 { key: "f",   label: `f = ${formatSI(f, "Hz")}`, color: "#fff" },
                 { key: "Xc",  label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: "#fff" },
-                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: "#fff" },
-                { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
+                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: "#fff" },*/
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
+                { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
                 { key: "UR",  label: `U<sub>R</sub> = ${formatSI(UR, "V")}`, color: colorUR },
                 { key: "UC",  label: `U<sub>C</sub> = ${formatSI(UC, "V")}`, color: colorUC },
-                { key: "phi", label: `φ = ${(phi * 180 / Math.PI).toFixed(2)}°`, color: colorPhi }
+                { key: "phi", label: `&phi; = ${(phi * 180 / Math.PI).toFixed(2)}°`, color: colorPhi }
             ];
             legendDiv.innerHTML = legend.map(
                 entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
@@ -4581,6 +4588,7 @@
             ctx.textAlign = "left";
             ctx.fillText(yLabel, marginLeft - 60, marginTop - 18);
 
+
             // X axis label (centered)
             let timeUnit = "s", timeFactor = 1;
             if (maxTime < 1e-3) { timeUnit = "μs"; timeFactor = 1e6; }
@@ -4588,6 +4596,26 @@
             ctx.font = "bold 22px Arial";
             ctx.textAlign = "center";
             ctx.fillText(`Zeit (${timeUnit})`, marginLeft + width / 2, canvas.height - marginBottom + 60);
+
+            // === 5. Define visually distinct colors ===
+            // Use site orange for R, lighter for Xc, green for Z, yellow for φ
+            const colorR   = "#FF9515";
+            const colorXc  = "#ffb029"; // lighter orange
+            const colorZ   = "#e15e00"; // darker orange
+            const colorPhi = "#FFFFFF"; // red
+
+            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
+            // R (horizontal, right)
+            drawArrow(ctx, cx, cy, cx + R * scale, cy, colorR, phasorHoveredKey === "R" ? 6 : 3, phasorHoveredKey === "R");
+            hitboxes.push({type: "vector", key: "R", x1: cx, y1: cy, x2: cx + R * scale, y2: cy});
+
+            // Xc (vertical, down)
+            drawArrow(ctx, cx + R * scale, cy, cx + R * scale, cy + Xc * scale, colorXc, phasorHoveredKey === "Xc" ? 6 : 3, phasorHoveredKey === "Xc");
+            hitboxes.push({type: "vector", key: "Xc", x1: cx + R * scale, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
+
+            // Z (hypotenuse)
+            drawArrow(ctx, cx, cy, cx + R * scale, cy + Xc * scale, colorZ, phasorHoveredKey === "Z" ? 6 : 3, phasorHoveredKey === "Z");
+            hitboxes.push({type: "vector", key: "Z", x1: cx, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
 
             // Tick labels (rounded to two decimals)
             ctx.font = "16px Arial";
@@ -4811,7 +4839,7 @@
                 { f: 1e3,  p: "k" },
                 { f: 1,    p: ""  },
                 { f: 1e-3, p: "m" },
-                { f: 1e-6, p: "μ" },
+                { f: 1e-6, p: "&mu;" },
                 { f: 1e-9, p: "n" }
             ];
             for (const {f, p} of prefixes) {
@@ -4883,7 +4911,7 @@
         }
 
     /*Dropdown menu*/
-    function toggleDropdown(header) {
+    /*function toggleDropdown(header) {
         // Find the next sibling with class 'dropdown-content'
         let content = header.nextElementSibling;
         while (content && !content.classList.contains('dropdown-content')) {
@@ -4893,7 +4921,11 @@
             // Toggle only this dropdown
             content.style.display = (content.style.display === 'block') ? 'none' : 'block';
         }
-    }
+    }*/
+   function toggleDropdown(element) {
+                const dropdown = element.parentElement;
+                dropdown.classList.toggle("open");
+            }
 
     </script>
     <script src="../scripts.js"></script>
