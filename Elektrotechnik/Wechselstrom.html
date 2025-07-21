@@ -438,6 +438,12 @@
     <script>
         let selectedButton = null;
 
+        // Cache the loaded watermark globally
+        const watermarkLogo = new Image();
+        watermarkLogo.src = "../Pictures/favicon_no_BG.svg";
+        let watermarkLoaded = false;
+        watermarkLogo.onload = function() { watermarkLoaded = true; };
+
         function toggleSelection(button, sectionId) {
             const section = document.getElementById(sectionId);
             
@@ -507,6 +513,48 @@
                 button.innerHTML = "%"; // Wechselt zurück zu Radian
                 isPercent = true;
             }
+        }
+
+        /**
+         * Draws a download icon on the given canvas context, positioned in the lower right corner with a margin.
+         *
+         * The icon consists of a white arrow pointing downwards and a box, representing a typical download symbol.
+         * The function also returns the clickable area of the icon for event handling purposes.
+         *
+         * @param {CanvasRenderingContext2D} ctx - The 2D rendering context for the drawing surface of the canvas.
+         * @param {HTMLCanvasElement} canvas - The canvas element on which to draw the icon.
+         * @param {number} [iconSize=32] - The size (width and height) of the icon in pixels. Defaults to 32.
+         * @returns {{ x: number, y: number, size: number }} The position (top-left corner) and size of the clickable area for the icon.
+         */
+        function drawDownloadIcon(ctx, canvas, iconSize = 32) {
+            // Position: lower right, with margin
+            const margin = 12;
+            const x = canvas.width - iconSize - margin;
+            const y = canvas.height - iconSize - margin;
+
+            // Draw a simple download icon (white)
+            ctx.save();
+            ctx.globalAlpha = 0.7;
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            // Draw arrow
+            ctx.beginPath();
+            ctx.moveTo(x + iconSize / 2, y + 8);
+            ctx.lineTo(x + iconSize / 2, y + iconSize - 10);
+            ctx.moveTo(x + iconSize / 2, y + iconSize - 10);
+            ctx.lineTo(x + iconSize / 2 - 8, y + iconSize - 18);
+            ctx.moveTo(x + iconSize / 2, y + iconSize - 10);
+            ctx.lineTo(x + iconSize / 2 + 8, y + iconSize - 18);
+            ctx.stroke();
+            // Draw box
+            ctx.beginPath();
+            ctx.rect(x + 8, y + iconSize - 10, iconSize - 16, 8);
+            ctx.stroke();
+            ctx.restore();
+
+            // Return the clickable area for event handling
+            return { x, y, size: iconSize };
         }
 
         /**
@@ -725,6 +773,49 @@
             );
         }
         
+        /**
+         * Draws a semi-transparent watermark image (logo) onto the given canvas context,
+         * positioned in the top right corner.
+         *
+         * @param {CanvasRenderingContext2D} ctx - The 2D rendering context for the drawing surface of the canvas.
+         * @param {HTMLCanvasElement} canvas - The canvas element on which to draw the watermark.
+         * @param {string} [src="../Pictures/favicon.png"] - The source path of the watermark image.
+         * @param {number} [size=28] - The width and height (in pixels) of the watermark image.
+         * @param {number} [margin=10] - The margin (in pixels) from the top-right corner of the canvas.
+         */
+        function drawWatermark(ctx, canvas, size = 70, margin = 10) {
+            if (watermarkLoaded) {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                ctx.drawImage(
+                    watermarkLogo,
+                    canvas.width - size - margin,
+                    margin,
+                    size,
+                    size
+                );
+                ctx.globalAlpha = 1.0;
+                ctx.restore();
+            }
+        }
+
+        /**
+         * Exports the specified HTML canvas element as a PNG image file.
+         *
+         * @param {string} canvasId - The ID of the canvas element to export.
+         * @returns {void}
+         *
+         * The function locates the canvas element by its ID, converts its content to a PNG data URL,
+         * creates a temporary download link, and triggers a download of the image.
+         */
+        function exportCanvasAsPNG(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.download = canvasId + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
 
         /**
          * Animates the drawing of a sine wave with axes, grid, marker, helper lines, and legend.
@@ -759,6 +850,32 @@
 
             // Draw axes, grid, and labels
             drawAxesAndLabels(ctx, W, H, midY, margin, marginR, up, f, scaleY, pxPerS, periods, Tsec);
+
+            // Draw the watermark logo
+            drawWatermark(ctx, canvas);
+
+            // Draw the icon and store its area
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // Add a click handler (only once)
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
 
             // Prepare for sine wave animation
             const sinusColor = getComputedStyle(document.documentElement)
