@@ -1,0 +1,37 @@
+{
+    "verstaerkungsMassG": {
+        "I1": "1",
+        "I2": "2",
+        "expected": "6.021dB"
+    },
+    "daempfungsMassA": {
+        "I1": "2",
+        "I2": "1",
+        "expected": "6.021dB"
+    },
+    "verstaerkungsFaktorV": {
+        "I1": "1",
+        "I2": "2",
+        "expected": "2.000"
+    },
+    "daempfungsFaktorD": {
+        "I1": "2",
+        "I2": "1",
+        "expected": "2.000"
+    },
+    "ausgangsstromI2": {
+        "I1": "1",
+        "g": "6.02",
+        "expected": "2.000A"
+    },
+    "ausgangsspannungU2": {
+        "U1": "1",
+        "g": "6.02",
+        "expected": "2.000V"
+    },
+    "ausgangsleistungP2": {
+        "P1": "1",
+        "g": "10",
+        "expected": "10.000W"
+    }
+}

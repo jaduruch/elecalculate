@@ -1,0 +1,189 @@
+{
+  "spezifischerWiderstand": [
+    {
+      "desc": "Calculate Resistance from Conductivity, Area and Length",
+      "fields": {
+        "x": "56",
+        "A": "1.5e-6",
+        "l": "100"
+      },
+      "expected": "Widerstand Rges ="
+    },
+    {
+      "desc": "Calculate Resistance from Conductivity, Diameter and Length",
+      "fields": {
+        "x": "56",
+        "d": "1.38e-3",
+        "l": "100"
+      },
+      "expected": "Widerstand Rges ="
+    },
+    {
+      "desc": "Calculate Resistance from Specific Resistance, Area and Length",
+      "fields": {
+        "p": "0.0178",
+        "A": "1.5e-6",
+        "l": "100"
+      },
+      "expected": "Widerstand Rges ="
+    },
+    {
+      "desc": "Calculate Resistance from Specific Resistance, Diameter and Length",
+      "fields": {
+        "p": "0.0178",
+        "d": "1.38e-3",
+        "l": "100"
+      },
+      "expected": "Widerstand Rges ="
+    },
+    {
+      "desc": "Calculate Conductivity from Specific Resistance",
+      "fields": {
+        "p": "0.0178"
+      },
+      "expected": "Leitfähigkeit χ ="
+    },
+    {
+      "desc": "Calculate Conductivity from Area, Length and Resistance",
+      "fields": {
+        "A": "1.5e-6",
+        "l": "100",
+        "R": "1.187"
+      },
+      "expected": "Leitfähigkeit χ ="
+    },
+    {
+      "desc": "Calculate Specific Resistance from Conductivity",
+      "fields": {
+        "x": "56"
+      },
+      "expected": "Spezifischer Widerstand ρ ="
+    },
+    {
+      "desc": "Calculate Area from Diameter",
+      "fields": {
+        "d": "1.38e-3"
+      },
+      "expected": "Fläche A ="
+    },
+    {
+      "desc": "Calculate Diameter from Area",
+      "fields": {
+        "A": "1.5e-6"
+      },
+      "expected": "Leiterdurchmesser d ="
+    }
+  ],
+  "temperaturabhaengigkeit": [
+    {
+      "desc": "Calculate Kaltwiderstand from Warmwiderstand",
+      "fields": {
+        "Rw": "120",
+        "alpha": "0.004",
+        "T": "50"
+      },
+      "expected": "Kaltwiderstand R ="
+    },
+    {
+      "desc": "Calculate Warmwiderstand from Kaltwiderstand",
+      "fields": {
+        "Rk": "100",
+        "alpha": "0.004",
+        "T": "50"
+      },
+      "expected": "Warmwiderstand Rϑ ="
+    },
+    {
+      "desc": "Calculate Temperature Coefficient Alpha",
+      "fields": {
+        "Rk": "100",
+        "Rw": "120",
+        "T": "50"
+      },
+      "expected": "Temperaturbeiwert α ="
+    },
+    {
+      "desc": "Calculate Temperature Change Delta T",
+      "fields": {
+        "Rw": "120",
+        "Rk": "100",
+        "alpha": "0.004"
+      },
+      "expected": "Temperaturänderung ΔT ="
+    },
+    {
+      "desc": "Calculate Warm Temperature Tw",
+      "fields": {
+        "Rw": "120",
+        "Rk": "100",
+        "alpha": "0.004",
+        "Tk": "20"
+      },
+      "expected": "Warmwert Tw ="
+    }
+  ],
+  "stromdichte": [
+    {
+      "desc": "Calculate Current from Diameter and Current Density",
+      "fields": {
+        "d_J": "1.38e-3",
+        "J": "6"
+      },
+      "expected": "Strom I ="
+    },
+    {
+      "desc": "Calculate Current from Area and Current Density",
+      "fields": {
+        "A_J": "1.5e-6",
+        "J": "6"
+      },
+      "expected": "Strom I ="
+    },
+    {
+      "desc": "Calculate Diameter from Current and Current Density",
+      "fields": {
+        "I_J": "9",
+        "J": "6"
+      },
+      "expected": "Durchmesser d ="
+    },
+    {
+      "desc": "Calculate Diameter from Area",
+      "fields": {
+        "A_J": "1.5e-6"
+      },
+      "expected": "Leiterdurchmesser d ="
+    },
+    {
+      "desc": "Calculate Area from Diameter",
+      "fields": {
+        "d_J": "1.38e-3"
+      },
+      "expected": "Fläche A ="
+    },
+    {
+      "desc": "Calculate Area from Current and Current Density",
+      "fields": {
+        "I_J": "9",
+        "J": "6"
+      },
+      "expected": "Querschnitt A ="
+    },
+    {
+      "desc": "Calculate Current Density from Current and Area",
+      "fields": {
+        "I_J": "9",
+        "A_J": "1.5e-6"
+      },
+      "expected": "Stromdichte J ="
+    },
+    {
+      "desc": "Calculate Current Density from Current and Diameter",
+      "fields": {
+        "I_J": "9",
+        "d_J": "1.38e-3"
+      },
+      "expected": "Strom I ="
+    }
+  ]
+}

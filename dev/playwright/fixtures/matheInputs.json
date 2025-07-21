@@ -1,0 +1,10 @@
+{
+  "diameterFromArea": {
+    "area": "12.57",
+    "expectedDiameter": "4"
+  },
+  "areaFromDiameter": {
+    "diameter": "4",
+    "expectedArea": "12.57"
+  }
+}
