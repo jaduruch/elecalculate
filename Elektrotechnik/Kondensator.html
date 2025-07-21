@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Berechnungen von Kapazitaet, Dielektrikum und weiteren Paremeter, RC-Glied simulationen und Kondensator an Wechselstom mit Verktordarstellung">
+	<!-- Stichworte für Suchmaschinen -->
+    <meta name="keywords" content="Online Rechner, Elektronik, Elektrotechnik, Kondensator, Dielektrikum, RC-Glied, E-Kurve, Kondensator an Wechselstrom, Blindwiderstand, Impedanz">
     <title>Elektrotechnik | Kondensator</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
@@ -432,7 +436,7 @@
                                     </div>
                                 </div>
                             </div>
-                        
+                        </div>
 
                         <!-- Spacer Div -->
                         <div style="height: 40px;"></div>
@@ -630,39 +634,30 @@
                         <h3>Berechnete Ergebnisse</h3>
                         <p id="result_RC"></p>
                         </div>
-                        <!--
-                            Canvas für die E-Kurve (RC-Glied):
-                            - Oben: Spannungskurve U_C(t)
-                            - Unten: Stromkurve I(t)
-                            - Automatisch gezeichnet von generate_e_curve_from_RCinputs()
-                            - Immer zentriert im Hauptinhalt
-                        -->
-                        <div style="
-                            width: 100%;
-                            max-width: 1400px;
-                            margin: 40px auto 0 auto;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            padding: 0 2vw 60px 2vw;
-                            box-sizing: border-box;
-                        ">
-                            <h3 style="color:#fff; margin-bottom: 8px; text-align: center;">Spannungskurve</h3>
-                            <canvas id="voltageCanvas"
-                                width="1300" height="400"
-                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
 
-                            <h3 style="color:#fff; margin: 40px 0 8px 0; text-align: center;">Stromkurve</h3>
-                            <canvas id="currentCanvas"
-                                width="1300" height="400"
-                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
+
+                        <!--<div>
+                            <label for="resistance">Widerstand (R) in Ohm:</label>
+                            <input type="number" id="RCresistance">
                         </div>
+                        <div>
+                            <label for="capacitance">Kapazit&auml;t (C) in Farad:</label>
+                            <input type="number" id="RCcapacitance" step="0.000001">
+                        </div>
+                        <div>
+                            <label for="voltage">Eingangsspannung (U<sub>in</sub>) in Volt:</label>
+                            <input type="number" id="RCvoltage" step="0.01">
+                        </div>
+                        <button onclick="generate_e_curve()">e-kurve generieren</button> <br>
+                        
+                        <h3>Spannungskurve</h3>
+                        <canvas id="voltageCanvas" width="600" height="400"></canvas>
+                        
+                        <h3>Stromkurve</h3>
+                        <canvas id="currentCanvas" width="600" height="400"></canvas>-->
                     </div>
                 </div>
             </div>
-
-
 
         </main>
         <footer>
