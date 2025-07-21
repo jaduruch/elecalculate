@@ -528,4 +528,33 @@ input:checked + .slider:before {
     transform: translateX(14px);
 }
 
+.examples-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
+        .example {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .example button {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #3a3a3a;
+            border: 1px solid #666;
+            border-radius: 3px;
+            cursor: pointer;
+            color: #eee;
+        }
+
+        .example button:hover {
+            background-color: #4f4f4f;
+        }

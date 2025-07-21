@@ -18,4 +18,3 @@ Stay updated by following elecalculate on Social Media:
 <a href="https://www.instagram.com/elecalculate">
     <img src="https://elecalculate.com/Pictures/instagram-logo.jpg" alt="Follow us on Instagram" width="60" height="60">
 </a>
-
