@@ -636,25 +636,33 @@
                         </div>
 
 
-                        <!--<div>
-                            <label for="resistance">Widerstand (R) in Ohm:</label>
-                            <input type="number" id="RCresistance">
-                        </div>
-                        <div>
-                            <label for="capacitance">Kapazit&auml;t (C) in Farad:</label>
-                            <input type="number" id="RCcapacitance" step="0.000001">
-                        </div>
-                        <div>
-                            <label for="voltage">Eingangsspannung (U<sub>in</sub>) in Volt:</label>
-                            <input type="number" id="RCvoltage" step="0.01">
-                        </div>
-                        <button onclick="generate_e_curve()">e-kurve generieren</button> <br>
-                        
-                        <h3>Spannungskurve</h3>
-                        <canvas id="voltageCanvas" width="600" height="400"></canvas>
-                        
-                        <h3>Stromkurve</h3>
-                        <canvas id="currentCanvas" width="600" height="400"></canvas>-->
+                        <!--
+                            Canvas für die E-Kurve (RC-Glied):
+                            - Oben: Spannungskurve U_C(t)
+                            - Unten: Stromkurve I(t)
+                            - Automatisch gezeichnet von generate_e_curve_from_RCinputs()
+                            - Immer zentriert im Hauptinhalt
+                        -->
+                        <div style="
+                            width: 100%;
+                            max-width: 1400px;
+                            margin: 40px auto 0 auto;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0 2vw 60px 2vw;
+                            box-sizing: border-box;
+                        ">
+                            <h3 style="color:#fff; margin-bottom: 8px; text-align: center;">Spannungskurve</h3>
+                            <canvas id="voltageCanvas"
+                                width="1300" height="400"
+                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
+
+                            <h3 style="color:#fff; margin: 40px 0 8px 0; text-align: center;">Stromkurve</h3>
+                            <canvas id="currentCanvas"
+                                width="1300" height="400"
+                                style="background:#222; border:1px solid #666; display:block; margin:20px auto; border-radius: 5px; max-width: 100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -3756,6 +3764,8 @@
             }
 
             document.getElementById('result_RC').innerHTML = result_RC;
+            
+            generate_e_curve_from_RCinputs();
         }
 
         // Global variable to track which vector is hovered
@@ -3766,6 +3776,71 @@
         watermarkLogo.src = "../Pictures/favicon_no_BG.svg";
         let watermarkLoaded = false;
         watermarkLogo.onload = function() { watermarkLoaded = true; };
+
+
+        /**
+         * Generates and draws the E-Kurve (exponential charging/discharging curve)
+         * for voltage and current of an RC circuit, using all available RC-Glied input fields.
+         * - Uses direct user input if available (e.g. τ, I, t, u(t), i(t))
+         * - Falls back to calculated values if not provided
+         * - Always draws a meaningful curve and warns if input is insufficient
+         */
+        function generate_e_curve_from_RCinputs() {
+            // 1. Read and parse all relevant RC-Glied inputs
+            const R = parseInput(document.getElementById("R_RC").value) || 1000;
+            const C = parseInput(document.getElementById("C_RC").value) || 0.000001;
+            const U = parseInput(document.getElementById("U_RC").value) || 1;
+            const tMarker = parseInput(document.getElementById("t_RC").value);
+            const isDischarging = document.getElementById("modeSwitch").checked;
+
+            // 2. Calculate derived values
+            const tau = R * C;
+            const maxTime = 5 * tau;
+            const stepCount = 100;
+            const I = U / R;
+
+            // 4. Draw voltage curve with all UI/UX features
+            drawCurveDynamic(
+                "voltageCanvas",
+                (t) => isDischarging
+                    ? U * Math.exp(-t / tau)
+                    : U * (1 - Math.exp(-t / tau)),
+                "Spannung (V)",
+                maxTime,
+                stepCount,
+                {
+                    color: "#0070C0",
+                    tMarker: isFinite(tMarker) ? tMarker : undefined,
+                    markerLabel: "u(t) = ",
+                }
+            );
+
+            // 5. Draw current curve with all UI/UX features
+            drawCurveDynamic(
+                "currentCanvas",
+                (t) => isDischarging
+                    ? -I * Math.exp(-t / tau)
+                    : I * Math.exp(-t / tau),
+                "Strom (A)",
+                maxTime,
+                stepCount,
+                {
+                    color: "#C00000",
+                    tMarker: isFinite(tMarker) ? tMarker : undefined,
+                    markerLabel: "i(t) = ",
+                }
+            );
+        }
+
+
+        /**
+         * Draws a warning message in the center of the given canvas.
+         */
+        function showCanvasWarning(canvasId, message) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+        }
 
         /**
          * Draws a interactive Spannungsdreieck (voltage phasor triangle)
@@ -4033,233 +4108,584 @@
          * @param {string} [canvasId="phasorCanvasImpedance"] - The canvas to draw on.
          * @param {string} [legendId="phasorLegendImpedance"] - The legend div to fill.
          */
-        function drawWiderstandsdreieckSerie(canvasId = "phasorCanvasImpedance", legendId = "phasorLegendImpedance") {
+        function drawWiderstandsdreieckSerie(
+        canvasId = "phasorCanvasImpedance",
+        legendId = "phasorLegendImpedance"
+        ) {
+        const canvas = document.getElementById(canvasId);
+        const legendDiv = document.getElementById(legendId);
+        if (!canvas || !legendDiv) return;
+
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // === 1. Parse and validate input values ===
+        const R = parseInput(document.getElementById("R_AC").value);
+        const C = parseInput(document.getElementById("C_AC").value);
+        const f = parseInput(document.getElementById("f_AC").value);
+
+        if (
+            !R ||
+            !C ||
+            !f ||
+            R <= 0 ||
+            C <= 0 ||
+            f <= 0 ||
+            !isFinite(R) ||
+            !isFinite(C) ||
+            !isFinite(f)
+        ) {
+            ctx.fillStyle = "#e66";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+            "Bitte R, C, f korrekt und > 0 eingeben!",
+            canvas.width / 2,
+            canvas.height / 2
+            );
+            legendDiv.innerHTML = "";
+            return;
+        }
+
+        // === 2. Calculate triangle values ===
+        const Xc = 1 / (2 * Math.PI * f * C);
+        const Z = Math.sqrt(R * R + Xc * Xc);
+        const phi = -Math.atan(Xc / R);
+
+        if (
+            !isFinite(R) ||
+            !isFinite(Xc) ||
+            !isFinite(Z) ||
+            Math.abs(R) < 1e-9 ||
+            Math.abs(Xc) < 1e-9 ||
+            Math.abs(Z) < 1e-9
+        ) {
+            ctx.fillStyle = "#e66";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+            "Werte ergeben kein sinnvolles Dreieck!",
+            canvas.width / 2,
+            canvas.height / 2
+            );
+            legendDiv.innerHTML = "";
+            return;
+        }
+
+        // === 3. Center and scale triangle ===
+        const margin = 60;
+        const plotWidth = canvas.width - 2 * margin;
+        const plotHeight = canvas.height - 2 * margin;
+        const maxSide = Math.max(Math.abs(R), Math.abs(Xc), Math.abs(Z));
+        const scale = (0.7 * Math.min(plotWidth, plotHeight)) / (maxSide * 1.2);
+
+        // Center of triangle (origin)
+        const cx = canvas.width / 2 - (R * scale) / 2;
+        const cy = canvas.height / 2 + (Math.abs(Xc) * scale) / 2;
+
+        // --- Store vector/arc positions for tooltips ---
+        const hitboxes = [];
+
+        // === 4. Draw axes (dotted, labeled, full width/height) ===
+        ctx.save();
+        ctx.strokeStyle = "#ccc";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        // x-axis
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(canvas.width, cy);
+        ctx.stroke();
+        // y-axis
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, canvas.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // x label
+        ctx.font = "bold 20px Arial";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "right";
+        ctx.fillText("x", canvas.width - 10, cy - 10);
+        // y label
+        ctx.textAlign = "left";
+        ctx.fillText("y", cx + 10, 24);
+        ctx.restore();
+
+        // === 5. Define visually distinct colors ===
+        const colorR = getComputedStyle(document.documentElement)
+            .getPropertyValue("--Orange")
+            .trim() || "#FFA500";
+        const colorXc = "#FFD580"; // lighter orange
+        const colorZ = "#00cc66"; // green
+        const colorPhi = "#FFD700"; // gold/yellow
+
+        // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
+        // R (horizontal, right)
+        drawArrow(
+            ctx,
+            cx,
+            cy,
+            cx + R * scale,
+            cy,
+            colorR,
+            phasorHoveredKey === "R" ? 6 : 3,
+            phasorHoveredKey === "R"
+        );
+        hitboxes.push({
+            type: "vector",
+            key: "R",
+            x1: cx,
+            y1: cy,
+            x2: cx + R * scale,
+            y2: cy,
+        });
+
+        // Xc (vertical, down)
+        drawArrow(
+            ctx,
+            cx + R * scale,
+            cy,
+            cx + R * scale,
+            cy + Xc * scale,
+            colorXc,
+            phasorHoveredKey === "Xc" ? 6 : 3,
+            phasorHoveredKey === "Xc"
+        );
+        hitboxes.push({
+            type: "vector",
+            key: "Xc",
+            x1: cx + R * scale,
+            y1: cy,
+            x2: cx + R * scale,
+            y2: cy + Xc * scale,
+        });
+
+        // Z (hypotenuse)
+        drawArrow(
+            ctx,
+            cx,
+            cy,
+            cx + R * scale,
+            cy + Xc * scale,
+            colorZ,
+            phasorHoveredKey === "Z" ? 6 : 3,
+            phasorHoveredKey === "Z"
+        );
+        hitboxes.push({
+            type: "vector",
+            key: "Z",
+            x1: cx,
+            y1: cy,
+            x2: cx + R * scale,
+            y2: cy + Xc * scale,
+        });
+
+        // Right angle marker at (cx + R * scale, cy)
+        drawRightAngleMarker(ctx, cx + R * scale, cy, 1, 1);
+
+        // === 7. Draw phase angle φ at origin ===
+        ctx.save();
+        ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+        ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+        ctx.beginPath();
+        const arcAngle = Math.atan2(Xc, R);
+        if (arcAngle < 0) {
+            ctx.arc(cx, cy, 36, 0, arcAngle, true);
+        } else {
+            ctx.arc(cx, cy, 36, 0, arcAngle, false);
+        }
+        ctx.stroke();
+        hitboxes.push({
+            type: "arc",
+            key: "phi",
+            cx,
+            cy,
+            r: 36,
+            angle: arcAngle,
+        });
+        ctx.restore();
+
+        // Draw origin dot
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // === 8. Fill legend/info box beside the canvas, with color coding ===
+        const legend = [
+            { key: "R", label: `R = ${formatSI(R, "Ω")}`, color: colorR },
+            { key: "Xc", label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorXc },
+            { key: "Z", label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
+            {
+            key: "phi",
+            label: `φ = ${(phi * 180 / Math.PI).toFixed(2)}°`,
+            color: colorPhi,
+            },
+        ];
+        legendDiv.innerHTML = legend
+            .map(
+            (entry) =>
+                `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+            )
+            .join("");
+
+        // === 9. Tooltip/hover system: highlight legend and vector on canvas hover ===
+        canvas.onmousemove = function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mx = (e.clientX - rect.left) * scaleX;
+            const my = (e.clientY - rect.top) * scaleY;
+            let found = null;
+            for (const h of hitboxes) {
+            if (h.type === "vector") {
+                const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                if (dist < 5) {
+                found = h.key;
+                break;
+                }
+            } else if (h.type === "arc") {
+                const dx = mx - h.cx,
+                dy = my - h.cy;
+                const r = Math.sqrt(dx * dx + dy * dy);
+                let a = Math.atan2(dy, dx);
+                if (a < 0) a += 2 * Math.PI;
+                let start = 0;
+                let end = h.angle;
+                if (end < 0) end += 2 * Math.PI;
+                let inArc = false;
+                if (start <= end) {
+                inArc = a >= start && a <= end;
+                } else {
+                inArc = a >= start || a <= end;
+                }
+                if (Math.abs(r - h.r) < 10 && inArc) {
+                found = h.key;
+                break;
+                }
+            }
+            }
+            phasorHoveredKey = found;
+            drawWiderstandsdreieckSerie(canvasId, legendId); // Redraw with highlight
+            for (const div of legendDiv.children) {
+            if (div.dataset.key === found) {
+                div.style.background = "#444";
+                div.style.fontWeight = "bold";
+            } else {
+                div.style.background = "";
+                div.style.fontWeight = "";
+            }
+            }
+        };
+        canvas.onmouseleave = function () {
+            phasorHoveredKey = null;
+            drawWiderstandsdreieckSerie(canvasId, legendId);
+            for (const div of legendDiv.children) {
+            div.style.background = "";
+            div.style.fontWeight = "";
+            }
+        };
+
+        // === 10. Legend hover highlights vector in canvas ===
+        for (const div of legendDiv.children) {
+            div.onmouseenter = function () {
+            phasorHoveredKey = this.dataset.key;
+            drawWiderstandsdreieckSerie(canvasId, legendId);
+            for (const d of legendDiv.children) {
+                d.style.background = d === this ? "#444" : "";
+                d.style.fontWeight = d === this ? "bold" : "";
+            }
+            };
+            div.onmouseleave = function () {
+            phasorHoveredKey = null;
+            drawWiderstandsdreieckSerie(canvasId, legendId);
+            for (const d of legendDiv.children) {
+                d.style.background = "";
+                d.style.fontWeight = "";
+            }
+            };
+        }
+
+        // Draw the icon and store its area
+        const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+        // Add a click handler (only once)
+        if (!canvas._downloadHandlerAdded) {
+            canvas.addEventListener("click", function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mx = (e.clientX - rect.left) * scaleX;
+            const my = (e.clientY - rect.top) * scaleY;
+            if (
+                mx >= downloadIconArea.x &&
+                mx <= downloadIconArea.x + downloadIconArea.size &&
+                my >= downloadIconArea.y &&
+                my <= downloadIconArea.y + downloadIconArea.size
+            ) {
+                exportCanvasAsPNG(canvas.id);
+            }
+            });
+            canvas._downloadHandlerAdded = true;
+        }
+
+        // 11. Watermark logo (top right)
+        drawWatermark(ctx, canvas);
+        }
+        
+        /**
+         * Draws a marker (circle) at (t, value) on the given curve canvas.
+         */
+        function drawMarkerOnCurve(canvasId, t, value, maxTime, minY, maxY, color) {
             const canvas = document.getElementById(canvasId);
-            const legendDiv = document.getElementById(legendId);
-            if (!canvas || !legendDiv) return;
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            const margin = 80;
+            const width = canvas.width - 2 * margin;
+            const height = canvas.height - 2 * margin;
+            const x = margin + (t / maxTime) * width;
+            const y = canvas.height - margin - ((value - minY) / (maxY - minY)) * height;
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        /**
+         * Determines the best SI prefix for a given value range.
+         * Returns { factor, prefix }.
+         */
+        function getBestSIPrefix(maxAbsValue) {
+            const prefixes = [
+                { f: 1e9,  p: "G" },
+                { f: 1e6,  p: "M" },
+                { f: 1e3,  p: "k" },
+                { f: 1,    p: ""  },
+                { f: 1e-3, p: "m" },
+                { f: 1e-6, p: "μ" },
+                { f: 1e-9, p: "n" }
+            ];
+            for (const {f, p} of prefixes) {
+                if (maxAbsValue >= f) return { factor: f, prefix: p };
+            }
+            // If value is extremely small
+            return { factor: 1, prefix: "" };
+        }
+
+        /**
+         * Formats a value using a given SI factor and prefix.
+         */
+        function formatWithSIPrefix(value, factor, prefix, unit) {
+            return (value / factor).toFixed(2) + " " + prefix + unit;
+        }
+
+        /**
+         * Draws a voltage or current E-curve for an RC circuit on a canvas.
+         * - Dynamically scales axes to the actual data range.
+         * - Shows a warning in the canvas if the input is missing or not physically meaningful.
+         * - Axis labels use a single SI prefix per axis.
+         * - Draws a marker at tMarker if provided (pink, no glow).
+         * - Draws a watermark logo in the top right.
+         * - All text is white, y-axis label stays on top.
+         * - X and Y axis numbers are rounded to two decimals.
+         *
+         * @param {string} canvasId
+         * @param {function} valueFunc
+         * @param {string} yLabel
+         * @param {number} maxTime
+         * @param {number} stepCount
+         * @param {object} options { color, minY, maxY, tMarker, markerLabel }
+         */
+        function drawCurveDynamic(canvasId, valueFunc, yLabel, maxTime, stepCount, options = {}) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // === 1. Parse and validate input values ===
-            const R = parseInput(document.getElementById("R_AC").value);
-            const C = parseInput(document.getElementById("C_AC").value);
-            const f = parseInput(document.getElementById("f_AC").value);
+            // Margins for all sides
+            const marginLeft = 90;
+            const marginRight = 60;
+            const marginTop = 40;
+            const marginBottom = 70;
+            const width = canvas.width - marginLeft - marginRight;
+            const height = canvas.height - marginTop - marginBottom;
 
-            if (!R || !C || !f || R <= 0 || C <= 0 || f <= 0 || !isFinite(R) || !isFinite(C) || !isFinite(f)) {
+            // 1. Input validation
+            if (!maxTime || maxTime <= 0 || typeof valueFunc !== "function") {
                 ctx.fillStyle = "#e66";
-                ctx.font = "bold 22px sans-serif";
+                ctx.font = "bold 24px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText("Bitte R, C, f korrekt und > 0 eingeben!", canvas.width / 2, canvas.height / 2);
-                legendDiv.innerHTML = "";
+                ctx.fillText("Ungültige Eingaben – keine Kurve darstellbar!", canvas.width / 2, canvas.height / 2);
+                ctx.font = "16px sans-serif";
+                ctx.fillStyle = "#fff";
+                ctx.fillText("Bitte überprüfe R, C, U und Modus.", canvas.width / 2, canvas.height / 2 + 30);
                 return;
             }
 
-            // === 2. Calculate triangle values ===
-            const Xc = 1 / (2 * Math.PI * f * C);
-            const Z = Math.sqrt(R * R + Xc * Xc);
-            const phi = -Math.atan(Xc / R);
-
-            if (!isFinite(R) || !isFinite(Xc) || !isFinite(Z) || Math.abs(R) < 1e-9 || Math.abs(Xc) < 1e-9 || Math.abs(Z) < 1e-9) {
-                ctx.fillStyle = "#e66";
-                ctx.font = "bold 22px sans-serif";
-                ctx.textAlign = "center";
-                ctx.fillText("Werte ergeben kein sinnvolles Dreieck!", canvas.width / 2, canvas.height / 2);
-                legendDiv.innerHTML = "";
-                return;
+            // 2. Compute data points and dynamic Y range
+            let minY = Number.POSITIVE_INFINITY;
+            let maxY = Number.NEGATIVE_INFINITY;
+            const points = [];
+            for (let i = 0; i <= stepCount; i++) {
+                const t = (i / stepCount) * maxTime;
+                const value = valueFunc(t);
+                points.push({ t, value });
+                if (isFinite(value)) {
+                    if (value < minY) minY = value;
+                    if (value > maxY) maxY = value;
+                }
             }
+            // Always include zero on Y axis
+            minY = Math.min(minY, 0);
+            maxY = Math.max(maxY, 0);
+            if (Math.abs(maxY - minY) < 1e-12) {
+                maxY += 1;
+                minY -= 1;
+            }
+            if (typeof options.minY === "number") minY = options.minY;
+            if (typeof options.maxY === "number") maxY = options.maxY;
 
-            // === 3. Center and scale triangle ===
-            const margin = 60;
-            const plotWidth = canvas.width - 2 * margin;
-            const plotHeight = canvas.height - 2 * margin;
-            const maxSide = Math.max(Math.abs(R), Math.abs(Xc), Math.abs(Z));
-            const scale = 0.7 * Math.min(plotWidth, plotHeight) / (maxSide * 1.2);
+            // === SI prefix for the entire Y axis ===
+            const maxAbsY = Math.max(Math.abs(minY), Math.abs(maxY));
+            const { factor: yFactor, prefix: yPrefix } = getBestSIPrefix(maxAbsY);
 
-            // Center of triangle (origin)
-            const cx = canvas.width / 2 - (R * scale) / 2;
-            const cy = canvas.height / 2 + (Math.abs(Xc) * scale) / 2;
-
-            // --- Store vector/arc positions for tooltips ---
-            const hitboxes = [];
-
-            // === 4. Draw axes (dotted, labeled, full width/height) ===
+            // 3. Draw grid lines (oscilloscope style)
             ctx.save();
-            ctx.strokeStyle = "#ccc";
+            ctx.strokeStyle = "rgba(255,255,255,0.10)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                // Vertical grid
+                const x = marginLeft + (i / 10) * width;
+                ctx.beginPath();
+                ctx.moveTo(x, marginTop);
+                ctx.lineTo(x, canvas.height - marginBottom);
+                ctx.stroke();
+                // Horizontal grid
+                const y = canvas.height - marginBottom - (i / 10) * height;
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(canvas.width - marginRight, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // 4. Draw axes
+            ctx.strokeStyle = "#aaa";
             ctx.lineWidth = 2;
-            ctx.setLineDash([6, 6]);
-            // x-axis
             ctx.beginPath();
-            ctx.moveTo(0, cy);
-            ctx.lineTo(canvas.width, cy);
+            ctx.moveTo(marginLeft, marginTop);
+            ctx.lineTo(marginLeft, canvas.height - marginBottom);
+            ctx.lineTo(canvas.width - marginRight, canvas.height - marginBottom);
             ctx.stroke();
-            // y-axis
-            ctx.beginPath();
-            ctx.moveTo(cx, 0);
-            ctx.lineTo(cx, canvas.height);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            // x label
-            ctx.font = "bold 20px Arial";
+
+            // 5. Axis labels and ticks (with SI formatting)
+            // Y-axis label (on top, not vertical)
+            ctx.font = "bold 22px Arial";
             ctx.fillStyle = "#fff";
-            ctx.textAlign = "right";
-            ctx.fillText("x", canvas.width - 10, cy - 10);
-            // y label
             ctx.textAlign = "left";
-            ctx.fillText("y", cx + 10, 24);
-            ctx.restore();
+            ctx.fillText(yLabel, marginLeft - 60, marginTop - 18);
 
-            // === 5. Define visually distinct colors ===
-            // Use site orange for R, lighter for Xc, green for Z, yellow for φ
-            const colorR   = "#FF9515";
-            const colorXc  = "#ffb029"; // lighter orange
-            const colorZ   = "#e15e00"; // darker orange
-            const colorPhi = "#FFFFFF"; // red
 
-            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
-            // R (horizontal, right)
-            drawArrow(ctx, cx, cy, cx + R * scale, cy, colorR, phasorHoveredKey === "R" ? 6 : 3, phasorHoveredKey === "R");
-            hitboxes.push({type: "vector", key: "R", x1: cx, y1: cy, x2: cx + R * scale, y2: cy});
+            // X axis label (centered)
+            let timeUnit = "s", timeFactor = 1;
+            if (maxTime < 1e-3) { timeUnit = "μs"; timeFactor = 1e6; }
+            else if (maxTime < 1) { timeUnit = "ms"; timeFactor = 1000; }
+            ctx.font = "bold 22px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(`Zeit (${timeUnit})`, marginLeft + width / 2, canvas.height - marginBottom + 60);
 
-            // Xc (vertical, down)
-            drawArrow(ctx, cx + R * scale, cy, cx + R * scale, cy + Xc * scale, colorXc, phasorHoveredKey === "Xc" ? 6 : 3, phasorHoveredKey === "Xc");
-            hitboxes.push({type: "vector", key: "Xc", x1: cx + R * scale, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
-
-            // Z (hypotenuse)
-            drawArrow(ctx, cx, cy, cx + R * scale, cy + Xc * scale, colorZ, phasorHoveredKey === "Z" ? 6 : 3, phasorHoveredKey === "Z");
-            hitboxes.push({type: "vector", key: "Z", x1: cx, y1: cy, x2: cx + R * scale, y2: cy + Xc * scale});
-
-            // Right angle marker at (cx + R * scale, cy)
-            drawRightAngleMarker(ctx, cx + R * scale, cy, 1, 1);
-
-            // === 7. Draw phase angle φ at origin ===
-            ctx.save();
-            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
-            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
-            ctx.beginPath();
-            const arcAngle = Math.atan2(Xc, R);
-            if (arcAngle < 0) {
-                ctx.arc(cx, cy, 36, 0, arcAngle, true);
-            } else {
-                ctx.arc(cx, cy, 36, 0, arcAngle, false);
+            // Tick labels (rounded to two decimals)
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            for (let i = 0; i <= 5; i++) {
+                const x = marginLeft + (i / 5) * width;
+                const tVal = (i * maxTime / 5) * timeFactor;
+                let label;
+                if (timeUnit === "s" || timeUnit === "ms" || timeUnit === "μs") {
+                    label = tVal.toFixed(2).replace(/\.00$/, "");
+                }
+                ctx.fillStyle = "#fff";
+                ctx.fillText(label, x, canvas.height - marginBottom + 28);
             }
+            ctx.textAlign = "right";
+            for (let i = 0; i <= 5; i++) {
+                // Always start at zero
+                const value = minY + (i / 5) * (maxY - minY);
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
+                ctx.fillStyle = "#fff";
+                ctx.fillText(formatWithSIPrefix(value, yFactor, yPrefix, yLabel.includes("A") ? "A" : "V"), marginLeft - 18, y + 7);
+            }
+
+                    // 6. Draw the curve
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                const { t, value } = points[i];
+                const x = marginLeft + (t / maxTime) * width;
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = options.color || "#0070C0";
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = options.color || "#0070C0";
+            ctx.shadowBlur = 4;
             ctx.stroke();
-            hitboxes.push({type: "arc", key: "phi", cx, cy, r: 36, angle: arcAngle});
-            ctx.restore();
+            ctx.shadowBlur = 0;
 
-            // Draw origin dot
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
-            ctx.fill();
+            // 7. Draw marker if tMarker is provided
+            if (typeof options.tMarker === "number" && options.tMarker >= 0 && options.tMarker <= maxTime) {
+                const t = options.tMarker;
+                const value = valueFunc(t);
+                const x = marginLeft + (t / maxTime) * width;
+                const y = canvas.height - marginBottom - ((value - minY) / (maxY - minY)) * height;
 
-            // === 8. Fill legend/info box beside the canvas, with color coding ===
-            const legend = [
-                { key: "R",   label: `R = ${formatSI(R, "Ω")}`, color: colorR },
-                { key: "Xc",  label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorXc },
-                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
-                { key: "phi", label: `φ = ${(phi * 180 / Math.PI).toFixed(2)}°`, color: colorPhi }
-            ];
-            legendDiv.innerHTML = legend.map(
-                entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
-            ).join("");
+                ctx.save();
+                ctx.strokeStyle = "#ff69b4";
+                ctx.setLineDash([6, 6]);
+                ctx.lineWidth = 2;
+                // Vertical marker line
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height - marginBottom);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                // Horizontal marker line
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Marker dot (pink, no glow)
+                ctx.fillStyle = "#ff69b4";
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.fill();
 
-            // === 9. Tooltip/hover system: highlight legend and vector on canvas hover ===
-            canvas.onmousemove = function(e) {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const mx = (e.clientX - rect.left) * scaleX;
-                const my = (e.clientY - rect.top) * scaleY;
-                let found = null;
-                for (const h of hitboxes) {
-                    if (h.type === "vector") {
-                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
-                        if (dist < 5) { found = h.key; break; }
-                    } else if (h.type === "arc") {
-                        const dx = mx - h.cx, dy = my - h.cy;
-                        const r = Math.sqrt(dx*dx + dy*dy);
-                        let a = Math.atan2(dy, dx);
-                        if (a < 0) a += 2 * Math.PI;
-                        let start = 0;
-                        let end = h.angle;
-                        if (end < 0) end += 2 * Math.PI;
-                        let inArc = false;
-                        if (start <= end) {
-                            inArc = (a >= start && a <= end);
-                        } else {
-                            inArc = (a >= start || a <= end);
-                        }
-                        if (Math.abs(r - h.r) < 10 && inArc) {
-                            found = h.key; break;
-                        }
-                    }
-                }
-                phasorHoveredKey = found;
-                drawWiderstandsdreieckSerie(canvasId, legendId); // Redraw with highlight
-                for (const div of legendDiv.children) {
-                    if (div.dataset.key === found) {
-                        div.style.background = "#444";
-                        div.style.fontWeight = "bold";
-                    } else {
-                        div.style.background = "";
-                        div.style.fontWeight = "";
-                    }
-                }
-            };
-            canvas.onmouseleave = function() {
-                phasorHoveredKey = null;
-                drawWiderstandsdreieckSerie(canvasId, legendId);
-                for (const div of legendDiv.children) {
-                    div.style.background = "";
-                    div.style.fontWeight = "";
-                }
-            };
-
-            // === 10. Legend hover highlights vector in canvas ===
-            for (const div of legendDiv.children) {
-                div.onmouseenter = function() {
-                    phasorHoveredKey = this.dataset.key;
-                    drawWiderstandsdreieckSerie(canvasId, legendId);
-                    for (const d of legendDiv.children) {
-                        d.style.background = d === this ? "#444" : "";
-                        d.style.fontWeight = d === this ? "bold" : "";
-                    }
-                };
-                div.onmouseleave = function() {
-                    phasorHoveredKey = null;
-                    drawWiderstandsdreieckSerie(canvasId, legendId);
-                    for (const d of legendDiv.children) {
-                        d.style.background = "";
-                        d.style.fontWeight = "";
-                    }
-                };
+                // Marker label (large, bold, white, no outline)
+                ctx.font = "bold 24px sans-serif";
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText(
+                    (options.markerLabel || "") + formatWithSIPrefix(value, yFactor, yPrefix, yLabel.includes("A") ? "A" : "V"),
+                    x + 22, y - 16
+                );
+                ctx.restore();
             }
 
-            // Draw the icon and store its area
-            const downloadIconArea = drawDownloadIcon(ctx, canvas);
 
-            // Add a click handler (only once)
-            if (!canvas._downloadHandlerAdded) {
-                canvas.addEventListener("click", function(e) {
-                    const rect = canvas.getBoundingClientRect();
-                    const scaleX = canvas.width / rect.width;
-                    const scaleY = canvas.height / rect.height;
-                    const mx = (e.clientX - rect.left) * scaleX;
-                    const my = (e.clientY - rect.top) * scaleY;
-                    if (
-                        mx >= downloadIconArea.x &&
-                        mx <= downloadIconArea.x + downloadIconArea.size &&
-                        my >= downloadIconArea.y &&
-                        my <= downloadIconArea.y + downloadIconArea.size
-                    ) {
-                        exportCanvasAsPNG(canvas.id);
-                    }
-                });
-                canvas._downloadHandlerAdded = true;
-            }
-
-            // 11. Watermark logo (top right)
-            drawWatermark(ctx, canvas);
+            // 8. Watermark logo (top right)
+            const logo = new Image();
+            logo.src = "../Pictures/favicon_no_BG.svg";
+            logo.onload = function() {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                const size = 120;
+                ctx.drawImage(logo, canvas.width - marginRight - size, marginTop + 10, size, size);
+                ctx.globalAlpha = 1.0;
+                ctx.restore();
+            };
         }
 
         /**
@@ -4402,6 +4828,24 @@
             return value.toExponential(2) + " " + unit;
         }
 
+        /**
+         * Exports the specified HTML canvas element as a PNG image file.
+         *
+         * @param {string} canvasId - The ID of the canvas element to export.
+         * @returns {void}
+         *
+         * The function locates the canvas element by its ID, converts its content to a PNG data URL,
+         * creates a temporary download link, and triggers a download of the image.
+         */
+        function exportCanvasAsPNG(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.download = canvasId + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
 
         /**
          * Draws an arrow from (x1, y1) to (x2, y2) with an arrowhead.
@@ -4426,6 +4870,7 @@
             if (highlight) {
             ctx.shadowColor = color;
             ctx.shadowBlur = 16;
+
             }
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -4444,25 +4889,6 @@
             ctx.fill();
             ctx.restore();
         }
-
-        /**
-         * Exports the specified HTML canvas element as a PNG image file.
-         *
-         * @param {string} canvasId - The ID of the canvas element to export.
-         * @returns {void}
-         *
-         * The function locates the canvas element by its ID, converts its content to a PNG data URL,
-         * creates a temporary download link, and triggers a download of the image.
-         */
-        function exportCanvasAsPNG(canvasId) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const link = document.createElement('a');
-            link.download = canvasId + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
 
     /*Dropdown menu*/
     /*function toggleDropdown(header) {
