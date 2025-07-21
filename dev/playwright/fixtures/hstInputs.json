@@ -1,0 +1,12 @@
+{
+    "knownTerms": ["ADC", "BIOS", "SRAM"],
+    "alphabetNav": {
+      "letter": "S",
+      "sectionId": "S",
+      "term": "SRAM"
+    },
+    "search": {
+    "query": "RAM",
+    "shouldShow": ["RAM", "SRAM", "DRAM"]
+  }
+  }

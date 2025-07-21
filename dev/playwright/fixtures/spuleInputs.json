@@ -1,0 +1,27 @@
+{
+    "strom": {
+        "Phi": "0.01",
+        "N": "100",
+        "L": "2",
+        "expected": "500.000mA"
+    },
+    "induktivitaet": {
+        "ur": "1000",
+        "N": "100",
+        "A": "0.0001",
+        "l": "0.05",
+        "expected": "25.140mH"
+    },
+    "magnetischerFluss": {
+        "L": "2",
+        "I": "0.5",
+        "N": "100",
+        "expected": "10.000mWb"
+    },
+    "induzierteSpannung": {
+        "Phi": "0.01",
+        "t": "2",
+        "N": "100",
+        "expected": ["-0.500V", "-500.000mV"]
+    }
+}

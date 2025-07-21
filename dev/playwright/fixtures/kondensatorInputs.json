@@ -1,0 +1,44 @@
+{
+    "kapazitaet": {
+      "Q": "0.001",
+      "U": "5",
+      "expected": "200.000μF"
+    },
+    "spannung": {
+      "E": "1000",
+      "s": "0.01",
+      "expected": "10.000V"
+    },
+    "energie": {
+      "C": "0.001",
+      "U": "10",
+      "expected": "50.000mJ"
+    },
+    "zeitkonstante": {
+      "R_RC": "1000",
+      "C_RC": "0.001",
+      "expected": "1.000s"
+    },
+    "ac_serie": {
+      "R_AC": "100",
+      "Xc_AC": "200",
+      "C_AC": "10u",
+      "expected": "223.607Ω"
+    },
+    "ac_parallel_Bc": {
+      "U_ACp": "10",
+      "f_ACp": "50",
+      "C_ACp": "0.0001",
+      "expected": "31.416mS"
+    },
+    "ac_parallel_Ir_phi": {
+      "Ir_ACp": "1.5",
+      "phi_ACp": "45",
+      "expected": "1.500A"
+    },
+    "ac_parallel_I_Ic": {
+      "I_ACp": "2",
+      "Ic_ACp": "1.5",
+      "expected": "1.323A"
+    }
+  }

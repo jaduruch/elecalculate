@@ -1,0 +1,28 @@
+{
+    "hochpassRC": {
+      "f": "1000",
+      "C": "0.000001",
+      "R": "1000"
+    },
+    "hochpassRL": {
+      "f": "1000",
+      "L": "0.01"
+    },
+    "tiefpassRC": {
+      "f": "1000",
+      "C": "0.000001",
+      "R": "1000"
+    },
+    "tiefpassRL": {
+      "f": "1000",
+      "L": "0.01"
+    },
+    "expected": {
+      "hochpassRC_XC": "159.155Ω",
+      "hochpassRL_XL": "62.832Ω",
+      "tiefpassRC_XC": "159.155Ω",
+      "tiefpassRL_XL": "62.832Ω",
+      "hochpassRC_fg": "159.155Hz",
+      "tiefpassRC_fg": "159.155Hz"
+    }
+  }

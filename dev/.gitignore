@@ -1,0 +1,81 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Playwright
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+*.pw.log
+
+# Coverage reports
+coverage/
+.nyc_output/
+lcov-report/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Static server cache (e.g. serve, http-server)
+.cache/
+.cache-loader/
+
+# Build output (if you add a build step)
+dist/
+build/
+out/
+public/
+
+# Misc
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Mac/Linux trash
+.Trashes
+*.~lock.*
+*~
+
+# GitHub Actions artifacts (if you ever download them)
+artifacts/
+
+# Optional: ignore screenshots/videos if you generate them
+screenshots/
+videos/
+
+# Optional: ignore cypress if you keep it for a while
+cypress/screenshots/
+cypress/videos/
+cypress/results/
+cypress/report/
+mochawesome-report/
+mochawesome.json
+
+# Optional: ignore local server PID files
+*.pid
+
+# Optional: ignore local test databases
+*.sqlite
+*.db
+
+# Optional: ignore Playwright traces (if you use them)
+trace.zip
+traces/

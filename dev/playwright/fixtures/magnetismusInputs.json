@@ -1,0 +1,22 @@
+{
+    "strom": {
+        "Theta": "10",
+        "N": "2",
+        "expected": "5.000A"
+    },
+    "kraft": {
+        "B": "2",
+        "A": "0.01",
+        "expected": "15.911kN"
+    },
+    "durchflutung": {
+        "H": "10",
+        "l": "2",
+        "expected": "20.000A"
+    },
+    "windungszahl": {
+        "Theta": "10",
+        "I": "2",
+        "expected": "5.00"
+    }
+}
