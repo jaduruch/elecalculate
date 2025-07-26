@@ -1,4 +1,4 @@
-name: Sync Any Branch to GitHub Pages
+name: Deploy Any Branch to GitHub Pages
 
 on:
   push:
@@ -41,6 +41,10 @@ jobs:
             echo "path=." >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/" >> $GITHUB_ENV
             echo "::notice::Deploying main branch to root (/)."
+          elif [ "$branch_name" = "development" ]; then
+            echo "path=dev" >> $GITHUB_ENV
+            echo "DEPLOY_URL=https://elecalculate.com/dev/" >> $GITHUB_ENV
+            echo "::notice::Deploying development branch to /dev."
           else
             echo "path=$safe_branch_name" >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/$safe_branch_name/" >> $GITHUB_ENV
