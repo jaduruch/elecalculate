@@ -1,13 +1,9 @@
-# Workflow for syncing main and development branches to the gh-pages branch
-name: Sync Main and Development to GitHub Pages
+name: Sync Any Branch to GitHub Pages
 
 on:
-  # Trigger on pushes to main and development branches
   push:
     branches:
-      - main
-      - development
-  # Allow manual triggering from the Actions tab
+      - '**'
   workflow_dispatch:
 
 permissions:
@@ -15,44 +11,58 @@ permissions:
   pages: write
   id-token: write
 
-# Ensure only one deployment runs at a time
 concurrency:
   group: "sync-to-gh-pages"
   cancel-in-progress: true
 
 jobs:
-  sync:
-    name: Sync Branch Content to GitHub Pages
+  deploy:
+    name: Deploy Branch Content to GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all branches to ensure we can access them
+          fetch-depth: 0
 
-      # Step 2: Determine Deployment Path
+      - name: 🛑 Skip gh-pages branch
+        if: github.ref == 'refs/heads/gh-pages'
+        run: |
+          echo "::notice::Skipping deployment for gh-pages branch."
+          exit 0
+
       - name: 🗺️ Determine Deployment Path
         id: set-path
         run: |
-          branch_name=${GITHUB_REF##*/}
-          echo "Current branch: $branch_name"
-          if [ "$branch_name" == "main" ]; then
+          branch_name="${GITHUB_REF##*/}"
+          safe_branch_name="${branch_name//\//-}"
+          if [ "$branch_name" = "main" ]; then
             echo "path=." >> $GITHUB_ENV
-            echo "✅ Deploying main branch to root (/)."
-          elif [ "$branch_name" == "development" ]; then
-            echo "path=dev" >> $GITHUB_ENV
-            echo "✅ Deploying development branch to /dev."
+            echo "DEPLOY_URL=https://elecalculate.com/" >> $GITHUB_ENV
+            echo "::notice::Deploying main branch to root (/)."
           else
-            echo "❌ Error: Unsupported branch '$branch_name'."
-            exit 1
+            echo "path=$safe_branch_name" >> $GITHUB_ENV
+            echo "DEPLOY_URL=https://elecalculate.com/$safe_branch_name/" >> $GITHUB_ENV
+            echo "::notice::Deploying $branch_name branch to /$safe_branch_name."
           fi
 
-      # Step 3: Deploy to GitHub Pages
+      - name: 📂 List files to be deployed
+        run: |
+          echo "::group::Files to be deployed"
+          ls -lhA
+          echo "::endgroup::"
+
       - name: 🚀 Deploy Content to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: . # Deploy the root directory
+          publish_dir: .
           destination_dir: ${{ env.path }}
+          keep_files: true
+
+      - name: ✅ Deployment Summary
+        run: |
+          echo "::notice::Deployment complete!"
+          echo "Branch: ${GITHUB_REF##*/}"
+          echo "Deployed to: ${{ env.DEPLOY_URL }}"
