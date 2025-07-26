@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hard und Softwaretechnik Glossar &uuml;bersicht &uuml;ber die wichtigsten Begriffe und Abkr&uuml;rzungen">
+    <meta name="keywords" content="HST, Glossar, FIFO, FILO, EEPROM, EPROM, RAM, ROM">
+    <title>HST</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <script>
+        function filterGlossary() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let rows = document.getElementsByTagName("tr");
+            
+            for (let row of rows) {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "table-row" : "none";
+            }
+        }
+
+        function scrollToLetter(letter) {
+            let element = document.getElementById("letter-" + letter);
+            if (element) 
+            {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+
+    </script>
+    <style>
+        .alphabet-nav {
+            position: fixed;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: right;
+        }
+        .alphabet-nav a {
+            display: block;
+            /*padding: 5px;
+            font-size: 18px;*/
+            cursor: pointer;
+            text-decoration: none;
+            color: rgb(182, 182, 182);
+            transition: transform 0.3s ease, color 0.3s;
+        }
+        .alphabet-nav a:hover {
+            color: white;
+            transform: translateX(-15px);
+        }
+        .alphabet-nav a:hover + a,
+        .alphabet-nav a:has(+ a:hover) {
+            transform: translateX(-7.5px);
+        }
+
+        .search{
+            background-color: black;
+            color: white;
+            /*border: 2px solid white;*/
+            border: none;
+            border-radius: 3px;
+        }
+
+        .search:focus {
+            /*border: 3px solid;*/
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+        table {
+            width: 800px;
+            max-width: 90%;
+            border-collapse: collapse;
+            
+        }
+        th, td {
+            border: none;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #616161;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a class="active" href="#hst">HST</a></li>
+                <li><a href="Massvorsaetze_Binaer.html">Massvors&auml;tze Bin&auml;r</a></li>
+                <li><a href="Ausgangs_Stufen.html">Ausgangs Stufen</a></li>
+                <li><a href="Gatter.html">Gatter</a></li>
+                <li><a href="Objekt_Orientiert.html">Objekt Orientiert</a></li>
+                <li><a href="C_Syntax.html">C-Syntax</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="#hst">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <br>
+            <h1>Hard- und Softwaretechnik</h1>
+            <nav class="alphabet-nav" style="width: 30px; text-align: right;">
+                <script>
+                    document.write("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(letter => 
+                        `<a href="#" onmouseover="scrollToLetter('${letter}')">${letter}</a>`
+                    ).join(""));
+                </script>
+            </nav>
+            <table>
+                <input type="text" id="search" onkeyup="filterGlossary()" placeholder="Begriff suchen..." class="search">
+                <tr><th>Begriff</th><th>Bedeutung</th></tr>
+                <tr id="letter-A"><td><strong>A</strong></td></tr>
+                    <tr><td><strong>ADC</strong></td><td>Analog-Digital Wandler</td></tr>
+                    <tr><td><strong>ALU</strong></td><td>Arithmetic Logic Unit (Arithmetisch-logische Einheit)</td></tr>
+                <tr id="letter-B"><td><strong>B</strong></td></tr>
+                    <tr><td><strong>BCD</strong></td><td>Binary Coded Decimal, Binär System welches nur bis 10 geht (1010) statt bis bis 16 (1111) auch bekannt als 8-4-2-1 Code</td></tr>
+                    <tr><td><strong>BIOS</strong></td><td>Basic Input Output System (Grundlegendes Eingabe-Ausgabe-System)</td></tr>
+                <tr id="letter-C"><td><strong>C</strong></td></tr>
+                    <tr><td><strong>CCS</strong></td><td>Combined Charging System (Ladesystem f&uuml;r Elektrofahrzeuge)</td></tr>
+                    <tr><td><strong>CMOS</strong></td><td>Complementary metal-oxide-semiconductor (diese Schaltungen haben einen grossen St&ouml;rabstand und kleinen Sromverbrauch da sie auf Unipolaren Transistoren basieren)</td></tr>
+                    <tr><td><strong>CPLD</strong></td><td>Complex programmable logic device (programmierbare logische Schaltungen)</td></tr>
+                    <tr><td><strong>CPU</strong></td><td>Central Processing Unit (Zentrale Verarbeitungseinheit)</td></tr>
+                    <tr><td><strong>CSS</strong></td><td>Cascading Style Sheets (Gestaltungssprache f&uuml;r Webdesign)</td></tr>
+                <tr id="letter-D"><td><strong>D</strong></td></tr>
+                    <tr><td><strong>DAC</strong></td><td>Digital-Analog Wandler</td></tr>
+                    <tr><td><strong>Demux</strong></td><td>Demultiplexer<br><img src="../Pictures/Demux.png" style="width:150px; height:auto;"></td></tr>
+                    <tr><td><strong>DRAM</strong></td><td>Dynamic RAM (langsamer und g&uuml;nstiger als SRAM, braucht mehr strom). Das element wird in einem geladenen oder entladenem Kondensator gespeichert.</td></tr>
+                    <tr><td><strong>Dualslope</strong></td><td>Verfahren um die Spannung mit einem Dreieck Signal in Zeit umzuwandeln, mit einem Counter entsteht dann ein Digital Signal
+                        <br><img src="../Pictures/dual_slope.png" style="width:400px; height:auto;">    
+                    </td></tr>
+                <tr id="letter-E"><td><strong>E</strong></td></tr>
+                    <tr><td><strong>EEPROM</strong></td><td>Electrically Erasable Programmable Read-Only Memory (Elektrisch l&ouml;schbarer Speicher) ist nicht fl&uuml;chtig</td></tr>
+                    <tr><td><strong>ECL</strong></td><td>Emittergekoppelte Logik (verwendet Bipolar Transistoren, ist aber schneller als TTL)</td></tr>
+                    <tr><td><strong>EPROM</strong></td><td>Erasable Programmable Read-Only Memory (Mit UV-Licht l&ouml;schbarer Speicher) ist nicht fl&uuml;chtig</td></tr>
+                <tr id="letter-F"><td><strong>F</strong></td></tr>
+                    <tr"><td><strong>FILO</strong></td><td>First In Last Out, die zuletzt gespeicherte Information wird als erste Information ausgelesen (ist das selbe wie LIFO)</td></tr>
+                    <tr><td><strong>Flash</strong></td><td>Flash-Speicher (Nichtfl&uuml;chtiger Speicher)</td></tr>
+                    <tr><td><strong>fl&uuml;chtiger (Speicher)</strong></td><td>Speicher wird ohne Speisung gel&ouml;scht (z.B. RAM)</td></tr>
+                    <tr><td><strong>FPLA</strong></td><td>Fieldprogrammable Logic Array (sowohl UND als auch ODER-felder programmierbar)</td></tr>
+                    <tr><td><strong>FPGA</strong></td><td>Field Programmable Gate Arrays (AQ &rarr; registerd Output, AMUX &rarr; unregisterd Output)</td></tr>
+                <tr id="letter-G"><td><strong>G</strong></td></tr>
+                    <tr><td><strong>GAL</strong></td><td>Genereic Array Logic (nur durch UND-felder programmierbar)</td></tr>
+                    <tr><td><strong>GPU</strong></td><td>Graphics Processing Unit (Grafikprozessor)</td></tr>
+                    <tr><td><strong>GUI</strong></td><td>Graphical user Interface (Grafische Benutzer Oberfl&auml;che)</td></tr>
+                <tr id="letter-H"><td><strong>H</strong></td></tr>
+                    <tr><td><strong>HDD</strong></td><td>Hard Disk Drive (Mechanische Festplatte)</td></tr>
+                    <tr><td><strong>HTML</strong></td><td>Hypertext Markup Language (Auszeichnungssprache f&uuml;r Webseiten)</td></tr>
+                <tr id="letter-K"><td><strong>K</strong></td></tr>
+                    <tr><td><strong>Komplement</strong></td><td>Einer Komplement &rarr; jedes Bit wird invertiert, <br>Zweier Komplement &rarr; einer Komplement + 1</td></tr>
+                <tr id="letter-L"><td><strong>L</strong></td></tr>
+                    <tr><td><strong>LSB</strong></td><td>Least Significant Bit (Niederwertigstes Bit)</td></tr>
+                    <tr><td><strong>LIFO</strong></td><td>Last In First Out, die zuletzt gespeicherte Information wird als erste Information ausgelesen (ist das selbe wie FILO)</td></tr>
+                <tr id="letter-M"><td><strong>M</strong></td></tr>
+                    <tr><td><strong>Mux</strong></td><td>Multiplexer<br><img src="../Pictures/Mux.png" style="width:150px; height:auto;"></td></tr>
+                    <tr><td><strong>MSB</strong></td><td>Most Significant Bit (H&ouml;chstwertiges Bit)</td></tr>
+                <tr id="letter-P"><td><strong>P</strong></td></tr>
+                    <tr><td><strong>PAL</strong></td><td>Programmable Logic Array (nur durch UND-felder programmierbar)</td></tr>
+                    <tr><td><strong>PIC</strong></td><td>Peripheral Interface Controller (Mikrocontroller-Familie)</td></tr>
+                    <tr><td><strong>PLD</strong></td><td>Programmable Logic Device (Programmierbare Logikschaltung)</td></tr>
+                    <tr><td><strong>PROM</strong></td><td>Programmable Read-Only Memory (nur durch ODER-felder programmierbar)</td></tr>
+                <tr id="letter-R"><td><strong>R</strong></td></tr>
+                    <tr><td><strong>RAM</strong></td><td>Random Access Memory (Fl&uuml;chtiger Speicher)</td></tr>
+                    <tr><td><strong>RISC</strong></td><td>Reduced Instruction Set Computer (Rechner mit reduziertem Befehlssatz)</td></tr>
+                    <tr><td><strong>ROM</strong></td><td>Read-Only Memory (Nur-Lese-Speicher)</td></tr>
+                <tr id="letter-S"><td><strong>S</strong></td></tr>
+                    <tr><td><strong>SRAM</strong></td><td>Static RAM (schneller und teurer als DRAM)</td></tr>
+                    <tr><td><strong>Sukzessive <br>Approxomation</strong></td><td>Verfahren f&uuml;r ADC
+                        <br><img src="../Pictures/Sukzessive_Approxomation.png" style="width:400px; height:auto;">    
+                    </td></tr>
+                    <tr><td><strong>SSD</strong></td><td>Solid State Drive (Halbleiterlaufwerk)</td></tr>
+                    <tr><td><strong>St&ouml;rabstand</strong></td><td>Abstand zwischen LOW und HIGH Pegel bei einem Logikbaustein</td></tr>
+                <tr id="letter-T"><td><strong>T</strong></td></tr>
+                    <tr><td><strong>TTL</strong></td><td>Transistor-Transistor logik (diese Schaltungen haben einen kleinen St&ouml;rabstand und hohen Sromverbrauch)</td></tr>
+                <tr id="letter-U"><td><strong>U</strong></td></tr>
+                    <tr><td><strong>UML</strong></td><td>Unified Modeling Language (Objektorientierte Sprache f&uuml;r Spezifizierung, Erstellung, Bearbeitung und Visualisierung)</td></tr>
+                    <tr><td><strong>UNIX</strong></td><td>Betriebssystemfamilie</td></tr>
+                <tr id="letter-V"><td><strong>V</strong></td></tr>
+                    <tr><td><strong>VHDL</strong></td><td>VHSIC Hardware Description Language (Hardwarebeschreibungssprache)</td></tr>
+                    <tr><td><strong>VLSI</strong></td><td>Very Large Scale Integration (Sehr hohe Integrationsdichte)</td></tr>
+                    <tr><td><strong>volatile</strong></td><td>englisch f&uuml;r fl&uuml;chtig (Beim abschalten der Betriebsspannung geht die Information verloren)</td></tr>
+            </table><br>
+        </main>
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    <script src="../scripts.js"></script>
+</body>
+</html>
