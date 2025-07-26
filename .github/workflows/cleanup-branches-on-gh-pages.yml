@@ -23,3 +23,11 @@ jobs:
           echo "Current remote branches:"
           git fetch origin
           git branch -r | grep 'origin/' | grep -v 'origin/gh-pages' | sed 's|origin/||'
+
+      - name: 📂 List all files and folders in gh-pages branch
+        run: |
+          echo "Files and folders in gh-pages branch:"
+          ls -lhA
+          echo
+          echo "Directories in gh-pages branch:"
+          find . -maxdepth 1 -type d | sort
