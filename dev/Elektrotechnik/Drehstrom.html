@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Drehstrom</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        /* Styling des Umschaltbuttons */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #7ff5be;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Layout für den gesamten Inhalt */
+        .content-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        /* Styling für das Eingabefeld und Label */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
+
+        .input-container label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .input-container input {
+            padding: 5px;
+            width: 100px;
+            text-align: center;
+            border: 2px solid #000;
+            background-color: #fff;
+        }
+
+        /* Styling für die Schaltungen */
+        .schaltung {
+            display: none;
+        }
+
+        .schaltung-aktiv {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Gemeinsames Styling der Buttons */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 20px; /* Abstand zwischen den Buttons */
+        }
+
+        .custom-button {
+            padding: 10px 20px;
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .custom-button.active {
+            border-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+	<div class="scroll-container">
+	        <ul class="main-menu">
+	            <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+	            <li><a href="Gleichstrom.html">Gleichstrom</a></li>
+	            <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+	            <li><a class="active" href="#Drehstrom">Drehstrom</a></li>
+	            <li><a href="Transformator.html">Transformator</a></li>
+	            <li><a href="Magnetismus.html">Magnetismus</a></li>
+	            <li><a href="Kondensator.html">Kondensator</a></li>
+	            <li><a href="Spule.html">Spule</a></li>
+	            <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+	            <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+	            <li><a href="Filter.html">Filter</a></li>
+	        </ul>
+	</div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div>
+            <h1><br>Drehstrom</h1>
+        </div>
+
+        <!-- Umschaltbutton für Stern/Dreieck -->
+        <label class="switch">
+            <input type="checkbox" id="toggleSwitch" onclick="toggleCircuit()">
+            <span class="slider round"></span>
+        </label>
+        <br>
+        <span id="circuitType">Sternschaltung</span>
+
+        <!-- Layout mit Eingabefeld und Bild -->
+        <div class="content-container">
+            <!-- Eingabefeld für Strangspannung -->
+            <div class="input-container">
+                <label for="inputVoltage">Eingangsstrangspannung (V):</label>
+                <input type="number" id="inputVoltage" value="230">
+            </div>
+	    <br>
+	    <div class="input-container">
+    		<label for="outputVoltage">Verkettete Spannung (V):</label>
+    		<input type="text" id="outputVoltage" value= outputVoltage readonly>
+	    </div>
+
+            <!-- Schaltbilder für Stern und Dreieck -->
+            <div id="starCircuit" class="schaltung schaltung-aktiv">
+                <img src="../Pictures/Drehstrom_Stern_ohne_NL.jpg" alt="Sternschaltung" id="starImage">
+                <!-- Container für die Buttons -->
+                <div class="button-container">
+                    <button id="neutralButton" class="custom-button" onclick="toggleNeutral()">Neutralleiter Hinzufügen</button>
+                    <button id="symmetryButtonStar" class="custom-button" onclick="toggleSymmetry('star')">Symmetrisch</button>
+                </div>
+            </div>
+            <div id="deltaCircuit" class="schaltung">
+                <img src="../Pictures/Drehstrom_Dreieck.jpg" alt="Dreieckschaltung" id="deltaImage">
+                <!-- Container für den Symmetrie-Button in der Dreieckschaltung -->
+                <div class="button-container">
+                    <button id="symmetryButtonDelta" class="custom-button" onclick="toggleSymmetry('delta')">Symmetrisch</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div>
+            <footer>&copy 2024 Elecalculate</footer>
+        </div>
+    </main>
+
+    <script>
+        function toggleCircuit() {
+            var isChecked = document.getElementById('toggleSwitch').checked;
+            var circuitType = document.getElementById('circuitType');
+            var starCircuit = document.getElementById('starCircuit');
+            var deltaCircuit = document.getElementById('deltaCircuit');
+            var neutralButton = document.getElementById('neutralButton');
+
+            if (isChecked) {
+                circuitType.innerText = "Dreieckschaltung";
+                starCircuit.classList.remove("schaltung-aktiv");
+                deltaCircuit.classList.add("schaltung-aktiv");
+                neutralButton.style.display = "none"; // Neutralleiter-Button ausblenden
+            } else {
+                circuitType.innerText = "Sternschaltung";
+                deltaCircuit.classList.remove("schaltung-aktiv");
+                starCircuit.classList.add("schaltung-aktiv");
+                neutralButton.style.display = "inline-block"; // Neutralleiter-Button anzeigen
+            }
+        }
+
+        function toggleNeutral() {
+            var starImage = document.getElementById('starImage');
+            var neutralButton = document.getElementById('neutralButton');
+            var isNeutralActive = neutralButton.classList.contains('active');
+
+            if (isNeutralActive) {
+                starImage.src = "../Pictures/Drehstrom_Stern_ohne_NL.jpg"; // Bild ohne Neutralleiter
+                neutralButton.innerText = "Neutralleiter Hinzufügen";
+                neutralButton.classList.remove('active');
+            } else {
+                starImage.src = "../Pictures/Drehstrom_Stern_mit_NL.jpg"; // Bild mit Neutralleiter
+                neutralButton.innerText = "Neutralleiter Entfernen";
+                neutralButton.classList.add('active');
+            }
+        }
+
+        function toggleSymmetry(type) {
+            var button;
+            if (type === 'star') {
+                button = document.getElementById('symmetryButtonStar');
+            } else {
+                button = document.getElementById('symmetryButtonDelta');
+            }
+            
+            var isSymmetric = button.classList.contains('active');
+            
+            if (isSymmetric) {
+                button.innerText = "Symmetrisch";
+                button.classList.remove('active');
+            } else {
+                button.innerText = "Asymmetrisch";
+                button.classList.add('active');
+            }
+        }
+
+        // Initiale Sichtbarkeit des Buttons festlegen
+        document.addEventListener('DOMContentLoaded', function () {
+            var neutralButton = document.getElementById('neutralButton');
+            neutralButton.style.display = 'inline-block';
+        });
+	// Beispiel für das Setzen der verketteten Spannung
+	function updateOutputVoltage() {
+    		var inputVoltage = document.getElementById('inputVoltage').value;
+    		var outputVoltage = document.getElementById('outputVoltage');
+
+    		// Berechnung der verketteten Spannung (hier als Beispiel einfach übernommen)
+    		var calculatedVoltage = inputVoltage * 1.732; // Beispiel: multiplizieren mit √3 für Dreieck
+    		outputVoltage.value = calculatedVoltage.toFixed(2); // Auf zwei Dezimalstellen runden
+	}
+
+// Event-Listener hinzufügen, um die Spannung zu aktualisieren, wenn sich der Wert ändert
+document.getElementById('inputVoltage').addEventListener('input', updateOutputVoltage);
+
+    </script>
+    <script src="../scripts.js"></script>
+
+</body>
+</html>
