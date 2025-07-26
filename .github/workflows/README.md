@@ -1,108 +1,120 @@
-# Sync Main and Development to GitHub Pages Workflow 🚀
+# 🚀 GitHub Pages Multi-Branch Deployment & Cleanup Workflows
 
-This workflow automates the process of syncing the `main` and `development` branches to the `gh-pages` branch for deployment to GitHub Pages.
+This repository uses two GitHub Actions workflows to automate deployment and maintenance of branch previews on GitHub Pages.
 
-## Purpose
+---
 
-- **`main` branch**: Deployed to the root of the GitHub Pages site
-- **`development` branch**: Deployed to the `/dev` folder
+## Overview
 
-This ensures that the latest content from both branches is always available on GitHub Pages.
+- **`sync-branches-to-gh-pages.yml`**  
+  Deploys any branch (except `gh-pages`) to a unique subdirectory on the `gh-pages` branch.  
+  - `main` branch → deployed to the root (`/`)
+  - Other branches → deployed to `/<branch-name>` (with `/` replaced by `-`)
+
+- **`cleanup-branches-on-gh-pages.yml`**  
+  Periodically removes subdirectories from `gh-pages` that no longer correspond to any active branch, keeping your GitHub Pages site tidy.
 
 ---
 
 ## How It Works
 
-### Trigger
+### 1. Branch Sync Workflow
 
-The workflow is triggered on:
-- Pushes to the `main` or `development` branches.
-- Manual runs via the Actions tab.
+**File:** `.github/workflows/sync-branches-to-gh-pages.yml`
 
-### Workflow Steps
+- **Triggers:**  
+  - On push to any branch (except `gh-pages`)
+  - Manually via the Actions tab
 
-1. **Checkout Repository**:
-   - Fetches the repository and all branches.
-   - Determines the current branch being deployed.
+- **Behavior:**  
+  - Deploys the contents of the branch to a subdirectory on `gh-pages`:
+    - `main` → root (`/`)
+    - Other branches → `/<branch-name>` (slashes replaced by dashes)
+  - Provides clear logs and a summary, including the deployed URL (e.g., `https://elecalculate.com/feature-xyz/`).
 
-2. **Determine Deployment Path**:
-   - Decides where the branch content should be deployed:
-     - `main` → Root (`/`).
-     - `development` → `/dev`.
+#### Example Logs
 
-3. **Deploy Content**:
-   - Uses the `peaceiris/actions-gh-pages` action to sync the branch content to the `gh-pages` branch.
+<details>
+<summary>Push to <code>main</code></summary>
 
----
-
-## Workflow File
-
-The workflow file is located at `.github/workflows/sync-branches-to-gh-pages.yml`.
-
-### Key Features
-
-- **Branch-Specific Deployment**:
-  - Automatically deploys `main` to the root and `development` to `/dev`.
-- **Error Handling**:
-  - Gracefully handles unsupported branches with clear error messages.
-- **Readable Logs**:
-  - Logs every step for easy debugging.
-
----
-
-## Example Logs
-
-### Push to `main`
 ```
 📦 Checked out repository. Current branch: main
 🗺️ Deployment path set to: .
 ✅ Deploying main branch to root (/).
 🚀 Deployed content to . in the gh-pages branch.
+::notice::Deployment complete!
+Branch: main
+Deployed to: https://elecalculate.com/
 ```
+</details>
 
-### Push to `development`
-```
-📦 Checked out repository. Current branch: development
-🗺️ Deployment path set to: dev
-✅ Deploying development branch to /dev.
-🚀 Deployed content to dev in the gh-pages branch.
-```
+<details>
+<summary>Push to <code>feature/awesome</code></summary>
 
-### Unsupported Branch
 ```
-📦 Checked out repository. Current branch: feature-branch
-❌ Error: Unsupported branch 'feature-branch'.
+📦 Checked out repository. Current branch: feature/awesome
+🗺️ Deployment path set to: feature-awesome
+✅ Deploying feature/awesome branch to /feature-awesome.
+🚀 Deployed content to feature-awesome in the gh-pages branch.
+::notice::Deployment complete!
+Branch: feature/awesome
+Deployed to: https://elecalculate.com/feature-awesome/
+```
+</details>
+
+---
+
+### 2. Cleanup Workflow
+
+**File:** `.github/workflows/cleanup-branches-on-gh-pages.yml`
+
+- **Triggers:**  
+  - On a daily schedule (configurable)
+  - Manually via the Actions tab
+
+- **Behavior:**  
+  - Scans all subdirectories on the `gh-pages` branch.
+  - Removes any subdirectory that does not correspond to an existing branch (with `/` replaced by `-`).
+  - Skips special directories (e.g., `.git`, `assets`, `.well-known`, etc.).
+  - Commits and pushes changes if any directories are removed.
+  - Logs all actions for transparency.
+
+#### Example Logs
+
+```
+::warning::Removing orphaned deployment: feature-old
+::notice::No orphaned deployments to remove.
 ```
 
 ---
 
 ## Notes
 
-- Ensure the `gh-pages` branch is configured as the source for GitHub Pages in the repository settings.
-- The workflow uses the `peaceiris/actions-gh-pages` action for deployment.
-- The workflow is designed to be modular and maintainable, with clear job separation and professional naming.
+- **GitHub Pages Source:**  
+  Ensure the `gh-pages` branch is set as the source for GitHub Pages in your repository settings.
+- **Static Content:**  
+  No build step is required; the root of each branch is deployed as-is.
+- **Branch Name Sanitization:**  
+  Branch names with `/` are converted to `-` for deployment directories.
+- **Safe Cleanup:**  
+  The cleanup workflow only removes directories for branches that no longer exist.
 
 ---
 
-## Extending the Workflow
+## Extending the Workflows
 
-### Add More Branches
+- **Custom Deployment Paths:**  
+  You can further customize deployment paths by editing the `Determine Deployment Path` step in the sync workflow.
+- **Special Directories:**  
+  To protect additional directories from cleanup, add them to the skip list in the cleanup workflow.
+- **Schedule:**  
+  Adjust the cleanup schedule by editing the cron expression in the workflow file.
 
-To deploy additional branches, update the `Determine Deployment Path` step in the workflow:
+---
 
-```yaml
-if [ "${{ github.ref_name }}" == "main" ]; then
-  echo "path=." >> $GITHUB_ENV
-elif [ "${{ github.ref_name }}" == "development" ]; then
-  echo "path=dev" >> $GITHUB_ENV
-elif [ "${{ github.ref_name }}" == "staging" ]; then
-  echo "path=staging" >> $GITHUB_ENV
-else
-  echo "Error: Unsupported branch '${{ github.ref_name }}'."
-  exit 1
-fi
-```
+## File Locations
 
-### Customize Deployment Paths
-
-You can customize the deployment paths by modifying the `destination_dir` in the workflow.
+- **Sync Workflow:**  
+  `.github/workflows/sync-branches-to-gh-pages.yml`
+- **Cleanup Workflow:**  
+  `.github/workflows/cleanup-branches-on-gh-pages.yml`
