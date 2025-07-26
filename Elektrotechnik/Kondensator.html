@@ -4578,18 +4578,6 @@
             ctx.restore();
         }
 
-    /*Dropdown menu*/
-    /*function toggleDropdown(header) {
-        // Find the next sibling with class 'dropdown-content'
-        let content = header.nextElementSibling;
-        while (content && !content.classList.contains('dropdown-content')) {
-            content = content.nextElementSibling;
-        }
-        if (content) {
-            // Toggle only this dropdown
-            content.style.display = (content.style.display === 'block') ? 'none' : 'block';
-        }
-    }*/
    function toggleDropdown(element) {
                 const dropdown = element.parentElement;
                 dropdown.classList.toggle("open");
