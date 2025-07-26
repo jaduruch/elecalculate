@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Magnetismus</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+
+    <style>
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 600px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="#Gleichstrom.html">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a class="active" href="#Magnetismus">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div><br>
+                <h1>Magnetismus</h1>
+            </div>
+            <div class="input-numbers">
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                </div>
+                <!-- Strom I -->
+                 <div class="form-row">
+                    <label>Strom I</label>
+                    <input type="text" id="I" style="border-color: var(--Strom);">
+                    <label>A [Ampere]</label>
+                </div>
+
+                <!-- Kraft F -->
+                <div class="form-row">
+                    <label>Kraft F</label>
+                    <input type="text" id="F" style="border-color: var(--Kraft);">
+                    <label>N [Newton]]</label>
+                </div>
+
+                <!-- Feldstaerke H -->
+                <div class="form-row">
+                    <label>Feldst&auml;rke H</label>
+                    <input type="text" id="H" style="border-color: var(--Feldstaerke);">
+                    <label>A/m [Ampere/meter]</label>
+                </div>
+
+                <!-- Durchflutung Theta -->
+                <div class="form-row">
+                    <label>Durchflutung &Theta;</label>
+                    <input type="text" id="Theta" style="border-color: var(--Durchflutung);">
+                    <label>A [Ampere]</label>
+                </div>
+
+                <!-- Permeabilitaet ur -->
+                <div class="form-row">
+                    <label>Permeabilit&auml;tszahl &mu;<sub>r</sub></label>
+                    <input type="text" id="ur" style="border-color: var(--Dielektrizitaetszahl);">
+                    <label>1</label>
+                </div>
+
+                <!-- Windungszahl N -->
+                <div class="form-row">
+                    <label>Windungszahl N</label>
+                    <input type="text" id="N" style="border-color: var(--Windungszahl);">
+                    <label>1</label>
+                </div>
+
+                <!-- Magnetischer Widerstand Rm -->
+                <div class="form-row">
+                    <label>Magnetischerwiderstand R<sub>m</sub></label>
+                    <input type="text" id="Rm" style="border-color: var(--Mag_Widerstand);">
+                    <label>A/Vs [Ampere/Volt sek.]</label>
+                </div>
+
+                <!-- Flaeche A -->
+                <div class="form-row">
+                    <label>Fl&auml;che A</label>
+                    <input type="text" id="A" style="border-color: var(--Flaeche);">
+                    <label>m<sup>2</sup> [Quadratmeter]</label>
+                </div>
+
+                <!-- Magnetischer Fluss  -->
+                <div class="form-row">
+                    <label>Magnetischer Fluss &Phi;</label>
+                    <input type="text" id="Phi" style="border-color: var(--Mag_Fluss);">
+                    <label>Weber [Wb]</label>
+                </div>
+
+                <!-- Spannung U -->
+                <div class="form-row">
+                    <label>Spannung U</label>
+                    <input type="text" id="U" style="border-color: var(--Spannung);">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Laenge l -->
+                <div class="form-row">
+                    <label>L&auml;nge l</label>
+                    <input type="text" id="l" style="border-color: var(--Laenge);">
+                    <label>m [meter]</label>
+                </div>
+
+                <!-- Magnetische Flussdichte B -->
+                <div class="form-row">
+                    <label>Magnetische Flussdichte B</label>
+                    <input type="text" id="B" style="border-color: var(--Mag_Flussdichte);">
+                    <label>T [Tesla]</label>
+                </div>
+
+                <!-- Zeit t -->
+                <div class="form-row">
+                    <label>Zeit t</label>
+                    <input type="text" id="t" style="border-color: var(--Zeit);">
+                    <label>s [sekunden]</label>
+                </div>
+            </div>
+            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParameters()">
+            
+            <p id="result"></p>
+
+            <br>
+        </main>
+        <div>
+            <footer>&copy 2025 Elecalculate</footer>
+        </div>
+    </div>
+    <script src="../scripts.js"></script>
+    <script>
+ 
+        function calculateParameters() 
+            {
+                let result = ``;
+
+                const I = document.getElementById("I").value;
+                const F = document.getElementById("F").value;
+                const H = document.getElementById("H").value;
+                const Theta = document.getElementById("Theta").value;
+                const ur = document.getElementById("ur").value;
+                const N = document.getElementById("N").value;
+                const Rm = document.getElementById("Rm").value;
+                const A = document.getElementById("A").value;
+                const Phi = document.getElementById("Phi").value;
+                const U = document.getElementById("U").value;
+                const l = document.getElementById("l").value;
+                const B = document.getElementById("B").value;
+                const t = document.getElementById("t").value;
+
+                if(!I)   // Strom I
+                {
+                    if(Theta && N)
+                    {
+                        debugger;
+                        result += `
+                            Strom I  = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&Theta;</span><br>
+                                <span>N</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${Theta}A</span><br>
+                                <span>${N}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(N), "A")}<br>`;
+                    }
+
+                    if(Rm && ur && A)
+                    {
+                        result += `
+                            Strom I =
+                            R<sub>m</sub> &lowast; &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A
+                        =
+                            ${Rm}A/VS &lowast; ${ur} 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup>
+                        = ${formatWithPrefix(parseInput(Rm) * parseInput(ur) * 1.257e-6 *  parseInputsquare(A), "A")}<br>`;
+                    }
+                }
+
+                if(!F)      // Kraft F
+                {
+                    if(B && A)
+                    {
+                        result += `
+                            Kraft F  = 
+                            - <div class ="fraction">
+                                <span class="fraction-numerator">B<sup>2</sup> &lowast; A</span><br>
+                                <span>2 &lowast; &mu;<sub>0</sub></span>
+                            </div> 
+                        =
+                            - <div class ="fraction">
+                                <span class="fraction-numerator">(${B}T)<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
+                                <span>2 &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am</span>
+                            </div> 
+                        = ${formatWithPrefix((Math.pow(parseInput(B), 2) * parseInputsquare(A))/ ( 2 * 1.257e-6), "N")}<br>`;
+                    }
+                }
+
+                /*if(!H)       //Feldstaerke H
+                {
+
+                }*/
+
+                if(!Theta && H && l)   // Durchflutung
+                {
+                    result += `
+                            Durchflutung &Theta; =
+                            H &lowast; l
+                        =
+                            ${H}A/m &lowast; ${l}m
+                        = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
+                }
+
+                /*if(!ur)  // Permeabilitaetszahl ur
+                {
+
+                }*/
+
+                if(!N)      // Windungszahl N
+                {
+                    if(Theta && I)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">&Theta;</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">${Theta}A</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(I), "")}<br>`;
+                    }
+
+                    if(U && t && Phi)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>&Delta;&Phi;</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                                <span>${Phi}Wb</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
+                    }
+
+                    if(H && l && I)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">H &lowast; l</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(H) * parseInput(l))/ parseInput(I), "")}<br>`;
+                    }
+                }
+                
+
+                document.getElementById('result').innerHTML = result;
+            }
+    </script>
+</body>
+</html>
