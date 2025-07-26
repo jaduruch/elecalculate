@@ -2,7 +2,7 @@ name: Cleanup Orphaned Branch Deployments
 
 on:
   schedule:
-    - cron: '0 3 * * *' # every day at 03:00 UTC
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -18,38 +18,8 @@ jobs:
           ref: gh-pages
           fetch-depth: 0
 
-      - name: 📝 Get all current branches
-        id: branches
+      - name: 📝 List all current branches
         run: |
+          echo "Current remote branches:"
           git fetch origin
-          git branch -r | grep 'origin/' | grep -v 'origin/gh-pages' | sed 's|origin/||' > ../branches.txt
-
-      - name: 🧹 Remove orphaned directories
-        run: |
-          sanitized_branches=$(cat ../branches.txt | sed 's|/|-|g')
-          for dir in */ ; do
-            dir=${dir%/}
-            # Skip special dirs (add more as needed)
-            case "$dir" in
-              .git|assets|.well-known|CNAME)
-                continue
-                ;;
-            esac
-            # If dir is not in sanitized_branches, remove it
-            if ! echo "$sanitized_branches" | grep -qx "$dir"; then
-              echo "::warning::Removing orphaned deployment: $dir"
-              rm -rf "$dir"
-            fi
-          done
-
-      - name: 🚀 Commit and push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "::notice::No orphaned deployments to remove."
-          else
-            git commit -m "Cleanup orphaned branch deployments"
-            git push
-          fi
+          git branch -r | grep 'origin/' | grep -v 'origin/gh-pages' | sed 's|origin/||'
