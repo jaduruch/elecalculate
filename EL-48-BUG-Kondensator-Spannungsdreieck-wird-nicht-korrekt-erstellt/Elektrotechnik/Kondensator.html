@@ -3628,12 +3628,10 @@
             ctx.restore();
 
             // === 6. Define visually distinct colors ===
-            const colorR = getComputedStyle(document.documentElement)
-                .getPropertyValue("--Orange")
-                .trim() || "#FFA500";
-            const colorXc = "#FFD580"; // lighter orange
-            const colorZ = "#00cc66"; // green
-            const colorPhi = "#FFD700"; // gold/yellow
+            const colorR   = "#FF9515";   // site orange
+            const colorXc  = "#ffb029";   // lighter orange
+            const colorZ   = "#e15e00";   // darker orange
+            const colorPhi = "#FFFFFF";   // white
 
             // === 7. Draw triangle vectors with arrowheads and store hitboxes ===
             // R (horizontal, right)
@@ -3730,7 +3728,7 @@
                 { key: "Z", label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
                 {
                     key: "phi",
-                    label: `φ = ${(phi * 180 / Math.PI).toFixed(2)}°`,
+                    label: `φ = +${(phi * 180 / Math.PI).toFixed(2)}°`,
                     color: colorPhi,
                 },
             ];
@@ -3905,7 +3903,7 @@
 
             // Calculate phase angle
             let phi = null;
-            if (R && Xc) phi = -Math.atan(Xc / R);
+            if (R && Xc) phi = Math.abs(Math.atan(Xc / R));
 
             // === 3. Fallback to example if not enough data ===
             let isExample = false;
@@ -3991,7 +3989,7 @@
             ctx.restore();
 
             // === 7. Define visually distinct colors ===
-            const colorUR = "#0070C0";  // normal blue (same as in style.css)
+            const colorUR = "#0070C0";  // normal blue
             const colorUC = "#2020FF";  // dark blue
             const colorU  = "#A0A0FF";  // light blue
             const colorI  = "#C00000";  // dark red (dashed)
@@ -4001,26 +3999,25 @@
             // Right angle marker at (cx + UR * scale, cy)
             drawRightAngleMarker(ctx, cx + Ur * scale, cy, 1, 1);
 
-            // I (red, parallel to U_R, slightly above, dashed)
-            const I_offset = 25; // pixels above U_R
+            // I (red, on top of U_R, 1.25x longer)
             drawArrow(
                 ctx,
                 cx,
-                cy - I_offset,
-                cx + Ur * scale,
-                cy - I_offset,
+                cy,
+                cx + Ur * scale * 1.25,
+                cy,
                 colorI,
-                phasorHoveredKey === "I" ? 5 : 2,
+                phasorHoveredKey === "I" ? 4 : 2,
                 phasorHoveredKey === "I",
-                true // dashed
+                dashed = true
             );
             hitboxes.push({
                 type: "vector",
                 key: "I",
                 x1: cx,
-                y1: cy - I_offset,
-                x2: cx + Ur * scale,
-                y2: cy - I_offset
+                y1: cy,
+                x2: cx + Ur * scale * 1.25,
+                y2: cy
             });
 
             // U_R (horizontal, right)
@@ -4108,12 +4105,13 @@
             ctx.fill();
 
             // === 10. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = phi * 180 / Math.PI;
             const legend = [
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
                 { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
                 { key: "UR",  label: `U<sub>R</sub> = ${formatSI(Ur, "V")}`, color: colorUR },
                 { key: "UC",  label: `U<sub>C</sub> = ${formatSI(Uc, "V")}`, color: colorUC },
-                { key: "phi", label: `&phi; = ${(phi * 180 / Math.PI).toFixed(2)}°`, color: colorPhi }
+                { key: "phi", label: `&phi; = +${phiDeg.toFixed(2)}°`, color: colorPhi }
             ];
             legendDiv.innerHTML =
                 (isExample
