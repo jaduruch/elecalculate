@@ -3999,13 +3999,13 @@
             // Right angle marker at (cx + UR * scale, cy)
             drawRightAngleMarker(ctx, cx + Ur * scale, cy, 1, 1);
 
-            // I (red, parallel to U_R, slightly above, dashed)
+            // I (red, parallel to U_R, slightly above, 1.25x longer, dashed)
             const I_offset = 25; // pixels above U_R
             drawArrow(
                 ctx,
                 cx,
                 cy - I_offset,
-                cx + Ur * scale,
+                cx + Ur * scale * 1.25,
                 cy - I_offset,
                 colorI,
                 phasorHoveredKey === "I" ? 5 : 2,
@@ -4017,7 +4017,7 @@
                 key: "I",
                 x1: cx,
                 y1: cy - I_offset,
-                x2: cx + Ur * scale,
+                x2: cx + Ur * scale * 1.25,
                 y2: cy - I_offset
             });
 
