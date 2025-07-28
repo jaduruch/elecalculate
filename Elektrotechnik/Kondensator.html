@@ -3628,12 +3628,10 @@
             ctx.restore();
 
             // === 6. Define visually distinct colors ===
-            const colorR = getComputedStyle(document.documentElement)
-                .getPropertyValue("--Orange")
-                .trim() || "#FFA500";
-            const colorXc = "#FFD580"; // lighter orange
-            const colorZ = "#00cc66"; // green
-            const colorPhi = "#FFD700"; // gold/yellow
+            const colorR   = "#FF9515";   // site orange
+            const colorXc  = "#ffb029";   // lighter orange
+            const colorZ   = "#e15e00";   // darker orange
+            const colorPhi = "#FFFFFF";   // white
 
             // === 7. Draw triangle vectors with arrowheads and store hitboxes ===
             // R (horizontal, right)
@@ -3991,7 +3989,7 @@
             ctx.restore();
 
             // === 7. Define visually distinct colors ===
-            const colorUR = "#0070C0";  // normal blue (same as in style.css)
+            const colorUR = "#0070C0";  // normal blue
             const colorUC = "#2020FF";  // dark blue
             const colorU  = "#A0A0FF";  // light blue
             const colorI  = "#C00000";  // dark red (dashed)
