@@ -3578,11 +3578,92 @@
 
             // === 3. If not enough values, use example triangle ===
             let isExample = false;
-            if (!(isFinite(R) && isFinite(Xc) && isFinite(Z) && R > 0 && Xc > 0 && Z > 0)) {
+            let missing = [];
+            if (!isFinite(R) || R <= 0) missing.push("R");
+            if (!isFinite(Xc) || Xc <= 0) missing.push("Xc");
+            if (!isFinite(Z) || Z <= 0) missing.push("Z");
+
+            if (missing.length > 0) {
                 R = 4; Xc = 3; Z = 5;
                 isExample = true;
             }
 
+            // === Comprehensive failsafe for degenerate/invalid triangle ===
+            {
+                // 1. All must be finite, numbers, and positive
+                if (
+                    !isFinite(R) || !isFinite(Xc) || !isFinite(Z) ||
+                    typeof R !== "number" || typeof Xc !== "number" || typeof Z !== "number" ||
+                    R <= 0 || Xc <= 0 || Z <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // 2. Pythagoras check (allowing for floating point error)
+                const pythagoras = Math.abs(Z * Z - (R * R + Xc * Xc));
+                if (pythagoras > 1e-6 * (R * R + Xc * Xc + Z * Z)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // 3. No side should be "too small" compared to the largest
+                const sides = [R, Xc, Z].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // 4. Angle check (optional, e.g. for φ)
+                const phi = Math.atan2(Xc, R);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
             // 4. Move triangle origin to the upper left
             const marginLeft = 80;
             const marginTop = 80;
@@ -3735,7 +3816,11 @@
             ];
             legendDiv.innerHTML =
                 (isExample
-                    ? "<i style='color:#aaa'>Beispiel-Dreieck:<br>Bitte oben Werte eingeben und auf <b>Berechnen</b>!</i><br><br>"
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
                     : ""
                 ) +
                 legend.map(
@@ -3908,10 +3993,12 @@
 
             // === 3. Fallback to example if not enough data ===
             let isExample = false;
-            if (
-                !isFinite(R) || !isFinite(Xc) || !isFinite(U) ||
-                R <= 0 || Xc <= 0 || U <= 0
-            ) {
+            let missing = [];
+            if (!isFinite(R) || R <= 0) missing.push("R");
+            if (!isFinite(Xc) || Xc <= 0) missing.push("Xc");
+            if (!isFinite(U) || U <= 0) missing.push("U");
+
+            if (missing.length > 0) {
                 // Use example values
                 R = 4;
                 Xc = 3;
@@ -3920,8 +4007,82 @@
                 I = U / Z;
                 Ur = I * R;
                 Uc = I * Xc;
-                phi = -Math.abs(Math.atan(Xc / R));
+                phi = -Math.atan(Xc / R);
                 isExample = true;
+            }
+
+            // === Comprehensive failsafe for degenerate/invalid voltage triangle ===
+            {
+                if (
+                    !isFinite(Ur) || !isFinite(Uc) || !isFinite(U) ||
+                    typeof Ur !== "number" || typeof Uc !== "number" || typeof U !== "number" ||
+                    Math.abs(Ur) < 1e-9 || Math.abs(Uc) < 1e-9 || Math.abs(U) < 1e-9
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                const pythagoras = Math.abs(U * U - (Ur * Ur + Uc * Uc));
+                if (pythagoras > 1e-6 * (Ur * Ur + Uc * Uc + U * U)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                const sides = [Ur, Uc, U].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // Angle check (optional)
+                const phi = -Math.atan2(Uc, Ur);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
             }
 
             // === 4. Check for degenerate triangle ===
@@ -4117,7 +4278,11 @@
             ];
             legendDiv.innerHTML =
                 (isExample
-                    ? "<i style='color:#aaa'>Beispiel-Dreieck:<br>Bitte oben Werte eingeben und auf <b>Berechnen</b>!</i><br><br>"
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
                     : ""
                 ) +
                 legend.map(
