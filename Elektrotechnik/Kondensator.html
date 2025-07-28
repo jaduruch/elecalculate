@@ -4105,7 +4105,7 @@
             ctx.fill();
 
             // === 10. Fill legend/info box beside the canvas, with color coding ===
-            const phiDeg = phi * 180 / Math.PI;
+            const phiDeg = Math.abs(phi * 180 / Math.PI); // Always positive
             const legend = [
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
                 { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
