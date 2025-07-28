@@ -3999,26 +3999,25 @@
             // Right angle marker at (cx + UR * scale, cy)
             drawRightAngleMarker(ctx, cx + Ur * scale, cy, 1, 1);
 
-            // I (red, parallel to U_R, slightly above, dashed)
-            const I_offset = 25; // pixels above U_R
+            // I (red, on top of U_R, 1.25x longer)
             drawArrow(
                 ctx,
                 cx,
-                cy - I_offset,
-                cx + Ur * scale,
-                cy - I_offset,
+                cy,
+                cx + Ur * scale * 1.25,
+                cy,
                 colorI,
-                phasorHoveredKey === "I" ? 5 : 2,
+                phasorHoveredKey === "I" ? 4 : 2,
                 phasorHoveredKey === "I",
-                true // dashed
+                dashed = true
             );
             hitboxes.push({
                 type: "vector",
                 key: "I",
                 x1: cx,
-                y1: cy - I_offset,
-                x2: cx + Ur * scale,
-                y2: cy - I_offset
+                y1: cy,
+                x2: cx + Ur * scale * 1.25,
+                y2: cy
             });
 
             // U_R (horizontal, right)
