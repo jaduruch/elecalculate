@@ -3722,13 +3722,14 @@
             ctx.fill();
 
             // === 9. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = phi * 180 / Math.PI;
             const legend = [
                 { key: "R", label: `R = ${formatSI(R, "Ω")}`, color: colorR },
                 { key: "Xc", label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorXc },
                 { key: "Z", label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
                 {
                     key: "phi",
-                    label: `φ = +${(phi * 180 / Math.PI).toFixed(2)}°`,
+                    label: `φ = ${phiDeg.toFixed(2)}°`,
                     color: colorPhi,
                 },
             ];
@@ -3903,7 +3904,7 @@
 
             // Calculate phase angle
             let phi = null;
-            if (R && Xc) phi = Math.abs(Math.atan(Xc / R));
+            if (R && Xc) phi = -Math.abs(Math.atan(Xc / R));
 
             // === 3. Fallback to example if not enough data ===
             let isExample = false;
@@ -3919,7 +3920,7 @@
                 I = U / Z;
                 Ur = I * R;
                 Uc = I * Xc;
-                phi = -Math.atan(Xc / R);
+                phi = -Math.abs(Math.atan(Xc / R));
                 isExample = true;
             }
 
@@ -4106,13 +4107,13 @@
             ctx.fill();
 
             // === 10. Fill legend/info box beside the canvas, with color coding ===
-            const phiDeg = Math.abs(phi * 180 / Math.PI); // Always positive
+            const phiDeg = phi * 180 / Math.PI;
             const legend = [
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
                 { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
                 { key: "UR",  label: `U<sub>R</sub> = ${formatSI(Ur, "V")}`, color: colorUR },
                 { key: "UC",  label: `U<sub>C</sub> = ${formatSI(Uc, "V")}`, color: colorUC },
-                { key: "phi", label: `&phi; = +${phiDeg.toFixed(2)}°`, color: colorPhi }
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
             ];
             legendDiv.innerHTML =
                 (isExample
