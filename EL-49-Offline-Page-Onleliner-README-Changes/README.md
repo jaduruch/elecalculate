@@ -25,7 +25,7 @@ Just run the command for your system below, no installation or internet needed a
 
 **Windows (PowerShell)**  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="20" alt="Windows" />
 ```powershell
-powershell -NoProfile -Command "$d=\"$($env:USERPROFILE)\Downloads\"; $ts=Get-Date -Format 'yyyyMMddHHmmss'; $zip=Join-Path $d ('repo_' + $ts + '.zip'); $folder=Join-Path $d ('elecalculate-main_' + $ts); Invoke-WebRequest -Uri 'https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip' -OutFile $zip; Expand-Archive -Path $zip -DestinationPath $d -Force; Rename-Item -Path (Join-Path $d 'elecalculate-main') -NewName ('elecalculate-main_' + $ts); cd $folder; start index.html"
+$dl="$env:USERPROFILE\Downloads"; $z="$dl\repo_$(Get-Date -f yyyyMMddHHmmss).zip"; Start-BitsTransfer -Source https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip -Destination $z; Expand-Archive $z $dl; cd "$dl\elecalculate-main"; start index.html
 ```
 
 **Linux**  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" width="20" alt="Linux" />
