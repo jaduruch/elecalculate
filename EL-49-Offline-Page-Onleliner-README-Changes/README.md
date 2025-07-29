@@ -21,7 +21,7 @@ It works fully offline, provides step-by-step solutions, and is regularly update
 ## Quick Start: Run Elecalculate Locally
 
 Elecalculate works 100% offline after setup.  
-Just run the command for your system below—no installation or internet needed after the first run.
+Just run the command for your system below, no installation or internet needed after the first run.
 
 **Windows (PowerShell)**  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="20" alt="Windows" />
 ```powershell
