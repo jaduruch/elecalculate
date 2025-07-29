@@ -25,17 +25,17 @@ Just run the command for your system below—no installation or internet needed 
 
 **Windows (PowerShell)**  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="20" alt="Windows" />
 ```powershell
-Invoke-WebRequest -Uri https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip -OutFile repo.zip; Expand-Archive -Path repo.zip -DestinationPath .; cd elecalculate-main; start index.html
+$z="repo_$(Get-Date -f yyyyMMddHHmmss).zip"; Invoke-WebRequest -Uri https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip -OutFile $z; Expand-Archive $z .; cd elecalculate-main; start index.html
 ```
 
 **Linux**  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" width="20" alt="Linux" />
 ```bash
-curl -L -o repo.zip https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip repo.zip && cd elecalculate-main && xdg-open index.html
+z=repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z && cd elecalculate-main && xdg-open index.html
 ```
 
 **macOS**  <img src="https://res.cloudinary.com/dr0tcokpp/image/upload/v1753822251/Finder_Icon_macOS_Big_Sur_vg95jl.png" width="20" alt="macOS" />
 ```bash
-curl -L -o repo.zip https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip repo.zip && cd elecalculate-main && open index.html
+z=repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z && cd elecalculate-main && open index.html
 ```
 
 > **Need more detailed instructions?**  
