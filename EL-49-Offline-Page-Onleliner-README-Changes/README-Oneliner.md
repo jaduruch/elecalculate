@@ -14,7 +14,7 @@ Just follow the steps below for your system. If you get stuck or have questions,
    - Paste it into PowerShell and press Enter.
 
    ```powershell
-   $z="repo_$(Get-Date -f yyyyMMddHHmmss).zip"; Invoke-WebRequest -Uri https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip -OutFile $z; Expand-Archive $z .; cd elecalculate-main; start index.html
+   $dl="$env:USERPROFILE\Downloads"; $z="$dl\repo_$(Get-Date -f yyyyMMddHHmmss).zip"; Invoke-WebRequest -Uri https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip -OutFile $z; Expand-Archive $z $dl; cd "$dl\elecalculate-main"; start index.html
    ```
 
 3. **Wait a moment.**  
@@ -31,7 +31,7 @@ Just follow the steps below for your system. If you get stuck or have questions,
    - Paste it into the Terminal and press Enter.
 
    ```bash
-   z=repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z && cd elecalculate-main && xdg-open index.html
+   d=~/Downloads; z=$d/repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z -d $d && cd $d/elecalculate-main && xdg-open index.html
    ```
 
 3. **Wait a moment.**  
@@ -48,7 +48,7 @@ Just follow the steps below for your system. If you get stuck or have questions,
    - Paste it into Terminal and press Enter.
 
    ```bash
-   z=repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z && cd elecalculate-main && open index.html
+   d=~/Downloads; z=$d/repo_$(date +%Y%m%d%H%M%S).zip; curl -L -o $z https://github.com/jaduruch/elecalculate/archive/refs/heads/main.zip && unzip $z -d $d && cd $d/elecalculate-main && open index.html
    ```
 
 3. **Wait a moment.**  
