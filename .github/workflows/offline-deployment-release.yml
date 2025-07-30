@@ -88,9 +88,12 @@ jobs:
             RANGE="$LAST_TAG..HEAD"
           fi
           git log --pretty=format:"* %s" $RANGE > release-notes.md
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          cat release-notes.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo >> release-notes.md
+          {
+            echo "release_notes<<EOF"
+            cat release-notes.md
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Create and push new tag
         run: |
