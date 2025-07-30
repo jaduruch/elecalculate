@@ -1,0 +1,1035 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Online Rechner für vierschiedene OPV Schaltungen (inkl. Lösungsweg)">
+	<!-- Stichworte fuer Suchmaschinen -->
+    <meta name="keywords" content="OPV, OPAmp, invertierender Verstaerker, nicht invertierender Verstaerker, Summier Verstaerker, Differenz Verstaerker, Operationsverstaerker, Elektronik">
+    <title>Elektronik | OPV</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+    <style>
+        /*Slider*/
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #535353;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+
+        .opv-button {
+            position: relative;
+            width: 200px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .opv-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .opv-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .opv-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .opv-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        
+        .input-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .input-container label, .input-container input, .input-container select, .input-container button {
+            display: block;
+            margin: 5px auto;
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .input-group input {
+            margin-right: 5px;
+        }
+        
+        .input-group select {
+            margin-left: 5px;
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            /*border: 3px solid;*/
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+        /* Stil fuer das Formular und Layout */
+        .input-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 600px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+            /*margin-left: 10px;*/
+        }
+
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            margin-left: 10px;
+            
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            margin-bottom: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denominator {
+            border-top: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektronik.html">Elektronik</a></li>
+                <li><a href="Dioden.html">Dioden</a></li>
+                <li><a href="Transistor.html">Transistoren</a></li>
+                <li><a href="FETs.html">FETs</a></li>
+                <li><a class="active" href="#OPV.html">OPVs</a></li>
+                <li><a href="Aktiv_Filter.html">Aktiv Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="../Elektrotechnik/elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a href="#Elektronik">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <div>
+                <h1><br>OPV</h1>
+            </div>
+            <div id="opvButtons">
+
+                <button class="opv-button " type="button" onclick="toggleSelection(this, 'invertierender_Verstaerker')">
+                    <img src="OPV_Bilder/Invertierender_Verstaerker.JPG" alt="invertierender Verstaerker">
+                    <span>invertierender Verst&auml;rker</span>
+                </button>
+                <button class="opv-button " type="button" onclick="toggleSelection(this, 'nicht_invertierender_Verstaerker')">
+                    <img src="OPV_Bilder/Nicht_Invertierender_Verstaerker.JPG" alt="nicht-invertierender Verstaerker">
+                    <span>nicht-invertierender Verst&auml;rker</span>
+                </button>
+                <button class="opv-button " type="button" onclick="toggleSelection(this, 'summier_Verstaerker')">
+                    <img src="OPV_Bilder/Summier_Verstaerker.JPG" alt="Summier Verstaerker">
+                    <span>Summier Verst&auml;rker</span>
+                </button>
+                <button class="opv-button " type="button" onclick="toggleSelection(this, 'differenz_Verstaerker')">
+                    <img src="OPV_Bilder/Differenz_Verstaerker.JPG" alt="Differenz Verstaerker">
+                    <span>Subtrahier Verst&auml;rker</span>
+                </button>
+
+                <!--<div>
+                    <h2>Mitkopplungen</h2>
+                </div>
+                <button class="opv-button" type="button" onclick="selectOPV('invertierenderSchmittTrigger', this)">
+                    <img src="../Pictures/OPV_invertierender_SchmittTrigger.jpg" alt="invertierender Schmitt-Trigger">
+                    <span>invertierender Schmitt-Trigger</span>
+                </button>
+                <button class="opv-button" type="button" onclick="selectOPV('nichtinvertierenderSchmittTrigger', this)">
+                    <img src="../Pictures/OPV_nichtinvertierender_SchmittTrigger.jpg" alt="nicht-invertierender Schmitt-Trigger">
+                    <span>nicht-invertierender Schmitt-Trigger</span>
+                </button>-->
+            </div>
+
+            <div id="invertierender_Verstaerker" style="display:none;" class="input-numbers">                            <!--invertierender Verstaerker-->
+                <h2>invertierender Verst&auml;rker</h2>
+
+                <img id="opvImage1" src="OPV_Bilder/Invertierender_Verstaerker_Beschriftet.JPG" alt="Invertierender Verstaerker" width="500">
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. R<sub>1</sub> = 10k&Omega; &rarr; Eingabe: 10k (nicht 10k&Omega;)<br><br> 
+                </div>
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R<sub>1</sub></label>
+                    <input type="text" id="R1-1" style="border-color: var(--Widerstand);" onclick="updateImage1('OPV_Bilder/Invertierender_Verstaerker_R1.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Widerstand R<sub>2</sub></label>
+                    <input type="text" id="R2-1" style="border-color: var(--Widerstand);" onclick="updateImage1('OPV_Bilder/Invertierender_Verstaerker_R2.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-1" style="border-color: var(--Spannung);" onclick="updateImage1('OPV_Bilder/Invertierender_Verstaerker_Uin.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-1" style="border-color: var(--Spannung);" onclick="updateImage1('OPV_Bilder/Invertierender_Verstaerker_Uout.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Verstaerkung V -->
+                <div class="form-row">
+                    <label>Verst&auml;rkung V</label>
+                    <input type="text" id="V-1" style="border-color: var(--Verstaerkungsfaktor);" onclick="updateImage1('OPV_Bilder/Invertierender_Verstaerker_Beschriftet.JPG')">
+                    <label>1</label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_invertierender_Verstaerker()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_invertierender_Verstaerker"></p>
+            </div>
+
+            <div id="nicht_invertierender_Verstaerker" style="display:none;" class="input-numbers">                           <!--nicht-invertierender Verstaerker-->
+                <h2>nicht-invertierender Verst&auml;rker</h2>
+
+                <img id="opvImage2" src="OPV_Bilder/Nicht_Invertierender_Verstaerker_Beschriftet.JPG" alt="Invertierender Verstaerker" width="500">
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. R<sub>1</sub> = 10k&Omega; &rarr; Eingabe: 10k (nicht 10k&Omega;)<br><br>
+                </div>
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R<sub>1</sub></label>
+                    <input type="text" id="R1-2" style="border-color: var(--Widerstand);" onclick="updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_R1.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Widerstand R<sub>2</sub></label>
+                    <input type="text" id="R2-2" style="border-color: var(--Widerstand);" onclick="updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_R2.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in</sub></label>
+                    <input type="text" id="Uin-2" style="border-color: var(--Spannung);" onclick="updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Uin.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-2" style="border-color: var(--Spannung);" onclick="updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Uout.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Verstaerkung V -->
+                <div class="form-row">
+                    <label>Verst&auml;rkung V</label>
+                    <input type="text" id="V-2" style="border-color: var(--Verstaerkungsfaktor);" onclick="updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Beschriftet.JPG')">
+                    <label>1</label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_nicht_invertierender_Verstaerker()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_nicht_invertierender_Verstaerker"></p>
+            </div>
+
+            <div id="summier_Verstaerker" style="display:none;" class="input-numbers">
+                <h2>Summier Verst&auml;rker</h2>
+
+                <img id="opvImage3" src="OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG" alt="Invertierender Verstaerker" width="500">
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. R<sub>11</sub> = 10k&Omega; &rarr; Eingabe: 10k (nicht 10k&Omega;)<br><br>
+                </div>
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R<sub>11</sub></label>
+                    <input type="text" id="R11-3" style="border-color: var(--Widerstand);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_R11.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Widerstand R<sub>12</sub></label>
+                    <input type="text" id="R12-3" style="border-color: var(--Widerstand);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_R12.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Widerstand R<sub>2</sub></label>
+                    <input type="text" id="R2-3" style="border-color: var(--Widerstand);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_R2.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in1</sub></label>
+                    <input type="text" id="Uin1-3" style="border-color: var(--Spannung);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Uin1.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>in2</sub></label>
+                    <input type="text" id="Uin2-3" style="border-color: var(--Spannung);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Uin2.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-3" style="border-color: var(--Spannung);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Uout.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Verstaerkung V -->
+                <div class="form-row">
+                    <label>Verst&auml;rkung V1</label>
+                    <input type="text" id="V1-3" style="border-color: var(--Verstaerkungsfaktor);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG')">
+                    <label>1</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Verst&auml;rkung V2</label>
+                    <input type="text" id="V2-3" style="border-color: var(--Verstaerkungsfaktor);" onclick="updateImage3('OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG')">
+                    <label>1</label>
+                </div>
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_summier_Verstaeker()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_summier_Verstaerker"></p>
+            </div>
+
+            <div id="differenz_Verstaerker" style="display:none;" class="input-numbers">
+                <h2>Differenz Verst&auml;rker</h2>
+
+                <img id="opvImage4" src="OPV_Bilder/Differenz_Verstaerker_Beschriftet.JPG" alt="Invertierender Verstaerker" width="500">
+
+                <div class="comment">
+                    Werte mit Massvorsatz eingeben z.B. U<sub>out</sub> = 125mV &rarr; Eingabe: 125m (nicht 125mV)<br><br>
+                </div>
+
+                <!-- Widerstand R -->
+                <div class="form-row">
+                    <label>Widerstand R<sub>1</sub>/R<sub>3</sub></label>
+                    <input type="text" id="R13-4" style="border-color: var(--Widerstand);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_R1_R3.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Widerstand R<sub>2</sub>/R<sub>2</sub></label>
+                    <input type="text" id="R24-4" style="border-color: var(--Widerstand);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_R2_R4.JPG')">
+                    <label>&Omega; [Ohm]</label>
+                </div>
+
+                <!-- Spannung -->
+                <div class="form-row">
+                    <label>Spannung U<sub>in1</sub></label>
+                    <input type="text" id="Uin1-4" style="border-color: var(--Spannung);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_Uin1.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>in1</sub></label>
+                    <input type="text" id="Uin2-4" style="border-color: var(--Spannung);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_Uin2.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <div class="form-row">
+                    <label>Spannung U<sub>out</sub></label>
+                    <input type="text" id="Uout-4" style="border-color: var(--Spannung);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_Uout.JPG')">
+                    <label>V [Volt]</label>
+                </div>
+
+                <!-- Verstaerkung V -->
+                <div class="form-row">
+                    <label>Verst&auml;rkung V</label>
+                    <input type="text" id="V-4" style="border-color: var(--Verstaerkungsfaktor);" onclick="updateImage4('OPV_Bilder/Differenz_Verstaerker_Beschriftet.JPG')">
+                    <label>1</label>
+                </div>
+
+
+                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate_differenz_Verstaerker()">
+
+                <h3>Berechnete Ergebnisse</h3>
+                <p id="result_differenz_Verstaerker"></p>
+            </div>
+
+            <br>
+        </main>
+
+        <footer>
+            &copy; 2025 Elecalculate
+        </footer>
+    </div>
+    <script>
+        let selectedButton = null;
+
+        function toggleSelection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            
+            if (selectedButton === button) {
+                // Deselect if the same button is clicked again
+                button.classList.remove('selected');
+                section.style.display = 'none';
+                selectedButton = null;
+            } else {
+                // Remove selection from the previously selected button
+                if (selectedButton) {
+                    selectedButton.classList.remove('selected');
+                }
+                
+                // Select the new button
+                button.classList.add('selected');
+                selectedButton = button;
+
+                // Show the selected section and hide the other
+                if (sectionId === 'invertierender_Verstaerker') {
+                    document.getElementById('invertierender_Verstaerker').style.display = 'block';
+                    document.getElementById('nicht_invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('summier_Verstaerker').style.display = 'none';
+                    document.getElementById('differenz_Verstaerker').style.display = 'none';
+                } else if(sectionId === 'nicht_invertierender_Verstaerker') {
+                    document.getElementById('invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('nicht_invertierender_Verstaerker').style.display = 'block';
+                    document.getElementById('summier_Verstaerker').style.display = 'none';
+                    document.getElementById('differenz_Verstaerker').style.display = 'none';
+                } else if (sectionId === 'summier_Verstaerker') {
+                    document.getElementById('invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('nicht_invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('summier_Verstaerker').style.display = 'block';
+                    document.getElementById('differenz_Verstaerker').style.display = 'none';
+                } else if (sectionId === 'differenz_Verstaerker') {
+                    document.getElementById('invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('nicht_invertierender_Verstaerker').style.display = 'none';
+                    document.getElementById('summier_Verstaerker').style.display = 'none';
+                    document.getElementById('differenz_Verstaerker').style.display = 'block';
+                }
+            }
+        }
+
+        function updateImage1(newSrc) 
+        {
+            const imageElement = document.getElementById('opvImage1');
+            if (imageElement) 
+            {
+                imageElement.src = newSrc;
+            }
+        }
+
+        function updateImage2(newSrc) 
+        {
+            const imageElement = document.getElementById('opvImage2');
+            if (imageElement) 
+            {
+                imageElement.src = newSrc;
+            }
+        }
+
+        function updateImage3(newSrc) 
+        {
+            const imageElement = document.getElementById('opvImage3');
+            if (imageElement) 
+            {
+                imageElement.src = newSrc;
+            }
+        }
+
+        function updateImage4(newSrc) 
+        {
+            const imageElement = document.getElementById('opvImage4');
+            if (imageElement) 
+            {
+                imageElement.src = newSrc;
+            }
+        }
+
+        function calculate_invertierender_Verstaerker() 
+        {
+            
+            let result_invertierender_Verstaerker = ``;
+
+            const R1 = document.getElementById("R1-1").value;
+            const R2 = document.getElementById("R2-1").value;
+            const Uin = document.getElementById("Uin-1").value;
+            const Uout = document.getElementById("Uout-1").value;
+            const V = document.getElementById("V-1").value;
+
+            if(!V)            /*Berechungen fuer Verstaerkung*/
+                    {
+                        if(R1 && R2)        // Eigabe bei R1 und R2
+                        {
+                            debugger;
+                            result_invertierender_Verstaerker += `
+                                Verst&auml;rkung V = -
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> R2 </span><br>
+                                    <span>R1</span>
+                                </div> 
+                            = - 
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> ${R2}&Omega; </span><br>
+                                    <span>${R1}&Omega;</span>
+                                </div> 
+                            
+                            = -${formatWithPrefix(parseInput(R2)/parseInput(R1), "")}<br>`;
+                        }
+
+                        if(Uout && Uin)     //Eigabe bei Uout und Uin
+                        {
+                            result_invertierender_Verstaerker += `
+                             Verst&auml;rkung V = 
+                             <div class ="fraction">
+                                    <span class="fraction-numerator"> -Uout </span><br>
+                                    <span>Uin</span>
+                                </div> 
+                            =
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> -${Uout}V </span><br>
+                                    <span>${Uin}V</span>
+                                </div> 
+                            = -${formatWithPrefix(parseInput(Uout)/parseInput(Uin), "")}<br>`;
+                        }
+                    }
+
+                    if(!Uin)            //Berechungen fuer Eingensspannugn Uin       
+                    {
+                        if(Uout && V)
+                        {
+                            result_invertierender_Verstaerker += `
+                             Uin = 
+                             <div class ="fraction">
+                                    <span class="fraction-numerator"> -Uout </span><br>
+                                    <span>V</span>
+                                </div> 
+                            =
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> -${Uout}V </span><br>
+                                    <span>${V}</span>
+                                </div> 
+                             = -${formatWithPrefix(parseInput(Uout)/parseInput(V), "V")}<br>`;
+                             
+                        }
+                        if(Uout && R2 && R1)
+                        {
+                            result_invertierender_Verstaerker += `
+                             Uin = 
+                             <div class ="fraction">
+                                    <span class="fraction-numerator"> -Uout &lowast; R1</span><br>
+                                    <span>R2</span>
+                                </div> 
+                            =
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> -${Uout}V &lowast; ${R1}&Omega;</span><br>
+                                    <span>${R2}&Omega;</span>
+                                </div> 
+                            = -${formatWithPrefix((parseInput(Uout) * parseInput(R1))/parseInput(R2), "V")}<br>`;
+                            
+                        }
+                    }
+
+                    if(!Uout)            //Berechungen fuer Eingensspannugn Uout             
+                    {
+                        if(Uin && V)
+                        {
+                            result_invertierender_Verstaerker += ` 
+                                Uout = -Uin &lowast; V 
+                            = -${Uin}V &lowast; ${V} 
+                            = -${formatWithPrefix(parseInput(Uin)*parseInput(V), "V")}<br>`;
+                        }
+                        if(Uin && R2 && R1)
+                        {
+                            result_invertierender_Verstaerker += ` 
+                            Uout = 
+                            - 
+                            <div class ="fraction">
+                                    <span class="fraction-numerator"> Uin &lowast; R<sub>2</sub> </span><br>
+                                    <span>R<sub>1</sub></span>
+                                </div> 
+                            = - 
+                            
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> ${Uin}V &lowast; ${R2}&Omega; </span><br>
+                                    <span>${R1}&Omega;</span>
+                                </div> 
+                            = -${formatWithPrefix((parseInput(Uin) * parseInput(R2))/parseInput(R1), "V")}<br>`;
+                        }
+                    }
+
+                    if(!R1)            //Berechungen fuer Widerstand R1             
+                    {
+                        if(R2 && V)
+                        {
+                            result_invertierender_Verstaerker += `
+                             R1 = 
+                             <div class ="fraction">
+                                    <span class="fraction-numerator"> -R2 </span><br>
+                                    <span>V</span>
+                                </div> 
+                            =
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> -${R2}&Omega; </span><br>
+                                    <span>${V}</span>
+                                </div> 
+                             = -${formatWithPrefix(parseInput(R2)/parseInput(V), "&Omega;")}<br>`;
+                        }
+                        if(R2 && Uin && Uout)
+                        {
+                            result_invertierender_Verstaerker += `
+                             R1 = 
+                             <div class ="fraction">
+                                    <span class="fraction-numerator"> -Uin &lowast; R2</span><br>
+                                    <span>Uout</span>
+                                </div> 
+                            =
+                                <div class ="fraction">
+                                    <span class="fraction-numerator"> -${Uin}V &lowast; ${R2}&Omega; </span><br>
+                                    <span>${Uout}V</span>
+                                </div> 
+                            = -${formatWithPrefix((parseInput(Uin) * parseInput(R2))/parseInput(Uout), "&Omega;")}<br>`;
+                            
+                        }
+                    }
+
+                    if(!R2)            //Berechungen fuer Widerstand R2             
+                    {
+                        if(R1 && V)
+                        {
+                            result_invertierender_Verstaerker += `
+                             R2 = 
+                                -R1 &lowast; V 
+                             = -${R1}&Omega; &lowast; ${V} 
+                             = ${formatWithPrefix(parseInput(R1)*parseInput(V), "&Omega;")}<br>`;
+                        }
+                        if(R1 && Uout && Uin)
+                        {
+                            result_invertierender_Verstaerker += ` 
+                            R2 = - 
+                            <div class="fraction">
+                                    <span class="fraction-numerator"> R1 &lowast; Uout </span><br>
+                                    <span>Uin</span>
+                                </div> 
+                            = - 
+                                <div class="fraction">
+                                    <span class="fraction-numerator"> ${R1}&Omega; &lowast; ${Uout}V </span><br>
+                                    <span>${Uin}V</span>
+                                </div> 
+                            = -${formatWithPrefix((parseInput(R1) * parseInput(Uout))/parseInput(Uin), "&Omega;")}<br>`;
+                        }
+                    }
+
+            document.getElementById('result_invertierender_Verstaerker').innerHTML = result_invertierender_Verstaerker;
+        }
+
+        function calculate_nicht_invertierender_Verstaerker()
+        {
+            let result_nicht_invertierender_Verstaerker = ``;
+
+            const R1 = document.getElementById("R1-2").value;
+            const R2 = document.getElementById("R2-2").value;
+            const Uin = document.getElementById("Uin-2").value;
+            const Uout = document.getElementById("Uout-2").value;
+            const V = document.getElementById("V-2").value;
+
+            if(!V)            //Berechungen fuer Verstaerkung
+            {
+                if(R1 && R2)        // Eigabe bei R1 und R2
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        Verst&auml;rkung V = 1 + 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> R2 </span><br>
+                            <span>R1</span>
+                        </div> 
+                    = 1 +
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${R2}&Omega; </span><br>
+                            <span>${R1}&Omega;</span>
+                        </div> 
+                    
+                    = ${formatWithPrefix(1 + parseInput(R2)/parseInput(R1), "")}<br>`;
+                }
+
+                if(Uout && Uin)     //Eigabe bei Uout und Uin
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                    Verst&auml;rkung V = 1 + 
+                    <div class ="fraction">
+                            <span class="fraction-numerator"> Uout </span><br>
+                            <span>Uin</span>
+                        </div> 
+                    = 1 +
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Uout}V </span><br>
+                            <span>${Uin}V</span>
+                        </div> 
+                    = ${formatWithPrefix(1+ parseInput(Uout)/parseInput(Uin), "")}<br>`;
+                }
+            }
+
+            if(!Uin)            //Berechungen fuer Eingensspannugn Uin       
+            {
+                if(Uout && V)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        Uin = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> Uout </span><br>
+                            <span>V</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Uout}V </span><br>
+                            <span>${V}</span>
+                        </div> 
+                        = ${formatWithPrefix(parseInput(Uout)/parseInput(V), "V")}<br>`;
+                        
+                }
+                if(Uout && R2 && R1)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        Uin =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">Uout &lowast; R1</span><br>
+                            <span>R1 + R2</span>
+                        </div>
+                    = 
+                        <div class ="fraction"> 
+                            <span class="fraction-numerator">${Uout}V &lowast; ${R1}&Omega;</span><br>
+                            <span>${R1}&Omega; + ${R2}&Omega;</span>
+                        </div>
+                    = ${formatWithPrefix((parseInput(Uout) + parseInput(R1))/(parseInput(R1) + parseInput(R2)), "V")}<br>`;
+                }
+            }
+
+            if(!Uout)
+            {
+                if(Uin && V)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        Uout = 
+                        V &lowast; Uin 
+                        = ${V} &lowast; ${Uin}V
+                        = ${formatWithPrefix(parseInput(V)*parseInput(Uin), "V")}<br>`;
+                }
+                if(Uin && R1 && R2)
+                {
+                    // debugger;
+                    result_nicht_invertierender_Verstaerker += `
+                        Uout = Uin &lowast; (1 + 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> R2 </span><br>
+                            <span>R1</span>
+                        </div> )
+                        = ${Uin}V &lowast; (1 + 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${R2}&Omega; </span><br>
+                            <span>${R1}&Omega;</span>
+                        </div> )
+                        = ${formatWithPrefix(parseInput(Uin) * (1 + parseInput(R2)/parseInput(R1)), "V")}<br>`;
+                }
+            }
+
+            if(!R1)     // RQ
+            {
+                if(V && R2)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        R1 = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> R1 </span><br>
+                            <span>V - 1</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${R2}&Omega; </span><br>
+                            <span>${V} - 1</span>
+                        </div> 
+                        = ${formatWithPrefix(parseInput(R2)/(parseInput(V) -1), "&Omega;")}<br>`;
+                }
+                if(Uin && Uout && R2)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        R1 = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> Uin &lowast; R2 </span><br>
+                            <span>Uout - Uin</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Uin}V &lowast; ${R2}&Omega; </span><br>
+                            <span>${Uout} - ${Uin}</span>
+                        </div> 
+                        = ${formatWithPrefix((parseInput(Uin)*parseInput(R2))/(parseInput(Uout) - parseInput(Uin)), "&Omega;")}<br>`;
+                }
+            }
+
+            if(!R2)   
+            {
+                if(R1 && V)
+                {
+                    // R2 = R1 * (V -1)
+                    result_nicht_invertierender_Verstaerker += `
+                        R2 = 
+                        R1 &lowast; (V - 1) 
+                        = ${R1}&Omega; &lowast; (${V}- 1)
+                        = ${formatWithPrefix(parseInput(R1)*(parseInput(V) -1), "&Omega;")}<br>`;
+                }
+
+                if(R1 && Uin && Uout)
+                {
+                    result_nicht_invertierender_Verstaerker += `
+                        R2 = R1 &lowast; ( 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> Uout </span><br>
+                            <span>Uin</span>
+                        </div> -1)
+                        = ${R1}&Omega; &lowast; ( 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Uout}V </span><br>
+                            <span>${Uin}V</span>
+                        </div> -1)
+                        = ${formatWithPrefix(parseInput(R1) * ((parseInput(Uout)/parseInput(Uin))-1), "&Omega;")}<br>`;
+                }
+            }
+
+            document.getElementById('result_nicht_invertierender_Verstaerker').innerHTML = result_nicht_invertierender_Verstaerker;
+        }
+
+        function calculate_summier_Verstaeker()
+        {
+            let result_summier_Verstaerker = ``;
+
+            const R11 = document.getElementById("R11-3").value;
+            const R12 = document.getElementById("R12-3").value;
+            const R2 = document.getElementById("R2-3").value;
+            const Uin1 = document.getElementById("Uin1-3").value;
+            const Uin2 = document.getElementById("Uin2-3").value;
+            const Uout = document.getElementById("Uout-3").value;
+            const V1 = document.getElementById("V1-3").value;
+            const V2 = document.getElementById("V2-3").value;
+
+            /*if(!Uout)
+            {
+                if(R11 && R12 && R2 && Uin1 && Uin2)
+                {
+                    debugger;
+                    result_summier_Verstaerker += ` 
+                    Uout = - ( 
+                    <div class="fraction">
+                            <span class="fraction-numerator">R2</span><br>
+                            <span>R11</span>
+                        </div> Uin1 +
+                    <div class="fraction">
+                            <span class="fraction-numerator">R2</span><br>
+                            <span>R12</span>
+                        </div> Uin2    
+                        )
+                    = - 
+                        <div class="fraction">
+                            <span class="fraction-numerator"> ${R1}&Omega; &lowast; ${Uout}V </span><br>
+                            <span>${Uin}V</span>
+                        </div> 
+                    = -${formatWithPrefix((parseInput(R1) * parseInput(Uout))/parseInput(Uin), "&Omega;")}<br>`;
+                }
+            }*/
+
+            if(!Uout)
+            {
+                if(R11 && R12 && R2 && Uin1 && Uin2)
+                {
+                    debugger;
+                    // Uout = -R2/R11 * Uin1 - R2/R12 * Uin2
+                    result_summier_Verstaerker += ` 
+                    U<sub>out</sub> =  
+                    - <div class="fraction">
+                            <span class="fraction-numerator">R<sub>2</sub></span><br>
+                            <span>R<sub>11</sub></span>
+                        </div> &lowast; U<sub>in1</sub>
+
+                    - <div class="fraction">
+                            <span class="fraction-numerator">R<sub>2</sub></span><br>
+                            <span>R<sub>12</sub></span>
+                        </div> &lowast; U<sub>in2</sub>    
+                        
+                    = 
+                    - <div class="fraction">
+                            <span class="fraction-numerator">${R2}&Omega;</span><br>
+                            <span>${R11}&Omega;</span>
+                        </div> &lowast; ${Uin1}V
+
+                    - <div class="fraction">
+                            <span class="fraction-numerator">${R2}&Omega;</span><br>
+                            <span>${R12}&Omega;</span>
+                        </div> &lowast; ${Uin2}V   
+                    = ${formatWithPrefix(-(parseInput(R2)/parseInput(R11)) * parseInput(Uin1) - (parseInput(R2)/parseInput(R12)) * parseInput(Uin2), "V")}<br>`;
+
+                }
+            }
+
+            document.getElementById('result_summier_Verstaerker').innerHTML = result_summier_Verstaerker;
+        }
+
+        function calculate_differenz_Verstaerker()
+        {
+            let result_differenz_Verstaerker = ``;
+
+            const R11 = document.getElementById("R13-4").value;
+            const R12 = document.getElementById("R24-4").value;
+            const Uin1 = document.getElementById("Uin1-4").value;
+            const Uin2 = document.getElementById("Uin2-4").value;
+            const Uout = document.getElementById("Uout-4").value;
+            const V1 = document.getElementById("V-4").value;
+
+            /*if(!Uout)
+            {
+                if(R11 && R12 && R2 && Uin1 && Uin2)
+                {
+                    debugger;
+                    result_summier_Verstaerker += ` 
+                    Uout = - ( 
+                    <div class="fraction">
+                            <span class="fraction-numerator">R2</span><br>
+                            <span>R11</span>
+                        </div> Uin1 +
+                    <div class="fraction">
+                            <span class="fraction-numerator">R2</span><br>
+                            <span>R12</span>
+                        </div> Uin2    
+                        )
+                    = - 
+                        <div class="fraction">
+                            <span class="fraction-numerator"> ${R1}&Omega; &lowast; ${Uout}V </span><br>
+                            <span>${Uin}V</span>
+                        </div> 
+                    = -${formatWithPrefix((parseInput(R1) * parseInput(Uout))/parseInput(Uin), "&Omega;")}<br>`;
+                }
+            }*/
+
+            result_differenz_Verstaerker = ` 
+                    development in progress <br>`;
+
+            document.getElementById('result_differenz_Verstaerker').innerHTML = result_differenz_Verstaerker;
+        }
+
+            
+
+        
+    </script>
+    <script src="../scripts.js"></script>
+</body>
+</html>
