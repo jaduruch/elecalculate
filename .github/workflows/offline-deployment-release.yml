@@ -1,4 +1,4 @@
-name: Semantic Release for Offline Deployment
+name: Offline Deployment Semantic Release
 
 on:
   push:
@@ -10,54 +10,99 @@ permissions:
   contents: write
 
 jobs:
-  semantic-release:
-    name: Semantic Release with Artifacts
+  release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout offline-deployment branch
+      - name: Checkout offline-deployment
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: offline-deployment
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install semantic-release and plugins
+      - name: Determine next semantic version
+        id: version
         run: |
-          npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          if [ "$LAST_TAG" = "v1.0.0" ] && [ -z "$(git tag)" ]; then
+            MAJOR=1; MINOR=0; PATCH=0
+          else
+            MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
+            MINOR=$(echo $LAST_TAG | cut -d. -f2)
+            PATCH=$(echo $LAST_TAG | cut -d. -f3)
+          fi
 
-      # Create ZIP and TAR.GZ of the offline build (excluding .git, node_modules, and previous archives)
-      - name: Create offline build archives
+          if [ "$LAST_TAG" = "v1.0.0" ] && [ -z "$(git tag)" ]; then
+            RANGE=""
+          else
+            RANGE="$LAST_TAG..HEAD"
+          fi
+          COMMITS=$(git log --pretty=format:"%s" $RANGE)
+
+          BUMP="patch"
+          if echo "$COMMITS" | grep -q -E 'BREAKING CHANGE|^feat!:'; then
+            BUMP="major"
+          elif echo "$COMMITS" | grep -q -E '^feat:'; then
+            BUMP="minor"
+          elif echo "$COMMITS" | grep -q -E '^fix:'; then
+            BUMP="patch"
+          fi
+
+          if [ "$BUMP" = "major" ]; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+          elif [ "$BUMP" = "minor" ]; then
+            MINOR=$((MINOR + 1)); PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Prepare clean dist directory for archiving
         run: |
-          BUILD_NAME="elecalculate-offline-$(date +%Y%m%d-%H%M%S)"
-          # Exclude .git, node_modules, and previous archives
-          zip -r "$BUILD_NAME.zip" . \
-            -x "*.git*" \
-            -x "node_modules/*" \
-            -x "*.zip" \
-            -x "*.tar.gz"
-          tar --exclude-vcs --exclude='node_modules' --exclude='*.zip' --exclude='*.tar.gz' --warning=no-file-changed -czf "$BUILD_NAME.tar.gz" .
+          rm -rf dist
+          mkdir dist
+          rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ dist/
 
-          # Save archive names for later steps
+      - name: Create offline build archives (ZIP and TAR.GZ) with version tag
+        run: |
+          cd dist
+          BUILD_NAME="elecalculate-offline-${{ steps.version.outputs.new_tag }}"
+          zip -r "../$BUILD_NAME.zip" .
+          tar -czf "../$BUILD_NAME.tar.gz" .
+          cd ..
           echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
           echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
 
-      # Run semantic-release to create the release and tag
-      - name: Run semantic-release
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Gather release notes from commits since last tag
+        id: notes
         run: |
-          npx semantic-release
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            RANGE=""
+          else
+            RANGE="$LAST_TAG..HEAD"
+          fi
+          git log --pretty=format:"* %s" $RANGE > release-notes.md
+          echo >> release-notes.md
+          {
+            echo "release_notes<<EOF"
+            cat release-notes.md
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
-      # Upload the ZIP and TAR.GZ to the latest release
-      - name: Upload offline build archives to GitHub Release
+      - name: Create and push new tag
+        run: |
+          git tag ${{ steps.version.outputs.new_tag }}
+          git push origin ${{ steps.version.outputs.new_tag }}
+
+      - name: Create GitHub Release and upload artifacts
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          target_commitish: offline-deployment
+          name: Release ${{ steps.version.outputs.new_tag }}
+          body: ${{ steps.notes.outputs.release_notes }}
           files: |
             ${{ env.ZIP_NAME }}
             ${{ env.TAR_NAME }}

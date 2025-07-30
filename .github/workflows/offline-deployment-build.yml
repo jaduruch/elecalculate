@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - EL-49-Offline-Page-Onleliner-README-Changes
   workflow_dispatch:
 
 permissions:
