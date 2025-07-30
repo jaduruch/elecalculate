@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - EL-49-Offline-Page-Onleliner-README-Changes
   workflow_dispatch:
 
 permissions:
@@ -109,4 +108,4 @@ jobs:
           set -e
           git add index.html deployment.manifest deployment.manifest.sha256
           git commit --allow-empty -m "ci: exam-proof offline deployment with single proof box and manifest hash"
-          git push --force origin offline-deployment
+          git push origin offline-deployment
