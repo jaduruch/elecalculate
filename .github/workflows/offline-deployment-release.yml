@@ -20,26 +20,9 @@ jobs:
           fetch-depth: 0
           ref: offline-deployment
 
-      - name: Prepare clean dist directory for archiving
-        run: |
-          rm -rf dist
-          mkdir dist
-          rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ dist/
-
-      - name: Create offline build archives (ZIP and TAR.GZ)
-        run: |
-          cd dist
-          BUILD_NAME="elecalculate-offline-$(date +%Y%m%d-%H%M%S)"
-          zip -r "../$BUILD_NAME.zip" .
-          tar -czf "../$BUILD_NAME.tar.gz" .
-          cd ..
-          echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
-          echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
-
       - name: Determine next semantic version
         id: version
         run: |
-          # Get latest tag (vX.Y.Z), default to v1.0.0 if none
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
           if [ "$LAST_TAG" = "v1.0.0" ] && [ -z "$(git tag)" ]; then
             MAJOR=1; MINOR=0; PATCH=0
@@ -49,7 +32,6 @@ jobs:
             PATCH=$(echo $LAST_TAG | cut -d. -f3)
           fi
 
-          # Get commit messages since last tag
           if [ "$LAST_TAG" = "v1.0.0" ] && [ -z "$(git tag)" ]; then
             RANGE=""
           else
@@ -57,7 +39,6 @@ jobs:
           fi
           COMMITS=$(git log --pretty=format:"%s" $RANGE)
 
-          # Default: patch bump
           BUMP="patch"
           if echo "$COMMITS" | grep -q -E 'BREAKING CHANGE|^feat!:'; then
             BUMP="major"
@@ -67,7 +48,6 @@ jobs:
             BUMP="patch"
           fi
 
-          # Calculate next version
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
           elif [ "$BUMP" = "minor" ]; then
@@ -77,6 +57,22 @@ jobs:
           fi
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Prepare clean dist directory for archiving
+        run: |
+          rm -rf dist
+          mkdir dist
+          rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ dist/
+
+      - name: Create offline build archives (ZIP and TAR.GZ) with version tag
+        run: |
+          cd dist
+          BUILD_NAME="elecalculate-offline-${{ steps.version.outputs.new_tag }}"
+          zip -r "../$BUILD_NAME.zip" .
+          tar -czf "../$BUILD_NAME.tar.gz" .
+          cd ..
+          echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
+          echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
 
       - name: Gather release notes from commits since last tag
         id: notes
