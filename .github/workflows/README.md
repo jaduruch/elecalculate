@@ -1,22 +1,24 @@
 # GitHub Actions Workflows: Multi-Branch Deployment, Offline Build, and Automated Release
 
-This repository leverages a suite of GitHub Actions workflows to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts.
+This repository uses a suite of GitHub Actions workflows to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts.
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Branch Preview and Cleanup](#1-branch-preview-and-cleanup)
+2. [Branch Preview and Cleanup](#branch-preview-and-cleanup)
    - [Branch Sync Workflow](#branch-sync-workflow)
    - [Cleanup Workflow](#cleanup-workflow)
-3. [Offline Deployment and Release](#2-offline-deployment-and-release)
+3. [Offline Deployment and Release](#offline-deployment-and-release)
    - [Offline Deployment Build Workflow](#offline-deployment-build-workflow)
    - [Offline Deployment Release Workflow](#offline-deployment-release-workflow)
 4. [File Locations](#file-locations)
 5. [How to Download the Latest Offline Build](#how-to-download-the-latest-offline-build)
 6. [Best Practices and Notes](#best-practices-and-notes)
 7. [Troubleshooting](#troubleshooting)
+8. [Security and Compliance](#security-and-compliance)
+9. [Contribution and Maintenance](#contribution-and-maintenance)
 
 ---
 
@@ -31,11 +33,11 @@ This repository is designed for robust, automated, and auditable deployment and 
 - **`offline-deployment-build.yml`**  
   Builds and force-updates the `offline-deployment` branch with a cryptographically verifiable, exam-proof offline build, including a manifest and proof box.
 - **`offline-deployment-release.yml`**  
-  Creates a semantic versioned GitHub Release from `offline-deployment`, attaching both ZIP and TAR.GZ archives for easy offline distribution.
+  Creates a semantic versioned GitHub Release from `offline-deployment`, attaching both ZIP and TAR.GZ archives for easy offline distribution. Release notes are grouped by type and exclude infrastructure-only changes.
 
 ---
 
-## 1. Branch Preview and Cleanup
+## Branch Preview and Cleanup
 
 ### Branch Sync Workflow
 
@@ -53,7 +55,7 @@ This repository is designed for robust, automated, and auditable deployment and 
   - Each deployment logs the branch, deployment path, and resulting URL for traceability.
 
 - **Purpose:**  
-  Enables live previews for all active branches, supporting feature development, QA, and stakeholder review.
+  Enables live previews for all active branches, supporting feature development, QA
 
 ---
 
@@ -81,7 +83,7 @@ This repository is designed for robust, automated, and auditable deployment and 
 
 ---
 
-## 2. Offline Deployment and Release
+## Offline Deployment and Release
 
 ### Offline Deployment Build Workflow
 
@@ -109,17 +111,22 @@ This repository is designed for robust, automated, and auditable deployment and 
 
 - **Triggers:**  
   - On push to `offline-deployment`
+  - Manually via the Actions tab
 
 - **Logic:**  
   - Determines the next semantic version (major, minor, or patch) based on commit messages since the last tag, following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-  - Tags the release and generates release notes from commit messages.
+  - **Excludes** from release notes:
+    - Commits starting with `ci:`, `chore:`, or `docs:`
+    - Commits that only touch `.yml`, `.yaml`, or `.md` files
+  - Groups release notes by type: Features, Fixes, Other changes.
+  - Tags the release and generates release notes from filtered commit messages.
   - Creates a clean `dist/` directory, copies all relevant files, and builds both a ZIP and TAR.GZ archive named with the version tag (e.g., `elecalculate-offline-v1.2.3.zip`).
-  - Creates a GitHub Release, attaching both archives and including the release notes.
+  - Creates a GitHub Release, attaching both archives and including the release notes with build context (date, branch, artifact names).
 
 - **Result:**  
   Every update to `offline-deployment` produces a new, versioned GitHub Release with:
     - Semantic version tag (e.g., `v1.2.3`)
-    - Release notes (from commit messages)
+    - Context-rich, grouped release notes (excluding infra-only changes)
     - Downloadable ZIP and TAR.GZ of the offline build
 
 ---
@@ -154,6 +161,8 @@ This repository is designed for robust, automated, and auditable deployment and 
   Each release includes both a ZIP and TAR.GZ for easy offline distribution and archival.
 - **Semantic Versioning:**  
   Releases are versioned and documented automatically based on commit messages, following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard.
+- **Release Notes Filtering:**  
+  Release notes exclude infrastructure-only changes and are grouped by type for clarity.
 - **Auditability:**  
   The manifest hash and build date are always visible in the proof box and as a comment in the HTML, supporting compliance and verification requirements.
 - **Clean Artifacts:**  
