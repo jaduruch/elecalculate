@@ -17,8 +17,6 @@ This repository uses a suite of GitHub Actions workflows to automate branch prev
 5. [How to Download the Latest Offline Build](#how-to-download-the-latest-offline-build)
 6. [Best Practices and Notes](#best-practices-and-notes)
 7. [Troubleshooting](#troubleshooting)
-8. [Security and Compliance](#security-and-compliance)
-9. [Contribution and Maintenance](#contribution-and-maintenance)
 
 ---
 
