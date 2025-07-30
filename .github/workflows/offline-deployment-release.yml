@@ -40,7 +40,7 @@ jobs:
             -x "node_modules/*" \
             -x "*.zip" \
             -x "*.tar.gz"
-          tar --exclude-vcs --exclude='node_modules' --exclude='*.zip' --exclude='*.tar.gz' -czf "$BUILD_NAME.tar.gz" .
+          tar --exclude-vcs --exclude='node_modules' --exclude='*.zip' --exclude='*.tar.gz' --warning=no-file-changed -czf "$BUILD_NAME.tar.gz" .
 
           # Save archive names for later steps
           echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
