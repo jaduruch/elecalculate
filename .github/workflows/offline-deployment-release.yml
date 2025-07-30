@@ -1,0 +1,64 @@
+name: Semantic Release for Offline Deployment
+
+on:
+  push:
+    branches:
+      - offline-deployment
+
+permissions:
+  contents: write
+
+jobs:
+  semantic-release:
+    name: Semantic Release with Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout offline-deployment branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: offline-deployment
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install semantic-release and plugins
+        run: |
+          npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
+
+      # Create ZIP and TAR.GZ of the offline build (excluding .git, node_modules, and previous archives)
+      - name: Create offline build archives
+        run: |
+          BUILD_NAME="elecalculate-offline-$(date +%Y%m%d-%H%M%S)"
+          # Exclude .git, node_modules, and previous archives
+          zip -r "$BUILD_NAME.zip" . \
+            -x "*.git*" \
+            -x "node_modules/*" \
+            -x "*.zip" \
+            -x "*.tar.gz"
+          tar --exclude-vcs --exclude='node_modules' --exclude='*.zip' --exclude='*.tar.gz' -czf "$BUILD_NAME.tar.gz" .
+
+          # Save archive names for later steps
+          echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
+          echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
+
+      # Run semantic-release to create the release and tag
+      - name: Run semantic-release
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release
+
+      # Upload the ZIP and TAR.GZ to the latest release
+      - name: Upload offline build archives to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ env.ZIP_NAME }}
+            ${{ env.TAR_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

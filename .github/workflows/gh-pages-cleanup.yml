@@ -104,8 +104,8 @@ jobs:
       - name: Commit and push changes
         if: steps.cleanup.outcome == 'success'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Elecalculate Orphaned Deployment Cleanup"
+          git config user.email "orphaned-cleanup@elecalculate.com"
           git add -A ":!./.main-branch"
           if git diff --cached --quiet; then
             echo "No changes to commit."
