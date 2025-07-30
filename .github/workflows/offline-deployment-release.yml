@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - offline-deployment
+  workflow_dispatch:
 
 permissions:
   contents: write
