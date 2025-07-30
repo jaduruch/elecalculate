@@ -124,11 +124,9 @@ jobs:
           done
 
           {
-            echo "## Release ${{ steps.version.outputs.new_tag }}"
-            echo
             echo "**Build date:** $(date -u +"%Y-%m-%d %H:%M UTC")"
             echo "**Branch:** offline-deployment"
-            echo "**Artifacts:** ${{ env.ZIP_NAME }}, ${{ env.TAR_NAME }}"
+            echo "**Assets:** ${{ env.ZIP_NAME }}, ${{ env.TAR_NAME }}"
             echo
             if [ -n "$FEATURES" ]; then
               echo "### Features"
