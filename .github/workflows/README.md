@@ -1,8 +1,3 @@
-Certainly, Paul! Here’s a **serious, enterprise-style README** for your new, all-in-one pipeline (`.github/workflows/offline-deployment.yml`).  
-This version is clear, detailed, and suitable for audits, onboarding, and compliance documentation.
-
----
-
 # GitHub Actions Workflows: Multi-Branch Deployment, Offline Build, and Automated Release
 
 This repository uses a unified GitHub Actions workflow to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts.
