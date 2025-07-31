@@ -1,4 +1,4 @@
-name: Offline Deployment: Build, Tag, and Release
+name: Offline Deployment - Build, Tag, and Release
 
 on:
   push:
