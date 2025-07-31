@@ -28,7 +28,6 @@ jobs:
 
       - name: Create artifact commit on top of main
         run: |
-          # Create a new branch for the artifact build
           git checkout -b offline-artifact-tmp
 
           # Generate manifest and hash
@@ -96,7 +95,11 @@ jobs:
           git add index.html deployment.manifest deployment.manifest.sha256
           git commit --allow-empty -m "ci: offline artifact build with manifest and proof box"
 
+      - name: Rebase artifact commit on latest offline-deployment
+        run: |
+          git fetch origin offline-deployment
+          git rebase origin/offline-deployment
+
       - name: Push artifact commit to offline-deployment
         run: |
-          # Push as a new commit on top of offline-deployment (no force-push)
-          git push origin offline-artifact-tmp:offline-deployment
+          git push origin HEAD:offline-deployment
