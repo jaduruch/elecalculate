@@ -1,0 +1,295 @@
+name: Offline Deployment - Build, Tag, and Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Fetch all tags (ensure tag visibility)
+        run: |
+          git fetch --tags
+          git tag -l
+
+      - name: Determine next semantic version and if release is needed
+        id: version
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "[INFO] Last tag found: $LAST_TAG"
+            MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
+            MINOR=$(echo $LAST_TAG | cut -d. -f2)
+            PATCH=$(echo $LAST_TAG | cut -d. -f3)
+            RANGE="$LAST_TAG..HEAD"
+            if [ "$(git rev-parse HEAD)" = "$(git rev-list -n 1 $LAST_TAG)" ]; then
+              echo "[INFO] HEAD is already tagged with $LAST_TAG. No new release needed."
+              echo "skip_release=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          else
+            echo "[INFO] No previous tag found. Starting at v1.0.0"
+            MAJOR=1; MINOR=0; PATCH=0
+            RANGE=""
+          fi
+
+          COMMITS=""
+          for SHA in $(git log --pretty=format:"%H" $RANGE); do
+            MSG=$(git log -1 --pretty=format:"%s" $SHA)
+            FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
+            if [[ "$MSG" =~ ^(ci|chore|docs): ]]; then
+              continue
+            fi
+            ONLY_INFRA=true
+            for FILE in $FILES; do
+              if [[ ! "$FILE" =~ \.ya?ml$ && ! "$FILE" =~ \.md$ ]]; then
+                ONLY_INFRA=false
+                break
+              fi
+            done
+            if $ONLY_INFRA; then
+              continue
+            fi
+            COMMITS="$COMMITS $SHA"
+          done
+
+          if [ -z "$COMMITS" ]; then
+            echo "[INFO] No new user-facing commits since last tag. Skipping release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          BUMP="patch"
+          for SHA in $COMMITS; do
+            MSG=$(git log -1 --pretty=format:"%s" $SHA)
+            if echo "$MSG" | grep -q -E 'BREAKING CHANGE|^feat!:'; then
+              BUMP="major"
+              break
+            elif echo "$MSG" | grep -q -E '^feat:'; then
+              if [ "$BUMP" != "major" ]; then
+                BUMP="minor"
+              fi
+            elif echo "$MSG" | grep -q -E '^fix:' && [ "$BUMP" = "patch" ]; then
+              BUMP="patch"
+            fi
+          done
+
+          if [ "$BUMP" = "major" ]; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+          elif [ "$BUMP" = "minor" ]; then
+            MINOR=$((MINOR + 1)); PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
+          if [ "$NEW_TAG" = "$LAST_TAG" ]; then
+            echo "[INFO] No version bump needed (no new user-facing changes since last release). Skipping release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "skip_release=false" >> $GITHUB_OUTPUT
+
+      - name: Gather and format release notes
+        if: steps.version.outputs.skip_release == 'false'
+        id: notes
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            RANGE="$LAST_TAG..HEAD"
+          else
+            RANGE=""
+          fi
+
+          FEATURES=""
+          FIXES=""
+          OTHERS=""
+          for SHA in $(git log --pretty=format:"%H" $RANGE); do
+            MSG=$(git log -1 --pretty=format:"%s" $SHA)
+            FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
+            if [[ "$MSG" =~ ^(ci|chore|docs): ]]; then
+              continue
+            fi
+            ONLY_INFRA=true
+            for FILE in $FILES; do
+              if [[ ! "$FILE" =~ \.ya?ml$ && ! "$FILE" =~ \.md$ ]]; then
+                ONLY_INFRA=false
+                break
+              fi
+            done
+            if $ONLY_INFRA; then
+              continue
+            fi
+            if [[ "$MSG" =~ ^feat: ]]; then
+              FEATURES+=$'\n'"* ${MSG#feat: }"
+            elif [[ "$MSG" =~ ^fix: ]]; then
+              FIXES+=$'\n'"* ${MSG#fix: }"
+            else
+              OTHERS+=$'\n'"* $MSG"
+            fi
+          done
+
+          {
+            echo "**Build date:** $(date -u +"%Y-%m-%d %H:%M UTC")"
+            echo "**Branch:** main"
+            echo
+            if [ -n "$FEATURES" ]; then
+              echo "### Features"
+              echo "$FEATURES"
+              echo
+            fi
+            if [ -n "$FIXES" ]; then
+              echo "### Fixes"
+              echo "$FIXES"
+              echo
+            fi
+            if [ -n "$OTHERS" ]; then
+              echo "### Other changes"
+              echo "$OTHERS"
+              echo
+            fi
+          } > release-notes.md
+
+          echo >> release-notes.md
+          {
+            echo "release_notes<<EOF"
+            cat release-notes.md
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create and push new tag (if not exists)
+        if: steps.version.outputs.skip_release == 'false'
+        run: |
+          if git rev-parse "${{ steps.version.outputs.new_tag }}" >/dev/null 2>&1; then
+            echo "[INFO] Tag ${{ steps.version.outputs.new_tag }} already exists. Skipping tag creation."
+          else
+            git tag ${{ steps.version.outputs.new_tag }}
+            git push origin ${{ steps.version.outputs.new_tag }}
+          fi
+
+      # Build and push offline-deployment artifact branch
+      - name: Checkout main branch again for artifact build
+        if: steps.version.outputs.skip_release == 'false'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          path: main-artifact
+
+      - name: Build artifact and push to offline-deployment
+        if: steps.version.outputs.skip_release == 'false'
+        run: |
+          cd main-artifact
+          git config --global user.name "Elecalculate Offline Deployment"
+          git config --global user.email "offline-deployment@elecalculate.com"
+          git checkout -B offline-deployment
+
+          # Generate manifest and hash
+          find . -type f \
+            ! -name 'deployment.manifest*' \
+            ! -name '*.asc' \
+            ! -name '*.ots' \
+            ! -path './.git/*' \
+            -exec sha256sum {} \; | sort > deployment.manifest
+          sha256sum deployment.manifest > deployment.manifest.sha256
+
+          # Inject proof box, CSS, and JS (same as before)
+          BUILD_DATE="$(date -u +"%Y-%m-%d %H:%M UTC")"
+          MANIFEST_HASH="$(cut -d' ' -f1 deployment.manifest.sha256)"
+          MANIFEST_HASH_SHORT="${MANIFEST_HASH:0:8}…${MANIFEST_HASH: -4}"
+
+          sed -i '/<!-- Neuer Inhalt -->/i \
+          <div class="proof-box">\
+            <h1>Offline-Prüfungsnachweis</h1>\
+            <div class="build" title="Zeitpunkt, zu dem diese Version gebaut wurde">ℹ️ Version erstellt: <span id="build-date">'"$BUILD_DATE"'</span></div>\
+            <div><span title="Technischer Fingerabdruck dieser Version. Klicken zum Kopieren!">🔒 Prüfcode: <span id="manifest-hash" class="hash" title="'"$MANIFEST_HASH"'">'"$MANIFEST_HASH_SHORT"'</span></span><div class="copy-hint" id="copy-hint" style="display:none;">Kopiert!</div></div>\
+            <div class="status" id="offline-status" title="Zeigt an, ob du gerade mit dem Internet verbunden bist.">🌐 Status: <span class="offline">Offline</span></div>\
+            <div class="info">Diese App funktioniert <b>vollständig offline</b>.<br>Alle Berechnungen und Inhalte sind lokal verfügbar.<br><span style="color:#ffe066;"><br>Kein Zugriff auf das Internet oder externe Ressourcen.</span></div>\
+          </div>\
+          <style>\
+            .proof-box { background: #222; color: #ffe066; border: 2px solid #ffe066; border-radius: 12px; margin: 2.5em auto 2em auto; padding: 2em 2.5em; box-shadow: 0 4px 24px #0008; text-align: center; max-width: 420px; }\
+            .proof-box h1 { color: #ffe066; margin-bottom: 0.5em; font-size: 1.7em; margin-top: 0; }\
+            .proof-box .status { font-size: 1.1em; margin: 1em 0; }\
+            .proof-box .hash { font-family: monospace; background: #333; color: #ffe066; padding: 0.2em 0.6em; border-radius: 4px; margin: 0.2em 0; display: inline-block; cursor: pointer; border: 1px solid #ffe066; }\
+            .proof-box .hash:hover { background: #444; text-decoration: underline; }\
+            .proof-box .build { color: #b3b3b3; font-size: 0.95em; margin-bottom: 0.5em; }\
+            .proof-box .offline { color: #0f0; font-weight: bold; }\
+            .proof-box .online { color: #e67e22; font-weight: bold; }\
+            .proof-box .info { color: #fff; font-size: 0.95em; margin-top: 1.2em; }\
+            .proof-box .copy-hint { color: #ffe066; font-size: 0.9em; margin-top: 0.2em; }\
+          </style>\
+          <script>\
+            function updateStatus(){\
+              var el=document.getElementById("offline-status");\
+              if(!el)return;\
+              var online=navigator.onLine;\
+              el.innerHTML="🌐 Status: <span class=\\"" + (online ? "online" : "offline") + "\\">" + (online ? "Online (Warnung: Verbindung erkannt!)" : "Offline (OK)") + "</span>";\
+            }\
+            window.addEventListener("online",updateStatus);\
+            window.addEventListener("offline",updateStatus);\
+            document.addEventListener("DOMContentLoaded",updateStatus);\
+            var hashEl=document.getElementById("manifest-hash");\
+            var hintEl=document.getElementById("copy-hint");\
+            if(hashEl){\
+              hashEl.addEventListener("click",function(){\
+                var fullHash=hashEl.getAttribute("title");\
+                if(navigator.clipboard){navigator.clipboard.writeText(fullHash);}\
+                if(hintEl){\
+                  hintEl.style.display="block";\
+                  setTimeout(function(){hintEl.style.display="none";},1200);\
+                }\
+              });\
+            }\
+          </script>' index.html
+
+          sed -i "1i <!-- deployment.manifest.sha256: $(cut -d' ' -f1 deployment.manifest.sha256) -->" index.html
+
+          git add index.html deployment.manifest deployment.manifest.sha256
+          git commit --allow-empty -m "ci: offline artifact build with manifest and proof box"
+          git push --force origin offline-deployment
+
+      - name: Checkout offline-deployment for release assets
+        if: steps.version.outputs.skip_release == 'false'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: offline-deployment
+          path: offline-artifact
+
+      - name: Create offline build archives (ZIP and TAR.GZ) from offline-deployment
+        if: steps.version.outputs.skip_release == 'false'
+        run: |
+          cd offline-artifact
+          BUILD_NAME="elecalculate-offline-${{ steps.version.outputs.new_tag }}"
+          zip -r "../$BUILD_NAME.zip" .
+          tar -czf "../$BUILD_NAME.tar.gz" .
+          cd ..
+          echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
+          echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
+
+      - name: Create GitHub Release and upload artifacts
+        if: steps.version.outputs.skip_release == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          target_commitish: main
+          name: Release ${{ steps.version.outputs.new_tag }}
+          body: ${{ steps.notes.outputs.release_notes }}
+          files: |
+            ${{ env.ZIP_NAME }}
+            ${{ env.TAR_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
