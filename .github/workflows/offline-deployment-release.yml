@@ -30,19 +30,40 @@ jobs:
       - name: Determine next semantic version and if release is needed
         id: version
         run: |
+          echo "=== [INFO] Git status and branch info ==="
+          git status
+          git branch -a
+          echo "Current HEAD: $(git rev-parse HEAD)"
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "Remotes:"
+          git remote -v
+      
           echo "=== [INFO] Fetching all tags from origin ==="
           git fetch --tags
-          echo "=== [INFO] Tags available locally ==="
-          git tag -l
+          echo "=== [INFO] Tags available locally (sorted by date) ==="
+          git tag -l --sort=-creatordate
+          echo "=== [INFO] Tag references (show-ref) ==="
+          git show-ref --tags
       
           echo "=== [INFO] Determining last tag and commit range ==="
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "[DEBUG] git describe --tags --abbrev=0 output: '$LAST_TAG'"
           if [ -n "$LAST_TAG" ]; then
             echo "[INFO] Last tag found: $LAST_TAG"
             MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
             MINOR=$(echo $LAST_TAG | cut -d. -f2)
             PATCH=$(echo $LAST_TAG | cut -d. -f3)
             RANGE="$LAST_TAG..HEAD"
+            echo "[INFO] Commit range: $RANGE"
+            echo "[INFO] Commits in range:"
+            git log $RANGE --oneline
+            echo "[INFO] Tag $LAST_TAG points to commit: $(git rev-list -n 1 $LAST_TAG)"
+            echo "[INFO] HEAD is at: $(git rev-parse HEAD)"
+            if [ "$(git rev-parse HEAD)" = "$(git rev-list -n 1 $LAST_TAG)" ]; then
+              echo "[INFO] HEAD is already tagged with $LAST_TAG. No new release needed."
+              echo "skip_release=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
           else
             echo "[INFO] No previous tag found. Starting at v1.0.0"
             MAJOR=1; MINOR=0; PATCH=0
@@ -112,7 +133,6 @@ jobs:
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
           echo "[INFO] New tag to be created: $NEW_TAG"
       
-          # Only create a new tag if it is different from the last tag
           if [ "$NEW_TAG" = "$LAST_TAG" ]; then
             echo "[INFO] No version bump needed (no new user-facing changes since last release). Skipping release."
             echo "skip_release=true" >> $GITHUB_OUTPUT
