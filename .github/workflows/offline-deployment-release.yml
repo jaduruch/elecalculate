@@ -27,100 +27,100 @@ jobs:
           echo "=== [INFO] Tags available locally ==="
           git tag -l
 
-    - name: Determine next semantic version and if release is needed
-      id: version
-      run: |
-        echo "=== [INFO] Fetching all tags from origin ==="
-        git fetch --tags
-        echo "=== [INFO] Tags available locally ==="
-        git tag -l
-    
-        echo "=== [INFO] Determining last tag and commit range ==="
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [ -n "$LAST_TAG" ]; then
-          echo "[INFO] Last tag found: $LAST_TAG"
-          MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
-          MINOR=$(echo $LAST_TAG | cut -d. -f2)
-          PATCH=$(echo $LAST_TAG | cut -d. -f3)
-          RANGE="$LAST_TAG..HEAD"
-        else
-          echo "[INFO] No previous tag found. Starting at v1.0.0"
-          MAJOR=1; MINOR=0; PATCH=0
-          RANGE=""
-        fi
-    
-        echo "=== [INFO] Scanning commits for user-facing changes ==="
-        COMMITS=""
-        for SHA in $(git log --pretty=format:"%H" $RANGE); do
-          MSG=$(git log -1 --pretty=format:"%s" $SHA)
-          FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
-          echo "[AUDIT] Commit $SHA: $MSG"
-          if [[ "$MSG" =~ ^(ci|chore|docs): ]]; then
-            echo "[AUDIT] -> Ignored: infra/ci/docs commit"
-            continue
+      - name: Determine next semantic version and if release is needed
+        id: version
+        run: |
+          echo "=== [INFO] Fetching all tags from origin ==="
+          git fetch --tags
+          echo "=== [INFO] Tags available locally ==="
+          git tag -l
+      
+          echo "=== [INFO] Determining last tag and commit range ==="
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "[INFO] Last tag found: $LAST_TAG"
+            MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
+            MINOR=$(echo $LAST_TAG | cut -d. -f2)
+            PATCH=$(echo $LAST_TAG | cut -d. -f3)
+            RANGE="$LAST_TAG..HEAD"
+          else
+            echo "[INFO] No previous tag found. Starting at v1.0.0"
+            MAJOR=1; MINOR=0; PATCH=0
+            RANGE=""
           fi
-          ONLY_INFRA=true
-          for FILE in $FILES; do
-            if [[ ! "$FILE" =~ \.ya?ml$ && ! "$FILE" =~ \.md$ ]]; then
-              ONLY_INFRA=false
+      
+          echo "=== [INFO] Scanning commits for user-facing changes ==="
+          COMMITS=""
+          for SHA in $(git log --pretty=format:"%H" $RANGE); do
+            MSG=$(git log -1 --pretty=format:"%s" $SHA)
+            FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
+            echo "[AUDIT] Commit $SHA: $MSG"
+            if [[ "$MSG" =~ ^(ci|chore|docs): ]]; then
+              echo "[AUDIT] -> Ignored: infra/ci/docs commit"
+              continue
+            fi
+            ONLY_INFRA=true
+            for FILE in $FILES; do
+              if [[ ! "$FILE" =~ \.ya?ml$ && ! "$FILE" =~ \.md$ ]]; then
+                ONLY_INFRA=false
+                break
+              fi
+            done
+            if $ONLY_INFRA; then
+              echo "[AUDIT] -> Ignored: only .yml/.yaml/.md files changed"
+              continue
+            fi
+            echo "[AUDIT] -> Included: user-facing change"
+            COMMITS="$COMMITS $SHA"
+          done
+      
+          if [ -z "$COMMITS" ]; then
+            echo "[INFO] No new user-facing commits since last tag. Skipping release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+      
+          echo "=== [INFO] Determining version bump type ==="
+          BUMP="patch"
+          for SHA in $COMMITS; do
+            MSG=$(git log -1 --pretty=format:"%s" $SHA)
+            if echo "$MSG" | grep -q -E 'BREAKING CHANGE|^feat!:'; then
+              echo "[AUDIT] Major bump triggered by commit: $SHA ($MSG)"
+              BUMP="major"
               break
+            elif echo "$MSG" | grep -q -E '^feat:'; then
+              if [ "$BUMP" != "major" ]; then
+                echo "[AUDIT] Minor bump triggered by commit: $SHA ($MSG)"
+                BUMP="minor"
+              fi
+            elif echo "$MSG" | grep -q -E '^fix:' && [ "$BUMP" = "patch" ]; then
+              echo "[AUDIT] Patch bump triggered by commit: $SHA ($MSG)"
+              BUMP="patch"
             fi
           done
-          if $ONLY_INFRA; then
-            echo "[AUDIT] -> Ignored: only .yml/.yaml/.md files changed"
-            continue
+      
+          if [ "$BUMP" = "major" ]; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+            echo "[INFO] Version bump: major -> v$MAJOR.$MINOR.$PATCH"
+          elif [ "$BUMP" = "minor" ]; then
+            MINOR=$((MINOR + 1)); PATCH=0
+            echo "[INFO] Version bump: minor -> v$MAJOR.$MINOR.$PATCH"
+          else
+            PATCH=$((PATCH + 1))
+            echo "[INFO] Version bump: patch -> v$MAJOR.$MINOR.$PATCH"
           fi
-          echo "[AUDIT] -> Included: user-facing change"
-          COMMITS="$COMMITS $SHA"
-        done
-    
-        if [ -z "$COMMITS" ]; then
-          echo "[INFO] No new user-facing commits since last tag. Skipping release."
-          echo "skip_release=true" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-    
-        echo "=== [INFO] Determining version bump type ==="
-        BUMP="patch"
-        for SHA in $COMMITS; do
-          MSG=$(git log -1 --pretty=format:"%s" $SHA)
-          if echo "$MSG" | grep -q -E 'BREAKING CHANGE|^feat!:'; then
-            echo "[AUDIT] Major bump triggered by commit: $SHA ($MSG)"
-            BUMP="major"
-            break
-          elif echo "$MSG" | grep -q -E '^feat:'; then
-            if [ "$BUMP" != "major" ]; then
-              echo "[AUDIT] Minor bump triggered by commit: $SHA ($MSG)"
-              BUMP="minor"
-            fi
-          elif echo "$MSG" | grep -q -E '^fix:' && [ "$BUMP" = "patch" ]; then
-            echo "[AUDIT] Patch bump triggered by commit: $SHA ($MSG)"
-            BUMP="patch"
+          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
+          echo "[INFO] New tag to be created: $NEW_TAG"
+      
+          # Only create a new tag if it is different from the last tag
+          if [ "$NEW_TAG" = "$LAST_TAG" ]; then
+            echo "[INFO] No version bump needed (no new user-facing changes since last release). Skipping release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
           fi
-        done
-    
-        if [ "$BUMP" = "major" ]; then
-          MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
-          echo "[INFO] Version bump: major -> v$MAJOR.$MINOR.$PATCH"
-        elif [ "$BUMP" = "minor" ]; then
-          MINOR=$((MINOR + 1)); PATCH=0
-          echo "[INFO] Version bump: minor -> v$MAJOR.$MINOR.$PATCH"
-        else
-          PATCH=$((PATCH + 1))
-          echo "[INFO] Version bump: patch -> v$MAJOR.$MINOR.$PATCH"
-        fi
-        NEW_TAG="v$MAJOR.$MINOR.$PATCH"
-        echo "[INFO] New tag to be created: $NEW_TAG"
-    
-        # Only create a new tag if it is different from the last tag
-        if [ "$NEW_TAG" = "$LAST_TAG" ]; then
-          echo "[INFO] No version bump needed (no new user-facing changes since last release). Skipping release."
-          echo "skip_release=true" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-    
-        echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
-        echo "skip_release=false" >> $GITHUB_OUTPUT
+      
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "skip_release=false" >> $GITHUB_OUTPUT
 
         
       - name: Prepare clean dist directory for archiving
