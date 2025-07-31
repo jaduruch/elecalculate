@@ -32,6 +32,11 @@ jobs:
         run: |
           echo "=== [INFO] Determining last tag and commit range ==="
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "[DEBUG] HEAD: $(git rev-parse HEAD)"
+          echo "[DEBUG] All tags and their SHAs:"
+          git show-ref --tags
+          echo "[DEBUG] git log --decorate --oneline -20"
+          git log --decorate --oneline -20
           if [ -n "$LAST_TAG" ]; then
             echo "[INFO] Last tag found: $LAST_TAG"
             MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
