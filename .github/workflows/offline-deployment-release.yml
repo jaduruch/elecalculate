@@ -30,24 +30,8 @@ jobs:
       - name: Determine next semantic version and if release is needed
         id: version
         run: |
-          echo "=== [INFO] Git status and branch info ==="
-          git status
-          git branch -a
-          echo "Current HEAD: $(git rev-parse HEAD)"
-          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
-          echo "Remotes:"
-          git remote -v
-      
-          echo "=== [INFO] Fetching all tags from origin ==="
-          git fetch --tags
-          echo "=== [INFO] Tags available locally (sorted by date) ==="
-          git tag -l --sort=-creatordate
-          echo "=== [INFO] Tag references (show-ref) ==="
-          git show-ref --tags
-      
           echo "=== [INFO] Determining last tag and commit range ==="
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          echo "[DEBUG] git describe --tags --abbrev=0 output: '$LAST_TAG'"
           if [ -n "$LAST_TAG" ]; then
             echo "[INFO] Last tag found: $LAST_TAG"
             MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
@@ -69,7 +53,7 @@ jobs:
             MAJOR=1; MINOR=0; PATCH=0
             RANGE=""
           fi
-      
+
           echo "=== [INFO] Scanning commits for user-facing changes ==="
           COMMITS=""
           for SHA in $(git log --pretty=format:"%H" $RANGE); do
@@ -94,13 +78,13 @@ jobs:
             echo "[AUDIT] -> Included: user-facing change"
             COMMITS="$COMMITS $SHA"
           done
-      
+
           if [ -z "$COMMITS" ]; then
             echo "[INFO] No new user-facing commits since last tag. Skipping release."
             echo "skip_release=true" >> $GITHUB_OUTPUT
             exit 0
           fi
-      
+
           echo "=== [INFO] Determining version bump type ==="
           BUMP="patch"
           for SHA in $COMMITS; do
@@ -119,7 +103,7 @@ jobs:
               BUMP="patch"
             fi
           done
-      
+
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
             echo "[INFO] Version bump: major -> v$MAJOR.$MINOR.$PATCH"
@@ -132,17 +116,16 @@ jobs:
           fi
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
           echo "[INFO] New tag to be created: $NEW_TAG"
-      
+
           if [ "$NEW_TAG" = "$LAST_TAG" ]; then
             echo "[INFO] No version bump needed (no new user-facing changes since last release). Skipping release."
             echo "skip_release=true" >> $GITHUB_OUTPUT
             exit 0
           fi
-      
+
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
           echo "skip_release=false" >> $GITHUB_OUTPUT
 
-        
       - name: Prepare clean dist directory for archiving
         if: steps.version.outputs.skip_release == 'false'
         run: |
