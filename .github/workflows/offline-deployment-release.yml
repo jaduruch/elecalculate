@@ -20,21 +20,28 @@ jobs:
           fetch-depth: 0
           ref: offline-deployment
 
+      - name: Fetch all tags (ensure tag visibility)
+        run: |
+          echo "=== [INFO] Fetching all tags from origin ==="
+          git fetch --tags
+          echo "=== [INFO] Tags available locally ==="
+          git tag -l
+
       - name: Determine next semantic version and if release is needed
         id: version
         run: |
           echo "=== [INFO] Determining last tag and commit range ==="
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -n "$LAST_TAG" ]; then
+            echo "[INFO] Last tag found: $LAST_TAG"
             MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
             MINOR=$(echo $LAST_TAG | cut -d. -f2)
             PATCH=$(echo $LAST_TAG | cut -d. -f3)
             RANGE="$LAST_TAG..HEAD"
-            echo "Last tag found: $LAST_TAG"
           else
+            echo "[INFO] No previous tag found. Starting at v1.0.0"
             MAJOR=1; MINOR=0; PATCH=0
             RANGE=""
-            echo "No previous tag found. Starting at v1.0.0"
           fi
 
           echo "=== [INFO] Scanning commits for user-facing changes ==="
@@ -198,6 +205,7 @@ jobs:
       - name: Create and push new tag (if not exists)
         if: steps.version.outputs.skip_release == 'false'
         run: |
+          echo "=== [INFO] Checking if tag ${{ steps.version.outputs.new_tag }} exists ==="
           if git rev-parse "${{ steps.version.outputs.new_tag }}" >/dev/null 2>&1; then
             echo "[INFO] Tag ${{ steps.version.outputs.new_tag }} already exists. Skipping tag creation."
           else
