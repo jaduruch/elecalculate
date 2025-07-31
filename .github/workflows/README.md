@@ -1,6 +1,11 @@
+Certainly, Paul! Here’s a **serious, enterprise-style README** for your new, all-in-one pipeline (`.github/workflows/offline-deployment.yml`).  
+This version is clear, detailed, and suitable for audits, onboarding, and compliance documentation.
+
+---
+
 # GitHub Actions Workflows: Multi-Branch Deployment, Offline Build, and Automated Release
 
-This repository uses a suite of GitHub Actions workflows to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts.
+This repository uses a unified GitHub Actions workflow to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts.
 
 ---
 
@@ -10,9 +15,7 @@ This repository uses a suite of GitHub Actions workflows to automate branch prev
 2. [Branch Preview and Cleanup](#branch-preview-and-cleanup)
    - [Branch Sync Workflow](#branch-sync-workflow)
    - [Cleanup Workflow](#cleanup-workflow)
-3. [Offline Deployment and Release](#offline-deployment-and-release)
-   - [Offline Deployment Build Workflow](#offline-deployment-build-workflow)
-   - [Offline Deployment Release Workflow](#offline-deployment-release-workflow)
+3. [Offline Deployment, Tagging, and Release](#offline-deployment-tagging-and-release)
 4. [File Locations](#file-locations)
 5. [How to Download the Latest Offline Build](#how-to-download-the-latest-offline-build)
 6. [Best Practices and Notes](#best-practices-and-notes)
@@ -28,15 +31,31 @@ This repository is designed for robust, automated, and auditable deployment and 
   Deploys any branch (except `gh-pages`) to a unique subdirectory on the `gh-pages` branch, enabling live previews for every branch.
 - **`gh-pages-cleanup.yml`**  
   Periodically removes orphaned branch preview directories from `gh-pages` to keep the deployment environment clean and up-to-date.
-- **`offline-deployment-build.yml`**  
-  Builds and force-updates the `offline-deployment` branch with a cryptographically verifiable, exam-proof offline build, including a manifest and proof box.
-- **`offline-deployment-release.yml`**  
-  Creates a semantic versioned GitHub Release from `offline-deployment`, attaching both ZIP and TAR.GZ archives for easy offline distribution. Release notes are grouped by type and exclude infrastructure-only changes.
+- **`offline-deployment.yml`**  
+  A single workflow that:
+  - Determines the next semantic version and release notes from `main` using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+  - Tags the release on `main`
+  - Builds and pushes a cryptographically verifiable, exam-proof offline build (with manifest and proof box) to the `offline-deployment` branch
+  - Packages the offline build as ZIP and TAR.GZ
+  - Publishes a GitHub Release with the correct tag, release notes, and attached artifacts
 
 ---
 
 ## Branch Preview and Cleanup
 
+```mermaid
+flowchart TD
+    A[Push to any branch except gh-pages] --> B[gh-pages-sync.yml]
+    B -->|main| C[Deploy to root of gh-pages]
+    B -->|development| D[Deploy to /dev on gh-pages]
+    B -->|other branch| E[Deploy to branch-named subdirectory on gh-pages]
+    F[Hourly or manual trigger] --> G[gh-pages-cleanup.yml]
+    G --> H[Check all directories in gh-pages]
+    H -->|Matches active branch| I[Keep directory]
+    H -->|Matches main content| J[Keep directory]
+    H -->|System or special directory| K[Skip directory]
+    H -->|Orphaned branch preview| L[Delete directory]
+```
 ### Branch Sync Workflow
 
 **File:** `.github/workflows/gh-pages-sync.yml`
@@ -53,7 +72,7 @@ This repository is designed for robust, automated, and auditable deployment and 
   - Each deployment logs the branch, deployment path, and resulting URL for traceability.
 
 - **Purpose:**  
-  Enables live previews for all active branches, supporting feature development, QA
+  Enables live previews for all active branches, supporting feature development, QA, and stakeholder review.
 
 ---
 
@@ -81,51 +100,52 @@ This repository is designed for robust, automated, and auditable deployment and 
 
 ---
 
-## Offline Deployment and Release
+## Offline Deployment, Tagging, and Release
 
-### Offline Deployment Build Workflow
+```mermaid
+flowchart TD
+    M[Push to main] --> N[offline-deployment.yml]
+    N --> O[Determine next semantic version from main]
+    O -->|No new user-facing commits| P[Skip release]
+    O -->|New user-facing commits| Q[Tag new version on main]
+    Q --> R[Generate release notes, filter infra/ci/docs]
+    R --> S[Build offline artifact: manifest, proof box]
+    S --> T[Force-push artifact commit to offline-deployment]
+    T --> U[Checkout offline-deployment for assets]
+    U --> V[Package ZIP and TAR.GZ from offline-deployment]
+    V --> W[Create GitHub Release on main]
+    W --> X[Attach ZIP and TAR.GZ to release]
+    P -.->|Manual trigger| N
+```
 
-**File:** `.github/workflows/offline-deployment-build.yml`
+**File:** `.github/workflows/offline-deployment.yml`
 
 - **Triggers:**  
-  - On push to `main` or any feature branch (e.g., `EL-49-Offline-Page-Oneliner-README-Changes`)
+  - On push to `main`
   - Manually via the Actions tab
 
 - **Logic:**  
-  - Checks out the latest code from the source branch.
-  - Creates or resets the `offline-deployment` branch to match the source.
-  - Injects a proof box (with build date, manifest hash, and live offline/online status) directly before the main content.
-  - Generates a manifest and manifest hash for cryptographic verification.
-  - Commits and force-pushes the result to the `offline-deployment` branch.
+  1. **Semantic Versioning and Tagging:**
+     - Determines the next semantic version (major, minor, or patch) based on commit messages since the last tag, following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+     - Excludes from release notes:
+       - Commits starting with `ci:`, `chore:`, or `docs:`
+       - Commits that only touch `.yml`, `.yaml`, or `.md` files
+     - Groups release notes by type: Features, Fixes, Other changes.
+     - Tags the release on `main` if there are new user-facing commits.
+  2. **Offline Artifact Build:**
+     - Checks out the latest `main` and creates a new artifact commit with the manifest and proof box injected.
+     - Force-pushes this artifact commit to the `offline-deployment` branch.
+  3. **Packaging and Release:**
+     - Checks out the latest `offline-deployment` branch.
+     - Packages the offline build as both ZIP and TAR.GZ, named with the version tag.
+     - Publishes a GitHub Release with the correct tag, release notes, and attached artifacts.
 
 - **Result:**  
-  The `offline-deployment` branch always contains a reproducible, exam-proof, offline-ready build, suitable for secure environments and audit scenarios.
-
----
-
-### Offline Deployment Release Workflow
-
-**File:** `.github/workflows/offline-deployment-release.yml`
-
-- **Triggers:**  
-  - On push to `offline-deployment`
-  - Manually via the Actions tab
-
-- **Logic:**  
-  - Determines the next semantic version (major, minor, or patch) based on commit messages since the last tag, following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-  - **Excludes** from release notes:
-    - Commits starting with `ci:`, `chore:`, or `docs:`
-    - Commits that only touch `.yml`, `.yaml`, or `.md` files
-  - Groups release notes by type: Features, Fixes, Other changes.
-  - Tags the release and generates release notes from filtered commit messages.
-  - Creates a clean `dist/` directory, copies all relevant files, and builds both a ZIP and TAR.GZ archive named with the version tag (e.g., `elecalculate-offline-v1.2.3.zip`).
-  - Creates a GitHub Release, attaching both archives and including the release notes with build context (date, branch, artifact names).
-
-- **Result:**  
-  Every update to `offline-deployment` produces a new, versioned GitHub Release with:
+  Every user-facing change to `main` produces a new, versioned GitHub Release with:
     - Semantic version tag (e.g., `v1.2.3`)
     - Context-rich, grouped release notes (excluding infra-only changes)
-    - Downloadable ZIP and TAR.GZ of the offline build
+    - Downloadable ZIP and TAR.GZ of the offline build (from `offline-deployment`)
+    - A cryptographically verifiable, exam-proof offline build
 
 ---
 
@@ -135,10 +155,8 @@ This repository is designed for robust, automated, and auditable deployment and 
   `.github/workflows/gh-pages-sync.yml`
 - **Branch Preview Cleanup:**  
   `.github/workflows/gh-pages-cleanup.yml`
-- **Offline Deployment Build:**  
-  `.github/workflows/offline-deployment-build.yml`
-- **Offline Deployment Release:**  
-  `.github/workflows/offline-deployment-release.yml`
+- **Offline Deployment, Tagging, and Release:**  
+  `.github/workflows/offline-deployment.yml`
 
 ---
 
@@ -173,7 +191,7 @@ This repository is designed for robust, automated, and auditable deployment and 
 ## Troubleshooting
 
 - **Release not created:**  
-  Ensure the release workflow file exists in the `offline-deployment` branch and that a new commit is pushed.
+  Ensure there are new user-facing commits on `main` since the last tag.
 - **Artifacts missing:**  
   Check the Actions logs for the archive creation and upload steps. Ensure the `dist/` directory is used for clean archiving.
 - **Proof box not visible:**  
@@ -183,4 +201,4 @@ This repository is designed for robust, automated, and auditable deployment and 
 - **Tag or release issues:**  
   Tags are created and pushed by the release workflow. If tags are missing or incorrect, check the versioning logic and ensure no manual tags are interfering.
 - **Force-push issues:**  
-  If using force-push, ensure the workflow file is present in the branch after the push. If not, the workflow will not trigger.
+  If using force-push for the artifact branch, ensure the workflow file is present in the branch after the push. If not, the workflow will not trigger.
