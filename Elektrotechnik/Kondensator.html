@@ -346,6 +346,7 @@
                             <div style="
                                 display: flex;
                                 flex-direction: row;
+                                flex-wrap: wrap;
                                 align-items: flex-start;
                                 justify-content: center;
                                 gap: 40px;
@@ -353,7 +354,7 @@
                                 max-width: 900px;
                             ">
                                 <!-- Canvas for Widerstandsdreieck -->
-                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Widerstandsdreieck</h3>
                                     <canvas id="phasorCanvasImpedance" width="500" height="400"
                                         style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
@@ -365,7 +366,7 @@
                                     flex-direction: column;
                                     align-items: center;
                                     justify-content: flex-start;
-                                    height: 400px; /* Match canvas height */
+                                    flex: 1 1 260px;
                                 ">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
                                     <div id="phasorLegendImpedance"
@@ -377,23 +378,24 @@
                                             padding:18px 24px;
                                             min-width:220px;
                                             max-width:260px;
-                                            height: 100%;
                                             font-family:monospace;
                                             font-size:16px;
                                             box-sizing: border-box;
                                             display: flex;
                                             flex-direction: column;
                                             justify-content: flex-start;
+                                            width: 100%;
                                         ">
                                         <!-- Legend will be filled by JS -->
                                     </div>
                                 </div>
                             </div>
-
+                            
                             <!-- Spannungsdreieck + Legende -->
                             <div style="
                                 display: flex;
                                 flex-direction: row;
+                                flex-wrap: wrap;
                                 align-items: flex-start;
                                 justify-content: center;
                                 gap: 40px;
@@ -401,7 +403,7 @@
                                 max-width: 900px;
                             ">
                                 <!-- Canvas for Spannungsdreieck -->
-                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Spannungsdreieck</h3>
                                     <canvas id="phasorCanvasVoltage" width="500" height="400"
                                         style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
@@ -413,7 +415,7 @@
                                     flex-direction: column;
                                     align-items: center;
                                     justify-content: flex-start;
-                                    height: 400px; /* Match canvas height */
+                                    flex: 1 1 260px;
                                 ">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
                                     <div id="phasorLegendVoltage"
@@ -425,19 +427,20 @@
                                             padding:18px 24px;
                                             min-width:220px;
                                             max-width:260px;
-                                            height: 100%;
                                             font-family:monospace;
                                             font-size:16px;
                                             box-sizing: border-box;
                                             display: flex;
                                             flex-direction: column;
                                             justify-content: flex-start;
+                                            width: 100%;
                                         ">
                                         <!-- Legend will be filled by JS -->
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Spacer Div -->
                         <div style="height: 40px;"></div>
