@@ -284,6 +284,12 @@ jobs:
         if: steps.version.outputs.skip_release == 'false'
         run: sudo apt-get update && sudo apt-get install -y p7zip-full
       
+      - name: Download 7z SFX module
+        if: steps.version.outputs.skip_release == 'false'
+        run: |
+          curl -L -o 7z-extra.7z https://www.7-zip.org/a/7z2301-extra.7z
+          7zr e 7z-extra.7z 7z.sfx
+      
       - name: Create SFX config
         if: steps.version.outputs.skip_release == 'false'
         run: |
@@ -298,7 +304,6 @@ jobs:
       - name: Build SFX EXE
         if: steps.version.outputs.skip_release == 'false'
         run: |
-          cp /usr/lib/p7zip/7z.sfx .
           cat 7z.sfx config.txt elecalculate-offline-${{ steps.version.outputs.new_tag }}.zip > elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe
           echo "EXE_NAME=elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe" >> $GITHUB_ENV
 
