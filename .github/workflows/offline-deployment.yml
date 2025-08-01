@@ -280,31 +280,20 @@ jobs:
           echo "ZIP_NAME=$BUILD_NAME.zip" >> $GITHUB_ENV
           echo "TAR_NAME=$BUILD_NAME.tar.gz" >> $GITHUB_ENV
 
-      - name: Install 7-Zip
+      - name: Setup .NET 8
         if: steps.version.outputs.skip_release == 'false'
-        run: sudo apt-get update && sudo apt-get install -y p7zip-full
-      
-      - name: Download 7z SFX module
-        if: steps.version.outputs.skip_release == 'false'
-        run: |
-          curl -L -o 7z-extra.7z https://www.7-zip.org/a/7z2301-extra.7z
-          7zr e 7z-extra.7z 7z.sfx
-      
-      - name: Create SFX config
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build .NET Self-Extractor (Windows)
         if: steps.version.outputs.skip_release == 'false'
         run: |
-          cat <<EOF > config.txt
-          ;!@Install@!UTF-8!
-          Title="Elecalculate Offline"
-          BeginPrompt="Extract and run Elecalculate Offline?"
-          RunProgram="start index.html"
-          ;!@InstallEnd@!
-          EOF
-      
-      - name: Build SFX EXE
-        if: steps.version.outputs.skip_release == 'false'
-        run: |
-          cat 7z.sfx config.txt elecalculate-offline-${{ steps.version.outputs.new_tag }}.zip > elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe
+          dotnet publish .github/workflows/ElecalculateSelfExtract/ElecalculateSelfExtract.csproj \
+            -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+          cp ${{ env.ZIP_NAME }} .github/workflows/ElecalculateSelfExtract/bin/Release/net8.0/win-x64/publish/
+          mv .github/workflows/ElecalculateSelfExtract/bin/Release/net8.0/win-x64/publish/ElecalculateSelfExtract.exe \
+            elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe
           echo "EXE_NAME=elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe" >> $GITHUB_ENV
 
       - name: Create GitHub Release and upload artifacts
