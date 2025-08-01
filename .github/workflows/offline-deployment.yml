@@ -286,12 +286,16 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Build .NET Self-Extractor (Windows)
+      - name: Copy ZIP into self-extractor project
         if: steps.version.outputs.skip_release == 'false'
         run: |
-          dotnet publish .github/workflows/ElecalculateSelfExtract/ElecalculateSelfExtract.csproj \
-            -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
-          cp ${{ env.ZIP_NAME }} .github/workflows/ElecalculateSelfExtract/bin/Release/net8.0/win-x64/publish/
+          cp ${{ env.ZIP_NAME }} .github/workflows/ElecalculateSelfExtract/
+
+      - name: Build .NET Self-Extractor (Windows, embedded ZIP)
+        if: steps.version.outputs.skip_release == 'false'
+        run: |
+          dotnet publish .github/workflows/ElecalculateSelfExtract/ElecalculateSelfExtract.csproj \ 
+          -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true /p:PublishReadyToRun=false
           mv .github/workflows/ElecalculateSelfExtract/bin/Release/net8.0/win-x64/publish/ElecalculateSelfExtract.exe \
             elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe
           echo "EXE_NAME=elecalculate-offline-${{ steps.version.outputs.new_tag }}.exe" >> $GITHUB_ENV
