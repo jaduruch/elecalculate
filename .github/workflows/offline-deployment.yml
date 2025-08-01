@@ -286,10 +286,10 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Copy ZIP into self-extractor project
+      - name: Copy ZIP into self-extractor project (with correct name)
         if: steps.version.outputs.skip_release == 'false'
         run: |
-          cp ${{ env.ZIP_NAME }} .github/workflows/ElecalculateSelfExtract/
+          cp ${{ env.ZIP_NAME }} .github/workflows/ElecalculateSelfExtract/elecalculate-offline-deployment.zip
 
       - name: Build .NET Self-Extractor (Windows, embedded ZIP)
         if: steps.version.outputs.skip_release == 'false'
