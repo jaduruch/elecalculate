@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrotechnik | Gleichstrom</title>
+    <link rel="stylesheet" href="../style.css">
+    <meta name="description" content="Online Rechner f&uuml;r Spannung, Strom, Widerstand und Leistung inklusive L&ouml;sungsweg, Parallel und Serie Widerst&auml;nde">
+    <meta name="keywords" content="Elektronik Rechner, Ohmsches Gesetz, URI Rechner, Widerstand, Spannung, Strom, 
+    Elektrotechnik, Online Rechner, Serie Schaltung, Parallel Schaltung">
+    <meta name="author" content="Jana Ruch">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL (verhindert Duplicate Content) -->
+    <link rel="canonical" href="https://elecalculate.com/Elektrotechnik/Gleichstrom.html">
+
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Elektrotechnik | Gleichstrom">
+    <meta property="og:description" content="Elektronik Rechner, Ohmsches Gesetz, URI Rechner, Widerstand, Spannung, Strom, Elektrotechnik">
+    <meta property="og:url" content="https://elecalculate.com/Elektrotechnik/Gleichstrom.html">
+    <meta property="og:image" content="https://elecalculate.com/Pictures/favicon.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Pictures/favicon.png">
+
+    <!-- Structured Data (Google Rich Snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "URI-Rechner",
+      "url": "https://elecalculate.com/Elektrotechnik/Gleichstrom.html",
+      "description": "Berechne Spannung, Strom und Widerstand online mit dem URI-Rechner.",
+      "image": "https://elecalculate.com/Pictures/favicon.png",
+      "creator": {
+        "@type": "Person",
+        "name": "Jana Ruch"
+      },
+      "sameAs": [
+        "https://www.instagram.com/elecalculate"
+      ]
+    }
+    </script>
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #535353;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        /*input:checked + .slider {
+            background-color: #22aca0;
+        }*/
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+  
+
+        .dropdown-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #000;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .dropdown-header:hover {
+            background-color: #181818;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+
+        .dropdown.open .arrow {
+            transform: rotate(-180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px 20px;
+            background-color: #000000;
+            border-top: 1px solid #ddd;
+
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* Stil fuer das Formular und Layout */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 700px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            /*max-width: 150px;*/
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        .form-row input[type="number"], .form-row select {
+            flex: 1.5;
+            margin-right: 5px;
+        }
+
+        .form-row .unit {
+            flex: 0.8;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .results{
+            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denumerator {
+            border-top: 1px solid white;
+        }
+
+        .opv-button {
+            position: relative;
+            width: 150px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .opv-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .opv-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .opv-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .opv-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        
+        .input-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .input-container label, .input-container input, .input-container select, .input-container button {
+            display: block;
+            margin: 5px auto;
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .input-group input {
+            margin-right: 5px;
+        }
+        
+        .input-group select {
+            margin-left: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="scroll-container">
+            <ul class="main-menu">
+                <li><a href="elektrotechnik.html">Elektrotechnik</a></li>
+                <li><a class="active" href="#Gleichstrom">Gleichstrom</a></li>
+                <li><a href="Wechselstrom.html">Wechselstrom</a></li>
+                <li><a href="Transformator.html">Transformator</a></li>
+                <li><a href="Magnetismus.html">Magnetismus</a></li>
+                <li><a href="Kondensator.html">Kondensator</a></li>
+                <li><a href="Spule.html">Spule</a></li>
+                <li><a href="Schwingkreis.html">Schwingkreis</a></li>
+                <li><a href="Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
+                <li><a href="Filter.html">Filter</a></li>
+            </ul>
+        </div>
+        <nav class="dropdown-menu">
+            <ul>
+                <li><a href="../index.html">Allgemein</a></li>
+                <li><a href="#Elektrotechnik">Elektrotechnik</a></li>
+                <li><a href="../Elektronik/elektronik.html">Elektronik</a></li>
+                <li><a href="../HST/hst.html">HST</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <main>
+            <br>
+            <h1>Gleichstrom</h1>
+            <div class="dropdown-container">
+                <div class="dropdown">      <!--URI-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Ohmsches Gesetz (URI)<span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+
+                                <img src="../Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik" width="80%">
+                            </div>
+                            <div class="input-numbers">
+                                <div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                                </div>
+                                <!-- Strom I -->
+                                <div class="form-row">
+                                    <label>Strom I</label>
+                                    <input type="text" id="I" style="border-color: var(--Strom);">
+                                    <label>A [Ampere]</label>
+                                </div>
+                
+                                <!-- Widerstand R -->
+                                <div class="form-row">
+                                    <label>Widerstand R</label>
+                                    <input type="text" id="R" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+                
+                                <!-- Leistung P -->
+                                <div class="form-row">
+                                    <label>Leistung P</label>
+                                    <input type="text" id="P" style="border-color: var(--Leistung);">
+                                    <label>P [Watt]</label>
+                                </div>
+                
+                                <!-- Spannung U -->
+                                <div class="form-row">
+                                    <label>Spannung U</label>
+                                    <input type="text" id="U" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+                            </div>
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersURI()">
+                            
+                            
+                            <p id="result"></p>
+                
+                            <br>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Spannungsteiler-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Spannungsteiler <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <!--hier einfuegen-->
+                        <label class="switch">
+                            <input type="checkbox" id="modeSwitch">
+                            <span class="slider round"></span>
+                        </label><br><br>
+                        <span id="modeLabel">unbelastet</span>
+                        <br>
+                        <div id="circuitDiagram">
+                            <img id="circuitImage" src="../Pictures/Spannungsteiler_unbelastet.png" alt="Schaltung unbelastet" style="width:auto; height:350px;">
+                            <div id="unbelastet" style="display:block;" class="input-numbers">
+                                    <div class="comment">
+                                        Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                                    </div>
+                                    <!-- Strom I -->
+                                    <div class="form-row">
+                                        <label>Strom I</label>
+                                        <input type="text" id="I_unb" style="border-color: var(--Strom);">
+                                        <label>A [Ampere]</label>
+                                    </div>
+                    
+                                    <!-- Widerstand R -->
+                                    <div class="form-row">
+                                        <label>Widerstand R<sub>1</sub></label>
+                                        <input type="text" id="R1_unb" style="border-color: var(--Widerstand);">
+                                        <label>&Omega; [Ohm]</label>
+                                    </div>
+        
+                                    <div class="form-row">
+                                        <label>Widerstand R<sub>2</sub></label>
+                                        <input type="text" id="R2_unb" style="border-color: var(--Widerstand);">
+                                        <label>&Omega; [Ohm]</label>
+                                    </div>
+                    
+                                    <!-- Spannung U -->
+                                    <div class="form-row">
+                                        <label>Spannung U<sub>in</sub></label>
+                                        <input type="text" id="Uin_unb" style="border-color: var(--Spannung);">
+                                        <label>V [Volt]</label>
+                                    </div>
+        
+                                    <div class="form-row">
+                                        <label>Spannung U<sub>1</sub></label>
+                                        <input type="text" id="U1_unb" style="border-color: var(--Spannung);">
+                                        <label>V [Volt]</label>
+                                    </div>
+        
+                                    <div class="form-row">
+                                        <label>Spannung U<sub>out</sub></label>
+                                        <input type="text" id="Uout_unb" style="border-color: var(--Spannung);">
+                                        <label>V [Volt]</label>
+                                    </div>
+                                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersUnb_Spannungsteiler()"> 
+                                <p id="result_unb"></p>
+                            <br>
+                            </div>
+        
+                            <div id="belastet" style="display:none;" class="input-numbers">
+                                <div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                                </div>
+                                <!-- Strom I -->
+                                <div class="form-row">
+                                    <label>Strom I<sub>ges</sub></label>
+                                    <input type="text" id="Iges_bel" style="border-color: var(--Strom);">
+                                    <label>A [Ampere]</label>
+                                </div>
+
+                                <div class="form-row">
+                                    <label>Strom I<sub>R2</sub></label>
+                                    <input type="text" id="IR2_bel" style="border-color: var(--Strom);">
+                                    <label>A [Ampere]</label>
+                                </div>
+
+                                <div class="form-row">
+                                    <label>Strom I<sub>RL</sub></label>
+                                    <input type="text" id="IRL_bel" style="border-color: var(--Strom);">
+                                    <label>A [Ampere]</label>
+                                </div>
+                
+                                <!-- Widerstand R -->
+                                <div class="form-row">
+                                    <label>Widerstand R<sub>1</sub></label>
+                                    <input type="text" id="R1_bel" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+        
+                                <div class="form-row">
+                                    <label>Widerstand R<sub>2</sub></label>
+                                    <input type="text" id="R2_bel" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+        
+                                <div class="form-row">
+                                    <label>Widerstand R<sub>L</sub></label>
+                                    <input type="text" id="RL_bel" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+                
+                                <!-- Spannung U -->
+                                <div class="form-row">
+                                    <label>Spannung U<sub>in</sub></label>
+                                    <input type="text" id="Uin_bel" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+        
+                                <div class="form-row">
+                                    <label>Spannung U<sub>1</sub></label>
+                                    <input type="text" id="U1_bel" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+        
+                                <div class="form-row">
+                                    <label>Spannung U<sub>out</sub></label>
+                                    <input type="text" id="Uout_bel" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersBel_Spannungsteiler()"> 
+                            <p id="result_bel"></p>
+                        <br>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Serie und Parallelschaltug-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Serie- und Parallelschaltung <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            <button class="opv-button" type="button" onclick="selectOPV('serie_schaltung', this)">
+                                <img src="../Pictures/R_Serie.png" alt="Serie Schaltung">
+                                <span>Serie</span>
+                            </button>
+                            <button class="opv-button" type="button" onclick="selectOPV('parallel_schaltung', this)">
+                                <img src="../Pictures/R_Parallel.png" alt="Parallel Schaltung">
+                                <span>Parallel</span>
+                            </button>
+                        </div>
+                        <div id="inputFieldsSerieParallel">
+                            <!-- Input fields will be dynamically generated here -->
+                        </div>
+                        <div id="result_S_P">
+                            <!-- Result will be displayed here -->
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div class="dropdown">      <!--Kondensator an Wechselstrom-->
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        Stern- Dreickschaltung <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="dropdown-content"> 
+                        <div>
+                            development in progress
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+            </div>
+
+
+
+        </main>
+        <footer>
+            &copy 2025 Elecalculate
+        </footer>
+    </div>
+    <script>
+
+    // slider
+    document.getElementById("modeSwitch").addEventListener("change", function () {
+        const modeLabel = document.getElementById("modeLabel");
+        const circuitImage = document.getElementById("circuitImage");
+
+        if (this.checked) {
+            modeLabel.textContent = "belastet";
+            circuitImage.src = "../Pictures/Spannungsteiler_belastet.png";
+            document.getElementById('belastet').style.display = 'block';
+            document.getElementById('unbelastet').style.display = 'none';
+
+        } else {
+            modeLabel.textContent = "unbelastet";
+            circuitImage.src = "../Pictures/Spannungsteiler_unbelastet.png";
+            document.getElementById('unbelastet').style.display = 'block';
+            document.getElementById('belastet').style.display = 'none';
+        }
+    });
+
+    function calculateParametersURI() 
+    {
+        let result = ``;
+
+        const I = document.getElementById("I").value;
+        const R = document.getElementById("R").value;
+        const P = document.getElementById("P").value;
+        const U = document.getElementById("U").value;
+
+        if(U && R && !I && !P)
+        {
+            // I = U/R
+            // P = U^2/R
+            result += `
+                Strom I = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U </span><br>
+                    <span>R</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${U}V </span><br>
+                    <span>${R}&Omega;</span>
+                </div> 
+            = ${formatWithPrefix(parseInput(U) / parseInput(R), "A")}<br>
+
+            Leistung P = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sup>2</sup> </span><br>
+                    <span>R</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                    <span>${R}&Omega;</span>
+                </div> 
+            = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(R), "W")}<br>`;
+        }
+
+        if(P && U && !R && !I)
+        {
+            // I = P/U
+            // R = U^2/P
+            result += `
+                Strom I = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> P </span><br>
+                    <span>U</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${P}W </span><br>
+                    <span>${U}V</span>
+                </div> 
+            = ${formatWithPrefix(parseInput(P) / parseInput(U), "A")}<br>
+
+            Widerstand R = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sup>2</sup> </span><br>
+                    <span>P</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                    <span>${P}W</span>
+                </div> 
+            = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(P), "&Omega;")}<br>`;
+        }
+
+        if(P && R && !I && !U)
+        {
+            // I = sqrt(P/R)
+            // U = sqrt(P*R)
+            result += `
+                Strom I = 
+                &radic;	<div class ="fraction">
+                    <span class="fraction-numerator"> P </span><br>
+                    <span>R</span>
+                </div> 
+            =
+                &radic;	 <div class ="fraction">
+                    <span class="fraction-numerator">${P}W </span><br>
+                    <span>${R}&Omega;</span>
+                </div> 
+            = ${formatWithPrefix( Math.pow((parseInput(P))/parseInput(R), 0.5), "A")}<br>
+
+
+            Spannung U =
+                    &radic; P &times; R
+                =
+                    &radic; ${P}W &times; ${R}&Omega;
+                = ${formatWithPrefix( Math.pow((parseInput(P))*parseInput(R), 0.5), "V")}<br>`;
+        }
+
+        if(I && R && !P && !U)
+        {
+            // U = I * R
+            // P = I^2 *R
+            result += `
+                    Spannung U =
+                    I &times; R
+                =
+                    ${I}A &times; ${R}&Omega;
+                = ${formatWithPrefix(parseInput(I) * parseInput(R), "V")}<br>
+
+                Leistung P =
+                    I<sup>2</sup> &times; R
+                =
+                    (${I}A)<sup>2</sup> &times; ${R}&Omega;
+                = ${formatWithPrefix(Math.pow(parseInput(I), 2) * parseInput(R), "W")}<br>`;
+        }
+        
+        if(P && I && !R && !U)
+        {
+            // R = P/I^2
+            // U = P/I
+            result += `
+                Widerstand R = 
+                <div class ="fraction">
+                    <span class="fraction-numerator">P</span><br>
+                    <span>I<sup>2</sup> </span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">  ${P}W</span><br>
+                    <span>(${I}A)<sup>2</sup></span>
+                </div> 
+            = ${formatWithPrefix( parseInput(P)/ Math.pow(parseInput(I), 2), "&Omega;")}<br>
+
+            Spannung U = 
+                <div class ="fraction">
+                    <span class="fraction-numerator">P</span><br>
+                    <span>I</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">  ${P}W</span><br>
+                    <span>${I}A</span>
+                </div> 
+            = ${formatWithPrefix( parseInput(P)/parseInput(I), "V")}<br>`;
+        }
+
+        if(U && I && !P && !R)
+        {
+            // P = U * I
+            // R = U/I
+            result += `
+                    Leistung P =
+                    U &times; I
+                =
+                    ${U}V &times; ${I}A;
+                = ${formatWithPrefix(parseInput(U) * parseInput(I), "W")}<br>
+
+                Widerstand R = 
+                <div class ="fraction">
+                    <span class="fraction-numerator">U</span><br>
+                    <span>I</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">${U}V</span><br>
+                    <span>${I}A</span>
+                </div> 
+            = ${formatWithPrefix( parseInput(U)/parseInput(I), "&Omega;")}<br>`;
+        }
+        
+
+        document.getElementById('result').innerHTML = result;
+    }   
+
+    
+    function calculateParametersUnb_Spannungsteiler()   // unbelasteter Spannungsteiler
+    {
+        let result_unb = ``;
+
+        const I = document.getElementById("I_unb").value;
+        const R1 = document.getElementById("R1_unb").value;
+        const R2 = document.getElementById("R2_unb").value;
+        const Uin = document.getElementById("Uin_unb").value;
+        const U1 = document.getElementById("U1_unb").value;
+        const Uout = document.getElementById("Uout_unb").value;
+
+        if(!Uout && Uin && R1 && R2)
+        {
+            result_unb += `
+                Spannung U<sub>out</sub> = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; R<sub>2</sub></span><br>
+                    <span>R<sub>1</sub> + R<sub>2</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uin}V &lowast; ${R2}&Omega;</span><br>
+                    <span>${R1}&Omega; + ${R2}&Omega;</span>
+                </div> 
+            = ${formatWithPrefix((parseInput(Uin) * parseInput(R2))/(parseInput(R1) + parseInput(R2)) , "V")}<br>`;
+        }
+
+        if(!I && Uin && R1 && R2)
+        {
+            result_unb += `
+                Strom I = 
+                <div class ="fraction">
+                    <span> U<sub>in</sub></span><br>
+                    <span class="fraction-denumerator">R<sub>1</sub> + R<sub>2</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span> ${Uin}V </span><br>
+                    <span class="fraction-denumerator">${R1}&Omega; + ${R2}&Omega;</span>
+                </div> 
+            = ${formatWithPrefix(parseInput(Uin)/(parseInput(R1) + parseInput(R2)) , "A")}<br>`;
+        }
+
+        if(!R2 && Uin && Uout && R1)
+        {
+            // R2 = Uout * R1 / (Uin - Uout)
+            // I = (Uin - Uout)/R1
+            // R2 = Uout / I
+
+            result_unb += `
+                Widerstand R<sub>2</sub> =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sub>out</sub> &lowast; R<sub>1</sub></span><br>
+                    <span>U<sub>in</sub> - U<sub>out</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uout}V &lowast; ${R1}&Omega;</span><br>
+                    <span>${Uin}V - ${Uout}V</span>
+                </div> 
+            = ${formatWithPrefix((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)) , "&Omega;")}<br>`;
+        }
+
+        if(!Uin)
+        {
+            if(Uout && R1 && R2)
+            {
+                // (Uout * (R1 + R2))/R2
+                    result_unb += `
+                    Spannung U<sub>in</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> &lowast; (R<sub>1</sub> + R<sub>2</sub>)</span><br>
+                        <span>R<sub>2</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V &lowast; (${R1}&Omega; + ${R2}&Omega;)</span><br>
+                        <span>${R2}&Omega;</span>
+                    </div> 
+                = ${formatWithPrefix((parseInput(Uout) * (parseInput(R1) + parseInput(R2)))/parseInput(R2) , "V")}<br>`;
+
+            }
+        }
+
+
+        document.getElementById('result_unb').innerHTML = result_unb;
+    }
+
+    function calculateParametersBel_Spannungsteiler()   // belasteter Spannungsteiler
+    {
+        let result_bel = ``;
+
+        const Iges = document.getElementById("Iges_bel").value;
+        const IR2 = document.getElementById("IR2_bel").value;
+        const IRL = document.getElementById("IRL_bel").value;
+        const R1 = document.getElementById("R1_bel").value;
+        const R2 = document.getElementById("R2_bel").value;
+        const RL = document.getElementById("RL_bel").value;
+        const Uin = document.getElementById("Uin_bel").value;
+        const U1 = document.getElementById("U1_bel").value;
+        const Uout = document.getElementById("Uout_bel").value;
+
+        if(!Uout && Uin && R1 && R2 && RL)
+        {
+            result_bel += `
+
+                Spannung U<sub>out</sub> = 
+                <div class ="fraction">
+                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
+                </div> </span><br>
+                    <span>R<sub>1</sub> + <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
+                </div> </span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uin}V &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
+                </div> </span><br>
+                    <span>${R1}&Omega; + <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
+                </div> </span>
+                </div> 
+            = ${formatWithPrefix((parseInput(Uin) * ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL))))/(parseInput(R1) + ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL)))) , "V")}<br>`;
+        }
+
+
+        document.getElementById('result_bel').innerHTML = result_bel;
+    }
+
+    function toggleDropdown(element) 
+    {
+        const dropdown = element.parentElement;
+        dropdown.classList.toggle("open");
+    }
+
+    // Serie Parallel
+    function selectOPV(opv, button) {
+            const buttonGroup = button.closest('div');
+            const buttons = buttonGroup.querySelectorAll('.opv-button');
+            const inputFields = document.getElementById('inputFieldsSerieParallel');
+
+            if (button.classList.contains('selected')) {
+                // If the button is already selected, deselect it
+                button.classList.remove('selected');
+                inputFields.innerHTML = ''; // Clear input fields
+                document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
+            } else {
+                // Remove 'selected' class from all buttons in the same group
+                buttons.forEach(btn => btn.classList.remove('selected'));
+
+                // Add 'selected' class to the clicked button
+                button.classList.add('selected');
+
+                let inputHTML = '';
+                
+                switch (opv) {          // if else anstelle von switch case
+                    case 'serie_schaltung':
+                    case 'parallel_schaltung':
+                        // debugger;
+                        inputHTML = `
+                            <div class="form-row">
+                                <label>Widerstand R<sub>1</sub></label>
+                                <input type="text" id="r1" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+                            <div class="form-row">
+                                <label>Widerstand R<sub>2</sub></label>
+                                <input type="text" id="r2" style="border-color: var(--Widerstand);">
+                                <label>&Omega; [Ohm]</label>
+                            </div>
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate('${opv}')">
+                            <br><br><div id="result_S_P"></div>
+                        `;
+                        break;
+                    default:
+                        inputHTML = '';
+                }
+                inputFields.innerHTML = inputHTML;
+                 document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
+            }
+        }
+
+        function calculate(opv) 
+        {
+            let result_S_P  = ``;
+            // const r1 = parseFloat(document.getElementById('r1').value);
+            // const r2 = parseFloat(document.getElementById('r2').value);
+            const r1 = document.getElementById("r1").value;
+            const r2 = document.getElementById("r2").value;
+
+            // debugger;
+            if(opv === 'serie_schaltung')
+            {
+                if(r1 && r2)
+                {
+                    debugger;
+                    result_S_P += `
+                        R<sub>ges</sub> = 
+                        R<sub>1</sub> + R<sub>2</sub>
+                    =
+                        ${r1}&Omega; + ${r2}&Omega;
+                    = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
+                }
+            }
+
+            if(opv === 'parallel_schaltung')
+            {
+                if(r1 && r2)
+                {
+                    result_S_P += `
+                    Widerstand R<sub>ges</sub> = 
+                        <div class ="fraction">
+                            <span >1</span><br>
+                            <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
+                            <div style="border-top: 1px solid white;"><div class ="fraction">
+                                <span >1</span><br>
+                                <span class="fraction-denumerator">R<sub>1</sub></span>
+                            </div>  
+                        + 
+                            <div class ="fraction">
+                                <span >1</span><br>
+                                <span class="fraction-denumerator">R<sub>2</sub></span>
+                            </div></div> </span>
+                        </div> 
+                    =
+                    <div class ="fraction">
+                        <span >1</span><br>
+                        <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
+                        <div style="border-top: 1px solid white;"><div class ="fraction">
+                            <span >1</span><br>
+                            <span class="fraction-denumerator">${r1}&Omega;</span>
+                        </div>  
+                    + 
+                        <div class ="fraction">
+                            <span >1</span><br>
+                            <span class="fraction-denumerator">${r2}&Omega;</span>
+                        </div></div> </span>
+                    </div>
+                    = ${formatWithPrefix(1/((1/parseInput(r1)) + (1/parseInput(r2))), "&Omega;")}<br>`;
+                }
+            }
+
+            document.getElementById('result_S_P').innerHTML = result_S_P;
+            debugger;
+        }
+
+    </script>
+    <script src="../scripts.js"></script>
+
+</body>
+</html>
