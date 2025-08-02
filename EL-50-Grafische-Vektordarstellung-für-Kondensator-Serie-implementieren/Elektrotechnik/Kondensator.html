@@ -553,6 +553,80 @@
 
                             <h3>Berechnete Ergebnisse</h3>
                             <p id="result_Parallel_AC"></p>
+
+                            <!-- Canvas for Stromdreieck (Current Triangle) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Stromdreieck</h3>
+                                <canvas id="phasorCanvasCurrent" width="500" height="400"
+                                    style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
+                                </canvas>
+                            </div>
+                            <!-- Legend/info box for Stromdreieck -->
+                            <div style="
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: flex-start;
+                                flex: 1 1 260px;
+                            ">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
+                                <div id="phasorLegendCurrent"
+                                    style="
+                                        background:#222;
+                                        color:#fff;
+                                        border-radius:16px;
+                                        box-shadow:0 2px 8px #0003;
+                                        padding:18px 24px;
+                                        min-width:220px;
+                                        max-width:260px;
+                                        font-family:monospace;
+                                        font-size:16px;
+                                        box-sizing: border-box;
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: flex-start;
+                                        width: 100%;
+                                    ">
+                                    <!-- Legend will be filled by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Canvas for Leitwertdreieck (Admittance Triangle) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Leitwertdreieck</h3>
+                                <canvas id="phasorCanvasAdmittance" width="500" height="400"
+                                    style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
+                                </canvas>
+                            </div>
+                            <!-- Legend/info box for Leitwertdreieck -->
+                            <div style="
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: flex-start;
+                                flex: 1 1 260px;
+                            ">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
+                                <div id="phasorLegendAdmittance"
+                                    style="
+                                        background:#222;
+                                        color:#fff;
+                                        border-radius:16px;
+                                        box-shadow:0 2px 8px #0003;
+                                        padding:18px 24px;
+                                        min-width:220px;
+                                        max-width:260px;
+                                        font-family:monospace;
+                                        font-size:16px;
+                                        box-sizing: border-box;
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: flex-start;
+                                        width: 100%;
+                                    ">
+                                    <!-- Legend will be filled by JS -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2615,6 +2689,13 @@
 
 
             document.getElementById('result_Parallel_AC').innerHTML = result_Parallel_AC;
+
+
+            // Draw the Stromdreieck (current triangle)
+            drawStromdreieckParallel("phasorCanvasCurrent", "phasorLegendCurrent");
+
+            // Draw the Leitwertdreieck (admittance triangle)
+            drawLeitwertdreieckParallel("phasorCanvasAdmittance", "phasorLegendAdmittance");
         }
 
         // RC-Glied berechnungen
@@ -3266,6 +3347,718 @@
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
 
+        }
+
+        function drawLeitwertdreieckParallel(
+            canvasId = "phasorCanvasAdmittance",
+            legendId = "phasorLegendAdmittance"
+        ) {
+            const canvas = document.getElementById(canvasId);
+            const legendDiv = document.getElementById(legendId);
+            if (!canvas || !legendDiv) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // === 1. Get values from input fields (no calculation here) ===
+            let G  = parseInput(document.getElementById("G_ACp")?.value);
+            let Bc = parseInput(document.getElementById("Bc_ACp")?.value);
+            let Y  = parseInput(document.getElementById("Y_ACp")?.value);
+
+            // === 2. Fallback to example if not enough data ===
+            let isExample = false;
+            let missing = [];
+            if (!isFinite(G)  || G  <= 0) missing.push("G");
+            if (!isFinite(Bc) || Bc <= 0) missing.push("Bc");
+            if (!isFinite(Y)  || Y  <= 0) missing.push("Y");
+            if (missing.length > 0) {
+                G = 0.2; Bc = 0.15; Y = 0.25;
+                isExample = true;
+            }
+
+            // === 3. Failsafe for degenerate/invalid triangle ===
+            {
+                if (
+                    !isFinite(G) || !isFinite(Bc) || !isFinite(Y) ||
+                    typeof G !== "number" || typeof Bc !== "number" || typeof Y !== "number" ||
+                    G <= 0 || Bc <= 0 || Y <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Pythagoras check
+                const pythagoras = Math.abs(Y * Y - (G * G + Bc * Bc));
+                if (pythagoras > 1e-6 * (G * G + Bc * Bc + Y * Y)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // No side should be "too small" compared to the largest
+                const sides = [G, Bc, Y].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Angle check
+                const phi = Math.atan2(Bc, G);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+
+            // === 4. Move triangle origin to the upper left and scale dynamically ===
+            const marginLeft = 80;
+            const marginTop = 80;
+            const marginRight = 80;
+            const marginBottom = 80;
+            const plotWidth = canvas.width - marginLeft - marginRight;
+            const plotHeight = canvas.height - marginTop - marginBottom;
+            const scale = 0.95 * Math.min(
+                plotWidth / Math.abs(G),
+                plotHeight / Math.abs(Bc)
+            );
+            const cx = marginLeft;
+            const cy = marginTop;
+
+            // --- Store vector/arc positions for tooltips ---
+            const hitboxes = [];
+
+            // === 5. Draw axes (dotted, labeled, full width/height) ===
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(canvas.width, cy);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // x label
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.fillText("x", canvas.width - 10, cy - 10);
+            // y label
+            ctx.textAlign = "left";
+            ctx.fillText("y", cx + 10, 24);
+            ctx.restore();
+
+            // === 6. Define visually distinct colors ===
+            const colorG = "#00C000";   // green
+            const colorBc = "#00FF80";  // light green
+            const colorY = "#008040";   // dark green
+            const colorPhi = "#FFFFFF"; // white
+
+            // === 7. Draw triangle vectors with arrowheads and store hitboxes ===
+            // G (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + G * scale,
+                cy,
+                colorG,
+                phasorHoveredKey === "G" ? 6 : 3,
+                phasorHoveredKey === "G"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "G",
+                x1: cx,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy
+            });
+
+            // Bc (vertical, down)
+            drawArrow(
+                ctx,
+                cx + G * scale,
+                cy,
+                cx + G * scale,
+                cy + Bc * scale,
+                colorBc,
+                phasorHoveredKey === "Bc" ? 6 : 3,
+                phasorHoveredKey === "Bc"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Bc",
+                x1: cx + G * scale,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy + Bc * scale
+            });
+
+            // Y (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + G * scale,
+                cy + Bc * scale,
+                colorY,
+                phasorHoveredKey === "Y" ? 6 : 3,
+                phasorHoveredKey === "Y"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Y",
+                x1: cx,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy + Bc * scale
+            });
+
+            // Right angle marker at (cx + G * scale, cy)
+            drawRightAngleMarker(ctx, cx + G * scale, cy, 1, 1);
+
+            // === 8. Draw phase angle φ at origin ===
+            const phi = Math.atan2(Bc, G);
+            ctx.save();
+            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 36, 0, phi, false);
+            ctx.stroke();
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: phi
+            });
+            ctx.restore();
+
+            // Draw origin dot
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // === 9. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = phi * 180 / Math.PI;
+            const legend = [
+                { key: "G", label: `G = ${formatSI(G, "S")}`, color: colorG },
+                { key: "Bc", label: `B<sub>C</sub> = ${formatSI(Bc, "S")}`, color: colorBc },
+                { key: "Y",  label: `Y = ${formatSI(Y, "S")}`, color: colorY },
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
+            ];
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
+
+            // === 10. Tooltip/hover system: highlight legend and vector on canvas hover ===
+            canvas.onmousemove = function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                let found = null;
+                for (const h of hitboxes) {
+                    if (h.type === "vector") {
+                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                        if (dist < 5) { found = h.key; break; }
+                    } else if (h.type === "arc") {
+                        const dx = mx - h.cx, dy = my - h.cy;
+                        const r = Math.sqrt(dx*dx + dy*dy);
+                        let a = Math.atan2(dy, dx);
+                        if (a < 0) a += 2 * Math.PI;
+                        let start = 0;
+                        let end = h.angle;
+                        if (end < 0) end += 2 * Math.PI;
+                        let inArc = false;
+                        if (start <= end) {
+                            inArc = (a >= start && a <= end);
+                        } else {
+                            inArc = (a >= start || a <= end);
+                        }
+                        if (Math.abs(r - h.r) < 10 && inArc) {
+                            found = h.key; break;
+                        }
+                    }
+                }
+                phasorHoveredKey = found;
+                drawLeitwertdreieckParallel(canvasId, legendId); // Redraw with highlight
+                for (const div of legendDiv.children) {
+                    if (div.dataset.key === found) {
+                        div.style.background = "#444";
+                        div.style.fontWeight = "bold";
+                    } else {
+                        div.style.background = "";
+                        div.style.fontWeight = "";
+                    }
+                }
+            };
+            canvas.onmouseleave = function() {
+                phasorHoveredKey = null;
+                drawLeitwertdreieckParallel(canvasId, legendId);
+                for (const div of legendDiv.children) {
+                    div.style.background = "";
+                    div.style.fontWeight = "";
+                }
+            };
+
+            // === 11. Legend hover highlights vector in canvas ===
+            for (const div of legendDiv.children) {
+                div.onmouseenter = function() {
+                    phasorHoveredKey = this.dataset.key;
+                    drawLeitwertdreieckParallel(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = d === this ? "#444" : "";
+                        d.style.fontWeight = d === this ? "bold" : "";
+                    }
+                };
+                div.onmouseleave = function() {
+                    phasorHoveredKey = null;
+                    drawLeitwertdreieckParallel(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = "";
+                        d.style.fontWeight = "";
+                    }
+                };
+            }
+
+            // Draw the icon and store its area
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // Add a click handler (only once)
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
+
+            // 12. Watermark logo (top right)
+            drawWatermark(ctx, canvas);
+        }
+
+        function drawStromdreieckParallel(
+            canvasId = "phasorCanvasCurrent",
+            legendId = "phasorLegendCurrent"
+        ) {
+            const canvas = document.getElementById(canvasId);
+            const legendDiv = document.getElementById(legendId);
+            if (!canvas || !legendDiv) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // === 1. Get values from input fields (no calculation here) ===
+            let Ir = parseInput(document.getElementById("Ir_ACp")?.value);
+            let Ic = parseInput(document.getElementById("Ic_ACp")?.value);
+            let I  = parseInput(document.getElementById("I_ACp")?.value);
+
+            // === 2. Fallback to example if not enough data ===
+            let isExample = false;
+            let missing = [];
+            if (!isFinite(Ir) || Ir <= 0) missing.push("I_R");
+            if (!isFinite(Ic) || Ic <= 0) missing.push("I_C");
+            if (!isFinite(I)  || I  <= 0) missing.push("I");
+            if (missing.length > 0) {
+                Ir = 2.0; Ic = 1.5; I = 2.5;
+                isExample = true;
+            }
+
+            // === 3. Failsafe for degenerate/invalid triangle ===
+            {
+                if (
+                    !isFinite(Ir) || !isFinite(Ic) || !isFinite(I) ||
+                    typeof Ir !== "number" || typeof Ic !== "number" || typeof I !== "number" ||
+                    Ir <= 0 || Ic <= 0 || I <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Pythagoras check
+                const pythagoras = Math.abs(I * I - (Ir * Ir + Ic * Ic));
+                if (pythagoras > 1e-6 * (Ir * Ir + Ic * Ic + I * I)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // No side should be "too small" compared to the largest
+                const sides = [Ir, Ic, I].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Angle check
+                const phi = Math.atan2(Ic, Ir);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+
+            // === 4. Move triangle origin to the upper left and scale dynamically ===
+            const marginLeft = 80;
+            const marginTop = 80;
+            const marginRight = 80;
+            const marginBottom = 80;
+            const plotWidth = canvas.width - marginLeft - marginRight;
+            const plotHeight = canvas.height - marginTop - marginBottom;
+            const scale = 0.95 * Math.min(
+                plotWidth / Math.abs(Ir),
+                plotHeight / Math.abs(Ic)
+            );
+            const cx = marginLeft;
+            const cy = marginTop;
+
+            // --- Store vector/arc positions for tooltips ---
+            const hitboxes = [];
+
+            // === 5. Draw axes (dotted, labeled, full width/height) ===
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(canvas.width, cy);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // x label
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.fillText("x", canvas.width - 10, cy - 10);
+            // y label
+            ctx.textAlign = "left";
+            ctx.fillText("y", cx + 10, 24);
+            ctx.restore();
+
+            // === 6. Define visually distinct colors ===
+            const colorIr = "#0070C0";  // blue
+            const colorIc = "#00C080";  // greenish
+            const colorI  = "#A0A0FF";  // light blue
+            const colorPhi = "#FFFFFF"; // white
+
+            // === 7. Draw triangle vectors with arrowheads and store hitboxes ===
+            // Ir (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ir * scale,
+                cy,
+                colorIr,
+                phasorHoveredKey === "Ir" ? 6 : 3,
+                phasorHoveredKey === "Ir"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Ir",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy
+            });
+
+            // Ic (vertical, down)
+            drawArrow(
+                ctx,
+                cx + Ir * scale,
+                cy,
+                cx + Ir * scale,
+                cy + Ic * scale,
+                colorIc,
+                phasorHoveredKey === "Ic" ? 6 : 3,
+                phasorHoveredKey === "Ic"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Ic",
+                x1: cx + Ir * scale,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy + Ic * scale
+            });
+
+            // I (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ir * scale,
+                cy + Ic * scale,
+                colorI,
+                phasorHoveredKey === "I" ? 6 : 3,
+                phasorHoveredKey === "I"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "I",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy + Ic * scale
+            });
+
+            // Right angle marker at (cx + Ir * scale, cy)
+            drawRightAngleMarker(ctx, cx + Ir * scale, cy, 1, 1);
+
+            // === 8. Draw phase angle φ at origin ===
+            const phi = Math.atan2(Ic, Ir);
+            ctx.save();
+            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 36, 0, phi, false);
+            ctx.stroke();
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: phi
+            });
+            ctx.restore();
+
+            // Draw origin dot
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // === 9. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = phi * 180 / Math.PI;
+            const legend = [
+                { key: "Ir", label: `I<sub>R</sub> = ${formatSI(Ir, "A")}`, color: colorIr },
+                { key: "Ic", label: `I<sub>C</sub> = ${formatSI(Ic, "A")}`, color: colorIc },
+                { key: "I",  label: `I = ${formatSI(I, "A")}`, color: colorI },
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
+            ];
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
+
+            // === 10. Tooltip/hover system: highlight legend and vector on canvas hover ===
+            canvas.onmousemove = function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                let found = null;
+                for (const h of hitboxes) {
+                    if (h.type === "vector") {
+                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                        if (dist < 5) { found = h.key; break; }
+                    } else if (h.type === "arc") {
+                        const dx = mx - h.cx, dy = my - h.cy;
+                        const r = Math.sqrt(dx*dx + dy*dy);
+                        let a = Math.atan2(dy, dx);
+                        if (a < 0) a += 2 * Math.PI;
+                        let start = 0;
+                        let end = h.angle;
+                        if (end < 0) end += 2 * Math.PI;
+                        let inArc = false;
+                        if (start <= end) {
+                            inArc = (a >= start && a <= end);
+                        } else {
+                            inArc = (a >= start || a <= end);
+                        }
+                        if (Math.abs(r - h.r) < 10 && inArc) {
+                            found = h.key; break;
+                        }
+                    }
+                }
+                phasorHoveredKey = found;
+                drawStromdreieckParallel(canvasId, legendId); // Redraw with highlight
+                for (const div of legendDiv.children) {
+                    if (div.dataset.key === found) {
+                        div.style.background = "#444";
+                        div.style.fontWeight = "bold";
+                    } else {
+                        div.style.background = "";
+                        div.style.fontWeight = "";
+                    }
+                }
+            };
+            canvas.onmouseleave = function() {
+                phasorHoveredKey = null;
+                drawStromdreieckParallel(canvasId, legendId);
+                for (const div of legendDiv.children) {
+                    div.style.background = "";
+                    div.style.fontWeight = "";
+                }
+            };
+
+            // === 11. Legend hover highlights vector in canvas ===
+            for (const div of legendDiv.children) {
+                div.onmouseenter = function() {
+                    phasorHoveredKey = this.dataset.key;
+                    drawStromdreieckParallel(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = d === this ? "#444" : "";
+                        d.style.fontWeight = d === this ? "bold" : "";
+                    }
+                };
+                div.onmouseleave = function() {
+                    phasorHoveredKey = null;
+                    drawStromdreieckParallel(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = "";
+                        d.style.fontWeight = "";
+                    }
+                };
+            }
+
+            // Draw the icon and store its area
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // Add a click handler (only once)
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
+
+            // 12. Watermark logo (top right)
+            drawWatermark(ctx, canvas);
         }
 
         /**
