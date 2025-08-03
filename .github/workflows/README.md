@@ -2,8 +2,6 @@
 
 This repository uses a unified GitHub Actions workflow to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts—including a single-file Windows self-extractor EXE.
 
----
-
 ## Table of Contents
 
 1. [Overview](#overview)
