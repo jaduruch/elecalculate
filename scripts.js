@@ -30,11 +30,13 @@ function toggleMenu() {
     }
 }
 
+
 function parseInput(value) {
     const unitMap = {
         "p": 1e-12,   // Pico
         "n": 1e-9,    // Nano
         "u": 1e-6,    // Mikro
+        // "µ": 1e-6,    // doesn't work
         "m": 1e-3,    // Milli
         "c": 1e-2,    // Centi
         "d": 1e-1,    // Dezi
@@ -50,7 +52,7 @@ function parseInput(value) {
 
     const num = parseFloat(match[1]);
     const unit = match[2];
-
+     debugger;
     return num * (unitMap[unit] || 1);
 }
 
@@ -62,7 +64,7 @@ function formatWithPrefix(value, unit) {
         { prefix: "k", factor: 1e3 },
         { prefix: "", factor: 1 },
         { prefix: "m", factor: 1e-3 },
-        { prefix: "&mu;", factor: 1e-6 },
+        { prefix: "µ", factor: 1e-6 },
         { prefix: "n", factor: 1e-9 },
         { prefix: "p", factor: 1e-12 }
     ];
@@ -85,7 +87,7 @@ function formatPrefixNoUnit(value)              // dont return Unit of Value
         { prefix: "k", factor: 1e3 },
         { prefix: "", factor: 1 },
         { prefix: "m", factor: 1e-3 },
-        { prefix: "&mu;", factor: 1e-6 },
+        { prefix: "u", factor: 1e-6 },
         { prefix: "n", factor: 1e-9 },
         { prefix: "p", factor: 1e-12 }
     ];
@@ -135,7 +137,7 @@ function formatWithPrefixsquare(value, unit) {
         { prefix: "k", factor: 1e6 },
         { prefix: "", factor: 1 },
         { prefix: "m", factor: 1e-6 },
-        { prefix: "&mu;", factor: 1e-12 },
+        { prefix: "u", factor: 1e-12 },
         { prefix: "n", factor: 1e-18 },
         { prefix: "p", factor: 1e-24 }
         //{ prefix: "f", factor: 1e-30 }
@@ -150,4 +152,7 @@ function formatWithPrefixsquare(value, unit) {
     return value.toFixed(2) + " " + unit;
 }
 
-
+function getlg(x)           // function for log base 10
+{
+    return Math.log(x) / Math.log(10);
+}
