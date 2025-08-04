@@ -110,7 +110,9 @@
                         Kondensator berechnungen<span class="arrow">&#9660;</span>
                     </div>
                     <div class="dropdown-content"> 
-                        <div>
+                        <div id="CapacitorParameter">
+                            <button onclick="resetInputsCapacitorParameters()" class="Button_Berechnen">Eingaben l&ouml;schen</button>
+
                             <div class="comment">
                                 Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
                             </div>
@@ -198,7 +200,8 @@
                                 <label>s [sekunden]</label>
                             </div>
 
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateCapacitorParameters()">
+                            <!--<input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateCapacitorParameters()">-->
+                            <button onclick="calculateCapacitorParameters()" class="Button_Berechnen">Berechnen</button>
                         <!--</form>-->
 
                         <h3>Berechnete Ergebnisse</h3>
@@ -220,7 +223,8 @@
                             <img src="../Pictures/Serie_RC.PNG" alt="Sinus">
                             <span>Serie</span>
                         </button>
-                        <button class="img-button" type="button" onclick="toggleSelection(this, 'Parallel')">
+                        <button class="img-button" type="button"
+                            onclick="toggleSelection(this, 'Parallel'); showExampleParallelTriangle();">
                             <img src="../Pictures/Parallel_RC.png" alt="Rechteck">
                             <span>Parallel</span>
                         </button>
@@ -553,6 +557,80 @@
 
                             <h3>Berechnete Ergebnisse</h3>
                             <p id="result_Parallel_AC"></p>
+
+                            <!-- Canvas for Stromdreieck (Current Triangle) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Stromdreieck</h3>
+                                <canvas id="phasorCanvasCurrent" width="500" height="400"
+                                    style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
+                                </canvas>
+                            </div>
+                            <!-- Legend/info box for Stromdreieck -->
+                            <div style="
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: flex-start;
+                                flex: 1 1 260px;
+                            ">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
+                                <div id="phasorLegendCurrent"
+                                    style="
+                                        background:#222;
+                                        color:#fff;
+                                        border-radius:16px;
+                                        box-shadow:0 2px 8px #0003;
+                                        padding:18px 24px;
+                                        min-width:220px;
+                                        max-width:260px;
+                                        font-family:monospace;
+                                        font-size:16px;
+                                        box-sizing: border-box;
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: flex-start;
+                                        width: 100%;
+                                    ">
+                                    <!-- Legend will be filled by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Canvas for Leitwertdreieck (Admittance Triangle) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Leitwertdreieck</h3>
+                                <canvas id="phasorCanvasAdmittance" width="500" height="400"
+                                    style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
+                                </canvas>
+                            </div>
+                            <!-- Legend/info box for Leitwertdreieck -->
+                            <div style="
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: flex-start;
+                                flex: 1 1 260px;
+                            ">
+                                <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
+                                <div id="phasorLegendAdmittance"
+                                    style="
+                                        background:#222;
+                                        color:#fff;
+                                        border-radius:16px;
+                                        box-shadow:0 2px 8px #0003;
+                                        padding:18px 24px;
+                                        min-width:220px;
+                                        max-width:260px;
+                                        font-family:monospace;
+                                        font-size:16px;
+                                        box-sizing: border-box;
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: flex-start;
+                                        width: 100%;
+                                    ">
+                                    <!-- Legend will be filled by JS -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -682,51 +760,61 @@
         function calculateCapacitorParameters() 
         {
             let result = ``;
+            let prevResult = `1`;
 
-            const I = document.getElementById("I").value;
-            const F = document.getElementById("F").value;
-            const E = document.getElementById("E").value;
-            const er = document.getElementById("er").value;
-            const A = document.getElementById("A").value;
-            const d = document.getElementById("d").value;
-            const s = document.getElementById("s").value;
-            const C = document.getElementById("C").value;
-            const U = document.getElementById("U").value;
-            const W = document.getElementById("W").value;
-            const Q = document.getElementById("Q").value;
-            const t = document.getElementById("t").value;
+            let I = document.getElementById("I").value;
+            let F = document.getElementById("F").value;
+            let E = document.getElementById("E").value;
+            let er = document.getElementById("er").value;
+            let A = document.getElementById("A").value;
+            let d = document.getElementById("d").value;
+            let s = document.getElementById("s").value;
+            let C = document.getElementById("C").value;
+            let U = document.getElementById("U").value;
+            let W = document.getElementById("W").value;
+            let Q = document.getElementById("Q").value;
+            let t = document.getElementById("t").value;
             
-            
-            if(!I && Q && t)       // Berechnungen fuer Strom I
+            while(result != prevResult)
             {
-                result += `
-                    Strom I = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta;Q </span><br>
-                        <span>&Delta;t</span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${Q}C </span><br>
-                        <span>${t}s</span>
-                    </div> 
-                = ${formatWithPrefix(parseInput(Q) / parseInput(t), "A")}<br>`;
-            }
+                prevResult = result;
 
-            if(!F && Q && E)     // Berechnungen fuer Kraft F
+                // === Strom I ===
+                if(!I && Q && t)
                 {
+                    I = formatPrefixNoUnit(parseInput(Q) / parseInput(t));
+
+                    result += `
+                        Strom I = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta;Q </span><br>
+                            <span>&Delta;t</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Q}C </span><br>
+                            <span>${t}s</span>
+                        </div> 
+                    = ${I}A <br>`;
+                }
+
+                // === Kraft F ===
+                if(!F && Q && E)
+                {
+                    F = formatPrefixNoUnit(parseInput(Q) * parseInput(E));
+                    
                     result += `
                         Kraft F =
                         Q &lowast; E
                     =
                         ${Q}C &lowast; ${E}V/m
-                    = ${formatWithPrefix(parseInput(Q) * parseInput(E), "N")}<br>`;
+                    = ${F}N <br>`;
                 }
 
-            if(!E)             // Berechnungen fuer Feldstaerke E
-            {
-                if(F && Q)
+                // === Feldstaerke E ===
+                if(!E && F && Q)
                 {
+                    E = formatPrefixNoUnit(parseInput(F) / parseInput(Q));
                     result += `
                         Feldst&auml;rke E = 
                         <div class ="fraction">
@@ -738,10 +826,13 @@
                             <span class="fraction-numerator"> ${F}N </span><br>
                             <span>${Q}C</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(F) / parseInput(Q), "V/m")}<br>`;
+                    = ${E}V/m <br>`;
                 }
-                if(U && s)
+
+                if(!E && U && s)
                 {
+                    E = formatPrefixNoUnit(parseInput(U) / parseInput(s));
+
                     result += `
                         Feldst&auml;rke E = 
                         <div class ="fraction">
@@ -753,46 +844,91 @@
                             <span class="fraction-numerator"> ${U}V </span><br>
                             <span>${s}m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(U) / parseInput(s), "V/m")}<br>`;
-                }    
-            }
+                    = ${E}V/m <br>`;
+                }
 
-            if(!er && C && s && A)       // Berechnungen fuer Dielektrizitaetszahl er
-            {
-                result += `
-                    Dielektrizit&auml;tszahl &epsilon;<sub>r</sub> = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> C &lowast; s </span><br>
-                        <span>A &lowast; &epsilon;<sub>0</sub></span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
-                        <span>${A}m<sup>2</sup> &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
-                    </div> 
-                = ${formatWithPrefix((parseInput(C) * parseInput(s))/ (parseInputsquare(A)*8.85e-12), "")}<br>`;
-            }
-
-            if(!A && C && s && er)       // Berechnungen fuer Querschnittsflaeche A
-            {
-                result += `
-                Querschnittsfl&auml;che A =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> C &lowast; s </span><br>
-                        <span>&epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
-                        <span>${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
-                    </div> 
-                = ${formatWithPrefixsquare((parseInput(C) * parseInput(s))/ (parseInput(er)*8.85e-12), "m<sup>2</sup>")}<br>`;
-            }
-
-            if(!s)             // Berechnungen fuer Elektronenabstand s
-            {
-                if(U && E)
+                // === Dielektrizitaetszahl er ===
+                if(!er && C && s && A)
                 {
+                    er = formatPrefixNoUnit((parseInput(C) * parseInput(s))/ (parseInputsquare(A)*8.85e-12));
+
+                    result += `
+                        Dielektrizit&auml;tszahl &epsilon;<sub>r</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> C &lowast; s </span><br>
+                            <span>A &lowast; &epsilon;<sub>0</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
+                            <span>${A}m<sup>2</sup> &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
+                        </div> 
+                    = ${er}<br>`;
+                }
+
+                // === Flaeche A ===
+                if(!A && C && s && er)
+                {
+                    A = formatPrefixNoUnitSquare((parseInput(C) * parseInput(s)) / (parseInput(er) * 8.85e-12));
+
+                    result += `
+                    Querschnittsfl&auml;che A =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> C &lowast; s </span><br>
+                            <span>&epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
+                            <span>${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+                }
+
+                if(!A && d)
+                {
+                     A = formatPrefixNoUnitSquare(Math.PI * Math.pow(parseInput(d), 2) / 4);
+
+                    result += `
+                    Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup></span><br>
+                            <span>4</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> </span><br>
+                            <span>4</span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+
+                    debugger;
+                }
+                
+                // === durchmesser d ===
+                if(!d && A)
+                {
+                    d = formatPrefixNoUnit(Math.pow((4 * (parseInputsquare(A)) / Math.PI), 0.5 ));
+                    result += `
+                    Leiterdurchmesser d = 
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; A</span><br>
+                            <span>&pi;</span>
+                        </div>) 
+                    =
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; ${A}m<sup>2</sup> </span><br>
+                            <span>&pi;</span>
+                        </div>)
+                    = ${d}m <br>`;
+                }
+
+
+                // === Elektronenabstand s ===
+                if(!s && U && E)
+                {
+                    s = formatPrefixNoUnit(parseInput(U) / parseInput(E));
+
                     result += `
                         Elektronenabstand s = 
                         <div class ="fraction">
@@ -804,10 +940,13 @@
                             <span class="fraction-numerator"> ${U}V </span><br>
                             <span>${E}V/m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(U) / parseInput(E), "m")}<br>`;
+                    = ${s}m <br>`;
                 }
-                if(er && A && C)
+
+                if(!s && er && A && C)
                 {
+                    s = formatPrefixNoUnit((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(C));
+
                     result += `
                         Elektronenabstand s = 
                         <div class ="fraction">
@@ -819,14 +958,14 @@
                             <span class="fraction-numerator">${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm &lowast; ${A}m<sup>2</sup> </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(C), "m")}<br>`;
-                }    
-            }
+                    = ${s}m <br>`;
+                }
 
-            if(!C)             // Berechnungen fuer Kapazitaet C
-            {
-                if(Q && U) 
+                // === Kapazitaet C ===
+                if(!C && Q && U)
                 {
+                    C = formatPrefixNoUnit(parseInput(Q) / parseInput(U));
+
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -838,11 +977,13 @@
                             <span class="fraction-numerator"> ${Q}C </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) / parseInput(U), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
 
-                if(er && A && s)
+                if(!C && er && A && s)
                 {
+                    C = formatPrefixNoUnit((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(s));
+
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -854,27 +995,13 @@
                             <span class="fraction-numerator">${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm &lowast; ${A}m<sup>2</sup> </span><br>
                             <span>${s}m</span>
                         </div> 
-                    = ${formatWithPrefix((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(s), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
 
-                if(er && d && s)                                                                                                    // mit durchmesser
+                if(!C && W && U)
                 {
-                    result += `
-                        Kapazit&auml;t C = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup> &lowast; &epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span><br>
-                            <span>4 &lowast; s</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> ${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span><br>
-                            <span>4 &lowast; ${s}m</span>
-                        </div> 
-                    = ${formatWithPrefix((Math.PI * Math.pow(parseInput(d), 2) * (parseInput(er) * 8.85e-12)) / (4 * parseInput(s)), "F")}<br>`;
-                }
+                    C = formatPrefixNoUnit(2 * parseInput(W) / Math.pow(parseInput(U), 2));
 
-                if(W && U) 
-                {
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -886,23 +1013,26 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>(${U}V)<sup>2</sup></span>
                         </div> 
-                    = ${formatWithPrefix(2 * parseInput(W) / Math.pow(parseInput(U), 2), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
-            }
 
-            if(!U)                  //Berechnungen fuer Spannung U
-            {
-                if(E && s)     
+                // === Spannung U ===
+                if(!U && E && s)
                 {
+                    U = formatPrefixNoUnit(parseInput(E) * parseInput(s));
+
                     result += `
                         Spannung U =
                         E &lowast; s
                     =
                         ${E}V/m &lowast; ${s}m
-                    = ${formatWithPrefix(parseInput(E) * parseInput(s), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
-                if(Q && C) 
+
+                if(!U && Q && C)
                 {
+                    U = formatPrefixNoUnit(parseInput(Q) / parseInput(C));
+
                     result += `
                         Spannung U = 
                         <div class ="fraction">
@@ -914,10 +1044,13 @@
                             <span class="fraction-numerator">${Q}C </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) / parseInput(C), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
-                if(W && Q) 
+
+                if(!U && W && Q) 
                 {
+                    U = formatPrefixNoUnit(2 * parseInput(W) / parseInput(Q));
+
                     result += `
                         Spannung U = 
                         <div class ="fraction">
@@ -929,11 +1062,13 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${Q}C</span>
                         </div> 
-                    = ${formatWithPrefix(2 * parseInput(W) / parseInput(Q), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
 
-                if(W && C) 
+                if(!U && W && C) 
                 {
+                    U = formatPrefixNoUnit(Math.pow((2 * parseInput(W))/parseInput(C), 0.5));
+
                     result += `
                         Spannung U = 
                         &radic;	<div class ="fraction">
@@ -945,14 +1080,14 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix( Math.pow((2 * parseInput(W))/parseInput(C), 0.5), "V")}<br>`;
+                    = ${U}V<br>`;
                 }
-            }
 
-            if(!W)              // Berechnungen fuer Energie W
-            {
-                if(Q && U)
+                // === Energie W ===
+                if(!W && Q && U)
                 {
+                    W = formatPrefixNoUnit(parseInput(Q) * parseInput(U) / 2);
+
                     result += `
                         Energie W = 
                         <div class ="fraction">
@@ -964,11 +1099,13 @@
                             <span class="fraction-numerator"> ${Q}C &lowast; ${U}V </span><br>
                             <span>2</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) * parseInput(U) / 2, "J")}<br>`;
+                    = ${W}J<br>`;
                 }
 
-                if(C && U) 
+                if(!W && C && U) 
                 {
+                    W = formatPrefixNoUnit(Math.pow(parseInput(U), 2) * parseInput(C) / 2);
+
                     result += `
                         Energie W = 
                         <div class ="fraction">
@@ -980,14 +1117,14 @@
                             <span class="fraction-numerator">${C}F &lowast; (${U}V)<sup>2</sup></span><br>
                             <span>2</span>
                         </div> 
-                    = ${formatWithPrefix(Math.pow(parseInput(U), 2) * parseInput(C) / 2, "J")}<br>`;
+                    = ${W}J<br>`;
                 }
-            }
 
-            if(!Q)              // Berechnungen fuer Ladung Q
-            {
-                if(F && E)
+                // === Ladung Q ===
+                if(!Q && F && E)
                 {
+                    Q = formatPrefixNoUnit(parseInput(F) / parseInput(E));
+
                     result += `
                         Ladung Q = 
                         <div class ="fraction">
@@ -999,31 +1136,37 @@
                             <span class="fraction-numerator"> ${F}N </span><br>
                             <span>${ E}V/m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(F) / parseInput(E), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }  
 
-                if(C && U) 
+                if(!Q && C && U) 
                 {
+                    Q = formatPrefixNoUnit(parseInput(C) * parseInput(U));
+
                     result += `
                         Ladung Q =
                         C &lowast; U
                     =
                         ${C}F &lowast; ${U}V
-                    = ${formatWithPrefix(parseInput(C) * parseInput(U), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }
 
-                if(I && t) 
+                if(!Q && I && t) 
                 {
+                    Q = formatPrefixNoUnit(parseInput(I) * parseInput(t));
+
                     result += `
                         Ladungs&auml;nderung  &Delta;Q =
                         I &lowast; &Delta;t
                     =
                         ${I}A &lowast; &Delta;${t}s
-                    = ${formatWithPrefix(parseInput(I) * parseInput(t), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }
 
-                if(W && U)
+                if(!Q && W && U)
                 {
+                    Q = formatPrefixNoUnit(2 * parseInput(W) / parseInput(U));
+
                     result += `
                         Ladung Q = 
                         <div class ="fraction">
@@ -1035,24 +1178,27 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${formatWithPrefix(2* parseInput(W) / parseInput(U), "C")}<br>`;
-                } 
-            }
+                    = ${Q}C <br>`;
+                }
 
-            if(!t && I && Q)       // Berechnungen fuer Zeit t
-            {
-                result += `
-                    Zeit &Delta; t = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta; Q </span><br>
-                        <span>I</span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta; ${Q}C </span><br>
-                        <span>${I}A</span>
-                    </div> 
-                = ${formatWithPrefix(parseInput(I) / parseInput(Q), "s")}<br>`;
+                // === Zeit t ===
+                if(!t && I && Q)
+                {
+                    t = formatPrefixNoUnit(parseInput(Q) / parseInput(I));
+
+                    result += `
+                        Zeit &Delta; t = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta; Q </span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta; ${Q}C </span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${t}s <br>`;
+                }
             }
 
 
@@ -1060,6 +1206,16 @@
             document.getElementById('result').innerHTML = result;
         }
 
+        // ------------------------
+        function resetInputsCapacitorParameters() {
+            const container = document.getElementById("CapacitorParameter");
+            const inputs = container.querySelectorAll("input");
+            
+            inputs.forEach(input => input.value = "");
+
+            // Optional: Nur das Ergebnis im 'result'-Div löschen, falls gewünscht
+            document.getElementById("result").innerHTML = "";
+        }
         
         // RC an Wechselstrom
         let selectedButton = null;
@@ -2615,6 +2771,25 @@
 
 
             document.getElementById('result_Parallel_AC').innerHTML = result_Parallel_AC;
+
+
+            // Draw the Stromdreieck (current triangle)
+            drawStromdreieckParallel(
+                parseInput(Ir),
+                parseInput(Ic),
+                parseInput(I),
+                "phasorCanvasCurrent",
+                "phasorLegendCurrent"
+            );
+
+            // Draw the Leitwertdreieck (admittance triangle)
+            drawLeitwertdreieckParallel(
+                parseInput(G),
+                parseInput(Bc),
+                parseInput(Y),
+                "phasorCanvasAdmittance",
+                "phasorLegendAdmittance"
+            );
         }
 
         // RC-Glied berechnungen
@@ -3266,6 +3441,740 @@
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
 
+        }
+
+        /**
+         * Draws the admittance triangle (Leitwertdreieck) for a parallel AC circuit.
+         *
+         * @param {number} G - Conductance (Siemens)
+         * @param {number} Bc - Susceptance (Siemens)
+         * @param {number} Y - Admittance (Siemens)
+         * @param {string} canvasId - ID of the canvas element to draw on
+         * @param {string} legendId - ID of the legend div to update
+         * @param {boolean} isExample - If true, show example notice in legend
+         * @param {Array<string>} missing - List of missing/invalid fields for the notice
+         */
+        function drawLeitwertdreieckParallel(
+            G, Bc, Y,
+            canvasId = "phasorCanvasAdmittance",
+            legendId = "phasorLegendAdmittance",
+            isExample = false,
+            missing = []
+        ) {
+            const canvas = document.getElementById(canvasId);
+            const legendDiv = document.getElementById(legendId);
+            if (!canvas || !legendDiv) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // --- Fallback to example values if not enough data ---
+            if (!isFinite(G)  || G  <= 0) missing.push("G");
+            if (!isFinite(Bc) || Bc <= 0) missing.push("Bc");
+            if (!isFinite(Y)  || Y  <= 0) missing.push("Y");
+            if (missing.length > 0) {
+                // Use example values for a valid triangle
+                G = 0.2; Bc = 0.15; Y = 0.25;
+                isExample = true;
+            }
+
+            // --- Failsafe for degenerate/invalid triangle ---
+            {
+                // Check for invalid or non-numeric values
+                if (
+                    !isFinite(G) || !isFinite(Bc) || !isFinite(Y) ||
+                    typeof G !== "number" || typeof Bc !== "number" || typeof Y !== "number" ||
+                    G <= 0 || Bc <= 0 || Y <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Values do not form a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Pythagoras check
+                const pythagoras = Math.abs(Y * Y - (G * G + Bc * Bc));
+                if (pythagoras > 1e-6 * (G * G + Bc * Bc + Y * Y)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Values do not form a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // No side should be "too small" compared to the largest
+                const sides = [G, Bc, Y].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Triangle is too sharp or too flat!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Angle check
+                const phi = Math.atan2(Bc, G);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Angle is too small or too large for a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+
+            // --- Set up drawing area and scaling ---
+            const marginLeft = 80;
+            const marginTop = 80;
+            const marginRight = 80;
+            const marginBottom = 80;
+            const plotWidth = canvas.width - marginLeft - marginRight;
+            const plotHeight = canvas.height - marginTop - marginBottom;
+            const scale = 0.95 * Math.min(
+                plotWidth / Math.abs(G),
+                plotHeight / Math.abs(Bc)
+            );
+            const cx = marginLeft;
+            const cy = marginTop;
+
+            // --- Store vector/arc positions for tooltips ---
+            const hitboxes = [];
+
+            // --- Draw axes (dotted, labeled, full width/height) ---
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(canvas.width, cy);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // x label
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.fillText("x", canvas.width - 10, cy - 10);
+            // y label
+            ctx.textAlign = "left";
+            ctx.fillText("y", cx + 10, 24);
+            ctx.restore();
+
+            // --- Define visually distinct colors ---
+            const colorG = "#00C000";   // green
+            const colorBc = "#00FF80";  // light green
+            const colorY = "#008040";   // dark green
+            const colorPhi = "#FFFFFF"; // white
+
+            // --- Draw triangle vectors with arrowheads and store hitboxes ---
+            // G (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + G * scale,
+                cy,
+                colorG,
+                phasorHoveredKey === "G" ? 6 : 3,
+                phasorHoveredKey === "G"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "G",
+                x1: cx,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy
+            });
+
+            // Bc (vertical, down)
+            drawArrow(
+                ctx,
+                cx + G * scale,
+                cy,
+                cx + G * scale,
+                cy + Bc * scale,
+                colorBc,
+                phasorHoveredKey === "Bc" ? 6 : 3,
+                phasorHoveredKey === "Bc"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Bc",
+                x1: cx + G * scale,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy + Bc * scale
+            });
+
+            // Y (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + G * scale,
+                cy + Bc * scale,
+                colorY,
+                phasorHoveredKey === "Y" ? 6 : 3,
+                phasorHoveredKey === "Y"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Y",
+                x1: cx,
+                y1: cy,
+                x2: cx + G * scale,
+                y2: cy + Bc * scale
+            });
+
+            // Draw right angle marker at the corner
+            drawRightAngleMarker(ctx, cx + G * scale, cy, 1, 1);
+
+            // --- Draw phase angle φ at origin ---
+            const phi = Math.atan2(Bc, G);
+            ctx.save();
+            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 36, 0, phi, false);
+            ctx.stroke();
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: phi
+            });
+            ctx.restore();
+
+            // Draw origin dot
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // --- Fill legend/info box beside the canvas, with color coding ---
+            const phiDeg = phi * 180 / Math.PI;
+            const legend = [
+                { key: "G", label: `G = ${formatSI(G, "S")}`, color: colorG },
+                { key: "Bc", label: `B<sub>C</sub> = ${formatSI(Bc, "S")}`, color: colorBc },
+                { key: "Y",  label: `Y = ${formatSI(Y, "S")}`, color: colorY },
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
+            ];
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
+
+            // --- Tooltip/hover system: highlight legend and vector on canvas hover ---
+            canvas.onmousemove = function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                let found = null;
+                for (const h of hitboxes) {
+                    if (h.type === "vector") {
+                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                        if (dist < 5) { found = h.key; break; }
+                    } else if (h.type === "arc") {
+                        const dx = mx - h.cx, dy = my - h.cy;
+                        const r = Math.sqrt(dx*dx + dy*dy);
+                        let a = Math.atan2(dy, dx);
+                        if (a < 0) a += 2 * Math.PI;
+                        let start = 0;
+                        let end = h.angle;
+                        if (end < 0) end += 2 * Math.PI;
+                        let inArc = false;
+                        if (start <= end) {
+                            inArc = (a >= start && a <= end);
+                        } else {
+                            inArc = (a >= start || a <= end);
+                        }
+                        if (Math.abs(r - h.r) < 10 && inArc) {
+                            found = h.key; break;
+                        }
+                    }
+                }
+                phasorHoveredKey = found;
+                // Redraw with the same isExample/missing state!
+                drawLeitwertdreieckParallel(G, Bc, Y, canvasId, legendId, isExample, missing);
+                for (const div of legendDiv.children) {
+                    if (div.dataset.key === found) {
+                        div.style.background = "#444";
+                        div.style.fontWeight = "bold";
+                    } else {
+                        div.style.background = "";
+                        div.style.fontWeight = "";
+                    }
+                }
+            };
+            canvas.onmouseleave = function() {
+                phasorHoveredKey = null;
+                drawLeitwertdreieckParallel(G, Bc, Y, canvasId, legendId, isExample, missing);
+                for (const div of legendDiv.children) {
+                    div.style.background = "";
+                    div.style.fontWeight = "";
+                }
+            };
+
+            // --- Legend hover highlights vector in canvas ---
+            for (const div of legendDiv.children) {
+                div.onmouseenter = function() {
+                    phasorHoveredKey = this.dataset.key;
+                    drawLeitwertdreieckParallel(G, Bc, Y, canvasId, legendId, isExample, missing);
+                    for (const d of legendDiv.children) {
+                        d.style.background = d === this ? "#444" : "";
+                        d.style.fontWeight = d === this ? "bold" : "";
+                    }
+                };
+                div.onmouseleave = function() {
+                    phasorHoveredKey = null;
+                    drawLeitwertdreieckParallel(G, Bc, Y, canvasId, legendId, isExample, missing);
+                    for (const d of legendDiv.children) {
+                        d.style.background = "";
+                        d.style.fontWeight = "";
+                    }
+                };
+            }
+
+            // --- Draw the download icon and store its area ---
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // --- Add a click handler for download (only once) ---
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
+
+            // --- Draw watermark logo (top right) ---
+            drawWatermark(ctx, canvas);
+        }
+
+        /**
+         * Draws the current triangle (Stromdreieck) for a parallel AC circuit.
+         *
+         * @param {number} Ir - Real current (A)
+         * @param {number} Ic - Reactive current (A)
+         * @param {number} I - Total current (A)
+         * @param {string} canvasId - ID of the canvas element to draw on
+         * @param {string} legendId - ID of the legend div to update
+         * @param {boolean} isExample - If true, show example notice in legend
+         * @param {Array<string>} missing - List of missing/invalid fields for the notice
+         */
+        function drawStromdreieckParallel(
+            Ir,
+            Ic,
+            I,
+            canvasId = "phasorCanvasCurrent",
+            legendId = "phasorLegendCurrent",
+            isExample = false,
+            missing = []
+        ) {
+            const canvas = document.getElementById(canvasId);
+            const legendDiv = document.getElementById(legendId);
+            if (!canvas || !legendDiv) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // --- Fallback to example values if not enough data ---
+            if (!isFinite(Ir) || Ir <= 0) missing.push("I_R");
+            if (!isFinite(Ic) || Ic <= 0) missing.push("I_C");
+            if (!isFinite(I)  || I  <= 0) missing.push("I");
+            if (missing.length > 0) {
+                // Use example values for a valid triangle
+                Ir = 2.0; Ic = 1.5; I = 2.5;
+                isExample = true;
+            }
+
+            // --- Failsafe for degenerate/invalid triangle ---
+            {
+                // Check for invalid or non-numeric values
+                if (
+                    !isFinite(Ir) || !isFinite(Ic) || !isFinite(I) ||
+                    typeof Ir !== "number" || typeof Ic !== "number" || typeof I !== "number" ||
+                    Ir <= 0 || Ic <= 0 || I <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Values do not form a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Pythagoras check
+                const pythagoras = Math.abs(I * I - (Ir * Ir + Ic * Ic));
+                if (pythagoras > 1e-6 * (Ir * Ir + Ic * Ic + I * I)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Values do not form a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // No side should be "too small" compared to the largest
+                const sides = [Ir, Ic, I].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Triangle is too sharp or too flat!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+                // Angle check
+                const phi = Math.atan2(Ic, Ir);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Angle is too small or too large for a valid triangle!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+
+            // --- Set up drawing area and scaling ---
+            const marginLeft = 80;
+            const marginTop = 80;
+            const marginRight = 80;
+            const marginBottom = 80;
+            const plotWidth = canvas.width - marginLeft - marginRight;
+            const plotHeight = canvas.height - marginTop - marginBottom;
+            const scale = 0.95 * Math.min(
+                plotWidth / Math.abs(Ir),
+                plotHeight / Math.abs(Ic)
+            );
+            const cx = marginLeft;
+            const cy = marginTop;
+
+            // --- Store vector/arc positions for tooltips ---
+            const hitboxes = [];
+
+            // --- Draw axes (dotted, labeled, full width/height) ---
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(canvas.width, cy);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // x label
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.fillText("x", canvas.width - 10, cy - 10);
+            // y label
+            ctx.textAlign = "left";
+            ctx.fillText("y", cx + 10, 24);
+            ctx.restore();
+
+            // --- Define visually distinct colors ---
+            const colorIr = "#0070C0";  // blue
+            const colorIc = "#00C080";  // greenish
+            const colorI  = "#A0A0FF";  // light blue
+            const colorPhi = "#FFFFFF"; // white
+
+            // --- Draw triangle vectors with arrowheads and store hitboxes ---
+            // Ir (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ir * scale,
+                cy,
+                colorIr,
+                phasorHoveredKey === "Ir" ? 6 : 3,
+                phasorHoveredKey === "Ir"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Ir",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy
+            });
+
+            // Ic (vertical, down)
+            drawArrow(
+                ctx,
+                cx + Ir * scale,
+                cy,
+                cx + Ir * scale,
+                cy + Ic * scale,
+                colorIc,
+                phasorHoveredKey === "Ic" ? 6 : 3,
+                phasorHoveredKey === "Ic"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Ic",
+                x1: cx + Ir * scale,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy + Ic * scale
+            });
+
+            // I (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ir * scale,
+                cy + Ic * scale,
+                colorI,
+                phasorHoveredKey === "I" ? 6 : 3,
+                phasorHoveredKey === "I"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "I",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ir * scale,
+                y2: cy + Ic * scale
+            });
+
+            // Draw right angle marker at the corner
+            drawRightAngleMarker(ctx, cx + Ir * scale, cy, 1, 1);
+
+            // --- Draw phase angle φ at origin ---
+            const phi = Math.atan2(Ic, Ir);
+            ctx.save();
+            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 36, 0, phi, false);
+            ctx.stroke();
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: phi
+            });
+            ctx.restore();
+
+            // Draw origin dot
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // --- Fill legend/info box beside the canvas, with color coding ---
+            const phiDeg = phi * 180 / Math.PI;
+            const legend = [
+                { key: "Ir", label: `I<sub>R</sub> = ${formatSI(Ir, "A")}`, color: colorIr },
+                { key: "Ic", label: `I<sub>C</sub> = ${formatSI(Ic, "A")}`, color: colorIc },
+                { key: "I",  label: `I = ${formatSI(I, "A")}`, color: colorI },
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
+            ];
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
+
+            // --- Tooltip/hover system: highlight legend and vector on canvas hover ---
+            canvas.onmousemove = function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                let found = null;
+                for (const h of hitboxes) {
+                    if (h.type === "vector") {
+                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                        if (dist < 5) { found = h.key; break; }
+                    } else if (h.type === "arc") {
+                        const dx = mx - h.cx, dy = my - h.cy;
+                        const r = Math.sqrt(dx*dx + dy*dy);
+                        let a = Math.atan2(dy, dx);
+                        if (a < 0) a += 2 * Math.PI;
+                        let start = 0;
+                        let end = h.angle;
+                        if (end < 0) end += 2 * Math.PI;
+                        let inArc = false;
+                        if (start <= end) {
+                            inArc = (a >= start && a <= end);
+                        } else {
+                            inArc = (a >= start || a <= end);
+                        }
+                        if (Math.abs(r - h.r) < 10 && inArc) {
+                            found = h.key; break;
+                        }
+                    }
+                }
+                phasorHoveredKey = found;
+                // Redraw with the same isExample/missing state!
+                drawStromdreieckParallel(Ir, Ic, I, canvasId, legendId, isExample, missing);
+                for (const div of legendDiv.children) {
+                    if (div.dataset.key === found) {
+                        div.style.background = "#444";
+                        div.style.fontWeight = "bold";
+                    } else {
+                        div.style.background = "";
+                        div.style.fontWeight = "";
+                    }
+                }
+            };
+            canvas.onmouseleave = function() {
+                phasorHoveredKey = null;
+                drawStromdreieckParallel(Ir, Ic, I, canvasId, legendId, isExample, missing);
+                for (const div of legendDiv.children) {
+                    div.style.background = "";
+                    div.style.fontWeight = "";
+                }
+            };
+
+            // --- Legend hover highlights vector in canvas ---
+            for (const div of legendDiv.children) {
+                div.onmouseenter = function() {
+                    phasorHoveredKey = this.dataset.key;
+                    drawStromdreieckParallel(Ir, Ic, I, canvasId, legendId, isExample, missing);
+                    for (const d of legendDiv.children) {
+                        d.style.background = d === this ? "#444" : "";
+                        d.style.fontWeight = d === this ? "bold" : "";
+                    }
+                };
+                div.onmouseleave = function() {
+                    phasorHoveredKey = null;
+                    drawStromdreieckParallel(Ir, Ic, I, canvasId, legendId, isExample, missing);
+                    for (const d of legendDiv.children) {
+                        d.style.background = "";
+                        d.style.fontWeight = "";
+                    }
+                };
+            }
+
+            // --- Draw the download icon and store its area ---
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // --- Add a click handler for download (only once) ---
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
+
+            // --- Draw watermark logo (top right) ---
+            drawWatermark(ctx, canvas);
         }
 
         /**
@@ -4135,6 +5044,38 @@
             // Redraw the triangle (will use example values)
             drawWiderstandsdreieckSerie("phasorCanvasImpedance", "phasorLegendImpedance");
             drawSpannungsdreieckSerie("phasorCanvasVoltage", "phasorLegendVoltage");
+        }
+
+        function showExampleParallelTriangle() {
+            // Clear the input fields
+            document.getElementById("G_ACp").value = "";
+            document.getElementById("Bc_ACp").value = "";
+            document.getElementById("Y_ACp").value = "";
+            document.getElementById("Ir_ACp").value = "";
+            document.getElementById("Ic_ACp").value = "";
+            document.getElementById("I_ACp").value = "";
+            document.getElementById("U_ACp").value = "";
+            document.getElementById("f_ACp").value = "";
+            document.getElementById("C_ACp").value = "";
+
+            // Example values for a valid triangle
+            // Admittance triangle: G = 0.3 S, Bc = 0.4 S, Y = 0.5 S
+            // Current triangle: Ir = 3.0 A, Ic = 4.0 A, I = 5.0 A
+
+            drawLeitwertdreieckParallel(
+                0.3, 0.4, 0.5,
+                "phasorCanvasAdmittance",
+                "phasorLegendAdmittance",
+                true, // isExample
+                ["G", "Bc", "Y"]
+            );
+            drawStromdreieckParallel(
+                3.0, 4.0, 5.0,
+                "phasorCanvasCurrent",
+                "phasorLegendCurrent",
+                true,
+                ["Ir", "Ic", "I"]
+            );
         }
 
         /**
