@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Beschreibung der Seite -->
-    <meta name="description" content="Serie- und Parallel Schwingkreise berechnen. Berechnungen inklusive Loesungsweg und Eingabe durch Massvorsaetze">
-	<!-- Stichworte fuer Suchmaschinen -->
-    <meta name="keywords" content="Online-Rechner, Elektrotechnik, Serienschwingkreis, Parallelschwingkreis, Schwingkreis, Blindwiderstand, Impedanz">
     <title>Elektrotechnik | Schwingkreis</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
     <style>
-
         .filter-button {
             position: relative;
             width: 200px; /* Adjust as needed */
@@ -49,15 +44,15 @@
             padding: 2px 0;
         }
 
-
-        img{
-            width: 80%;
-            max-width: 600px;
+        input {
+            border: 2px solid;
+            border-radius: 3px;
         }
 
-
-
-
+        input:focus {
+            /*border: 3px solid;*/
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
 
         /* Stil fuer das Formular und Layout */
         .input-numbers {
@@ -70,6 +65,12 @@
             /*margin-left: 10px;*/
         }
 
+        .comment{
+            font-size: smaller;
+            font-style: italic;
+            color:rgb(179, 179, 179);
+            margin-left: 10px;
+        }
 
         .form-row {
             display: flex;
@@ -78,10 +79,6 @@
             width: 100%;
             margin-left: 10px;
             
-        }
-
-        .Button_Berechnen {
-            margin: 5px;
         }
 
         .form-row label {
@@ -99,7 +96,30 @@
             line-height: 2; /* Multiplikator fuer die Schriftgroesse */
         }
 
-        
+        .fraction
+        {
+            display: inline-block; 
+            vertical-align: middle; 
+            text-align: center;
+            margin-top: 1px;
+            margin-bottom: 1px;
+            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
+        }
+
+        .fraction-numerator{
+            border-bottom: 1px solid;
+            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
+            display: inline-block; /* Macht die Anpassungen besser sichtbar */
+        }
+
+        .fraction-denominator {
+            border-top: 1px solid;
+        }
+
+        img{
+            width: 80%;
+            max-width: 600px;
+        }
 
     </style>
 </head>
@@ -136,7 +156,7 @@
     <div class="wrapper">
         <main>
             <div>
-                <h1><br>Schwingkreis1</h1>
+                <h1><br>Schwingkreis</h1>
             </div>
             <div>
                 <button class="filter-button" type="button" onclick="toggleSelection(this, 'serie')">
@@ -155,13 +175,6 @@
 
                 <div class="comment">
                     Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
-                </div>
-
-                <!-- Strom I -->
-                <div class="form-row">
-                    <label>Strom I</label>
-                    <input type="text" id="I-serie" style="border-color: var(--Strom);">
-                    <label>A [Ampere]</label>
                 </div>
 
                 <!-- Widerstand R -->
@@ -185,13 +198,6 @@
                     <label>&Omega; [Ohm &angle; -90&deg;]</label>
                 </div>
 
-                <!-- Impedanz Z -->
-                <div class="form-row">
-                    <label>Impedanz Z</label>
-                    <input type="text" id="Z-serie" style="border-color: var(--Widerstand);">
-                    <label>&Omega; [Ohm]</label>
-                </div>
-
                 <!-- Induktivitaet L -->
                 <div class="form-row">
                     <label>Induktivit&auml;t L</label>
@@ -213,7 +219,7 @@
                     <label>F [Farad]</label>
                 </div>
 
-                <!-- Spannung U -->
+                <!-- Spannung Uges -->
                 <div class="form-row">
                     <label>Spannung U</label>
                     <input type="text" id="U-serie" style="border-color: var(--Spannung);">
@@ -241,12 +247,6 @@
                 <div class="form-row">
                     <label>Frequenz f</label>
                     <input type="text" id="f-serie" style="border-color: var(--Frequenz);">
-                    <label>Hz [Hertz] </label>
-                </div>
-
-                <div class="form-row">
-                    <label>Resonanzfrequenz f<sub>r</sub></label>
-                    <input type="text" id="fr-serie" style="border-color: var(--Frequenz);">
                     <label>Hz [Hertz] </label>
                 </div>
 
@@ -398,331 +398,129 @@
         {
             
             let result = ``;
-            let prevResult = `1`;
+
             
-            let I = document.getElementById("I-serie").value;
-            let R = document.getElementById("R-serie").value;
-            let XL = document.getElementById("XL-serie").value;
-            let XC = document.getElementById("XC-serie").value;
-            let Z = document.getElementById("Z-serie").value;
-            let L = document.getElementById("L-serie").value;
-            let Q = document.getElementById("Q-serie").value;
-            let C = document.getElementById("C-serie").value;
-            let U = document.getElementById("U-serie").value;
-            let UR = document.getElementById("UR-serie").value;
-            let UL = document.getElementById("UL-serie").value;
-            let UC = document.getElementById("UC-serie").value;
-            let f = document.getElementById("f-serie").value;
-            let fr = document.getElementById("fr-serie").value;
-            let b = document.getElementById("b-serie").value;
+            const R = document.getElementById("R-serie").value;
+            const XL = document.getElementById("XL-serie").value;
+            const XC = document.getElementById("XC-serie").value;
+            const L = document.getElementById("L-serie").value;
+            const Q = document.getElementById("Q-serie").value;
+            const C = document.getElementById("C-serie").value;
+            const U = document.getElementById("U-serie").value;
+            const UR = document.getElementById("UR-serie").value;
+            const UL = document.getElementById("UL-serie").value;
+            const UC = document.getElementById("UC-serie").value;
+            const f = document.getElementById("f-serie").value;
+            const b = document.getElementById("b-serie").value;
 
-            // debugger;
+            debugger;
 
-            while(result != prevResult)
+            if(!R)
             {
-                prevResult = result;
-
-                // === Strom I ===
-                if(!I && U && Z)
+                if(L && C && Q)
                 {
-                    I = formatPrefixNoUnit(parseInput(U) / parseInput(Z));
-
-                    result += `
-                        Strom I = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U </span><br>
-                            <span>Z</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${U}V </span><br>
-                            <span>${Z}&Omega;</span>
-                        </div> 
-                    = ${I}A <br>`;
-                }
-
-                if(!I && UR && R)
-                {
-                    I = formatPrefixNoUnit(parseInput(UR) / parseInput(R));
-
-                    result += `
-                        Strom I = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>R</sub> </span><br>
-                            <span>R</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UR}V </span><br>
-                            <span>${R}&Omega;</span>
-                        </div> 
-                    = ${I}A <br>`;
-                }
-
-                if(!I && UC && XC)
-                {
-                    I = formatPrefixNoUnit(parseInput(UC) / parseInput(XC));
-
-                    result += `
-                        Strom I = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>C</sub> </span><br>
-                            <span>X<sub>C</sub></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UC}V </span><br>
-                            <span>${XC}&Omega;</span>
-                        </div> 
-                    = ${I}A <br>`;
-                }
-
-                if(!I && UL && XL)
-                {
-                    I = formatPrefixNoUnit(parseInput(UL) / parseInput(XL));
-
-                    result += `
-                        Strom I = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>L</sub> </span><br>
-                            <span>X<sub>L</sub></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UL}V </span><br>
-                            <span>${XL}&Omega;</span>
-                        </div> 
-                    = ${I}A <br>`;
-                }
-
-                // === Widerstand R ===
-                if(!R && L && C && Q)
-                {
-                    R = formatPrefixNoUnit(1/parseInput(Q) * (Math.pow(parseInput(L) / parseInput(C), 0.5)));
-
                     result += `
                         Verlustwiderstand R<sub>v</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">Q</span>
+                            <span class="fraction-denominator">Q</span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>L</span><br>
-                            <span class="fraction-denumerator">C</span>
+                            <span class="fraction-denominator">C</span>
                         </div> )
                     =
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">${Q}</span>
+                            <span class="fraction-denominator">${Q}</span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denumerator">${C}F</span>
+                            <span class="fraction-denominator">${C}F</span>
                         </div> )
-                    = ${R}&Omega; <br>`;
+                    = ${formatWithPrefix(1/parseInput(Q) * (2 * Math.PI * Math.pow(parseInput(L) / parseInput(C), 0.5)), "&Omega;")}<br>`;
                 }
+            }
 
-                if(!R && Z && XC && XL)
+            if(!XL)
+            {
+                if(f && L)
                 {
-                    R = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(Z), 2) - Math.pow(parseInput(XL) - parseInput(XC), 2), 0.5));
-
                     result += `
-                    Verlustwiderstand R<sub>v</sub> = &radic;((Z)<sup>2</sup> - (X<sub>L</sub> - X<sub>C</sub>)<sup>2</sup>)
-                    =
-                        &radic;((${Z}&Omega;)<sup>2</sup> - (${XL}&Omega; - ${XC}&Omega;)<sup>2</sup>)
-                    = ${R}&Omega; <br>`;
+                    Blindwiderstand X<sub>L</sub> = 2&pi; &lowast; f &lowast; L
+                =
+                    2&pi; &lowast; ${f}Hz &lowast; ${L}H
+                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(L), "&Omega;")}<br>`;
                 }
+            }
 
-                if(!R && UR && I)
+            if(!XC)
+            {
+                if(f && C)
                 {
-                    R = formatPrefixNoUnit(parseInput(UR) / parseInput(I));
-
-                    result += `
-                        Verlustwiderstand R<sub>v</sub> = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>R</sub> </span><br>
-                            <span>I</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UR}V </span><br>
-                            <span>${IU}A</span>
-                        </div> 
-                    = ${R}&Omega; <br>`;
-                }
-
-                // === Blindwiderstand XL ===
-                if(!XL && f && L)
-                {
-                    XL = formatPrefixNoUnit(2 * Math.PI * parseInput(f) * parseInput(L));
-
-                    result += `
-                        Blindwiderstand X<sub>L</sub> = 2&pi; &lowast; f &lowast; L
-                    =
-                        2&pi; &lowast; ${f}Hz &lowast; ${L}H
-                    = ${XL}&Omega; <br>`;
-                }
-
-                if(!XL && Z && R && XC)
-                {
-                    XL = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(Z), 2) - Math.pow(parseInput(R), 2), 0.5) + parseInput(XC));
-
-                    result += `
-                    Blindwiderstand X<sub>L</sub> = &radic;(Z<sup>2</sup> - R<sup>2</sup>) + X<sub>C</sub>
-                    =
-                        &radic;((${Z}&Omega;)<sup>2</sup> + (${R}&Omega;)<sup>2</sup>) + ${XC}&Omega;
-                    = ${XL}&Omega; <br>`;
-                }
-
-                if(!XL && UL && I)
-                {
-                    XL = formatPrefixNoUnit(parseInput(UL) / parseInput(I));
-
-                    result += `
-                        Blindwiderstand X<sub>L</sub> = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>L</sub> </span><br>
-                            <span>I</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UL}V </span><br>
-                            <span>${I}A</span>
-                        </div> 
-                    = ${XL}&Omega; <br>`;
-                }
-
-                // === Blindwiderstand Xc ===
-                if(!XC && f && C)
-                {
-                    XC = formatPrefixNoUnit(1/(2 * Math.PI * parseInput(f) * parseInput(C)));
-
                     result += `
                         Blindwiderstand X<sub>C</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f &lowast; C</span>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
                         </div> 
-                    = ${XC}&Omega; <br>`;
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
                 }
+            }
 
-                if(!XC && Z && R && XL)
+            if(!L)
+            {
+                if(f && C)
                 {
-                    XC = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(Z), 2) - Math.pow(parseInput(R), 2), 0.5) - parseInput(XL));
-                    debugger;
-                    result += `
-                    Blindwiderstand X<sub>C</sub> = &radic;(Z<sup>2</sup> - R<sup>2</sup>) - X<sub>L</sub>
-                    =
-                        &radic;((${Z}&Omega;)<sup>2</sup> + (${R}&Omega;)<sup>2</sup>) - ${XL}&Omega;
-                    = ${XC}&Omega; <br>`;
-                }
-
-                if(!XC && UC && I)
-                {
-                    XC = formatPrefixNoUnit(parseInput(UC) / parseInput(I));
-
-                    result += `
-                        Blindwiderstand X<sub>C</sub> 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U<sub>C</sub> </span><br>
-                            <span>I</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${UC}V </span><br>
-                            <span>${I}A</span>
-                        </div> 
-                    = ${XC}A <br>`;
-                }
-
-                // === Impedanz Z ===
-                if(!Z && U && I)
-                {
-                    Z = formatPrefixNoUnit(parseInput(U) / parseInput(I));
-
-                    result += `
-                        Impedanz Z = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> U </span><br>
-                            <span>I</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator"> ${U}V </span><br>
-                            <span>${I}A</span>
-                        </div> 
-                    = ${Z}&Omega; <br>`;
-                }
-
-                if(!Z && R && XL && XC)
-                {
-                    Z = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(R), 2) + Math.pow(parseInput(XL) - parseInput(XC), 2), 0.5));
-
-                    result += `
-                    Impedanz Z = &radic;((R)<sup>2</sup> + (X<sub>L</sub> - X<sub>C</sub>)<sup>2</sup>)
-                    =
-                        &radic;((${R}&Omega;)<sup>2</sup> + (${XL}&Omega; - ${XC}&Omega;)<sup>2</sup>)
-                    = ${Z}&Omega; <br>`;
-                }
-
-                // === Induktivitaet L ===
-                if(!L && fr && C)
-                {
-                    L = formatPrefixNoUnit(1/(Math.pow(2 * Math.PI * parseInput(fr), 2) * parseInput(C)));
-
                     result += `
                         Induktivit&auml;t L = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; f<sub>r</sub>)<sup>2</sup> &lowast; C</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; f)<sup>2</sup> &lowast; C</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; ${fr}Hz)<sup>2</sup> &lowast; ${C}F</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${C}F</span>
                         </div> 
-                    = ${L}H <br>`;
+                    = ${formatWithPrefix(1/(Math.pow(2 * Math.PI * parseInput(f), 2) * parseInput(C)), "H")}<br>`;
                 }
 
-                if(!L && XL && f)
+                if(XL && f)
                 {
-                    L = formatPrefixNoUnit(parseInput(XL)/(2 * Math.PI * parseInput(f)));
-
                     result += `
                         Induktivit&auml;t L =
                         <div class ="fraction">
                             <span> X<sub>L</sub> </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f</span>
+                            <span class="fraction-denominator">2&pi; &lowast; f</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>${XL}&Omega;</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
                         </div> 
-                    = ${L}H <br>`;
+                    = ${formatWithPrefix(parseInput(XL)/(2 * Math.PI * parseInput(f)), "H")}<br>`;
                 }
 
-                if(!L && Q && R && C)
+                if(Q && R && C)
                 {
-                    L = formatPrefixNoUnit(Math.pow(parseInput(Q) * parseInput(R),2) * parseInput(C));
-
                     result += `
-                        Induktivit&auml;t L = (Q &lowast; R<sub>v</sub>)<sup>2</sup> &lowast; C
-                    =
-                        (${Q} &lowast; ${R}&Omega;)<sup>2</sup> &lowast; ${C}F
-                    = ${L}H <br>`;
+                    Induktivit&auml;t L = (Q &lowast; R<sub>v</sub>)<sup>2</sup> &lowast; C
+                =
+                    (${Q} &lowast; ${R}&Omega;)<sup>2</sup> &lowast; ${C}F
+                = ${formatWithPrefix(Math.pow(parseInput(Q) * parseInput(R),2) * parseInput(C), "H")}<br>`;
                 }
+            }
 
-                // === Guetefaktor Q ===
-                /*if(!Q && UL && U)
+            if(!Q)
+            {
+                if(!UL && U)
                 {
-                    Q = formatPrefixNoUnit(parseInput(UL) / parseInput(U));
-
                     result += `
                         (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
@@ -734,13 +532,11 @@
                             <span class="fraction-numerator"> ${UL}V </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${Q} <br>`;
+                    = ${formatWithPrefix(parseInput(UL) / parseInput(U), " ")}<br>`;
                 }
 
-                if(!Q && UC && U)
+                if(UC && U)
                 {
-                    Q = formatPrefixNoUnit(parseInput(UC) / parseInput(U));
-
                     result += `
                         (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
@@ -752,13 +548,11 @@
                             <span class="fraction-numerator"> ${UC}V </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${Q} <br>`;
+                    = ${formatWithPrefix(parseInput(UC) / parseInput(U), " ")}<br>`;
                 }
 
-                if(!Q && XL && R)
+                if(XL && R)
                 {
-                    Q = formatPrefixNoUnit(parseInput(XL) / parseInput(R));
-
                     result += `
                         (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
@@ -770,13 +564,11 @@
                             <span class="fraction-numerator"> ${XL}&Omega; </span><br>
                             <span>${R}&Omega;</span>
                         </div> 
-                    = ${Q} <br>`;
+                    = ${formatWithPrefix(parseInput(XL) / parseInput(R), " ")}<br>`;
                 }
 
-                if(!Q && XC && R)
+                if(XC && R)
                 {
-                    Q = formatPrefixNoUnit(parseInput(XC) / parseInput(R));
-
                     result += `
                         (Kreis) G&uuml;te Q =  = 
                         <div class ="fraction">
@@ -788,284 +580,161 @@
                             <span class="fraction-numerator"> ${XC}&Omega; </span><br>
                             <span>${R}&Omega;</span>
                         </div> 
-                    = ${Q} <br>`;
-                }*/
+                    = ${formatWithPrefix(parseInput(XC) / parseInput(R), " ")}<br>`;
+                }
 
-                if(!Q && L && C && R)
+                if(L && C && R)
                 {
-                    Q = formatPrefixNoUnit(1/parseInput(R) * (Math.pow(parseInput(L) / parseInput(C), 0.5)));
-
                     result += `
                         (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">R<sub>v</sub></span>
+                            <span class="fraction-denominator">R<sub>v</sub></span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>L</span><br>
-                            <span class="fraction-denumerator">C</span>
+                            <span class="fraction-denominator">C</span>
                         </div> )
                     =
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">${R}&Omega;</span>
+                            <span class="fraction-denominator">${R}&Omega;</span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denumerator">${C}F</span>
+                            <span class="fraction-denominator">${C}F</span>
                         </div> )
-                    = ${Q} <br>`;
+                    = ${formatWithPrefix(1/parseInput(R) * (Math.pow(parseInput(L) / parseInput(C), 0.5)), "")}<br>`;
                 }
 
-                if(!Q && fr && b)
+                if(f && b)
                 {
-                    Q = formatPrefixNoUnit(parseInput(fr) / parseInput(b));
-
                     result += `
-                        (Kreis) G&uuml;te Q = 
+                        (Kreis) G&uuml;te Q> =  = 
                         <div class ="fraction">
-                            <span class="fraction-numerator"> f<sub>r</sub> </span><br>
+                            <span class="fraction-numerator"> f<sub>g</sub> </span><br>
                             <span>b</span>
                         </div> 
                     =
                         <div class ="fraction">
-                            <span class="fraction-numerator"> ${fr}Hz </span><br>
+                            <span class="fraction-numerator"> ${f}Hz </span><br>
                             <span>${b}Hz</span>
                         </div> 
-                    = ${Q} <br>`;
+                    = ${formatWithPrefix(parseInput(f) / parseInput(b), " ")}<br>`;
                 }
+            }
 
-                // === Kapaziaet C ===
-                if(!C && fr && L)
+            if(!C)
+            {
+                if(f && L)
                 {
-                    C = formatPrefixNoUnit(1/(Math.pow(2 * Math.PI * parseInput(fr), 2) * parseInput(L)));
-
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; f<sub>r</sub>)<sup>2</sup> &lowast; L</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; f)<sup>2</sup> &lowast; L</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; ${fr}Hz)<sup>2</sup> &lowast; ${L}H</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${L}H</span>
                         </div> 
-                    = ${C}F <br>`;
+                    = ${formatWithPrefix(1/(Math.pow(2 * Math.PI * parseInput(f), 2) * parseInput(L)), "F")}<br>`;
                 }
 
-                if(!C && XC && f)
+                if(XC && f)
                 {
-                    C = formatPrefixNoUnit(1/(2 * Math.PI * parseInput(f) * parseInput(XL)));
-
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f &lowast; X<sub>C</sub></span>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; X<sub>C</sub></span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz &lowast; ${XL}&Omega;</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${XL}&Omega;</span>
                         </div> 
-                    = ${C}F <br>`;
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(XL)), "F")}<br>`;
                 }
 
-                if(!C && Q && R && L)
+                if(Q && R && L)
                 {
-                    C = formatPrefixNoUnit(parseInput(L)/(Math.pow(parseInput(Q) * parseInput(R), 2)));
-
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
                             <span> L </span><br>
-                            <span class="fraction-denumerator">(Q &lowast; R)<sup>2</sup></span>
+                            <span class="fraction-denominator">(Q &lowast; R)<sup>2</sup></span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denumerator">(${Q} &lowast; ${R}&Omega;)<sup>2</sup></span>
+                            <span class="fraction-denominator">(${Q} &lowast; ${R}&Omega;)<sup>2</sup></span>
                         </div> 
-                    = ${C}F <br>`;
+                    = ${formatWithPrefix(parseInput(L)/(Math.pow(parseInput(Q) * parseInput(R), 2)), "F")}<br>`;
                 }
+            }
 
-                // === Spannung U ===
-                if(!U && UR && UL && UC)
+            if(!U)
+            {
+                if(UR && UL && UC)
                 {
-                    U = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(UR), 2) + Math.pow(parseInput(UL) - parseInput(UC), 2), 0.5));
-
                     result += `
                     Spannung U<sub>ges</sub> = &radic;((U<sub>R</sub>)<sup>2</sup> + (U<sub>L</sub> - U<sub>C</sub>)<sup>2</sup>)
                     =
                         &radic;((${UR}V)<sup>2</sup> + (${UL}V - ${UC}V)<sup>2</sup>)
-                    = ${U}V <br>`;
+                    = ${formatWithPrefix(Math.pow(Math.pow(parseInput(UR), 2) + Math.pow(parseInput(UL) - parseInput(UC), 2), 0.5), "V")}<br>`;
                 }
+            }
 
-                if(!U && Z && I)
+            if(!f)
+            {
+                if(L && C)
                 {
-                    U = formatPrefixNoUnit(parseInput(Z) * parseInput(I));
-
-                    result += `
-                        Spannung U<sub>ges</sub> = Z &lowast; I
-                    =
-                        ${Z}&Omega; &lowast; ${I}A
-                    = ${U}V <br>`;
-                }
-
-                // === Spannung UR ===
-                if(!UR && U && UL && UC)
-                {
-                    UR = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(U), 2) - Math.pow(parseInput(UL) - parseInput(UC), 2), 0.5));
-
-                    result += `
-                    Spannung U<sub>ges</sub> = &radic;(U<sup>2</sup> - (U<sub>L</sub> - U<sub>C</sub>)<sup>2</sup>)
-                    =
-                        &radic;((${U}V)<sup>2</sup> + (${UL}V - ${UC}V)<sup>2</sup>)
-                    = ${UR}V <br>`;
-                }
-
-                if(!UR && R && I)
-                {
-                    UR = formatPrefixNoUnit(parseInput(R) * parseInput(I));
-
-                    result += `
-                        Spannung U<sub>R</sub> = R &lowast; I
-                    =
-                        ${R}&Omega; &lowast; ${I}A
-                    = ${UR}V <br>`;
-                }
-
-                // === Spannung Uc ===
-                if(!UC && U && UR && UL)
-                {
-                    UC = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(Z), 2) - Math.pow(parseInput(R), 2), 0.5) - parseInput(UL));
-
-                    result += `
-                    Spannung U<sub>L</sub> = &radic;(U<sup>2</sup> - (U<sub>R</sub>)<sup>2</sup>) - U<sub>L</sub>
-                    =
-                        &radic;((${U}V)<sup>2</sup> + (${UR}V)<sup>2</sup>) - ${UL}V
-                    = ${UC}V <br>`;
-                }
-
-                if(!UC && XC && I)
-                {
-                    UC = formatPrefixNoUnit(parseInput(XC) * parseInput(I));
-
-                    result += `
-                        Spannung U<sub>C</sub> = X<sub>C</sub> &lowast; I
-                    =
-                        ${XC}&Omega; &lowast; ${I}A
-                    = ${UC}V <br>`;
-                }
-
-                // === Spannung UL ===
-                if(!UL && U && UR && UC)
-                {
-                    UL = formatPrefixNoUnit(Math.pow(Math.pow(parseInput(U), 2) - Math.pow(parseInput(UR), 2), 0.5) + parseInput(UC));
-                    debugger;
-                    result += `
-                    Spannung U<sub>L</sub> = &radic;(U<sup>2</sup> - (U<sub>R</sub>)<sup>2</sup>) + U<sub>C</sub>
-                    =
-                        &radic;((${U}V)<sup>2</sup> - (${UR}V)<sup>2</sup>) + ${UC}V
-                    = ${UL}V <br>`;
-                }
-
-                if(!UL && XL && I)
-                {
-                    UL = formatPrefixNoUnit(parseInput(XL) * parseInput(I));
-
-                    result += `
-                        Spannung U<sub>L</sub> = X<sub>L</sub> &lowast; I
-                    =
-                        ${XL}&Omega; &lowast; ${I}A
-                    = ${UL}V <br>`;
-                }
-
-                // === Frequenz f ===
-                if(!f && XL && L)
-                {
-                    f = formatPrefixNoUnit(parseInput(XL)/(2 * Math.PI * parseInput(L)));
-
-                    result += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> X<sub>L</sub> </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; L</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${XL}&Omega;</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${L}H</span>
-                        </div> 
-                    = ${f}Hz <br>`;
-                }
-
-                if(!f && XC && C)
-                {
-                    f = formatPrefixNoUnit(1/(2 * Math.PI * parseInput(XC) * parseInput(C)));
-
-                    result += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; X<sub>C</sub> &lowast; C</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${XC}&Omega; &lowast; ${C}F</span>
-                        </div> 
-                    = ${f}Hz <br>`;
-                }
-                
-                // === Resonanzfrequenz fr ===
-                if(!fr && L && C)
-                {
-                    fr = formatPrefixNoUnit(1/(2 * Math.PI * Math.pow(parseInput(L) * parseInput(C), 0.5)));
-
                     result += `
                         Resonanzfrequenz f<sub>r</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &radic;(L &lowast; C)</span>
+                            <span class="fraction-denominator">2&pi; &radic;(L &lowast; C)</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &radic;(${L}H &lowast; ${C}F)</span>
+                            <span class="fraction-denominator">2&pi; &radic;(${L}H &lowast; ${C}F)</span>
                         </div> 
-                    = ${fr}Hz <br>`;
+                    = ${formatWithPrefix(1/(2 * Math.PI * Math.pow(parseInput(L) * parseInput(C), 0.5)), "Hz")}<br>`;
                 }
 
-                if(!fr && XL && I)
+                if(XL && L)
                 {
-                    fr = formatPrefixNoUnit(parseInput(XL) * parseInput(I));
-
                     result += `
-                        Resonanzfrequenz f<sub>r</sub> = Q &lowast; b
-                    =
-                        ${Q} &lowast; ${b}Hz
-                    = ${fr}Hz <br>`;
-                }
-
-                // === Bandbreite b ===
-                if(!b && fr && Q)
-                {
-                    b = formatPrefixNoUnit(parseInput(fr) / parseInput(Q));
-
-                    result += `
-                        Bandbreite b =
+                        Frequnez f = 
                         <div class ="fraction">
-                            <span class="fraction-numerator"> f<sub>r</sub> </span><br>
-                            <span>Q</span>
+                            <span> X<sub>L</sub> </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; L</span>
                         </div> 
                     =
                         <div class ="fraction">
-                            <span class="fraction-numerator"> ${fr}Hz </span><br>
-                            <span>${Q}</span>
+                            <span>${XL}&Omega;</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${L}H</span>
                         </div> 
-                    = ${b}Hz <br>`;
+                    = ${formatWithPrefix(parseInput(XL)/(2 * Math.PI * parseInput(L)), "Hz")}<br>`;
+                }
+
+                if(XC && C)
+                {
+                    result += `
+                        Blindwiderstand X<sub>C</sub> = 
+                        <div class ="fraction">
+                            <span> 1 </span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; X<sub>C</sub> &lowast; C</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span>1</span><br>
+                            <span class="fraction-denominator">2&pi; &lowast; ${XC}&Omega; &lowast; ${C}F</span>
+                        </div> 
+                    = ${formatWithPrefix(1/(2 * Math.PI * parseInput(XC) * parseInput(C)), "&Omega;")}<br>`;
                 }
             }
             
@@ -1109,20 +778,20 @@
                         Verlustwiderstand R<sub>v</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">Q</span>
+                            <span class="fraction-denominator">Q</span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>L</span><br>
-                            <span class="fraction-denumerator">C</span>
+                            <span class="fraction-denominator">C</span>
                         </div> )
                     =
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">${Q}</span>
+                            <span class="fraction-denominator">${Q}</span>
                         </div> &lowast; &radic;(
                         <div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denumerator">${C}F</span>
+                            <span class="fraction-denominator">${C}F</span>
                         </div> )
                     = ${formatWithPrefix(1/parseInput(Q) * (2 * Math.PI * Math.pow(parseInput(L) / parseInput(C), 0.5)), "&Omega;")}<br>`;
                 }
@@ -1148,12 +817,12 @@
                         Blindwiderstand X<sub>C</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f &lowast; C</span>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; C</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${C}F</span>
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(C)), "&Omega;")}<br>`;
                 }
@@ -1167,12 +836,12 @@
                         Induktivit&auml;t L = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; f)<sup>2</sup> &lowast; C</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; f)<sup>2</sup> &lowast; C</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${C}F</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${C}F</span>
                         </div> 
                     = ${formatWithPrefix(1/(Math.pow(2 * Math.PI * parseInput(f), 2) * parseInput(C)), "H")}<br>`;
                 }
@@ -1183,12 +852,12 @@
                         Induktivit&auml;t L =
                         <div class ="fraction">
                             <span> X<sub>L</sub> </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f</span>
+                            <span class="fraction-denominator">2&pi; &lowast; f</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>${XL}&Omega;</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(XL)/(2 * Math.PI * parseInput(f)), "H")}<br>`;
                 }
@@ -1276,13 +945,13 @@
                         R<sub>v</sub> &lowast; &radic;(
                         <div class ="fraction">
                             <span>L</span><br>
-                            <span class="fraction-denumerator">C</span>
+                            <span class="fraction-denominator">C</span>
                         </div> )
                     =
                         ${R}&Omega; &lowast; &radic;(
                         <div class ="fraction">
                             <span>${L}H</span><br>
-                            <span class="fraction-denumerator">${C}F</span>
+                            <span class="fraction-denominator">${C}F</span>
                         </div> )
                     = ${formatWithPrefix(parseInput(R) * (2 * Math.PI * Math.pow(parseInput(L) / parseInput(C), 0.5)), "")}<br>`;
                 }
@@ -1293,12 +962,12 @@
                         (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; b &radic;(C &lowast; L)</span>
+                            <span class="fraction-denominator">2&pi; &lowast; b &radic;(C &lowast; L)</span>
                         </div>
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${b}Hz &radic;(${C}F &lowast; ${L}H)</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${b}Hz &radic;(${C}F &lowast; ${L}H)</span>
                         </div> 
                     = ${formatWithPrefix(1/ (2 * Math.PI * parseInput(b) * Math.pow(parseInput(L) * parseInput(C), 0.5)), "")}<br>`;
                 }
@@ -1309,12 +978,12 @@
                         (Kreis) G&uuml;te Q = 
                         <div class ="fraction">
                             <span>f</span><br>
-                            <span class="fraction-denumerator">b</span>
+                            <span class="fraction-denominator">b</span>
                         </div>
                     =
                         <div class ="fraction">
                             <span>${f}Hz</span><br>
-                            <span class="fraction-denumerator">${b}Hz</span>
+                            <span class="fraction-denominator">${b}Hz</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(f) / parseInput(b), "")}<br>`;
                 }
@@ -1328,12 +997,12 @@
                         Kapazit&auml;t C = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; f)<sup>2</sup> &lowast; L</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; f)<sup>2</sup> &lowast; L</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${L}H</span>
+                            <span class="fraction-denominator">(2&pi; &lowast; ${f}Hz)<sup>2</sup> &lowast; ${L}H</span>
                         </div> 
                     = ${formatWithPrefix(1/(Math.pow(2 * Math.PI * parseInput(f), 2) * parseInput(L)), "F")}<br>`;
                 }
@@ -1344,12 +1013,12 @@
                         Kapazit&auml;t C = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; f &lowast; X<sub>C</sub></span>
+                            <span class="fraction-denominator">2&pi; &lowast; f &lowast; X<sub>C</sub></span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${f}Hz &lowast; ${XL}&Omega;</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz &lowast; ${XL}&Omega;</span>
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(f) * parseInput(XL)), "F")}<br>`;
                 }
@@ -1360,12 +1029,12 @@
                         Kapazit&auml;t C = 
                         <div class ="fraction">(
                             <span> Q </span><br>
-                            <span class="fraction-denumerator">R</span>
+                            <span class="fraction-denominator">R</span>
                         </div> )<sup>2</sup> &lowast; L
                     = (
                         <div class ="fraction">
                             <span>${Q}</span><br>
-                            <span class="fraction-denumerator">${R}&Omega;</span>
+                            <span class="fraction-denominator">${R}&Omega;</span>
                         </div> )<sup>2</sup> &lowast; ${L}H
                     = ${formatWithPrefix((Math.pow(parseInput(Q) / parseInput(f), 2) * parseInput(L)), "F")}<br>`;
                 }
@@ -1379,12 +1048,12 @@
                         Resonanzfrequenz f<sub>r</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &radic;(L &lowast; C)</span>
+                            <span class="fraction-denominator">2&pi; &radic;(L &lowast; C)</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &radic;(${L}H &lowast; ${C}F)</span>
+                            <span class="fraction-denominator">2&pi; &radic;(${L}H &lowast; ${C}F)</span>
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * Math.pow(parseInput(L) * parseInput(C), 0.5)), "Hz")}<br>`;
                 }
@@ -1395,12 +1064,12 @@
                         Frequnez f = 
                         <div class ="fraction">
                             <span> X<sub>L</sub> </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; L</span>
+                            <span class="fraction-denominator">2&pi; &lowast; L</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>${XL}&Omega;</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${L}H</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${L}H</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(XL)/(2 * Math.PI * parseInput(L)), "Hz")}<br>`;
                 }
@@ -1411,12 +1080,12 @@
                         Blindwiderstand X<sub>C</sub> = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; X<sub>C</sub> &lowast; C</span>
+                            <span class="fraction-denominator">2&pi; &lowast; X<sub>C</sub> &lowast; C</span>
                         </div> 
                     =
                         <div class ="fraction">
                             <span>1</span><br>
-                            <span class="fraction-denumerator">2&pi; &lowast; ${XC}&Omega; &lowast; ${C}F</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${XC}&Omega; &lowast; ${C}F</span>
                         </div> 
                     = ${formatWithPrefix(1/(2 * Math.PI * parseInput(XC) * parseInput(C)), "&Omega;")}<br>`;
                 }
