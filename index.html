@@ -64,7 +64,23 @@
             letter-spacing: 2px;
             text-transform: uppercase; /* Alle Buchstaben groß */
             margin-bottom: 20px;
+            padding: 5px;
         }
+
+        /* Wenn das Display schmaler als 768px (Tablet/Smartphone) wird */
+        @media (max-width: 768px) {
+            .background-section h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Wenn das Display sehr schmal ist (Smartphones) */
+        @media (max-width: 480px) {
+            .background-section h2 {
+                font-size: 1.4rem;
+            }
+        }
+
 
         /* Styling des neuen Inhalts */
         .content {
@@ -127,41 +143,43 @@
 
         footer {
             display: flex;
-            justify-content: space-around; /* Abstand zwischen den Listen */
-            flex-wrap: wrap; /* Ermöglicht Umbruch, falls der Platz nicht ausreicht */
-            /*background-color: #111;
-            color: white;*/
-            /*padding: 2rem;*/
-            /*text-align: center;  */
+            justify-content: space-around;
+            flex-wrap: wrap;
         }
 
-        /*footer links*/
         .footer-menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column; /* Stapelt die Listenelemente untereinander */
-        text-align: left; /* Links ausgerichtet */
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
         }
 
         .footer-menu li {
-            /*margin: 0 10px;*/
-  
-            margin: 5px 0; /* Abstand zwischen den Elementen */
+            margin: 5px 0;
         }
 
         .footer-menu li a {
             color: white;
-            
             text-decoration: none;
-           
-            /*background-color: #33333300;*/
-            /*border-radius: none;*/
         }
 
         .footer-menu li a:hover {
             text-decoration: underline;
+        }
+
+        /* Responsiv ab 700px Breite */
+        @media (max-width: 700px) {
+            footer {
+                flex-direction: column; /* Stapelt die <ul> untereinander */
+                align-items: center;    /* Zentriert die Listen horizontal */
+            }
+
+            .footer-menu {
+                margin-bottom: 20px; /* Abstand zwischen den Blöcken */
+                align-items: center;  /* Zentriert die Links innerhalb der Liste */
+            }
         }
         
     </style>
@@ -208,35 +226,81 @@
                 </div>
                 
                 <br>
-                
-                <!-- Neuer Inhalt -->
-                <div class="content">
-                    <p>Mit Elecalculate kannst du (fast) alles berechnen, was du in der Elektronik-Lehre ben&ouml;tigst.</p>
-                    <p>Keine Grantie f&uuml;r korrekte Berechnungen und Informationen.<br> Solltest du einen Fehler finden kannst du gerne eine Insta DM / E-Mail schreiben oder ein neues Issue auf GitHub er&ouml;ffnen. </p>
-                    <p>Die Formeln zur Berechnung einzelner Parameter basieren auf:</p>
-                    <ul>
-                        <li>Zastrow: Formeln der Elektronik</li>
-                        <li>Europa: Formeln Elektrotechnik PLUS+</li>
-                    </ul>
-                    
-                </div>
+                <div style="padding: 0 10px;"> <!-- top/bottom 0px, left/right 10px */-->
+                    <!-- Neuer Inhalt -->
+                    <div class="content">
+                        <p>Mit Elecalculate kannst du (fast) alles berechnen, was du in der Elektronik-Lehre ben&ouml;tigst.</p>
+                        <p>Keine Garantie f&uuml;r korrekte Berechnungen und Informationen.<br> </p>
+                        <p>Die Formeln zur Berechnung einzelner Parameter basieren auf:</p>
+                        <ul>
+                            <li>Zastrow: Formeln der Elektronik</li>
+                            <li>Europa: Formeln Elektrotechnik PLUS+</li>
+                        </ul>
+                        
+                    </div>
 
-                <!-- Instagram-Link -->
-                <div class="instagram-link">
-                    Folge Elecalculate auf SocialMedia:
-                    <br>
-                    <a href="https://www.instagram.com/elecalculate" target="_blank">
-                        <img src="Pictures/instagram-logo.jpg" alt="Instagram Logo">
+                    <!-- Support & Community Links -->
+                    <div class="instagram-link">
+                    <b>Fehler gefunden oder eine Idee für das Projekt?</b>
+                    <br /><br />
+                    <i>Der beste Weg für detailliertes Feedback <br>(Konto erforderlich):</i>
+                    <br />
+                    <!-- Jira Portal Link -->
+                    <a
+                        href="https://elecalculate.atlassian.net/servicedesk/customer/portal/1"
+                        target="_blank"
+                        style="vertical-align: middle"
+                    >
+                    <img
+                    src="Pictures/Jira-Service-Management_icon.png"
+                    alt="Jira Service Management Logo"
+                    style="height: 40px; width: 40px; vertical-align: middle;"
+                    />
                     </a>
+                    <a
+                        href="https://elecalculate.atlassian.net/servicedesk/customer/portal/1"
+                        target="_blank"
+                        style="
+                        text-decoration: none;
+                        color: inherit;
+                        vertical-align: middle;
+                        margin-left: 8px;
+                        "
+                    >
+                        Zum Support-Portal
+                    </a>
+
+                    <br /><br />
+                    <i>Die schnellste Methode ohne Registrierung <br>(wird autom. ein Ticket):</i>
+                    <br />
+                    <!-- Email Link -->
+                    <a href="mailto:contact@elecalculate.com" style="vertical-align: middle">
+                        <img src="Pictures/mail-logo.png" alt="E-Mail Logo" height="24" />
+                    </a>
+                    <a
+                        href="mailto:contact@elecalculate.com"
+                        style="
+                        text-decoration: none;
+                        color: inherit;
+                        vertical-align: middle;
+                        margin-left: 8px;
+                        "
+                    >
+                        Per E-Mail schreiben
+                    </a>
+
+                    <br /><br />
+                    <b>Folge dem Projekt auf Social-Media:</b>
+                    <br />
+                    <!-- Social Links -->
                     <a href="https://github.com/jaduruch/elecalculate" target="_blank">
-                        <img src="Pictures/github-logo.png" alt="Github Logo">
+                        <img src="Pictures/github-logo.png" alt="Github Logo" height="24" />
                     </a>
-                    <a href="mailto:elecalculate@gmail.com" target="_blank">
-                        <img src="Pictures/mail-logo.png" alt="Mail Logo">
+                    <a href="https://www.instagram.com/elecalculate" target="_blank">
+                        <img src="Pictures/instagram-logo.jpg" alt="Instagram Logo" height="24" />
                     </a>
-                </div>
-
-                                   
+                    </div>
+                </div>                   
             </main>
     
             <footer>
@@ -249,6 +313,7 @@
                     <li><a href="Allgemein/Glossar.html">Glossar</a></li>
                     <li><a href="Allgemein/Massvorsaetze.html">Massvorsa&auml;tze</a></li>
                     <li><a href="Allgemein/Werkstoffe.html">Werkstoffe</a></li>
+                    <li></li>
                 </ul><br>
 
                 <ul class="footer-menu">
@@ -262,6 +327,7 @@
                     <li><a href="Elektrotechnik/Schwingkreis.html">Schwingkreis</a></li>
                     <li><a href="Elektrotechnik/Verstaerkung_Daempfung.html">Verst&auml;rkung/D&auml;mpfung</a></li>
                     <li><a href="Elektrotechnik/Filter.html">Filter</a></li>
+                    <li></li>
                 </ul><br>
 
                 <ul class="footer-menu">
@@ -271,6 +337,7 @@
                     <li><a href="Elektronik/FETs.html">FETs</a></li>
                     <li><a href="Elektronik/OPV.html">OPVs</a></li>
                     <li><a href="Elektronik/Aktiv_Filter.html">Aktiv Filter</a></li>
+                    <li></li>
                 </ul><br>
 
                 <ul class="footer-menu">
@@ -280,6 +347,7 @@
                     <li><a href="HST/Gatter.html">Gatter</a></li>
                     <li><a href="HST/Objekt_Orientiert.html">Objekt Orientiert</a></li>
                     <li><a href="HST/C_Syntax.html">C-Syntax</a></li>
+                    <li></li>
                 </ul><br>
                 
             </footer>
@@ -289,5 +357,3 @@
     <script src="scripts.js"></script>
 </body>
 </html>
-
-<!-- Testing .exe Deployment: Part 8 :) -->

@@ -215,7 +215,8 @@
                     </div>
                     <div class="dropdown-content"> 
 
-                        <button class="img-button" type="button" onclick="toggleSelection(this, 'Serie')">
+                        <button class="img-button" type="button"
+                            onclick="toggleSelection(this, 'Serie'); showExampleSerieTriangle();">
                             <img src="../Pictures/Serie_RC.PNG" alt="Sinus">
                             <span>Serie</span>
                         </button>
@@ -345,6 +346,7 @@
                             <div style="
                                 display: flex;
                                 flex-direction: row;
+                                flex-wrap: wrap;
                                 align-items: flex-start;
                                 justify-content: center;
                                 gap: 40px;
@@ -352,7 +354,7 @@
                                 max-width: 900px;
                             ">
                                 <!-- Canvas for Widerstandsdreieck -->
-                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Widerstandsdreieck</h3>
                                     <canvas id="phasorCanvasImpedance" width="500" height="400"
                                         style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
@@ -364,7 +366,7 @@
                                     flex-direction: column;
                                     align-items: center;
                                     justify-content: flex-start;
-                                    height: 400px; /* Match canvas height */
+                                    flex: 1 1 260px;
                                 ">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
                                     <div id="phasorLegendImpedance"
@@ -376,23 +378,24 @@
                                             padding:18px 24px;
                                             min-width:220px;
                                             max-width:260px;
-                                            height: 100%;
                                             font-family:monospace;
                                             font-size:16px;
                                             box-sizing: border-box;
                                             display: flex;
                                             flex-direction: column;
                                             justify-content: flex-start;
+                                            width: 100%;
                                         ">
                                         <!-- Legend will be filled by JS -->
                                     </div>
                                 </div>
                             </div>
-
+                            
                             <!-- Spannungsdreieck + Legende -->
                             <div style="
                                 display: flex;
                                 flex-direction: row;
+                                flex-wrap: wrap;
                                 align-items: flex-start;
                                 justify-content: center;
                                 gap: 40px;
@@ -400,7 +403,7 @@
                                 max-width: 900px;
                             ">
                                 <!-- Canvas for Spannungsdreieck -->
-                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 300px;">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Spannungsdreieck</h3>
                                     <canvas id="phasorCanvasVoltage" width="500" height="400"
                                         style="background:#222; border:1px solid #666; border-radius: 16px; display:block; max-width: 100%;">
@@ -412,7 +415,7 @@
                                     flex-direction: column;
                                     align-items: center;
                                     justify-content: flex-start;
-                                    height: 400px; /* Match canvas height */
+                                    flex: 1 1 260px;
                                 ">
                                     <h3 style="color:#fff; text-align:center; margin-bottom: 10px;">Legende</h3>
                                     <div id="phasorLegendVoltage"
@@ -424,19 +427,20 @@
                                             padding:18px 24px;
                                             min-width:220px;
                                             max-width:260px;
-                                            height: 100%;
                                             font-family:monospace;
                                             font-size:16px;
                                             box-sizing: border-box;
                                             display: flex;
                                             flex-direction: column;
                                             justify-content: flex-start;
+                                            width: 100%;
                                         ">
                                         <!-- Legend will be filled by JS -->
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Spacer Div -->
                         <div style="height: 40px;"></div>
@@ -3088,39 +3092,6 @@
                         = ${formatWithPrefix(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    if(R && C && t && It)
-                    {
-                        // I = i(t)/(e^(-t/RC))
-                        result_RC += `
-                            Strom I = 
-                            <div class ="fraction">
-                                <span>i(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                -<div class ="fraction">
-                                    <span >t </span><br>
-                                    <span class="fraction-denumerator">R &lowast; C</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-                        = 
-                            <div class ="fraction">
-                                <span>${It}A</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                -<div class ="fraction">
-                                    <span >${t}s</span><br>
-                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-
-                        = ${formatWithPrefix(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
-                    }
-                }
-
                 if(!It)             // Momentanstrom i(t)
                 {
                     if(I && t && tau)
@@ -3139,24 +3110,6 @@
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
-
-                    if(I && t && R && C)
-                    {
-                        // I * (e ^(-t / RC))
-                        result_RC += `
-                            Strom i(t) = I &lowast; (e<sup> 
-                            -<div class ="fraction">
-                                <span>t</span><br>
-                                <span class="fraction-denumerator">R &lowast; C</span>
-                            </div></sup>)
-                        = ${I}A &lowast; (e<sup>
-                            <div class ="fraction">
-                                <span>- ${t}s</span><br>
-                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
-                            </div></sup>)
-                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
-                    }
-                }
 
                 if(!tau)
                 {
@@ -3261,39 +3214,6 @@
                         = ${formatWithPrefix(parseInput(Ut)/(1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
 
-                    if(R && C && t && Ut)
-                    {
-                        // U = u(t)/(1-e^(-t/RC))
-                        result_RC += `
-                            Spannung U = 
-                            <div class ="fraction">
-                                <span>u(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span>- t</span><br>
-                                    <span class="fraction-denumerator">R &lowast; C</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-                        = 
-                            <div class ="fraction">
-                                <span>${Ut}V</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span>- ${t}s</span><br>
-                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-
-                        = ${formatWithPrefix(parseInput(Ut)/(1 - Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
-                    }
-                }
-
                 if(!Ut)             // Momentanspannung u(t)
                 {
                     if(U && t && tau)
@@ -3312,32 +3232,9 @@
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
-
-
-
-
-                    if(U && t && R && C)
-                    {
-                        // u(t) = U * (1- e ^(-t / RC))
-                        result_RC += `
-                            Spannung u(t) = U &lowast; (1 - e<sup> 
-                            <div class ="fraction">
-                                <span>- t</span><br>
-                                <span class="fraction-denumerator">R &lowast; C</span>
-                            </div></sup>)
-                        = ${U}V &lowast; (1 - e<sup>
-                            <div class ="fraction">
-                                <span>- ${t}s</span><br>
-                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
-                            </div></sup>)
-                        = ${formatWithPrefix(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
-                    }
-                }
-
-
-                if(!t)              // Zeit t
-                {
-                    if(tau && U && Ut)
+                    
+                    // === Zeit t ===
+                    if(!t && tau && U && Ut)
                     {
                         // t = - tau * ln(1 - u(t)/U)
                         result_RC += `
@@ -3352,23 +3249,6 @@
                                 <span class="fraction-denumerator">${U}V</span>
                             </div>)
                         = ${formatWithPrefix(- parseInput(tau) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
-                    }
-
-                    if(R && C && U && Ut)
-                    {
-                        // t = - RC * ln(1 - u(t)/U)
-                        result_RC += `
-                            Zeit t = - R &lowast; C &lowast; ln(1 -
-                            <div class ="fraction">
-                                <span>u(t) </span><br>
-                                <span class="fraction-denumerator">U</span>
-                            </div>)
-                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(1 -
-                            <div class ="fraction">
-                                <span>${Ut}V</span><br>
-                                <span class="fraction-denumerator">${U}V</span>
-                            </div>)
-                        = ${formatWithPrefix(- parseInput(R) * parseInput(C) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
                     if(tau && I && It)
@@ -3388,29 +3268,10 @@
                         = ${formatWithPrefix( - parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
                     }
 
-                    if(R && C && I && It)
-                    {
-                        // t = - R * C * ln(i(t)/I)
-                        result_RC += `
-                            Zeit t = - R &lowast; C &lowast; ln( 
-                            <div class ="fraction">
-                                <span class="fraction-numerator">i(t) </span><br>
-                                <span>I</span>
-                            </div>)
-                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(
-                            <div class ="fraction">
-                                <span class="fraction-numerator">${It}A</span><br>
-                                <span>${I}A</span>
-                            </div>)
-                        = ${formatWithPrefix(-parseInput(R) * parseInput(C) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
-                    }
-                }
-
-            }else                    // entladen
-            {
-                if(!I)              // Speisestrom I
+                }else                    // entladen
                 {
-                    if(tau && t && It)
+                    // === Speisestrom I ===
+                    if(!I && tau && t && It)
                     {
                         // I = - i(t) / (e ^(-t/tau))
                         result_RC += `
@@ -3442,39 +3303,6 @@
                         = ${formatWithPrefix(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    if(R && C && t && It)
-                    {
-                        // I = - i(t)/(e^(-t/RC))
-                        result_RC += `
-                            Strom I = -
-                            <div class ="fraction">
-                                <span>i(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span >- t</span><br>
-                                    <span class="fraction-denumerator">R &lowast; C</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-                        = -
-                            <div class ="fraction">
-                                <span>${It}A</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span >- ${t}s</span><br>
-                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-
-                        = ${formatWithPrefix(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
-                    }
-                }
-
                 if(!It)             // Momentanstrom i(t)
                 {
                     if(I && t && tau)
@@ -3493,24 +3321,6 @@
                             </div></sup>)
                         = ${formatWithPrefix(-parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
-
-                    if(I && t && R && C)
-                    {
-                        // i(t) = - I * (e ^(-t / RC))
-                        result_RC += `
-                            Strom i(t) = I &lowast; (e<sup> 
-                            <div class ="fraction">
-                                <span>- t</span><br>
-                                <span class="fraction-denumerator">R &lowast; C</span>
-                            </div></sup>)
-                        = ${I}A &lowast; (e<sup>
-                            <div class ="fraction">
-                                <span>- ${t}s</span><br>
-                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
-                            </div></sup>)
-                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
-                    }
-                }
 
                 if(!tau)
                 {
@@ -3616,39 +3426,6 @@
                         = ${formatWithPrefix(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
 
-                    if(R && C && t && Ut)
-                    {
-                        // U = u(t)/(e^(-t/RC))
-                        result_RC += `
-                            Spannung U = 
-                            <div class ="fraction">
-                                <span>u(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span >- t</span><br>
-                                    <span class="fraction-denumerator">R &lowast; C</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-                        = 
-                            <div class ="fraction">
-                                <span>${Ut}V</span><br>
-                                <div style="border-top: 1px solid white"><span >e<sup>
-                                    
-                                <div class ="fraction">
-                                    <span>- ${t}s</span><br>
-                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
-                                </div>
-                                    
-                                </sup></span></div>
-                            </div>
-
-                        = ${formatWithPrefix(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
-                    }
-                }
-
                 if(!Ut)             // Momentanspannung u(t)
                 {
                     if(U && t && tau)
@@ -3667,27 +3444,6 @@
                             </div></sup>
                         = ${formatWithPrefix(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
-
-
-
-
-                    if(U && t && R && C)
-                    {
-                        // u(t) = U * e ^(-t / RC)
-                        result_RC += `
-                            Spannung u(t) = U &lowast; e<sup> 
-                            <div class ="fraction">
-                                <span>- t</span><br>
-                                <span class="fraction-denumerator">R &lowast; C</span>
-                            </div></sup>
-                        = ${U}V &lowast; e<sup>
-                            <div class ="fraction">
-                                <span>- ${t}s</span><br>
-                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
-                            </div></sup>
-                        = ${formatWithPrefix(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
-                    }
-                }
 
 
                 if(!t)              // Zeit t
@@ -3710,24 +3466,7 @@
                         = ${formatWithPrefix(parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
                     }
 
-                    if(R && C && I && It)
-                    {
-                        // t = R * C * ln(i(t)/I)
-                        result_RC += `
-                            Zeit t = R &lowast; C &lowast; ln( 
-                            <div class ="fraction">
-                                <span class="fraction-numerator">i(t) </span><br>
-                                <span>I</span>
-                            </div>)
-                        = ${R}&Omega; &lowast; ${C}F &lowast; ln(
-                            <div class ="fraction">
-                                <span class="fraction-numerator">${It}A</span><br>
-                                <span>${I}A</span>
-                            </div>)
-                        = ${formatWithPrefix(parseInput(R) * parseInput(C) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
-                    }
-                    
-                    if(tau && U && Ut)
+                    if(!t && tau && U && Ut)
                     {
                         // t = tau * ln(u(t)/U)
                         result_RC += `
@@ -3744,22 +3483,6 @@
                         = ${formatWithPrefix(- parseInput(tau) * Math.log((parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
-                    if(R && C && U && Ut)
-                    {
-                        // t = R * C * ln(u(t)/U)
-                        result_RC += `
-                            Zeit t = - R &lowast; C &lowast; ln(
-                            <div class ="fraction">
-                                <span class="fraction-numerator">u(t) </span><br>
-                                <span>U</span>
-                            </div>)
-                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(
-                            <div class ="fraction">
-                                <span class="fraction-numerator">${Ut}V</span><br>
-                                <span>${U}V</span>
-                            </div>)
-                        = ${formatWithPrefix(- parseInput(R) * parseInput(C) * Math.log((parseInput(Ut)/parseInput(U))), "s")}<br>`;
-                    }
                 }
             }
 
@@ -3843,67 +3566,157 @@
         }
 
         /**
-         * Draws a interactive Spannungsdreieck (voltage phasor triangle)
-         * for a series RC circuit, using main AC input fields: R_AC, C_AC, U_AC, f_AC.
+         * Draws an interactive impedance triangle (Widerstandsdreieck) for a series RC AC circuit.
          *
-         * @param {string} [canvasId="phasorCanvasVoltage"] - The canvas to draw on.
-         * @param {string} [legendId="phasorLegendVoltage"] - The legend div to fill.
+         * - The triangle is dynamically scaled to fill the canvas, with its origin in the upper left.
+         * - Uses the main AC input fields: R_AC, C_AC, f_AC (and optionally Xc_AC, Z_AC if present).
+         * - Calculates and visualizes R, Xc, Z, and the phase angle φ.
+         * - If input is incomplete, draws an example triangle and marks the legend accordingly.
+         * - Provides interactive highlighting for vectors and legend entries.
+         * - Includes a download icon for exporting the canvas as PNG.
+         * - Draws a watermark logo in the top right corner.
+         *
+         * @param {string} [canvasId="phasorCanvasImpedance"] - The ID of the canvas element to draw on.
+         * @param {string} [legendId="phasorLegendImpedance"] - The ID of the legend container to fill.
          */
-        function drawSpannungsdreieckSerie(canvasId = "phasorCanvasVoltage", legendId = "phasorLegendVoltage") {
+        function drawWiderstandsdreieckSerie(
+            canvasId = "phasorCanvasImpedance",
+            legendId = "phasorLegendImpedance"
+        ) {
             const canvas = document.getElementById(canvasId);
             const legendDiv = document.getElementById(legendId);
             if (!canvas || !legendDiv) return;
+
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // === 1. Parse and validate input values ===
-            const R = parseInput(document.getElementById("R_AC").value);
-            const C = parseInput(document.getElementById("C_AC").value);
-            const U = parseInput(document.getElementById("U_AC").value);
-            const f = parseInput(document.getElementById("f_AC").value);
+            // === 1. Parse all possible input values ===
+            let R = parseInput(document.getElementById("R_AC")?.value);
+            let C = parseInput(document.getElementById("C_AC")?.value);
+            let f = parseInput(document.getElementById("f_AC")?.value);
+            let Xc = null, Z = null;
 
-            if (!R || !C || !U || !f || R <= 0 || C <= 0 || U <= 0 || f <= 0 || !isFinite(R) || !isFinite(C) || !isFinite(U) || !isFinite(f)) {
-                ctx.fillStyle = "#e66";
-                ctx.font = "bold 22px sans-serif";
-                ctx.textAlign = "center";
-                ctx.fillText("Bitte R, C, U, f korrekt und > 0 eingeben!", canvas.width / 2, canvas.height / 2);
-                legendDiv.innerHTML = "";
-                return;
+            // Try to get Xc and Z from hidden/extra fields if present (for future flexibility)
+            if (document.getElementById("Xc_AC")) {
+                Xc = parseInput(document.getElementById("Xc_AC").value);
+            }
+            if (document.getElementById("Z_AC")) {
+                Z = parseInput(document.getElementById("Z_AC").value);
             }
 
-            // === 2. Calculate phasor values ===
-            const Xc = 1 / (2 * Math.PI * f * C);
-            const Z = Math.sqrt(R * R + Xc * Xc);
-            const phi = -Math.atan(Xc / R);
-            const I = U / Z;
-            const UR = I * R;
-            const UC = I * Xc;
-            const Uges = I * Z;
+            // === 2. Calculate missing values if possible ===
+            if (!Xc && C && f) Xc = 1 / (2 * Math.PI * f * C);
+            if (!Z && R && Xc) Z = Math.sqrt(R * R + Xc * Xc);
+            if (!R && Z && Xc) R = Math.sqrt(Z * Z - Xc * Xc);
+            if (!Xc && Z && R) Xc = Math.sqrt(Z * Z - R * R);
 
-            if (!isFinite(UR) || !isFinite(UC) || !isFinite(Uges) || Math.abs(UR) < 1e-9 || Math.abs(UC) < 1e-9 || Math.abs(Uges) < 1e-9) {
-                ctx.fillStyle = "#e66";
-                ctx.font = "bold 22px sans-serif";
-                ctx.textAlign = "center";
-                ctx.fillText("Werte ergeben kein sinnvolles Dreieck!", canvas.width / 2, canvas.height / 2);
-                legendDiv.innerHTML = "";
-                return;
+            // === 3. If not enough values, use example triangle ===
+            let isExample = false;
+            let missing = [];
+            if (!isFinite(R) || R <= 0) missing.push("R");
+            if (!isFinite(Xc) || Xc <= 0) missing.push("Xc");
+            if (!isFinite(Z) || Z <= 0) missing.push("Z");
+
+            if (missing.length > 0) {
+                R = 4; Xc = 3; Z = 5;
+                isExample = true;
             }
 
-            // === 3. Center and scale triangle ===
-            const margin = 60;
-            const plotWidth = canvas.width - 2 * margin;
-            const plotHeight = canvas.height - 2 * margin;
-            const maxSide = Math.max(Math.abs(UR), Math.abs(UC), Math.abs(Uges));
-            const scale = 0.7 * Math.min(plotWidth, plotHeight) / (maxSide * 1.2);
+            // === Comprehensive failsafe for degenerate/invalid triangle ===
+            {
+                // 1. All must be finite, numbers, and positive
+                if (
+                    !isFinite(R) || !isFinite(Xc) || !isFinite(Z) ||
+                    typeof R !== "number" || typeof Xc !== "number" || typeof Z !== "number" ||
+                    R <= 0 || Xc <= 0 || Z <= 0
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
 
-            // Center of triangle (origin)
-            const cx = canvas.width / 2 - (UR * scale) / 2;
-            const cy = canvas.height / 2 + (Math.abs(UC) * scale) / 2;
+                // 2. Pythagoras check (allowing for floating point error)
+                const pythagoras = Math.abs(Z * Z - (R * R + Xc * Xc));
+                if (pythagoras > 1e-6 * (R * R + Xc * Xc + Z * Z)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // 3. No side should be "too small" compared to the largest
+                const sides = [R, Xc, Z].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // 4. Angle check (optional, e.g. for φ)
+                const phi =  Math.atan2(Xc, R);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+            // 4. Move triangle origin to the upper left
+            const marginLeft = 80;
+            const marginTop = 80;
+            const plotWidth = canvas.width - marginLeft - 80;
+            const plotHeight = canvas.height - marginTop - 80;
+            const maxSide = Math.max(Math.abs(R), Math.abs(Xc), Math.abs(Z));
+            const scale = 0.90 * Math.min(
+                plotWidth / R,
+                plotHeight / Xc
+            );
+
+            // Origin at upper left margin
+            const cx = marginLeft;
+            const cy = marginTop;
 
             // --- Store vector/arc positions for tooltips ---
             const hitboxes = [];
 
-            // === 4. Draw axes (dotted, labeled, full width/height) ===
+            // === 5. Draw axes (dotted, labeled, full width/height) ===
             ctx.save();
             ctx.strokeStyle = "#ccc";
             ctx.lineWidth = 2;
@@ -3929,54 +3742,92 @@
             ctx.fillText("y", cx + 10, 24);
             ctx.restore();
 
-            // === 5. Define visually distinct colors ===
-            // Use site orange for UR/R, lighter for UC/Xc, darker for U/Z, red for I, yellow for φ
-            const colorUR = "#0070C0";  // normal blue (same as in style.css)
-            const colorUC = "#2020FF"; // dark blue
-            const colorU  = "#A0A0FF"; // light blue
-            const colorI  = "#C00000"; // dark red (dashed)
-            const colorPhi = "#FFFFFF"; // white
+            // === 6. Define visually distinct colors ===
+            const colorR   = "#FF9515";   // site orange
+            const colorXc  = "#ffb029";   // lighter orange
+            const colorZ   = "#e15e00";   // darker orange
+            const colorPhi = "#FFFFFF";   // white
 
-            // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
-            // Right angle marker at (cx + UR * scale, cy)
-            drawRightAngleMarker(ctx, cx + UR * scale, cy, 1, 1);
+            // === 7. Draw triangle vectors with arrowheads and store hitboxes ===
+            // R (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + R * scale,
+                cy,
+                colorR,
+                phasorHoveredKey === "R" ? 6 : 3,
+                phasorHoveredKey === "R"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "R",
+                x1: cx,
+                y1: cy,
+                x2: cx + R * scale,
+                y2: cy,
+            });
 
+            // Xc (vertical, down)
+            drawArrow(
+                ctx,
+                cx + R * scale,
+                cy,
+                cx + R * scale,
+                cy + Xc * scale,
+                colorXc,
+                phasorHoveredKey === "Xc" ? 6 : 3,
+                phasorHoveredKey === "Xc"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Xc",
+                x1: cx + R * scale,
+                y1: cy,
+                x2: cx + R * scale,
+                y2: cy + Xc * scale,
+            });
 
-            // // I (red, same as U_R direction, dashed)
-            // drawArrow(ctx, cx, cy - 30, cx + UR * scale, cy - 30, colorI, phasorHoveredKey === "I" ? 5 : 2, phasorHoveredKey === "I", true);
-            drawArrow(ctx, cx, cy, cx + UR * scale * 1.25 , cy, colorI, phasorHoveredKey === "I" ? 4 : 2, phasorHoveredKey === "I");
-            // hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy - 30, x2: cx + UR * scale, y2: cy - 30});
-            hitboxes.push({type: "vector", key: "I", x1: cx, y1: cy, x2: cx + UR * scale * 1.25, y2: cy});
+            // Z (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + R * scale,
+                cy + Xc * scale,
+                colorZ,
+                phasorHoveredKey === "Z" ? 6 : 3,
+                phasorHoveredKey === "Z"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "Z",
+                x1: cx,
+                y1: cy,
+                x2: cx + R * scale,
+                y2: cy + Xc * scale,
+            });
 
-            // U_R (horizontal, right)
-            drawArrow(ctx, cx, cy, cx + UR * scale, cy, colorUR, phasorHoveredKey === "UR" ? 6 : 3, phasorHoveredKey === "UR");
-            hitboxes.push({type: "vector", key: "UR", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy});
+            // Right angle marker at (cx + R * scale, cy)
+            drawRightAngleMarker(ctx, cx + R * scale, cy, 1, 1);
 
-            // U_C (vertical, down)
-            drawArrow(ctx, cx + UR * scale, cy, cx + UR * scale, cy + UC * scale, colorUC, phasorHoveredKey === "UC" ? 6 : 3, phasorHoveredKey === "UC");
-            hitboxes.push({type: "vector", key: "UC", x1: cx + UR * scale, y1: cy, x2: cx + UR * scale, y2: cy + UC * scale});
-
-            // U (hypotenuse)
-            drawArrow(ctx, cx, cy, cx + UR * scale, cy + UC * scale, colorU, phasorHoveredKey === "U" ? 6 : 3, phasorHoveredKey === "U");
-            hitboxes.push({type: "vector", key: "U", x1: cx, y1: cy, x2: cx + UR * scale, y2: cy + UC * scale});
-
-            
-
-            
-
-            // === 7. Draw phase angle φ at origin ===
+            // === 8. Draw phase angle φ at origin ===
+            const phi = Math.atan2(Xc, R);
             ctx.save();
             ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
             ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
             ctx.beginPath();
-            const arcAngle = Math.atan2(UC, UR);
-            if (arcAngle < 0) {
-                ctx.arc(cx, cy, 36, 0, arcAngle, true);
-            } else {
-                ctx.arc(cx, cy, 36, 0, arcAngle, false);
-            }
+            ctx.arc(cx, cy, 36, 0, phi, false);
             ctx.stroke();
-            hitboxes.push({type: "arc", key: "phi", cx, cy, r: 36, angle: arcAngle});
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: phi,
+            });
             ctx.restore();
 
             // Draw origin dot
@@ -3985,24 +3836,494 @@
             ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
             ctx.fill();
 
-            // === 8. Fill legend/info box beside the canvas, with color coding ===
+            // === 9. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = -phi * 180 / Math.PI;
             const legend = [
-                /*{ key: "R",   label: `R = ${formatSI(R, "Ω")}`, color: "#fff" },
-                { key: "C",   label: `C = ${formatSI(C, "F")}`, color: "#fff" },
-                { key: "f",   label: `f = ${formatSI(f, "Hz")}`, color: "#fff" },
-                { key: "Xc",  label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: "#fff" },
-                { key: "Z",   label: `Z = ${formatSI(Z, "Ω")}`, color: "#fff" },*/
+                { key: "R", label: `R = ${formatSI(R, "Ω")}`, color: colorR },
+                { key: "Xc", label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorXc },
+                { key: "Z", label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
+                {
+                    key: "phi",
+                    label: `φ = ${phiDeg.toFixed(2)}°`,
+                    color: colorPhi,
+                },
+            ];
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
+
+            // === 10. Tooltip/hover system: highlight legend and vector on canvas hover ===
+            canvas.onmousemove = function (e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                let found = null;
+                for (const h of hitboxes) {
+                    if (h.type === "vector") {
+                        const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
+                        if (dist < 5) {
+                            found = h.key;
+                            break;
+                        }
+                    } else if (h.type === "arc") {
+                        const dx = mx - h.cx,
+                            dy = my - h.cy;
+                        const r = Math.sqrt(dx * dx + dy * dy);
+                        let a = Math.atan2(dy, dx);
+                        if (a < 0) a += 2 * Math.PI;
+                        let start = 0;
+                        let end = h.angle;
+                        if (end < 0) end += 2 * Math.PI;
+                        let inArc = false;
+                        if (start <= end) {
+                            inArc = a >= start && a <= end;
+                        } else {
+                            inArc = a >= start || a <= end;
+                        }
+                        if (Math.abs(r - h.r) < 10 && inArc) {
+                            found = h.key;
+                            break;
+                        }
+                    }
+                }
+                phasorHoveredKey = found;
+                drawWiderstandsdreieckSerie(canvasId, legendId); // Redraw with highlight
+                for (const div of legendDiv.children) {
+                    if (div.dataset.key === found) {
+                        div.style.background = "#444";
+                        div.style.fontWeight = "bold";
+                    } else {
+                        div.style.background = "";
+                        div.style.fontWeight = "";
+                    }
+                }
+            };
+            canvas.onmouseleave = function () {
+                phasorHoveredKey = null;
+                drawWiderstandsdreieckSerie(canvasId, legendId);
+                for (const div of legendDiv.children) {
+                    div.style.background = "";
+                    div.style.fontWeight = "";
+                }
+            };
+
+            // === 11. Legend hover highlights vector in canvas ===
+            for (const div of legendDiv.children) {
+                div.onmouseenter = function () {
+                    phasorHoveredKey = this.dataset.key;
+                    drawWiderstandsdreieckSerie(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = d === this ? "#444" : "";
+                        d.style.fontWeight = d === this ? "bold" : "";
+                    }
+                };
+                div.onmouseleave = function () {
+                    phasorHoveredKey = null;
+                    drawWiderstandsdreieckSerie(canvasId, legendId);
+                    for (const d of legendDiv.children) {
+                        d.style.background = "";
+                        d.style.fontWeight = "";
+                    }
+                };
+            }
+
+            // Draw the icon and store its area
+            const downloadIconArea = drawDownloadIcon(ctx, canvas);
+
+            // Add a click handler (only once)
+            if (!canvas._downloadHandlerAdded) {
+                canvas.addEventListener("click", function (e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX;
+                    const my = (e.clientY - rect.top) * scaleY;
+                    if (
+                        mx >= downloadIconArea.x &&
+                        mx <= downloadIconArea.x + downloadIconArea.size &&
+                        my >= downloadIconArea.y &&
+                        my <= downloadIconArea.y + downloadIconArea.size
+                    ) {
+                        exportCanvasAsPNG(canvas.id);
+                    }
+                });
+                canvas._downloadHandlerAdded = true;
+            }
+
+            // 12. Watermark logo (top right)
+            drawWatermark(ctx, canvas);
+        }
+        
+        /**
+         * Draws an interactive voltage phasor triangle (Spannungsdreieck) for a series RC AC circuit.
+         *
+         * - The triangle is dynamically scaled to fill the canvas, with its origin in the upper left.
+         * - Accepts any reasonable combination of: R, Xc, C, f, U, Uc, Ur as input.
+         * - Calculates and visualizes UR, UC, U, I, and the phase angle φ.
+         * - If input is incomplete, draws an example triangle and marks the legend accordingly.
+         * - Provides interactive highlighting for vectors and legend entries.
+         * - Includes a download icon for exporting the canvas as PNG.
+         * - Draws a watermark logo in the top right corner.
+         *
+         * @param {string} [canvasId="phasorCanvasVoltage"] - The ID of the canvas element to draw on.
+         * @param {string} [legendId="phasorLegendVoltage"] - The ID of the legend container to fill.
+         */
+        function drawSpannungsdreieckSerie(
+            canvasId = "phasorCanvasVoltage",
+            legendId = "phasorLegendVoltage"
+        ) {
+            const canvas = document.getElementById(canvasId);
+            const legendDiv = document.getElementById(legendId);
+            if (!canvas || !legendDiv) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // === 1. Parse all possible input values ===
+            let R = parseInput(document.getElementById("R_AC")?.value);
+            let C = parseInput(document.getElementById("C_AC")?.value);
+            let f = parseInput(document.getElementById("f_AC")?.value);
+            let U = parseInput(document.getElementById("U_AC")?.value);
+            let Xc = parseInput(document.getElementById("Xc_AC")?.value);
+            let Uc = parseInput(document.getElementById("Uc_AC")?.value);
+            let Ur = parseInput(document.getElementById("Ur_AC")?.value);
+
+            // === 2. Try to calculate missing values ===
+            // Calculate Xc if possible
+            if (!Xc && C && f) Xc = 1 / (2 * Math.PI * f * C);
+            if (!C && Xc && f) C = 1 / (2 * Math.PI * f * Xc);
+            if (!f && Xc && C) f = 1 / (2 * Math.PI * Xc * C);
+
+            // Try to get I (current)
+            let I = null;
+            if (U && R && Xc) {
+                // All voltages from total voltage
+                const Z = Math.sqrt(R * R + Xc * Xc);
+                I = U / Z;
+            } else if (Uc && Xc) {
+                I = Uc / Xc;
+            } else if (Ur && R) {
+                I = Ur / R;
+            }
+
+            // Calculate missing voltages
+            if (!Uc && I && Xc) Uc = I * Xc;
+            if (!Ur && I && R) Ur = I * R;
+            if (!U && Ur !== null && Uc !== null) U = Math.sqrt(Ur * Ur + Uc * Uc);
+
+            // Calculate phase angle
+            let phi = null;
+            if (R && Xc) phi = -Math.abs(Math.atan(Xc / R));
+
+            // === 3. Fallback to example if not enough data ===
+            let isExample = false;
+            let missing = [];
+            if (!isFinite(R) || R <= 0) missing.push("R");
+            if (!isFinite(Xc) || Xc <= 0) missing.push("Xc");
+            if (!isFinite(U) || U <= 0) missing.push("U");
+
+            if (missing.length > 0) {
+                // Use example values
+                R = 4;
+                Xc = 3;
+                U = 10;
+                const Z = Math.sqrt(R * R + Xc * Xc);
+                I = U / Z;
+                Ur = I * R;
+                Uc = I * Xc;
+                phi = -Math.atan(Xc / R);
+                isExample = true;
+            }
+
+            // === Comprehensive failsafe for degenerate/invalid voltage triangle ===
+            {
+                if (
+                    !isFinite(Ur) || !isFinite(Uc) || !isFinite(U) ||
+                    typeof Ur !== "number" || typeof Uc !== "number" || typeof U !== "number" ||
+                    Math.abs(Ur) < 1e-9 || Math.abs(Uc) < 1e-9 || Math.abs(U) < 1e-9
+                ) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                const pythagoras = Math.abs(U * U - (Ur * Ur + Uc * Uc));
+                if (pythagoras > 1e-6 * (Ur * Ur + Uc * Uc + U * U)) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Werte ergeben kein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                const sides = [Ur, Uc, U].map(Math.abs);
+                const minSide = Math.min(...sides);
+                const maxSide = Math.max(...sides);
+                if (minSide / maxSide < 0.01) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Dreieck ist zu spitz oder zu flach!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+
+                // Angle check (optional)
+                const phi = -Math.atan2(Uc, Ur);
+                const phiDeg = phi * 180 / Math.PI;
+                if (Math.abs(phiDeg) < 1 || Math.abs(phiDeg) > 89) {
+                    ctx.save();
+                    ctx.fillStyle = "#e66";
+                    ctx.font = "bold 22px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Winkel ist zu klein oder zu groß für ein sinnvolles Dreieck!",
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+                    ctx.restore();
+                    legendDiv.innerHTML = "";
+                    return;
+                }
+            }
+
+            // === 4. Check for degenerate triangle ===
+            if (
+                !isFinite(Ur) || !isFinite(Uc) || !isFinite(U) ||
+                Math.abs(Ur) < 1e-9 || Math.abs(Uc) < 1e-9 || Math.abs(U) < 1e-9
+            ) {
+                ctx.fillStyle = "#e66";
+                ctx.font = "bold 22px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(
+                    "Werte ergeben kein sinnvolles Dreieck!",
+                    canvas.width / 2,
+                    canvas.height / 2
+                );
+                legendDiv.innerHTML = "";
+                return;
+            }
+
+            // === 5. Move triangle origin to the upper left and scale dynamically ===
+            const marginLeft = 80;
+            const marginTop = 80;
+            const marginRight = 80;
+            const marginBottom = 80;
+
+            const plotWidth = canvas.width - marginLeft - marginRight;
+            const plotHeight = canvas.height - marginTop - marginBottom;
+
+            // Dynamically scale to fit the triangle
+            const scale = 0.95 * Math.min(
+                plotWidth / Math.abs(Ur),
+                plotHeight / Math.abs(Uc)
+            );
+
+            // Origin at upper left margin
+            const cx = marginLeft;
+            const cy = marginTop;
+
+            // --- Store vector/arc positions for tooltips ---
+            const hitboxes = [];
+
+            // === 6. Draw axes (dotted, labeled, full width/height) ===
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(canvas.width, cy);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // x label
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.fillText("x", canvas.width - 10, cy - 10);
+            // y label
+            ctx.textAlign = "left";
+            ctx.fillText("y", cx + 10, 24);
+            ctx.restore();
+
+            // === 7. Define visually distinct colors ===
+            const colorUR = "#0070C0";  // normal blue
+            const colorUC = "#2020FF";  // dark blue
+            const colorU  = "#A0A0FF";  // light blue
+            const colorI  = "#C00000";  // dark red (dashed)
+            const colorPhi = "#FFFFFF"; // white
+
+            // === 8. Draw triangle vectors with arrowheads and store hitboxes ===
+            // Right angle marker at (cx + UR * scale, cy)
+            drawRightAngleMarker(ctx, cx + Ur * scale, cy, 1, 1);
+
+            // I (red, parallel to U_R, slightly above, 1.25x longer, dashed)
+            const I_offset = 25; // pixels above U_R
+            drawArrow(
+                ctx,
+                cx,
+                cy - I_offset,
+                cx + Ur * scale * 1.25,
+                cy - I_offset,
+                colorI,
+                phasorHoveredKey === "I" ? 5 : 2,
+                phasorHoveredKey === "I",
+                true // dashed
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "I",
+                x1: cx,
+                y1: cy - I_offset,
+                x2: cx + Ur * scale * 1.25,
+                y2: cy - I_offset
+            });
+
+            // U_R (horizontal, right)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ur * scale,
+                cy,
+                colorUR,
+                phasorHoveredKey === "UR" ? 6 : 3,
+                phasorHoveredKey === "UR"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "UR",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ur * scale,
+                y2: cy
+            });
+
+            // U_C (vertical, down)
+            drawArrow(
+                ctx,
+                cx + Ur * scale,
+                cy,
+                cx + Ur * scale,
+                cy + Uc * scale,
+                colorUC,
+                phasorHoveredKey === "UC" ? 6 : 3,
+                phasorHoveredKey === "UC"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "UC",
+                x1: cx + Ur * scale,
+                y1: cy,
+                x2: cx + Ur * scale,
+                y2: cy + Uc * scale
+            });
+
+            // U (hypotenuse)
+            drawArrow(
+                ctx,
+                cx,
+                cy,
+                cx + Ur * scale,
+                cy + Uc * scale,
+                colorU,
+                phasorHoveredKey === "U" ? 6 : 3,
+                phasorHoveredKey === "U"
+            );
+            hitboxes.push({
+                type: "vector",
+                key: "U",
+                x1: cx,
+                y1: cy,
+                x2: cx + Ur * scale,
+                y2: cy + Uc * scale
+            });
+
+            // === 9. Draw phase angle φ at origin ===
+            ctx.save();
+            ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
+            ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
+            ctx.beginPath();
+            const arcAngle = Math.atan2(Uc, Ur);
+            ctx.arc(cx, cy, 36, 0, arcAngle, arcAngle < 0);
+            ctx.stroke();
+            hitboxes.push({
+                type: "arc",
+                key: "phi",
+                cx,
+                cy,
+                r: 36,
+                angle: arcAngle
+            });
+            ctx.restore();
+
+            // Draw origin dot
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // === 10. Fill legend/info box beside the canvas, with color coding ===
+            const phiDeg = phi * 180 / Math.PI;
+            const legend = [
                 { key: "I",   label: `I = ${formatSI(I, "A")}`, color: colorI },
                 { key: "U",   label: `U = ${formatSI(U, "V")}`, color: colorU },
-                { key: "UR",  label: `U<sub>R</sub> = ${formatSI(UR, "V")}`, color: colorUR },
-                { key: "UC",  label: `U<sub>C</sub> = ${formatSI(UC, "V")}`, color: colorUC },
-                { key: "phi", label: `&phi; = ${(phi * 180 / Math.PI).toFixed(2)}°`, color: colorPhi }
+                { key: "UR",  label: `U<sub>R</sub> = ${formatSI(Ur, "V")}`, color: colorUR },
+                { key: "UC",  label: `U<sub>C</sub> = ${formatSI(Uc, "V")}`, color: colorUC },
+                { key: "phi", label: `&phi; = ${phiDeg.toFixed(2)}°`, color: colorPhi }
             ];
-            legendDiv.innerHTML = legend.map(
-                entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
-            ).join("");
+            legendDiv.innerHTML =
+                (isExample
+                    ? `<i style='color:#aaa'>
+                        Beispiel-Dreieck:<br>
+                        Bitte oben Werte eingeben und auf <b>Berechnen</b>!<br>
+                        Fehlend/ungültig: <b>${missing.join(", ")}</b>
+                    </i><br><br>`
+                    : ""
+                ) +
+                legend.map(
+                    entry => `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
+                ).join("");
 
-            // === 9. Tooltip/hover system: highlight legend and vector on canvas hover ===
+            // === 11. Tooltip/hover system: highlight legend and vector on canvas hover ===
             canvas.onmousemove = function(e) {
                 const rect = canvas.getBoundingClientRect();
                 const scaleX = canvas.width / rect.width;
@@ -4054,7 +4375,7 @@
                 }
             };
 
-            // === 10. Legend hover highlights vector in canvas ===
+            // === 12. Legend hover highlights vector in canvas ===
             for (const div of legendDiv.children) {
                 div.onmouseenter = function() {
                     phasorHoveredKey = this.dataset.key;
@@ -4097,343 +4418,22 @@
                 canvas._downloadHandlerAdded = true;
             }
 
-            // 11. Watermark logo (top right)
+            // 13. Watermark logo (top right)
             drawWatermark(ctx, canvas);
         }
 
-        /**
-         * Draws a interactive Widerstandsdreieck (impedance triangle)
-         * for a series RC circuit, using main AC input fields: R_AC, C_AC, f_AC.
-         *
-         * @param {string} [canvasId="phasorCanvasImpedance"] - The canvas to draw on.
-         * @param {string} [legendId="phasorLegendImpedance"] - The legend div to fill.
-         */
-        function drawWiderstandsdreieckSerie(
-        canvasId = "phasorCanvasImpedance",
-        legendId = "phasorLegendImpedance"
-        ) {
-        const canvas = document.getElementById(canvasId);
-        const legendDiv = document.getElementById(legendId);
-        if (!canvas || !legendDiv) return;
+        function showExampleSerieTriangle() {
+            // Clear the input fields
+            document.getElementById("R_AC").value = "";
+            document.getElementById("C_AC").value = "";
+            document.getElementById("U_AC").value = "";
+            document.getElementById("f_AC").value = "";
 
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // === 1. Parse and validate input values ===
-        const R = parseInput(document.getElementById("R_AC").value);
-        const C = parseInput(document.getElementById("C_AC").value);
-        const f = parseInput(document.getElementById("f_AC").value);
-
-        if (
-            !R ||
-            !C ||
-            !f ||
-            R <= 0 ||
-            C <= 0 ||
-            f <= 0 ||
-            !isFinite(R) ||
-            !isFinite(C) ||
-            !isFinite(f)
-        ) {
-            ctx.fillStyle = "#e66";
-            ctx.font = "bold 22px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText(
-            "Bitte R, C, f korrekt und > 0 eingeben!",
-            canvas.width / 2,
-            canvas.height / 2
-            );
-            legendDiv.innerHTML = "";
-            return;
+            // Redraw the triangle (will use example values)
+            drawWiderstandsdreieckSerie("phasorCanvasImpedance", "phasorLegendImpedance");
+            drawSpannungsdreieckSerie("phasorCanvasVoltage", "phasorLegendVoltage");
         }
 
-        // === 2. Calculate triangle values ===
-        const Xc = 1 / (2 * Math.PI * f * C);
-        const Z = Math.sqrt(R * R + Xc * Xc);
-        const phi = -Math.atan(Xc / R);
-
-        if (
-            !isFinite(R) ||
-            !isFinite(Xc) ||
-            !isFinite(Z) ||
-            Math.abs(R) < 1e-9 ||
-            Math.abs(Xc) < 1e-9 ||
-            Math.abs(Z) < 1e-9
-        ) {
-            ctx.fillStyle = "#e66";
-            ctx.font = "bold 22px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText(
-            "Werte ergeben kein sinnvolles Dreieck!",
-            canvas.width / 2,
-            canvas.height / 2
-            );
-            legendDiv.innerHTML = "";
-            return;
-        }
-
-        // === 3. Center and scale triangle ===
-        const margin = 60;
-        const plotWidth = canvas.width - 2 * margin;
-        const plotHeight = canvas.height - 2 * margin;
-        const maxSide = Math.max(Math.abs(R), Math.abs(Xc), Math.abs(Z));
-        const scale = (0.7 * Math.min(plotWidth, plotHeight)) / (maxSide * 1.2);
-
-        // Center of triangle (origin)
-        const cx = canvas.width / 2 - (R * scale) / 2;
-        const cy = canvas.height / 2 + (Math.abs(Xc) * scale) / 2;
-
-        // --- Store vector/arc positions for tooltips ---
-        const hitboxes = [];
-
-        // === 4. Draw axes (dotted, labeled, full width/height) ===
-        ctx.save();
-        ctx.strokeStyle = "#ccc";
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 6]);
-        // x-axis
-        ctx.beginPath();
-        ctx.moveTo(0, cy);
-        ctx.lineTo(canvas.width, cy);
-        ctx.stroke();
-        // y-axis
-        ctx.beginPath();
-        ctx.moveTo(cx, 0);
-        ctx.lineTo(cx, canvas.height);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        // x label
-        ctx.font = "bold 20px Arial";
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "right";
-        ctx.fillText("x", canvas.width - 10, cy - 10);
-        // y label
-        ctx.textAlign = "left";
-        ctx.fillText("y", cx + 10, 24);
-        ctx.restore();
-
-        // === 5. Define visually distinct colors ===
-        const colorR = getComputedStyle(document.documentElement)
-            .getPropertyValue("--Orange")
-            .trim() || "#FFA500";
-        const colorXc = "#FFD580"; // lighter orange
-        const colorZ = "#00cc66"; // green
-        const colorPhi = "#FFD700"; // gold/yellow
-
-        // === 6. Draw triangle vectors with arrowheads and store hitboxes ===
-        // R (horizontal, right)
-        drawArrow(
-            ctx,
-            cx,
-            cy,
-            cx + R * scale,
-            cy,
-            colorR,
-            phasorHoveredKey === "R" ? 6 : 3,
-            phasorHoveredKey === "R"
-        );
-        hitboxes.push({
-            type: "vector",
-            key: "R",
-            x1: cx,
-            y1: cy,
-            x2: cx + R * scale,
-            y2: cy,
-        });
-
-        // Xc (vertical, down)
-        drawArrow(
-            ctx,
-            cx + R * scale,
-            cy,
-            cx + R * scale,
-            cy + Xc * scale,
-            colorXc,
-            phasorHoveredKey === "Xc" ? 6 : 3,
-            phasorHoveredKey === "Xc"
-        );
-        hitboxes.push({
-            type: "vector",
-            key: "Xc",
-            x1: cx + R * scale,
-            y1: cy,
-            x2: cx + R * scale,
-            y2: cy + Xc * scale,
-        });
-
-        // Z (hypotenuse)
-        drawArrow(
-            ctx,
-            cx,
-            cy,
-            cx + R * scale,
-            cy + Xc * scale,
-            colorZ,
-            phasorHoveredKey === "Z" ? 6 : 3,
-            phasorHoveredKey === "Z"
-        );
-        hitboxes.push({
-            type: "vector",
-            key: "Z",
-            x1: cx,
-            y1: cy,
-            x2: cx + R * scale,
-            y2: cy + Xc * scale,
-        });
-
-        // Right angle marker at (cx + R * scale, cy)
-        drawRightAngleMarker(ctx, cx + R * scale, cy, 1, 1);
-
-        // === 7. Draw phase angle φ at origin ===
-        ctx.save();
-        ctx.strokeStyle = phasorHoveredKey === "phi" ? colorPhi : "#fff";
-        ctx.lineWidth = phasorHoveredKey === "phi" ? 4 : 2;
-        ctx.beginPath();
-        const arcAngle = Math.atan2(Xc, R);
-        if (arcAngle < 0) {
-            ctx.arc(cx, cy, 36, 0, arcAngle, true);
-        } else {
-            ctx.arc(cx, cy, 36, 0, arcAngle, false);
-        }
-        ctx.stroke();
-        hitboxes.push({
-            type: "arc",
-            key: "phi",
-            cx,
-            cy,
-            r: 36,
-            angle: arcAngle,
-        });
-        ctx.restore();
-
-        // Draw origin dot
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // === 8. Fill legend/info box beside the canvas, with color coding ===
-        const legend = [
-            { key: "R", label: `R = ${formatSI(R, "Ω")}`, color: colorR },
-            { key: "Xc", label: `X<sub>C</sub> = ${formatSI(Xc, "Ω")}`, color: colorXc },
-            { key: "Z", label: `Z = ${formatSI(Z, "Ω")}`, color: colorZ },
-            {
-            key: "phi",
-            label: `φ = ${(phi * 180 / Math.PI).toFixed(2)}°`,
-            color: colorPhi,
-            },
-        ];
-        legendDiv.innerHTML = legend
-            .map(
-            (entry) =>
-                `<div data-key="${entry.key}" style="color:${entry.color};transition:background 0.2s;">${entry.label}</div>`
-            )
-            .join("");
-
-        // === 9. Tooltip/hover system: highlight legend and vector on canvas hover ===
-        canvas.onmousemove = function (e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mx = (e.clientX - rect.left) * scaleX;
-            const my = (e.clientY - rect.top) * scaleY;
-            let found = null;
-            for (const h of hitboxes) {
-            if (h.type === "vector") {
-                const dist = pointToSegment(mx, my, h.x1, h.y1, h.x2, h.y2);
-                if (dist < 5) {
-                found = h.key;
-                break;
-                }
-            } else if (h.type === "arc") {
-                const dx = mx - h.cx,
-                dy = my - h.cy;
-                const r = Math.sqrt(dx * dx + dy * dy);
-                let a = Math.atan2(dy, dx);
-                if (a < 0) a += 2 * Math.PI;
-                let start = 0;
-                let end = h.angle;
-                if (end < 0) end += 2 * Math.PI;
-                let inArc = false;
-                if (start <= end) {
-                inArc = a >= start && a <= end;
-                } else {
-                inArc = a >= start || a <= end;
-                }
-                if (Math.abs(r - h.r) < 10 && inArc) {
-                found = h.key;
-                break;
-                }
-            }
-            }
-            phasorHoveredKey = found;
-            drawWiderstandsdreieckSerie(canvasId, legendId); // Redraw with highlight
-            for (const div of legendDiv.children) {
-            if (div.dataset.key === found) {
-                div.style.background = "#444";
-                div.style.fontWeight = "bold";
-            } else {
-                div.style.background = "";
-                div.style.fontWeight = "";
-            }
-            }
-        };
-        canvas.onmouseleave = function () {
-            phasorHoveredKey = null;
-            drawWiderstandsdreieckSerie(canvasId, legendId);
-            for (const div of legendDiv.children) {
-            div.style.background = "";
-            div.style.fontWeight = "";
-            }
-        };
-
-        // === 10. Legend hover highlights vector in canvas ===
-        for (const div of legendDiv.children) {
-            div.onmouseenter = function () {
-            phasorHoveredKey = this.dataset.key;
-            drawWiderstandsdreieckSerie(canvasId, legendId);
-            for (const d of legendDiv.children) {
-                d.style.background = d === this ? "#444" : "";
-                d.style.fontWeight = d === this ? "bold" : "";
-            }
-            };
-            div.onmouseleave = function () {
-            phasorHoveredKey = null;
-            drawWiderstandsdreieckSerie(canvasId, legendId);
-            for (const d of legendDiv.children) {
-                d.style.background = "";
-                d.style.fontWeight = "";
-            }
-            };
-        }
-
-        // Draw the icon and store its area
-        const downloadIconArea = drawDownloadIcon(ctx, canvas);
-
-        // Add a click handler (only once)
-        if (!canvas._downloadHandlerAdded) {
-            canvas.addEventListener("click", function (e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mx = (e.clientX - rect.left) * scaleX;
-            const my = (e.clientY - rect.top) * scaleY;
-            if (
-                mx >= downloadIconArea.x &&
-                mx <= downloadIconArea.x + downloadIconArea.size &&
-                my >= downloadIconArea.y &&
-                my <= downloadIconArea.y + downloadIconArea.size
-            ) {
-                exportCanvasAsPNG(canvas.id);
-            }
-            });
-            canvas._downloadHandlerAdded = true;
-        }
-
-        // 11. Watermark logo (top right)
-        drawWatermark(ctx, canvas);
-        }
-        
         /**
          * Draws a marker (circle) at (t, value) on the given curve canvas.
          */
@@ -4890,22 +4890,10 @@
             ctx.restore();
         }
 
-    /*Dropdown menu*/
-    /*function toggleDropdown(header) {
-        // Find the next sibling with class 'dropdown-content'
-        let content = header.nextElementSibling;
-        while (content && !content.classList.contains('dropdown-content')) {
-            content = content.nextElementSibling;
-        }
-        if (content) {
-            // Toggle only this dropdown
-            content.style.display = (content.style.display === 'block') ? 'none' : 'block';
-        }
-    }*/
-   function toggleDropdown(element) {
-                const dropdown = element.parentElement;
-                dropdown.classList.toggle("open");
-            }
+        function toggleDropdown(element) {
+                        const dropdown = element.parentElement;
+                        dropdown.classList.toggle("open");
+                    }
 
     </script>
     <script src="../scripts.js"></script>
