@@ -110,7 +110,9 @@
                         Kondensator berechnungen<span class="arrow">&#9660;</span>
                     </div>
                     <div class="dropdown-content"> 
-                        <div>
+                        <div id="CapacitorParameter">
+                            <button onclick="resetInputsCapacitorParameters()" class="Button_Berechnen">Eingaben l&ouml;schen</button>
+
                             <div class="comment">
                                 Werte mit Massvorsatz eingeben z.B. C = 100nF &rarr; Eingabe: 100n (nicht 100nF)<br><br>
                             </div>
@@ -198,7 +200,8 @@
                                 <label>s [sekunden]</label>
                             </div>
 
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateCapacitorParameters()">
+                            <!--<input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateCapacitorParameters()">-->
+                            <button onclick="calculateCapacitorParameters()" class="Button_Berechnen">Berechnen</button>
                         <!--</form>-->
 
                         <h3>Berechnete Ergebnisse</h3>
@@ -756,51 +759,61 @@
         function calculateCapacitorParameters() 
         {
             let result = ``;
+            let prevResult = `1`;
 
-            const I = document.getElementById("I").value;
-            const F = document.getElementById("F").value;
-            const E = document.getElementById("E").value;
-            const er = document.getElementById("er").value;
-            const A = document.getElementById("A").value;
-            const d = document.getElementById("d").value;
-            const s = document.getElementById("s").value;
-            const C = document.getElementById("C").value;
-            const U = document.getElementById("U").value;
-            const W = document.getElementById("W").value;
-            const Q = document.getElementById("Q").value;
-            const t = document.getElementById("t").value;
+            let I = document.getElementById("I").value;
+            let F = document.getElementById("F").value;
+            let E = document.getElementById("E").value;
+            let er = document.getElementById("er").value;
+            let A = document.getElementById("A").value;
+            let d = document.getElementById("d").value;
+            let s = document.getElementById("s").value;
+            let C = document.getElementById("C").value;
+            let U = document.getElementById("U").value;
+            let W = document.getElementById("W").value;
+            let Q = document.getElementById("Q").value;
+            let t = document.getElementById("t").value;
             
-            
-            if(!I && Q && t)       // Berechnungen fuer Strom I
+            while(result != prevResult)
             {
-                result += `
-                    Strom I = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta;Q </span><br>
-                        <span>&Delta;t</span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${Q}C </span><br>
-                        <span>${t}s</span>
-                    </div> 
-                = ${formatWithPrefix(parseInput(Q) / parseInput(t), "A")}<br>`;
-            }
+                prevResult = result;
 
-            if(!F && Q && E)     // Berechnungen fuer Kraft F
+                // === Strom I ===
+                if(!I && Q && t)
                 {
+                    I = formatPrefixNoUnit(parseInput(Q) / parseInput(t));
+
+                    result += `
+                        Strom I = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta;Q </span><br>
+                            <span>&Delta;t</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Q}C </span><br>
+                            <span>${t}s</span>
+                        </div> 
+                    = ${I}A <br>`;
+                }
+
+                // === Kraft F ===
+                if(!F && Q && E)
+                {
+                    F = formatPrefixNoUnit(parseInput(Q) * parseInput(E));
+                    
                     result += `
                         Kraft F =
                         Q &lowast; E
                     =
                         ${Q}C &lowast; ${E}V/m
-                    = ${formatWithPrefix(parseInput(Q) * parseInput(E), "N")}<br>`;
+                    = ${F}N <br>`;
                 }
 
-            if(!E)             // Berechnungen fuer Feldstaerke E
-            {
-                if(F && Q)
+                // === Feldstaerke E ===
+                if(!E && F && Q)
                 {
+                    E = formatPrefixNoUnit(parseInput(F) / parseInput(Q));
                     result += `
                         Feldst&auml;rke E = 
                         <div class ="fraction">
@@ -812,10 +825,13 @@
                             <span class="fraction-numerator"> ${F}N </span><br>
                             <span>${Q}C</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(F) / parseInput(Q), "V/m")}<br>`;
+                    = ${E}V/m <br>`;
                 }
-                if(U && s)
+
+                if(!E && U && s)
                 {
+                    E = formatPrefixNoUnit(parseInput(U) / parseInput(s));
+
                     result += `
                         Feldst&auml;rke E = 
                         <div class ="fraction">
@@ -827,46 +843,91 @@
                             <span class="fraction-numerator"> ${U}V </span><br>
                             <span>${s}m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(U) / parseInput(s), "V/m")}<br>`;
-                }    
-            }
+                    = ${E}V/m <br>`;
+                }
 
-            if(!er && C && s && A)       // Berechnungen fuer Dielektrizitaetszahl er
-            {
-                result += `
-                    Dielektrizit&auml;tszahl &epsilon;<sub>r</sub> = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> C &lowast; s </span><br>
-                        <span>A &lowast; &epsilon;<sub>0</sub></span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
-                        <span>${A}m<sup>2</sup> &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
-                    </div> 
-                = ${formatWithPrefix((parseInput(C) * parseInput(s))/ (parseInputsquare(A)*8.85e-12), "")}<br>`;
-            }
-
-            if(!A && C && s && er)       // Berechnungen fuer Querschnittsflaeche A
-            {
-                result += `
-                Querschnittsfl&auml;che A =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> C &lowast; s </span><br>
-                        <span>&epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
-                        <span>${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
-                    </div> 
-                = ${formatWithPrefixsquare((parseInput(C) * parseInput(s))/ (parseInput(er)*8.85e-12), "m<sup>2</sup>")}<br>`;
-            }
-
-            if(!s)             // Berechnungen fuer Elektronenabstand s
-            {
-                if(U && E)
+                // === Dielektrizitaetszahl er ===
+                if(!er && C && s && A)
                 {
+                    er = formatPrefixNoUnit((parseInput(C) * parseInput(s))/ (parseInputsquare(A)*8.85e-12));
+
+                    result += `
+                        Dielektrizit&auml;tszahl &epsilon;<sub>r</sub> = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> C &lowast; s </span><br>
+                            <span>A &lowast; &epsilon;<sub>0</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
+                            <span>${A}m<sup>2</sup> &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
+                        </div> 
+                    = ${er}<br>`;
+                }
+
+                // === Flaeche A ===
+                if(!A && C && s && er)
+                {
+                    A = formatPrefixNoUnitSquare((parseInput(C) * parseInput(s)) / (parseInput(er) * 8.85e-12));
+
+                    result += `
+                    Querschnittsfl&auml;che A =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> C &lowast; s </span><br>
+                            <span>&epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${C}F &lowast; ${s}m</span><br>
+                            <span>${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+                }
+
+                if(!A && d)
+                {
+                     A = formatPrefixNoUnitSquare(Math.PI * Math.pow(parseInput(d), 2) / 4);
+
+                    result += `
+                    Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup></span><br>
+                            <span>4</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> </span><br>
+                            <span>4</span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+
+                    debugger;
+                }
+                
+                // === durchmesser d ===
+                if(!d && A)
+                {
+                    d = formatPrefixNoUnit(Math.pow((4 * (parseInputsquare(A)) / Math.PI), 0.5 ));
+                    result += `
+                    Leiterdurchmesser d = 
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; A</span><br>
+                            <span>&pi;</span>
+                        </div>) 
+                    =
+                        &radic;(<div class ="fraction">
+                            <span class="fraction-numerator">4 &lowast; ${A}m<sup>2</sup> </span><br>
+                            <span>&pi;</span>
+                        </div>)
+                    = ${d}m <br>`;
+                }
+
+
+                // === Elektronenabstand s ===
+                if(!s && U && E)
+                {
+                    s = formatPrefixNoUnit(parseInput(U) / parseInput(E));
+
                     result += `
                         Elektronenabstand s = 
                         <div class ="fraction">
@@ -878,10 +939,13 @@
                             <span class="fraction-numerator"> ${U}V </span><br>
                             <span>${E}V/m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(U) / parseInput(E), "m")}<br>`;
+                    = ${s}m <br>`;
                 }
-                if(er && A && C)
+
+                if(!s && er && A && C)
                 {
+                    s = formatPrefixNoUnit((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(C));
+
                     result += `
                         Elektronenabstand s = 
                         <div class ="fraction">
@@ -893,14 +957,14 @@
                             <span class="fraction-numerator">${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm &lowast; ${A}m<sup>2</sup> </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(C), "m")}<br>`;
-                }    
-            }
+                    = ${s}m <br>`;
+                }
 
-            if(!C)             // Berechnungen fuer Kapazitaet C
-            {
-                if(Q && U) 
+                // === Kapazitaet C ===
+                if(!C && Q && U)
                 {
+                    C = formatPrefixNoUnit(parseInput(Q) / parseInput(U));
+
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -912,11 +976,13 @@
                             <span class="fraction-numerator"> ${Q}C </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) / parseInput(U), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
 
-                if(er && A && s)
+                if(!C && er && A && s)
                 {
+                    C = formatPrefixNoUnit((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(s));
+
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -928,27 +994,13 @@
                             <span class="fraction-numerator">${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm &lowast; ${A}m<sup>2</sup> </span><br>
                             <span>${s}m</span>
                         </div> 
-                    = ${formatWithPrefix((parseInput(er) * 8.85e-12 * parseInputsquare(A))/ parseInput(s), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
 
-                if(er && d && s)                                                                                                    // mit durchmesser
+                if(!C && W && U)
                 {
-                    result += `
-                        Kapazit&auml;t C = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup> &lowast; &epsilon;<sub>r</sub> &lowast; &epsilon;<sub>0</sub></span><br>
-                            <span>4 &lowast; s</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> ${er} &lowast; 8.85&lowast;10<sup>-12</sup> As/Vm</span><br>
-                            <span>4 &lowast; ${s}m</span>
-                        </div> 
-                    = ${formatWithPrefix((Math.PI * Math.pow(parseInput(d), 2) * (parseInput(er) * 8.85e-12)) / (4 * parseInput(s)), "F")}<br>`;
-                }
+                    C = formatPrefixNoUnit(2 * parseInput(W) / Math.pow(parseInput(U), 2));
 
-                if(W && U) 
-                {
                     result += `
                         Kapazit&auml;t C = 
                         <div class ="fraction">
@@ -960,23 +1012,26 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>(${U}V)<sup>2</sup></span>
                         </div> 
-                    = ${formatWithPrefix(2 * parseInput(W) / Math.pow(parseInput(U), 2), "F")}<br>`;
+                    = ${C}F <br>`;
                 }
-            }
 
-            if(!U)                  //Berechnungen fuer Spannung U
-            {
-                if(E && s)     
+                // === Spannung U ===
+                if(!U && E && s)
                 {
+                    U = formatPrefixNoUnit(parseInput(E) * parseInput(s));
+
                     result += `
                         Spannung U =
                         E &lowast; s
                     =
                         ${E}V/m &lowast; ${s}m
-                    = ${formatWithPrefix(parseInput(E) * parseInput(s), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
-                if(Q && C) 
+
+                if(!U && Q && C)
                 {
+                    U = formatPrefixNoUnit(parseInput(Q) / parseInput(C));
+
                     result += `
                         Spannung U = 
                         <div class ="fraction">
@@ -988,10 +1043,13 @@
                             <span class="fraction-numerator">${Q}C </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) / parseInput(C), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
-                if(W && Q) 
+
+                if(!U && W && Q) 
                 {
+                    U = formatPrefixNoUnit(2 * parseInput(W) / parseInput(Q));
+
                     result += `
                         Spannung U = 
                         <div class ="fraction">
@@ -1003,11 +1061,13 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${Q}C</span>
                         </div> 
-                    = ${formatWithPrefix(2 * parseInput(W) / parseInput(Q), "V")}<br>`;
+                    = ${U}V <br>`;
                 }
 
-                if(W && C) 
+                if(!U && W && C) 
                 {
+                    U = formatPrefixNoUnit(Math.pow((2 * parseInput(W))/parseInput(C), 0.5));
+
                     result += `
                         Spannung U = 
                         &radic;	<div class ="fraction">
@@ -1019,14 +1079,14 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${C}F</span>
                         </div> 
-                    = ${formatWithPrefix( Math.pow((2 * parseInput(W))/parseInput(C), 0.5), "V")}<br>`;
+                    = ${U}V<br>`;
                 }
-            }
 
-            if(!W)              // Berechnungen fuer Energie W
-            {
-                if(Q && U)
+                // === Energie W ===
+                if(!W && Q && U)
                 {
+                    W = formatPrefixNoUnit(parseInput(Q) * parseInput(U) / 2);
+
                     result += `
                         Energie W = 
                         <div class ="fraction">
@@ -1038,11 +1098,13 @@
                             <span class="fraction-numerator"> ${Q}C &lowast; ${U}V </span><br>
                             <span>2</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(Q) * parseInput(U) / 2, "J")}<br>`;
+                    = ${W}J<br>`;
                 }
 
-                if(C && U) 
+                if(!W && C && U) 
                 {
+                    W = formatPrefixNoUnit(Math.pow(parseInput(U), 2) * parseInput(C) / 2);
+
                     result += `
                         Energie W = 
                         <div class ="fraction">
@@ -1054,14 +1116,14 @@
                             <span class="fraction-numerator">${C}F &lowast; (${U}V)<sup>2</sup></span><br>
                             <span>2</span>
                         </div> 
-                    = ${formatWithPrefix(Math.pow(parseInput(U), 2) * parseInput(C) / 2, "J")}<br>`;
+                    = ${W}J<br>`;
                 }
-            }
 
-            if(!Q)              // Berechnungen fuer Ladung Q
-            {
-                if(F && E)
+                // === Ladung Q ===
+                if(!Q && F && E)
                 {
+                    Q = formatPrefixNoUnit(parseInput(F) / parseInput(E));
+
                     result += `
                         Ladung Q = 
                         <div class ="fraction">
@@ -1073,31 +1135,37 @@
                             <span class="fraction-numerator"> ${F}N </span><br>
                             <span>${ E}V/m</span>
                         </div> 
-                    = ${formatWithPrefix(parseInput(F) / parseInput(E), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }  
 
-                if(C && U) 
+                if(!Q && C && U) 
                 {
+                    Q = formatPrefixNoUnit(parseInput(C) * parseInput(U));
+
                     result += `
                         Ladung Q =
                         C &lowast; U
                     =
                         ${C}F &lowast; ${U}V
-                    = ${formatWithPrefix(parseInput(C) * parseInput(U), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }
 
-                if(I && t) 
+                if(!Q && I && t) 
                 {
+                    Q = formatPrefixNoUnit(parseInput(I) * parseInput(t));
+
                     result += `
                         Ladungs&auml;nderung  &Delta;Q =
                         I &lowast; &Delta;t
                     =
                         ${I}A &lowast; &Delta;${t}s
-                    = ${formatWithPrefix(parseInput(I) * parseInput(t), "C")}<br>`;
+                    = ${Q}C <br>`;
                 }
 
-                if(W && U)
+                if(!Q && W && U)
                 {
+                    Q = formatPrefixNoUnit(2 * parseInput(W) / parseInput(U));
+
                     result += `
                         Ladung Q = 
                         <div class ="fraction">
@@ -1109,24 +1177,27 @@
                             <span class="fraction-numerator"> 2 &lowast; ${W}J </span><br>
                             <span>${U}V</span>
                         </div> 
-                    = ${formatWithPrefix(2* parseInput(W) / parseInput(U), "C")}<br>`;
-                } 
-            }
+                    = ${Q}C <br>`;
+                }
 
-            if(!t && I && Q)       // Berechnungen fuer Zeit t
-            {
-                result += `
-                    Zeit &Delta; t = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta; Q </span><br>
-                        <span>I</span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator"> &Delta; ${Q}C </span><br>
-                        <span>${I}A</span>
-                    </div> 
-                = ${formatWithPrefix(parseInput(I) / parseInput(Q), "s")}<br>`;
+                // === Zeit t ===
+                if(!t && I && Q)
+                {
+                    t = formatPrefixNoUnit(parseInput(Q) / parseInput(I));
+
+                    result += `
+                        Zeit &Delta; t = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta; Q </span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> &Delta; ${Q}C </span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${t}s <br>`;
+                }
             }
 
 
@@ -1134,6 +1205,16 @@
             document.getElementById('result').innerHTML = result;
         }
 
+        // ------------------------
+        function resetInputsCapacitorParameters() {
+            const container = document.getElementById("CapacitorParameter");
+            const inputs = container.querySelectorAll("input");
+            
+            inputs.forEach(input => input.value = "");
+
+            // Optional: Nur das Ergebnis im 'result'-Div löschen, falls gewünscht
+            document.getElementById("result").innerHTML = "";
+        }
         
         // RC an Wechselstrom
         let selectedButton = null;
