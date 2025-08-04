@@ -572,7 +572,7 @@
                             <span id="modeLabel">Laden</span>
                         </div>
                         <div id="circuitDiagram">
-                            <img id="circuitImage" src="../Pictures/RC_Charge.png" alt="Schaltbild RC Glied" style="max-width:500px;  height:auto; width:80%">
+                            <img id="circuitImage" src="../Pictures/RC_Charge.png" alt="Schaltbild RC Glied" style="width:500px; height:auto;">
                         </div>
 
                         <div>
@@ -2634,119 +2634,34 @@
         function calculateRC() 
         {
             let result_RC = ``;
-            let prevResult_RC = `1`;
 
-            let isDischarging = document.getElementById("modeSwitch").checked;
-            let I = document.getElementById("I_RC").value;
-            let It = document.getElementById("It_RC").value;
-            let tau = document.getElementById("tau_RC").value;
-            let R = document.getElementById("R_RC").value;
-            let C = document.getElementById("C_RC").value;
-            let U = document.getElementById("U_RC").value;
-            let Ut = document.getElementById("Ut_RC").value;
-            let t = document.getElementById("t_RC").value;
+            const isDischarging = document.getElementById("modeSwitch").checked;
+            const I = document.getElementById("I_RC").value;
+            const It = document.getElementById("It_RC").value;
+            const tau = document.getElementById("tau_RC").value;
+            const R = document.getElementById("R_RC").value;
+            const C = document.getElementById("C_RC").value;
+            const U = document.getElementById("U_RC").value;
+            const Ut = document.getElementById("Ut_RC").value;
+            const t = document.getElementById("t_RC").value;
 
-            while(prevResult_RC != result_RC)     // do as long as new Results are found
+            if(!tau && R && C) 
             {
-                prevResult_RC = result_RC;
+                result_RC += `
+                    Zeitkonstante &#120649; = 
+                    R &lowast; C
+                =
+                    ${R}&Omega; &lowast; ${C}F
+                = ${formatWithPrefix(parseInput(R) * parseInput(C), "s")}<br>`;
+            }            
 
-                if(!tau && R && C) 
+            if(!isDischarging)       // Laden
+            {
+                if(!I)              // Speisestrom I
                 {
-                    tau = formatPrefixNoUnit(parseInput(R) * parseInput(C));
-                    result_RC += `
-                        Zeitkonstante &#120649; = 
-                        R &lowast; C
-                    =
-                        ${R}&Omega; &lowast; ${C}F
-                    = ${tau}s <br>`;
-                }
-
-                if(!R && tau && C)
-                {
-                    R = formatPrefixNoUnit(parseInput(tau) / parseInput(C));
-                    result_RC += `
-                        Widerstand R = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&#120649;</span><br>
-                            <span>C</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">${tau}s</span><br>
-                            <span>${C}F</span>
-                        </div> 
-                    = ${R}&Omega; <br>`;
-                }
-
-                if(!C && tau && R)
-                {
-                    C = formatPrefixNoUnit(parseInput(tau) / parseInput(R));
-                    result_RC += `
-                        Kapazit&auml;t C = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&#120649;</span><br>
-                            <span>R</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">${tau}s</span><br>
-                            <span>${R}&Omega;</span>
-                        </div> 
-                    = ${C}F <br>`;
-                }
-
-                if(!U && R && I) 
-                {
-                    U = formatPrefixNoUnit(parseInput(R) * parseInput(I));
-                    result_RC += `
-                        Spannung U = 
-                        R &lowast; I
-                    =
-                        ${R}&Omega; &lowast; ${I}A
-                    = ${U}V <br>`;
-                }
-
-                if(!R && U && I)
-                {
-                    R = formatPrefixNoUnit(parseInput(U) / parseInput(I));
-                    result_RC += `
-                        Widerstand R = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">U</span><br>
-                            <span>I</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">${U}V</span><br>
-                            <span>${I}A</span>
-                        </div> 
-                    = ${R}&Omega; <br>`;
-                }
-                
-                if(!I && U && R)
-                {
-                    I = formatPrefixNoUnit(parseInput(U) / parseInput(R));
-                    result_RC += `
-                        Strom I = 
-                        <div class ="fraction">
-                            <span class="fraction-numerator">U</span><br>
-                            <span>R</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">${U}V</span><br>
-                            <span>${R}&Omega;</span>
-                        </div> 
-                    = ${I}A <br>`;
-                }
-
-                if(!isDischarging)       // Laden
-                {
-                    // === Speisestrom I ===
-                    if(!I && tau && t && It)
+                    if(tau && t && It)
                     {
                         // I = i(t) / (e ^(-t/tau))
-                        I = formatPrefixNoUnit(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
                         result_RC += `
                             Strom I = 
                             <div class ="fraction">
@@ -2773,15 +2688,14 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${I}A<br>`;
+                        = ${formatWithPrefix(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    // === Momentanstrom i(t) ===
-                    if(!It && I && t && tau)
+                if(!It)             // Momentanstrom i(t)
+                {
+                    if(I && t && tau)
                     {
-                        debugger;
-                        // i(t) = I * (e ^(-t / tau))
-                        It = formatPrefixNoUnit(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
+                        // I * (e ^(-t / tau))
                         result_RC += `
                             Strom i(t) = I &lowast; (e<sup> 
                             -<div class ="fraction">
@@ -2793,14 +2707,14 @@
                                 <span>${t}s</span><br>
                                 <span class="fraction-denumerator">${tau}s</span>
                             </div></sup>)
-                        = ${It}A<br>`;
+                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    // === Zeitkonstante tau ===
-                    if(!tau && I && It && t)
+                if(!tau)
+                {
+                    if(I && It && t)
                     {
                         // tau = -t/(ln((i(t)/I))
-                        tau = formatPrefixNoUnit(-parseInput(t) / (Math.log(parseInput(It)/parseInput(I))));
 
                         result_RC += `
                             Zeitkonstante &#120649; = 
@@ -2828,13 +2742,12 @@
                                 </span></div>
                             </div>
 
-                        = ${tau}s<br>`;
+                        = ${formatWithPrefix(-parseInput(t) / (Math.log(parseInput(It)/parseInput(I))), "s")}<br>`;
                     }
 
-                    if(!tau && U && Ut && t)
+                    if(U && Ut && t)
                     {
                         // tau = -t/(ln(1 - (u(t)/U)))
-                        tau = formatPrefixNoUnit(-parseInput(t) / (Math.log(1 - (parseInput(Ut)/parseInput(U)))));
 
                         result_RC += `
                             Zeitkonstante &#120649; = 
@@ -2862,14 +2775,15 @@
                                 </span></div>
                             </div>
 
-                        = ${tau}s<br>`;
+                        = ${formatWithPrefix(-parseInput(t) / (Math.log(1 - (parseInput(Ut)/parseInput(U)))), "s")}<br>`;
                     }
-        
-                    // === Speisespannung U ===
-                    if(!U && tau && t && Ut)
+                }
+
+                if(!U)              // Speisespannung U
+                {
+                    if(tau && t && Ut)
                     {
                         // U = u(t)/(1-e^(-t/tau))
-                        U = formatPrefixNoUnit(parseInput(Ut)/(1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
                         result_RC += `
                             Spannung U = 
                             <div class ="fraction">
@@ -2896,14 +2810,14 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${U}V<br>`;
+                        = ${formatWithPrefix(parseInput(Ut)/(1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
 
-                    // === Momentanspannung u(t) ===
-                    if(!Ut && U && t && tau)
+                if(!Ut)             // Momentanspannung u(t)
+                {
+                    if(U && t && tau)
                     {
                         // u(t) = U * (1- e ^(-t / tau))
-                        Ut = formatPrefixNoUnit(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
                         result_RC += `
                             Spannung u(t) = U &lowast; (1 - e<sup> 
                             <div class ="fraction">
@@ -2915,15 +2829,13 @@
                                 <span class="fraction-numerator">- ${t}s</span><br>
                                 <span>${tau}s</span>
                             </div></sup>)
-                        = ${Ut}V<br>`;
+                        = ${formatWithPrefix(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
                     
                     // === Zeit t ===
                     if(!t && tau && U && Ut)
                     {
                         // t = - tau * ln(1 - u(t)/U)
-                        t = formatPrefixNoUnit(- parseInput(tau) * Math.log(1 - (parseInput(Ut)/parseInput(U))));
-
                         result_RC += `
                             Zeit t = - &#120649; &lowast; ln(1 -
                             <div class ="fraction">
@@ -2935,13 +2847,12 @@
                                 <span>${Ut}V</span><br>
                                 <span class="fraction-denumerator">${U}V</span>
                             </div>)
-                        = ${t}s <br>`;
+                        = ${formatWithPrefix(- parseInput(tau) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
-                    if(!t && tau && I && It)
+                    if(tau && I && It)
                     {
                         // t = - tau * ln(i(t)/I)
-                        t = formatPrefixNoUnit(- parseInput(tau) * Math.log(parseInput(It)/parseInput(I)));
                         result_RC += `
                             Zeit t = - &#120649; &lowast; ln( 
                             <div class ="fraction">
@@ -2953,7 +2864,7 @@
                                 <span class="fraction-numerator">${It}A</span><br>
                                 <span>${I}A</span>
                             </div>)
-                        = ${t}s <br>`;
+                        = ${formatWithPrefix( - parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
                     }
 
                 }else                    // entladen
@@ -2962,7 +2873,6 @@
                     if(!I && tau && t && It)
                     {
                         // I = - i(t) / (e ^(-t/tau))
-                        I = formatPrefixNoUnit(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
                         result_RC += `
                             Strom I = -
                             <div class ="fraction">
@@ -2989,15 +2899,14 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${I}A <br>`;
+                        = ${formatWithPrefix(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    // === Momentanstrom i(t) ===
-                    if(!It && I && t && tau)
+                if(!It)             // Momentanstrom i(t)
+                {
+                    if(I && t && tau)
                     {
                         // i(t) = - I * (e ^(-t / tau))
-                        It = formatPrefixNoUnit(-parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
-
                         result_RC += `
                             Strom i(t) = - I &lowast; (e<sup> 
                             <div class ="fraction">
@@ -3009,14 +2918,15 @@
                                 <span class="fraction-numerator">- ${t}s</span><br>
                                 <span>${tau}s</span>
                             </div></sup>)
-                        = ${It}A <br>`;
+                        = ${formatWithPrefix(-parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
-                    // === Zeitkonstante tau ===
-                    if(!tau && I && It && t)
+                if(!tau)
+                {
+                    if(I && It && t)
                     {
                         // tau = t/(ln((i(t)/I))
-                        tau = formatPrefixNoUnit(parseInput(t) / (Math.log(parseInput(It)/parseInput(I))));
+
                         result_RC += `
                             Zeitkonstante &#120649; = 
                             <div class ="fraction">
@@ -3043,13 +2953,13 @@
                                 </span></div>
                             </div>
 
-                        = ${tau}s <br>`;
+                        = ${formatWithPrefix(parseInput(t) / (Math.log(parseInput(It)/parseInput(I))), "s")}<br>`;
                     }
 
-                    if(!tau && U && Ut && t)
+                    if(U && Ut && t)
                     {
                         // tau = -t/(ln(u(t)/U))
-                        tau = formatPrefixNoUnit(-parseInput(t) / (Math.log(parseInput(Ut)/parseInput(U))));
+                        
 
                         result_RC += `
                             Zeitkonstante &#120649; = 
@@ -3077,14 +2987,15 @@
                                 </span></div>
                             </div>
 
-                        = ${tau}s <br>`;
+                        = ${formatWithPrefix(-parseInput(t) / (Math.log(parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
+                }
 
-                    // === Speisespannung U ===
-                    if(!U && tau && t && Ut)
+                if(!U)              // Speisespannung U
+                {
+                    if(tau && t && Ut)
                     {
                         // U = u(t)/(e^(-t/tau))
-                        U = formatPrefixNoUnit(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
                         result_RC += `
                             Spannung U = 
                             <div class ="fraction">
@@ -3111,15 +3022,14 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${U}V<br>`;
+                        = ${formatWithPrefix(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
 
-                    // === Momentanspannung u(t) ===
-                    if(!Ut && U && t && tau)
+                if(!Ut)             // Momentanspannung u(t)
+                {
+                    if(U && t && tau)
                     {
                         // u(t) = U * e ^(-t / tau)
-                        Ut = formatPrefixNoUnit(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))));
-
                         result_RC += `
                             Spannung u(t) = U &lowast; e<sup> 
                             <div class ="fraction">
@@ -3131,15 +3041,16 @@
                                 <span class="fraction-numerator">- ${t}s</span><br>
                                 <span>${tau}s</span>
                             </div></sup>
-                        = ${Ut}V <br>`;
+                        = ${formatWithPrefix(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
 
-                    // === Zeit t ===
-                    if(!t && tau && I && It)
+
+                if(!t)              // Zeit t
+                {
+                    
+                    if(tau && I && It)
                     {
                         // t = tau * ln(i(t)/I)
-                        t = formatPrefixNoUnit(parseInput(tau) * Math.log(parseInput(It)/parseInput(I)));
-
                         result_RC += `
                             Zeit t = &#120649; &lowast; ln( 
                             <div class ="fraction">
@@ -3151,13 +3062,12 @@
                                 <span class="fraction-numerator">${It}A</span><br>
                                 <span>${I}A</span>
                             </div>)
-                        = ${t}s <br>`;
+                        = ${formatWithPrefix(parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
                     }
 
                     if(!t && tau && U && Ut)
                     {
                         // t = tau * ln(u(t)/U)
-                        t = formatPrefixNoUnit(- parseInput(tau) * Math.log((parseInput(Ut)/parseInput(U))));
                         result_RC += `
                             Zeit t = - &#120649; &lowast; ln(
                             <div class ="fraction">
@@ -3169,7 +3079,7 @@
                                 <span class="fraction-numerator">${Ut}V</span><br>
                                 <span>${U}V</span>
                             </div>)
-                        = ${t}s <br>`;
+                        = ${formatWithPrefix(- parseInput(tau) * Math.log((parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
                 }
@@ -3177,8 +3087,7 @@
 
             document.getElementById('result_RC').innerHTML = result_RC;
             
-            // generate_e_curve_from_RCinputs(parseInput(I), parseInput(tau), parseInput(U), parseInput(tMarker));
-            generate_e_curve_from_RCinputs(I, tau, U, t);
+            generate_e_curve_from_RCinputs();
         }
 
         // Global variable to track which vector is hovered
@@ -3198,32 +3107,19 @@
          * - Falls back to calculated values if not provided
          * - Always draws a meaningful curve and warns if input is insufficient
          */
-        function generate_e_curve_from_RCinputs(calcI, calcTau, calcU, calcT) {
-        // function generate_e_curve_from_RCinputs() {
-
-            // 1. Read modeSwitch
-            const isDischarging = document.getElementById("modeSwitch").checked;
-
-            /*const R = parseInput(document.getElementById("R_RC").value) || 1000;
+        function generate_e_curve_from_RCinputs() {
+            // 1. Read and parse all relevant RC-Glied inputs
+            const R = parseInput(document.getElementById("R_RC").value) || 1000;
             const C = parseInput(document.getElementById("C_RC").value) || 0.000001;
             const U = parseInput(document.getElementById("U_RC").value) || 1;
             const tMarker = parseInput(document.getElementById("t_RC").value);
-            
+            const isDischarging = document.getElementById("modeSwitch").checked;
+
             // 2. Calculate derived values
             const tau = R * C;
-            const I = U / R;
-            const maxTime = 5 * tau;
-            const stepCount = 100;*/
-
-            // 2. parse recived data
-            const I = parseInput(calcI) || 0.0001;          // 1mA if no Value
-            const tau = parseInput(calcTau) || 0.001;       // 1ms if no Value
-            const U = parseInput(calcU) || 1;               // 1V if no Value
-            const tMarker = parseInput(calcT)|| 6 * tau;    // position marker out of frame
-
-            // 3. define canvas attributes
             const maxTime = 5 * tau;
             const stepCount = 100;
+            const I = U / R;
 
             // 4. Draw voltage curve with all UI/UX features
             drawCurveDynamic(
