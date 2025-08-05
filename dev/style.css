@@ -260,6 +260,16 @@ th {
     display: inline-block;
 }*/
 
+/* Stil fuer das Formular und Layout */
+.input-numbers {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    max-width: 600px; /* Setzt eine maximale Breite */
+    margin: 0 auto; /* Zentriert das Formular */
+    /*margin-left: 10px;*/
+}
 
 input[type="number"] {
     padding: 5px;
@@ -271,7 +281,7 @@ input[type="text"] {
     padding: 5px;
     margin: 5px;
     width: 100px;       /*width of input fields*/
-    text-align: right;
+    text-align: left;
 }
 
 button {
