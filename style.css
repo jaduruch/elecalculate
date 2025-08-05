@@ -271,6 +271,7 @@ input[type="text"] {
     padding: 5px;
     margin: 5px;
     width: 100px;       /*width of input fields*/
+    text-align: right;
 }
 
 button {
@@ -279,20 +280,25 @@ button {
     border: none;
     border-radius: 3px;
 }
-.Button_Berechnen
-{
-    /*padding: 20px;*/
+
+.Button_Berechnen {
     width: 100px;
     padding-top: 10px;
     padding-bottom: 10px;
-    
+
     background-color: black;
     border: 2px solid white;
     border-radius: 8px;
     color: white;
 
+    display: flex;               /* Flexbox aktivieren */
+    justify-content: center;     /* Horizontal zentrieren */
+    align-items: center;         /* Vertikal zentrieren */
+
     transition-duration: 0.4s;
+    cursor: pointer;             /* Zeigt Handcursor */
 }
+
 .Button_Berechnen:hover
 {
     background-color: white;
