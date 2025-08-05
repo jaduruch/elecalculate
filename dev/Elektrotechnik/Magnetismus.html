@@ -3,58 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Beschreibung der Seite -->
+    <meta name="description" content="Online Rechner f&uml;r Magnetismus, berechnung von Durchflutung, Magnetischer Fluss, Permeabilit&auml;t und weiteren parametern. ">
+	<!-- Stichworte für Suchmaschinen -->
+    <meta name="keywords" content="Online Rechner, Elektronik, Elektrotechnik, Magnet, Magnetismus, Feldstaerke, Windungszahl, ">
     <title>Elektrotechnik | Magnetismus</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
-
-    <style>
-        input:checked + .slider:before {
-            transform: translateX(14px);
-        }
-
-        input {
-            border: 2px solid;
-            border-radius: 3px;
-        }
-
-        input:focus {
-            outline: none; /* Entfernt den Standard-Umrandungsring */
-        }
-
-        /* Stil fuer das Formular und Layout */
-        .input-numbers {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            max-width: 600px; /* Setzt eine maximale Breite */
-            margin: 0 auto; /* Zentriert das Formular */
-            /*margin-left: 10px;*/
-        }
-
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-            margin-left: 10px;
-            
-        }
-
-        .form-row label {
-            flex: 3;
-            text-align: left;
-            margin-right: 10px;
-
-        }
-
-        h3 {
-            margin-top: 20px;
-        }
-
-
-    </style>
 </head>
 <body>
     <header>
@@ -92,21 +47,22 @@
                 <h1>Magnetismus</h1>
             </div>
             <div class="input-numbers">
+                
+                <div class="form-row">
+                    <label></label>
+                    <button onclick="resetInputs()" class="Button_Berechnen">L&ouml;schen</button>
+                    <label></label>
+                </div>
+
                 <div class="comment">
                     Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
                 </div>
+
                 <!-- Strom I -->
-                 <div class="form-row">
+                <div class="form-row">
                     <label>Strom I</label>
                     <input type="text" id="I" style="border-color: var(--Strom);">
                     <label>A [Ampere]</label>
-                </div>
-
-                <!-- Kraft F -->
-                <div class="form-row">
-                    <label>Kraft F</label>
-                    <input type="text" id="F" style="border-color: var(--Kraft);">
-                    <label>N [Newton]]</label>
                 </div>
 
                 <!-- Feldstaerke H -->
@@ -139,7 +95,7 @@
 
                 <!-- Magnetischer Widerstand Rm -->
                 <div class="form-row">
-                    <label>Magnetischerwiderstand R<sub>m</sub></label>
+                    <label>Mag. Widerstand R<sub>m</sub></label>
                     <input type="text" id="Rm" style="border-color: var(--Mag_Widerstand);">
                     <label>A/Vs [Ampere/Volt sek.]</label>
                 </div>
@@ -153,7 +109,7 @@
 
                 <!-- Magnetischer Fluss  -->
                 <div class="form-row">
-                    <label>Magnetischer Fluss &Phi;</label>
+                    <label>Mag. Fluss &Phi;</label>
                     <input type="text" id="Phi" style="border-color: var(--Mag_Fluss);">
                     <label>Weber [Wb]</label>
                 </div>
@@ -174,7 +130,7 @@
 
                 <!-- Magnetische Flussdichte B -->
                 <div class="form-row">
-                    <label>Magnetische Flussdichte B</label>
+                    <label>Mag. Flussdichte B</label>
                     <input type="text" id="B" style="border-color: var(--Mag_Flussdichte);">
                     <label>T [Tesla]</label>
                 </div>
@@ -185,161 +141,439 @@
                     <input type="text" id="t" style="border-color: var(--Zeit);">
                     <label>s [sekunden]</label>
                 </div>
+
+                <div class="form-row">
+                    <label></label>
+                    <button onclick="calculateParameters()" class="Button_Berechnen">Berechnen</button>
+                    <label></label>
+                </div>
             </div>
-            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParameters()">
-            
+                        
             <p id="result"></p>
 
             <br>
         </main>
         <div>
-            <footer>&copy 2025 Elecalculate</footer>
+            <footer>&copy; 2025 Elecalculate</footer>
         </div>
     </div>
     <script src="../scripts.js"></script>
     <script>
  
         function calculateParameters() 
+        {
+            let result = ``;
+            let prevResult = `1`;
+
+            let I = document.getElementById("I").value;
+            let H = document.getElementById("H").value;
+            let Theta = document.getElementById("Theta").value;
+            let ur = document.getElementById("ur").value;
+            let N = document.getElementById("N").value;
+            let Rm = document.getElementById("Rm").value;
+            let A = document.getElementById("A").value;
+            let Phi = document.getElementById("Phi").value;
+            let U = document.getElementById("U").value;
+            let l = document.getElementById("l").value;
+            let B = document.getElementById("B").value;
+            let t = document.getElementById("t").value;
+
+            while(result != prevResult)
             {
-                let result = ``;
+                prevResult = result;
 
-                const I = document.getElementById("I").value;
-                const F = document.getElementById("F").value;
-                const H = document.getElementById("H").value;
-                const Theta = document.getElementById("Theta").value;
-                const ur = document.getElementById("ur").value;
-                const N = document.getElementById("N").value;
-                const Rm = document.getElementById("Rm").value;
-                const A = document.getElementById("A").value;
-                const Phi = document.getElementById("Phi").value;
-                const U = document.getElementById("U").value;
-                const l = document.getElementById("l").value;
-                const B = document.getElementById("B").value;
-                const t = document.getElementById("t").value;
-
-                if(!I)   // Strom I
+                // === Strom I ===
+                if(!I && Theta && N)
                 {
-                    if(Theta && N)
-                    {
-                        debugger;
-                        result += `
-                            Strom I  = 
-                            <div class ="fraction">
-                                <span class="fraction-numerator">&Theta;</span><br>
-                                <span>N</span>
-                            </div> 
-                        =
-                            <div class ="fraction">
-                                <span class="fraction-numerator">${Theta}A</span><br>
-                                <span>${N}</span>
-                            </div> 
-                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(N), "A")}<br>`;
-                    }
-
-                    if(Rm && ur && A)
-                    {
-                        result += `
-                            Strom I =
-                            R<sub>m</sub> &lowast; &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A
-                        =
-                            ${Rm}A/VS &lowast; ${ur} 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup>
-                        = ${formatWithPrefix(parseInput(Rm) * parseInput(ur) * 1.257e-6 *  parseInputsquare(A), "A")}<br>`;
-                    }
+                    I = formatPrefixNoUnit(parseInput(Theta) / parseInput(N));
+                
+                    result += `
+                        Strom I  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&Theta;</span><br>
+                            <span>N</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Theta}A</span><br>
+                            <span>${N}</span>
+                        </div> 
+                    = ${I}A <br>`;
                 }
 
-                if(!F)      // Kraft F
+                if(!I && Rm && ur && A)
                 {
-                    if(B && A)
-                    {
-                        result += `
-                            Kraft F  = 
-                            - <div class ="fraction">
-                                <span class="fraction-numerator">B<sup>2</sup> &lowast; A</span><br>
-                                <span>2 &lowast; &mu;<sub>0</sub></span>
-                            </div> 
-                        =
-                            - <div class ="fraction">
-                                <span class="fraction-numerator">(${B}T)<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
-                                <span>2 &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am</span>
-                            </div> 
-                        = ${formatWithPrefix((Math.pow(parseInput(B), 2) * parseInputsquare(A))/ ( 2 * 1.257e-6), "N")}<br>`;
-                    }
+                    I = formatPrefixNoUnit(parseInput(Rm) * parseInput(ur) * 1.257e-6 * parseInputsquare(A));
+
+                    result += `
+                        Strom I =
+                        R<sub>m</sub> &lowast; &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A
+                    =
+                        ${Rm}A/VS &lowast; ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup>
+                    = ${I}A <br>`;
                 }
 
-                /*if(!H)       //Feldstaerke H
+                if(!I && H && l && N)
                 {
+                    I = formatPrefixNoUnit((parseInput(H) * parseInput(l)) / parseInput(N));
 
-                }*/
+                    result += `
+                        Strom I = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">H &lowast; l</span><br>
+                            <span>N</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
+                            <span>${N}</span>
+                        </div> 
+                    = ${I}A <br>`;
+                }
 
-                if(!Theta && H && l)   // Durchflutung
+                // === Feldstaerke H ===
+                if(!H && Theta && l)
                 {
+                    H = formatPrefixNoUnit(parseInput(Theta) / parseInput(l));
+
+                    result += `
+                       Feldst&auml;rke H = 
+                        - <div class ="fraction">
+                            <span class="fraction-numerator">&Theta;</span><br>
+                            <span> l </span>
+                        </div> 
+                    =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator"> ${Theta}Wb </span><br>
+                            <span> ${l}m </span>
+                        </div> 
+                    = ${H}A/m <br>`;
+                }
+
+                if(!H && N && I && l)
+                {
+                    H = formatPrefixNoUnit((parseInput(N) * parseInput(I)) / parseInput(l));
+
+                    result += `
+                       Feldst&auml;rke H = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">N &lowast; I</span><br>
+                            <span> l </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${N} &lowast; ${I}A </span><br>
+                            <span> ${l}m </span>
+                        </div> 
+                    = ${H}A/m <br>`;
+                }
+
+                // === Durchflutung Theta ===
+                if(!Theta && H && l)
+                {
+                    Theta = formatPrefixNoUnit(parseInput(H) * parseInput(l));
+
                     result += `
                             Durchflutung &Theta; =
                             H &lowast; l
                         =
                             ${H}A/m &lowast; ${l}m
-                        = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
+                        = ${Theta}A <br>`;
                 }
 
-                /*if(!ur)  // Permeabilitaetszahl ur
+                if(!Theta && I && N)
                 {
+                    Theta = formatPrefixNoUnit(parseInput(I) * parseInput(N));
 
-                }*/
-
-                if(!N)      // Windungszahl N
-                {
-                    if(Theta && I)
-                    {
-                        result += `
-                            Windungszahl N  = 
-                            -<div class ="fraction">
-                                <span class="fraction-numerator">&Theta;</span><br>
-                                <span>I</span>
-                            </div> 
+                    result += `
+                            Durchflutung &Theta; =
+                            I &lowast; N
                         =
-                            -<div class ="fraction">
-                                <span class="fraction-numerator">${Theta}A</span><br>
-                                <span>${I}A</span>
-                            </div> 
-                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(I), "")}<br>`;
-                    }
-
-                    if(U && t && Phi)
-                    {
-                        result += `
-                            Windungszahl N  = 
-                            -<div class ="fraction">
-                                <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
-                                <span>&Delta;&Phi;</span>
-                            </div> 
-                        =
-                            -<div class ="fraction">
-                                <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
-                                <span>${Phi}Wb</span>
-                            </div> 
-                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
-                    }
-
-                    if(H && l && I)
-                    {
-                        result += `
-                            Windungszahl N  = 
-                            -<div class ="fraction">
-                                <span class="fraction-numerator">H &lowast; l</span><br>
-                                <span>I</span>
-                            </div> 
-                        =
-                            -<div class ="fraction">
-                                <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
-                                <span>${I}A</span>
-                            </div> 
-                        = ${formatWithPrefix((parseInput(H) * parseInput(l))/ parseInput(I), "")}<br>`;
-                    }
+                            ${I}A &lowast; ${N}
+                        = ${Theta}A <br>`;
                 }
+
+                // === Permeabilitaetszahl ur ===
+                if(!ur && I && Rm && A)
+                {
+                    ur = formatPrefixNoUnit(parseInput(I) / (parseInput(Rm) * 1.257e-6 * parseInputsquare(A)));
+
+                    result += `
+                        Mag. Widerstand R<sub>m</sub> = 
+                        <div class ="fraction">
+                            <span>I</span><br>
+                            <span class="fraction-denumerator"> R<sub>m</sub> &lowast; &mu;<sub>0</sub> &lowast; A </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span> ${I}A</span><br>
+                            <span class="fraction-denumerator"> ${Rm}A/Vs &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup> </span>
+                        </div> 
+                    = ${ur} <br>`;
+                }
+
+                // === Windungszahl N ===
+                if(!N && Theta && I)
+                {
+                    N = formatPrefixNoUnit(parseInput(Theta) / parseInput(I));
+
+                    result += `
+                        Windungszahl N  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&Theta;</span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Theta}A</span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${N}<br>`;
+                }
+
+                if(!N && U && t && Phi)
+                {
+                    N = formatPrefixNoUnit(-(parseInput(U) * parseInput(t)) / parseInput(Phi));
+
+                    result += `
+                        Windungszahl N  = 
+                        - <div class ="fraction">
+                            <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
+                            <span>&Delta;&Phi;</span>
+                        </div> 
+                    =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                            <span>${Phi}Wb</span>
+                        </div> 
+                    = ${N}<br>`;
+                }
+
+                if(!N && H && l && I)
+                {
+                    N = formatPrefixNoUnit((parseInput(H) * parseInput(l)) / parseInput(I));
+
+                    result += `
+                        Windungszahl N  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">H &lowast; l</span><br>
+                            <span>I</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
+                            <span>${I}A</span>
+                        </div> 
+                    = ${N}<br>`;
+                }
+
+                // === Mag. Widerstand Rm ===
+                if(!Rm && I && ur && A)
+                {
+                    Rm = formatPrefixNoUnit(parseInput(I) / (parseInput(ur) * 1.257e-6 * parseInputsquare(A)));
+
+                    result += `
+                        Mag. Widerstand R<sub>m</sub> = 
+                        <div class ="fraction">
+                            <span>I</span><br>
+                            <span class="fraction-denumerator"> &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span> ${I}A</span><br>
+                            <span class="fraction-denumerator"> ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup> </span>
+                        </div> 
+                    = ${Rm}A/Vs <br>`;
+                }
+
+                // === Flaeche A ===
+                if(!A && I && ur && Rm)
+                {
+                    A = formatPrefixNoUnitSquare(parseInput(I) / (parseInput(ur) * 1.257e-6 * parseInput(Rm)));
+
+                    result += `
+                        Fl&auml;che A = 
+                        <div class ="fraction">
+                            <span>I</span><br>
+                            <span class="fraction-denumerator"> &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; R<sub>m</sub> </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span> ${I}A</span><br>
+                            <span class="fraction-denumerator"> ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am  ${Rm}A/Vs </span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+                }
+
+                if(!A && Phi && B)
+                {
+                    A = formatPrefixNoUnitSquare(parseInput(Phi) / parseInput(B));
                 
+                    result += `
+                        Strom I  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&Phi;</span><br>
+                            <span>B</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Phi}Wb</span><br>
+                            <span>${B}T</span>
+                        </div> 
+                    = ${A}m<sup>2</sup> <br>`;
+                }
 
-                document.getElementById('result').innerHTML = result;
+                // === Mag. Fluss Phi ===
+                if(!Phi && B && A)
+                {
+                    Phi = formatPrefixNoUnit(parseInput(B) * parseInputsquare(A));
+
+                    result += `
+                        Mag. Fluss &Phi; =
+                        B &lowast; A
+                    =
+                        ${B}T &lowast; ${A}m<sup>2</sup>
+                    = ${Phi}Wb <br>`;
+                }
+
+                if(!Phi && U && t && N)
+                {
+                    Phi = formatPrefixNoUnit(-(parseInput(U) * parseInput(t)) / parseInput(N));
+
+                    result += `
+                        Mag. Fluss &Phi; =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
+                            <span>N</span>
+                        </div> 
+                    =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                            <span>${N}</span>
+                        </div> 
+                    = ${Phi}Wb <br>`;
+                }
+
+                // === Spannung U ===
+                if(!U && t && N && Phi)
+                {
+                    U = formatPrefixNoUnit(-(parseInput(N) * parseInput(Phi)) / parseInput(t));
+
+                    result += `
+                        Induzierte Spannung u<sub>0</sub> = 
+                        - <div class ="fraction">
+                            <span class="fraction-numerator">N &lowast; &Delta;&Phi;</span><br>
+                            <span> </span>
+                        </div> 
+                    =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator"> ${N} &lowast; ${Phi}Wb</span><br>
+                            <span>${t}s</span>
+                        </div> 
+                    = ${U}V <br>`;
+                }
+
+                // === laenge l ===
+                if(!l && Theta && H)
+                {
+                    l = formatPrefixNoUnit(parseInput(Theta) / parseInput(H));
+
+                    result += `
+                       Feldlinienl&auml;nge l = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&Theta;</span><br>
+                            <span> H </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${Theta}Wb </span><br>
+                            <span> ${H}A/m </span>
+                        </div> 
+                    = ${l} <br>`;
+                }
+
+                if(!l && N && I && H)
+                {
+                    l = formatPrefixNoUnit((parseInput(N) * parseInput(I)) / parseInput(H));
+
+                    result += `
+                       Feldlinienl&auml;nge l = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">N &lowast; I</span><br>
+                            <span> H </span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator"> ${N} &lowast; ${I}A </span><br>
+                            <span> ${H}A/m </span>
+                        </div> 
+                    = ${l}m <br>`;
+                }
+
+
+                // === Mag. Flussdichte B ===
+                if(!B && ur && H)
+                {
+                    B = formatPrefixNoUnit(parseInput(ur) * 1.257e-6 * parseInput(H));
+
+                    result += `
+                        Mag. Flussdichte B =
+                        &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; H
+                    =
+                        ${ur} &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am  &lowast; ${H}A/m
+                    = ${B}T <br>`;
+                }
+
+                if(!B && Phi && A)
+                {
+                    B = formatPrefixNoUnit(parseInput(Phi) / parseInputsquare(A));
+                
+                    result += `
+                        Mag. Flussdichte B  = 
+                        <div class ="fraction">
+                            <span class="fraction-numerator">&Phi;</span><br>
+                            <span>A</span>
+                        </div> 
+                    =
+                        <div class ="fraction">
+                            <span class="fraction-numerator">${Phi}Wb</span><br>
+                            <span>${A}m<sup>2</sup></span>
+                        </div> 
+                    = ${B}T <br>`;
+                }
+
+                // === Zeit t ===
+                if(!t && U && N && Phi)
+                {
+                    t = formatPrefixNoUnit(-(parseInput(N) * parseInput(Phi)) / parseInput(U));
+
+                    result += `
+                        Zeit t = 
+                        - <div class ="fraction">
+                            <span class="fraction-numerator">N &lowast; &Delta;&Phi;</span><br>
+                            <span> u<sub>0</sub></span>
+                        </div> 
+                    =
+                        - <div class ="fraction">
+                            <span class="fraction-numerator"> ${N} &lowast; ${Phi}Wb</span><br>
+                            <span>${U}V</span>
+                        </div> 
+                    = ${t}s <br>`;
+                }
+
             }
+            
+            document.getElementById('result').innerHTML = result;
+        }
+
+
+        function resetInputs() {
+            const inputs = document.querySelectorAll(".input-numbers input");
+            inputs.forEach(input => input.value = "");
+            
+            // Optional: Ausgabe löschen
+            document.getElementById("result").innerHTML = "";
+        }
     </script>
 </body>
 </html>
