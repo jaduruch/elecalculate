@@ -52,7 +52,7 @@ function parseInput(value) {
 
     const num = parseFloat(match[1]);
     const unit = match[2];
-     debugger;
+    // debugger;
     return num * (unitMap[unit] || 1);
 }
 
@@ -64,7 +64,7 @@ function formatWithPrefix(value, unit) {
         { prefix: "k", factor: 1e3 },
         { prefix: "", factor: 1 },
         { prefix: "m", factor: 1e-3 },
-        { prefix: "µ", factor: 1e-6 },
+        { prefix: "u", factor: 1e-6 },
         { prefix: "n", factor: 1e-9 },
         { prefix: "p", factor: 1e-12 }
     ];
@@ -103,6 +103,31 @@ function formatPrefixNoUnit(value)              // dont return Unit of Value
 
 
 //-----------------------------------------------------------------------Massvorsaetze Quadratisch
+function formatPrefixNoUnitSquare(value)
+{
+    const prefixes = [
+        { prefix: "T", factor: 1e24 },
+        { prefix: "G", factor: 1e18 },
+        { prefix: "M", factor: 1e12 },
+        { prefix: "k", factor: 1e6 },
+        { prefix: "", factor: 1 },
+        { prefix: "m", factor: 1e-6 },
+        { prefix: "u", factor: 1e-12 },
+        { prefix: "n", factor: 1e-18 },
+        { prefix: "p", factor: 1e-24 }
+    ];
+
+    for (let i = 0; i < prefixes.length; i++) {
+        if (Math.abs(value) >= prefixes[i].factor) {
+            return (value / prefixes[i].factor).toFixed(3) + prefixes[i].prefix;
+        }
+    }
+
+    return value.toFixed(3);
+}
+
+
+
 function parseInputsquare(value) {
     const unitMap = {
         //"f": 1e-30,   // Femto
