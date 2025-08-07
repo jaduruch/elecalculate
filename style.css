@@ -574,3 +574,75 @@ input:checked + .slider:before {
         .example button:hover {
             background-color: #4f4f4f;
         }
+
+/* PDFObject container and PDF embed */
+.pdfobject-container,
+.pdfobject {
+    width: 100% !important;
+    max-width: 1000px;
+    height: 80vh !important;
+    margin: 0 auto !important;
+    border: none;
+    background: #f8f8f8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    display: block;
+    padding: 0 !important;
+}
+
+/* PDF viewer wrapper */
+#pdfjs-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+    min-height: 80vh;
+}
+
+/* PDF action buttons */
+#pdf-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1em;
+    flex-wrap: wrap;
+}
+.PDF_Button {
+    min-width: 140px;
+    padding: 10px 18px;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 8px;
+    color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1rem;
+}
+.PDF_Button-Download {
+    min-width: 180px;
+    padding-left: 28px;
+    padding-right: 28px;
+}
+.PDF_Button:hover {
+    background-color: white;
+    color: black;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+    .pdfobject-container,
+    .pdfobject {
+        max-width: 100vw;
+        height: 60vh !important;
+    }
+    #pdfjs-viewer {
+        min-height: 60vh;
+    }
+}
