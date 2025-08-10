@@ -117,6 +117,10 @@ jobs:
           FEATURES=""
           FIXES=""
           OTHERS=""
+          FEATURE_COUNT=0
+          FIX_COUNT=0
+          OTHER_COUNT=0
+
           for SHA in $(git log --pretty=format:"%H" $RANGE); do
             MSG=$(git log -1 --pretty=format:"%s" $SHA)
             FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
@@ -134,36 +138,56 @@ jobs:
               continue
             fi
             if [[ "$MSG" =~ ^feat: ]]; then
-              FEATURES+=$'\n'"* ${MSG#feat: }"
+              FEATURES+=$'\n'"- ${MSG#feat: }"
+              FEATURE_COUNT=$((FEATURE_COUNT+1))
             elif [[ "$MSG" =~ ^fix: ]]; then
-              FIXES+=$'\n'"* ${MSG#fix: }"
+              FIXES+=$'\n'"- ${MSG#fix: }"
+              FIX_COUNT=$((FIX_COUNT+1))
             else
-              OTHERS+=$'\n'"* $MSG"
+              OTHERS+=$'\n'"- $MSG"
+              OTHER_COUNT=$((OTHER_COUNT+1))
             fi
           done
 
           {
-            echo "**Build date:** $(date -u +"%Y-%m-%d %H:%M UTC")"
-            echo "**Branch:** main"
+            echo "# Elecalculate Offline Release – ${{ steps.version.outputs.new_tag }}"
+            echo
+            echo "**📅 Build Date:** $(date -u +"%Y-%m-%d %H:%M UTC")"
+            echo "**🌿 Branch:** \`main\`"
+            if [ -n "$LAST_TAG" ]; then
+              echo "**🔖 Commit Range:** \`$LAST_TAG\` → \`${{ steps.version.outputs.new_tag }}\`"
+            fi
+            echo
+            echo "---"
+            echo
+            echo "## 📦 Summary"
+            echo
+            echo "| Type | Count |"
+            echo "|------|-------|"
+            echo "| ✨ Features | $FEATURE_COUNT |"
+            echo "| 🐛 Fixes    | $FIX_COUNT |"
+            echo "| 📄 Other    | $OTHER_COUNT |"
             echo
             if [ -n "$FEATURES" ]; then
-              echo "### Features"
+              echo "## ✨ Features"
               echo "$FEATURES"
               echo
             fi
             if [ -n "$FIXES" ]; then
-              echo "### Fixes"
+              echo "## 🐛 Fixes"
               echo "$FIXES"
               echo
             fi
             if [ -n "$OTHERS" ]; then
-              echo "### Other changes"
+              echo "## 📄 Other Changes"
               echo "$OTHERS"
               echo
             fi
+            echo "---"
+            echo
+            echo "**✅ This build works fully offline.**"
           } > release-notes.md
 
-          echo >> release-notes.md
           {
             echo "release_notes<<EOF"
             cat release-notes.md
