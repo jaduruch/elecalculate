@@ -1,3 +1,4 @@
+<!-- deployment.manifest.sha256: 1867eaeffc4e2cec1396e6c69bff440c57c71aa47b7211256496091b47a56d29 -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -231,6 +232,48 @@
                 
                 <br>
                 <div style="padding: 0 10px;"> <!-- top/bottom 0px, left/right 10px */-->
+<div class="proof-box">
+  <h1>Offline-Prüfungsnachweis</h1>
+  <div class="build" title="Zeitpunkt, zu dem diese Version gebaut wurde">ℹ️ Version erstellt: <span id="build-date">2025-08-10 21:09 UTC</span></div>
+  <div><span title="Technischer Fingerabdruck dieser Version. Klicken zum Kopieren!">🔒 Prüfcode: <span id="manifest-hash" class="hash" title="1867eaeffc4e2cec1396e6c69bff440c57c71aa47b7211256496091b47a56d29">1867eaef…6d29</span></span><div class="copy-hint" id="copy-hint" style="display:none;">Kopiert!</div></div>
+  <div class="status" id="offline-status" title="Zeigt an, ob du gerade mit dem Internet verbunden bist.">🌐 Status: <span class="offline">Offline</span></div>
+  <div class="info">Diese App funktioniert <b>vollständig offline</b>.<br>Alle Berechnungen und Inhalte sind lokal verfügbar.<br><span style="color:#ffe066;"><br>Kein Zugriff auf das Internet oder externe Ressourcen.</span></div>
+</div>
+<style>
+  .proof-box { background: #222; color: #ffe066; border: 2px solid #ffe066; border-radius: 12px; margin: 2.5em auto 2em auto; padding: 2em 2.5em; box-shadow: 0 4px 24px #0008; text-align: center; max-width: 420px; }
+  .proof-box h1 { color: #ffe066; margin-bottom: 0.5em; font-size: 1.7em; margin-top: 0; }
+  .proof-box .status { font-size: 1.1em; margin: 1em 0; }
+  .proof-box .hash { font-family: monospace; background: #333; color: #ffe066; padding: 0.2em 0.6em; border-radius: 4px; margin: 0.2em 0; display: inline-block; cursor: pointer; border: 1px solid #ffe066; }
+  .proof-box .hash:hover { background: #444; text-decoration: underline; }
+  .proof-box .build { color: #b3b3b3; font-size: 0.95em; margin-bottom: 0.5em; }
+  .proof-box .offline { color: #0f0; font-weight: bold; }
+  .proof-box .online { color: #e67e22; font-weight: bold; }
+  .proof-box .info { color: #fff; font-size: 0.95em; margin-top: 1.2em; }
+  .proof-box .copy-hint { color: #ffe066; font-size: 0.9em; margin-top: 0.2em; }
+</style>
+<script>
+  function updateStatus(){
+    var el=document.getElementById("offline-status");
+    if(!el)return;
+    var online=navigator.onLine;
+    el.innerHTML="🌐 Status: <span class=\"" + (online ? "online" : "offline") + "\">" + (online ? "Online (Warnung: Verbindung erkannt!)" : "Offline (OK)") + "</span>";
+  }
+  window.addEventListener("online",updateStatus);
+  window.addEventListener("offline",updateStatus);
+  document.addEventListener("DOMContentLoaded",updateStatus);
+  var hashEl=document.getElementById("manifest-hash");
+  var hintEl=document.getElementById("copy-hint");
+  if(hashEl){
+    hashEl.addEventListener("click",function(){
+      var fullHash=hashEl.getAttribute("title");
+      if(navigator.clipboard){navigator.clipboard.writeText(fullHash);}
+      if(hintEl){
+        hintEl.style.display="block";
+        setTimeout(function(){hintEl.style.display="none";},1200);
+      }
+    });
+  }
+</script>
                     <!-- Neuer Inhalt -->
                     <div class="content">
                         <p>Mit Elecalculate kannst du (fast) alles berechnen, was du in der Elektronik-Lehre ben&ouml;tigst.</p>
