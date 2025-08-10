@@ -150,8 +150,6 @@ jobs:
           done
 
           {
-            echo "# Elecalculate Offline Release – ${{ steps.version.outputs.new_tag }}"
-            echo
             echo "**📅 Build Date:** $(date -u +"%Y-%m-%d %H:%M UTC")"
             echo "**🌿 Branch:** \`main\`"
             if [ -n "$LAST_TAG" ]; then
