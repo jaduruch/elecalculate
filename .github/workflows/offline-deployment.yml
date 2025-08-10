@@ -124,9 +124,13 @@ jobs:
           for SHA in $(git log --pretty=format:"%H" $RANGE); do
             MSG=$(git log -1 --pretty=format:"%s" $SHA)
             FILES=$(git diff-tree --no-commit-id --name-only -r $SHA)
+
+            # Skip commits that are only CI, chore, or docs
             if [[ "$MSG" =~ ^(ci|chore|docs): ]]; then
               continue
             fi
+
+            # Skip commits that only touch infra files
             ONLY_INFRA=true
             for FILE in $FILES; do
               if [[ ! "$FILE" =~ \.ya?ml$ && ! "$FILE" =~ \.md$ ]]; then
@@ -137,14 +141,18 @@ jobs:
             if $ONLY_INFRA; then
               continue
             fi
+
+            SHORT_SHA=$(git rev-parse --short $SHA)
+            COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/$SHA"
+
             if [[ "$MSG" =~ ^feat: ]]; then
-              FEATURES+=$'\n'"- ${MSG#feat: }"
+              FEATURES+=$'\n'"- ${MSG#feat: } ([\`$SHORT_SHA\`]($COMMIT_URL))"
               FEATURE_COUNT=$((FEATURE_COUNT+1))
             elif [[ "$MSG" =~ ^fix: ]]; then
-              FIXES+=$'\n'"- ${MSG#fix: }"
+              FIXES+=$'\n'"- ${MSG#fix: } ([\`$SHORT_SHA\`]($COMMIT_URL))"
               FIX_COUNT=$((FIX_COUNT+1))
             else
-              OTHERS+=$'\n'"- $MSG"
+              OTHERS+=$'\n'"- $MSG ([\`$SHORT_SHA\`]($COMMIT_URL))"
               OTHER_COUNT=$((OTHER_COUNT+1))
             fi
           done
