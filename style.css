@@ -469,6 +469,7 @@ form {
     margin-bottom: 10px;
     width: 100%;
     /*max-width: 150px;*/
+            margin-left: 10px;
 }
 
 .form-row label {
