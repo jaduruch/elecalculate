@@ -54,7 +54,7 @@ jobs:
             echo "path=angular" >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/angular/" >> $GITHUB_ENV
             echo "build_type=angular" >> $GITHUB_ENV
-            echo "publish_dir=dist" >> $GITHUB_ENV
+            echo "publish_dir=dist/angular-app" >> $GITHUB_ENV
             echo "::notice::Building and deploying angular branch."
           elif [ "$branch_name" = "nextjs" ]; then
             echo "path=nextjs" >> $GITHUB_ENV
