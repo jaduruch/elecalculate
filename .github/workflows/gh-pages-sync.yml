@@ -88,7 +88,6 @@ jobs:
         if: env.build_type == 'nextjs'
         run: |
           npm run build
-          npx next export
 
       - name: List files to be deployed
         run: |
