@@ -300,8 +300,7 @@ button {
     border: 2px solid white;
     border-radius: 8px;
     color: white;
-
-    display: flex;               /* Flexbox aktivieren */
+    text-align: center;
     justify-content: center;     /* Horizontal zentrieren */
     align-items: center;         /* Vertikal zentrieren */
 
