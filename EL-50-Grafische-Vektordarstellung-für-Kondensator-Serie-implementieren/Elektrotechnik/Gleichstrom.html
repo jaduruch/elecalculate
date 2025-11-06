@@ -182,32 +182,6 @@
             flex: 0.8;
         }
 
-        h3 {
-            margin-top: 20px;
-        }
-
-        .results{
-            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction
-        {
-            display: inline-block; 
-            vertical-align: middle; 
-            text-align: center;
-            margin-top: 1px;
-            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction-numerator{
-            border-bottom: 1px solid;
-            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
-            display: inline-block; /* Macht die Anpassungen besser sichtbar */
-        }
-
-        .fraction-denumerator {
-            border-top: 1px solid white;
-        }
 
         .opv-button {
             position: relative;
@@ -314,7 +288,8 @@
                     <div class="dropdown-content"> 
                         <div>
 
-                                <img src="../Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik" width="80%">
+                            <img src="../Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik" style="max-width:400px; width:80%;">
+                            
                             </div>
                             <div class="input-numbers">
                                 <div class="comment">
@@ -347,8 +322,14 @@
                                     <input type="text" id="U" style="border-color: var(--Spannung);">
                                     <label>V [Volt]</label>
                                 </div>
+
+                                <div class="form-row">
+                                    <label></label>
+                                    <button onclick="calculateParametersURI()" class="Button_Berechnen">Berechnen</button>
+                                    <label></label>
+                                </div>
+
                             </div>
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersURI()">
                             
                             
                             <p id="result"></p>
@@ -372,50 +353,56 @@
                         <span id="modeLabel">unbelastet</span>
                         <br>
                         <div id="circuitDiagram">
-                            <img id="circuitImage" src="../Pictures/Spannungsteiler_unbelastet.png" alt="Schaltung unbelastet" style="width:auto; height:350px;">
+                            <img id="circuitImage" src="../Pictures/Spannungsteiler_unbelastet.png" alt="Schaltung unbelastet" style="max-width:400px; width:80%; height:auto;">
                             <div id="unbelastet" style="display:block;" class="input-numbers">
-                                    <div class="comment">
-                                        Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
-                                    </div>
-                                    <!-- Strom I -->
-                                    <div class="form-row">
-                                        <label>Strom I</label>
-                                        <input type="text" id="I_unb" style="border-color: var(--Strom);">
-                                        <label>A [Ampere]</label>
-                                    </div>
-                    
-                                    <!-- Widerstand R -->
-                                    <div class="form-row">
-                                        <label>Widerstand R<sub>1</sub></label>
-                                        <input type="text" id="R1_unb" style="border-color: var(--Widerstand);">
-                                        <label>&Omega; [Ohm]</label>
-                                    </div>
-        
-                                    <div class="form-row">
-                                        <label>Widerstand R<sub>2</sub></label>
-                                        <input type="text" id="R2_unb" style="border-color: var(--Widerstand);">
-                                        <label>&Omega; [Ohm]</label>
-                                    </div>
-                    
-                                    <!-- Spannung U -->
-                                    <div class="form-row">
-                                        <label>Spannung U<sub>in</sub></label>
-                                        <input type="text" id="Uin_unb" style="border-color: var(--Spannung);">
-                                        <label>V [Volt]</label>
-                                    </div>
-        
-                                    <div class="form-row">
-                                        <label>Spannung U<sub>1</sub></label>
-                                        <input type="text" id="U1_unb" style="border-color: var(--Spannung);">
-                                        <label>V [Volt]</label>
-                                    </div>
-        
-                                    <div class="form-row">
-                                        <label>Spannung U<sub>out</sub></label>
-                                        <input type="text" id="Uout_unb" style="border-color: var(--Spannung);">
-                                        <label>V [Volt]</label>
-                                    </div>
-                                <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersUnb_Spannungsteiler()"> 
+                                <div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
+                                </div>
+                                <!-- Strom I -->
+                                <div class="form-row">
+                                    <label>Strom I</label>
+                                    <input type="text" id="I_unb" style="border-color: var(--Strom);">
+                                    <label>A [Ampere]</label>
+                                </div>
+                
+                                <!-- Widerstand R -->
+                                <div class="form-row">
+                                    <label>Widerstand R<sub>1</sub></label>
+                                    <input type="text" id="R1_unb" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+    
+                                <div class="form-row">
+                                    <label>Widerstand R<sub>2</sub></label>
+                                    <input type="text" id="R2_unb" style="border-color: var(--Widerstand);">
+                                    <label>&Omega; [Ohm]</label>
+                                </div>
+                
+                                <!-- Spannung U -->
+                                <div class="form-row">
+                                    <label>Spannung U<sub>in</sub></label>
+                                    <input type="text" id="Uin_unb" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+    
+                                <div class="form-row">
+                                    <label>Spannung U<sub>1</sub></label>
+                                    <input type="text" id="U1_unb" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+    
+                                <div class="form-row">
+                                    <label>Spannung U<sub>out</sub></label>
+                                    <input type="text" id="Uout_unb" style="border-color: var(--Spannung);">
+                                    <label>V [Volt]</label>
+                                </div>
+
+                                <div class="form-row">
+                                    <label></label>
+                                    <button onclick="calculateUnb_Spannungsteiler()" class="Button_Berechnen">Berechnen</button>
+                                    <label></label>
+                                </div>
+                                
                                 <p id="result_unb"></p>
                             <br>
                             </div>
@@ -480,7 +467,7 @@
                                     <input type="text" id="Uout_bel" style="border-color: var(--Spannung);">
                                     <label>V [Volt]</label>
                                 </div>
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParametersBel_Spannungsteiler()"> 
+                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateBel_Spannungsteiler()"> 
                             <p id="result_bel"></p>
                         <br>
                             </div>
@@ -531,12 +518,8 @@
 
             </div>
 
-
-
         </main>
-        <footer>
-            &copy 2025 Elecalculate
-        </footer>
+        <footer> &copy; 2025 Elecalculate </footer>
     </div>
     <script>
 
@@ -730,75 +713,202 @@
     }   
 
     
-    function calculateParametersUnb_Spannungsteiler()   // unbelasteter Spannungsteiler
+    function calculateUnb_Spannungsteiler()   // unbelasteter Spannungsteiler
     {
         let result_unb = ``;
+        let prevResult_unb = `1`;
 
-        const I = document.getElementById("I_unb").value;
-        const R1 = document.getElementById("R1_unb").value;
-        const R2 = document.getElementById("R2_unb").value;
-        const Uin = document.getElementById("Uin_unb").value;
-        const U1 = document.getElementById("U1_unb").value;
-        const Uout = document.getElementById("Uout_unb").value;
+        let I = document.getElementById("I_unb").value;
+        let R1 = document.getElementById("R1_unb").value;
+        let R2 = document.getElementById("R2_unb").value;
+        let Uin = document.getElementById("Uin_unb").value;
+        let U1 = document.getElementById("U1_unb").value;
+        let Uout = document.getElementById("Uout_unb").value;
 
-        if(!Uout && Uin && R1 && R2)
+        while(prevResult_unb != result_unb)     // do as long as new Results are found
         {
-            result_unb += `
-                Spannung U<sub>out</sub> = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; R<sub>2</sub></span><br>
-                    <span>R<sub>1</sub> + R<sub>2</sub></span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> ${Uin}V &lowast; ${R2}&Omega;</span><br>
-                    <span>${R1}&Omega; + ${R2}&Omega;</span>
-                </div> 
-            = ${formatWithPrefix((parseInput(Uin) * parseInput(R2))/(parseInput(R1) + parseInput(R2)) , "V")}<br>`;
-        }
+            prevResult_unb = result_unb;
 
-        if(!I && Uin && R1 && R2)
-        {
-            result_unb += `
-                Strom I = 
-                <div class ="fraction">
-                    <span> U<sub>in</sub></span><br>
-                    <span class="fraction-denumerator">R<sub>1</sub> + R<sub>2</sub></span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span> ${Uin}V </span><br>
-                    <span class="fraction-denumerator">${R1}&Omega; + ${R2}&Omega;</span>
-                </div> 
-            = ${formatWithPrefix(parseInput(Uin)/(parseInput(R1) + parseInput(R2)) , "A")}<br>`;
-        }
-
-        if(!R2 && Uin && Uout && R1)
-        {
-            // R2 = Uout * R1 / (Uin - Uout)
-            // I = (Uin - Uout)/R1
-            // R2 = Uout / I
-
-            result_unb += `
-                Widerstand R<sub>2</sub> =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U<sub>out</sub> &lowast; R<sub>1</sub></span><br>
-                    <span>U<sub>in</sub> - U<sub>out</sub></span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> ${Uout}V &lowast; ${R1}&Omega;</span><br>
-                    <span>${Uin}V - ${Uout}V</span>
-                </div> 
-            = ${formatWithPrefix((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)) , "&Omega;")}<br>`;
-        }
-
-        if(!Uin)
-        {
-            if(Uout && R1 && R2)
+            // === Strom I ===
+            if(!I && Uin && R1 && R2)
             {
-                // (Uout * (R1 + R2))/R2
-                    result_unb += `
+                // I = Uin / (R1 + R2)
+                I = formatPrefixNoUnit(parseInput(Uin)/(parseInput(R1) + parseInput(R2)));
+                result_unb += `
+                    Strom I = 
+                    <div class ="fraction">
+                        <span> U<sub>in</sub></span><br>
+                        <span class="fraction-denumerator">R<sub>1</sub> + R<sub>2</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span> ${Uin}V </span><br>
+                        <span class="fraction-denumerator">${R1}&Omega; + ${R2}&Omega;</span>
+                    </div> 
+                = ${I}A <br>`;
+            }
+
+            if(!I && U1 && R1)
+            {
+                // I = U1 / R1
+                I = formatPrefixNoUnit(parseInput(U1)/parseInput(R1));
+            
+                result_unb += `
+                    Strom I =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>1</sub> </span><br>
+                        <span> R<sub>1</sub> </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${U1}V </span><br>
+                        <span>${R1}&Omega; </span>
+                    </div> 
+                = ${I}A <br>`;
+            }
+
+            if(!I && Uout && R2)
+            {
+                // I = Uout / R2
+                I = formatPrefixNoUnit(parseInput(Uout)/parseInput(R2));
+            
+                result_unb += `
+                    Strom I =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> </span><br>
+                        <span> R<sub>2</sub> </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V </span><br>
+                        <span>${R2}&Omega; </span>
+                    </div> 
+                = ${I}A <br>`;
+            }
+            
+            // === Widerstand R1 ===            
+            if(!R1 && Uin && Uout && R2)
+            {
+                // R1 = (Uin - Uout) / Uout * R2
+                R1 = formatPrefixNoUnit((parseInput(Uin) - parseInput(Uout)) / (parseInput(Uout) * parseInput(R2)));
+            
+                result_unb += `
+                    Widerstand R<sub>2</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>in</sub> - U<sub>out</sub> </span><br>
+                        <span> U<sub>out</sub> &lowast; R<sub>2</sub> </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator">${Uin}V - ${Uout}V</span><br>
+                        <span>${Uout}V &lowast; ${R2}&Omega;</span>
+                    </div> 
+                = ${R1}&Omega;<br>`;
+            }
+
+            if(!R1 && Uin && I && R2)
+            {
+                // R1 = (Uin / I) - R2
+                R1 = formatPrefixNoUnit((parseInput(U1) /parseInput(I)) - parseInput(R2));
+            
+                result_unb += `
+                    Widerstand R<sub>1</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>in</sub> </span><br>
+                        <span> I </span>
+                    </div> - R<sub>2</sub>
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uin}V </span><br>
+                        <span>${I}A </span>
+                    </div> - ${R2}&Omega;
+                = ${R1}&Omega;<br>`;
+            }
+
+            if(!R1 && U1 && I)
+            {
+                // R1 = U1 / I
+                R1 = formatPrefixNoUnit(parseInput(U1)/parseInput(I));
+            
+                result_unb += `
+                    Widerstand R<sub>1</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>1</sub> </span><br>
+                        <span> I </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${U1}V </span><br>
+                        <span>${I}A </span>
+                    </div> 
+                = ${R1}&Omega;<br>`;
+            }
+
+            // === Widerstand R2 ===
+            if(!R2 && Uin && Uout && R1)
+            {
+                // R2 = Uout * R1 / (Uin - Uout)
+                R2 = formatPrefixNoUnit((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)));
+            
+                result_unb += `
+                    Widerstand R<sub>2</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> &lowast; R<sub>1</sub></span><br>
+                        <span>U<sub>in</sub> - U<sub>out</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V &lowast; ${R1}&Omega;</span><br>
+                        <span>${Uin}V - ${Uout}V</span>
+                    </div> 
+                = ${R2}&Omega;<br>`;
+            }
+
+            if(!R1 && Uin && I && R2)
+            {
+                // R2 = (Uin / I) - R1
+                R2 = formatPrefixNoUnit((parseInput(U1) /parseInput(I)) - parseInput(R1));
+            
+                result_unb += `
+                    Widerstand R<sub>2</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>in</sub> </span><br>
+                        <span> I </span>
+                    </div> - R<sub>1</sub>
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uin}V </span><br>
+                        <span>${I}A </span>
+                    </div> - ${R1}&Omega;
+                = ${R2}&Omega;<br>`;
+            }
+
+            if(!R2 && Uout && I)
+            {
+                // R2 = Uout / I
+                R2 = formatPrefixNoUnit(parseInput(Uout)/parseInput(I));
+            
+                result_unb += `
+                    Widerstand R<sub>2</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> </span><br>
+                        <span> I </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V </span><br>
+                        <span>${I}A </span>
+                    </div> 
+                = ${R2}&Omega;<br>`;
+            }
+
+            // === Spannung Uin ===
+            if(!Uin && Uout && R1 && R2)
+            {
+                // Uin = (Uout * (R1 + R2))/R2
+                Uin = formatPrefixNoUnit((parseInput(Uout) * (parseInput(R1) + parseInput(R2)))/parseInput(R2));
+
+                result_unb += `
                     Spannung U<sub>in</sub> =
                     <div class ="fraction">
                         <span class="fraction-numerator"> U<sub>out</sub> &lowast; (R<sub>1</sub> + R<sub>2</sub>)</span><br>
@@ -809,56 +919,209 @@
                         <span class="fraction-numerator"> ${Uout}V &lowast; (${R1}&Omega; + ${R2}&Omega;)</span><br>
                         <span>${R2}&Omega;</span>
                     </div> 
-                = ${formatWithPrefix((parseInput(Uout) * (parseInput(R1) + parseInput(R2)))/parseInput(R2) , "V")}<br>`;
-
+                = ${Uin}V <br>`;
             }
+
+            if(!Uin && R1 && R2 && I)
+            {
+                // Uout = (R1 + R2) * I
+                Uout = formatPrefixNoUnit((parseInput(R1) + parseInput(R2)) * parseInput(I));
+
+                result += `
+                    Spannung U<sub>in</sub> =  
+                    (R<sub>1</sub> + R<sub>2</sub>) &lowast; I
+                =
+                    (${R1}&Omega; + ${R2}&Omega;) &lowast; ${I}A
+                = ${Uin}V <br>`;
+            }
+
+            if(!Uin && Uout && U1)
+            {
+                // Uin = Uout - U1
+                Uin = formatPrefixNoUnit(parseInput(Uout) - parseInput(U1));
+
+                result += `
+                    Spannung U<sub>in</sub> =  
+                    U<sub>out</sub> - U<sub>1</sub>
+                =
+                    ${Uout}V - ${U1}V
+                = ${Uin}V <br>`;
+            }
+            
+            // === Spanung U1 ===
+            if(!U1 && R1 && I)
+            {
+                // U1 = R1 * I
+                U1 = formatPrefixNoUnit(parseInput(R1) * parseInput(I));
+
+                result += `
+                    Spannung U<sub>1</sub> =  
+                    R<sub>1</sub> &lowast; I
+                =
+                    ${R1}&Omega; &lowast; ${I}A
+                = ${U1}V <br>`;
+            }
+
+            if(!U1 && Uout && Uin)
+            {
+                // U1 = Uout - Uin
+                U1 = formatPrefixNoUnit(parseInput(Uout) - parseInput(Uin));
+
+                result += `
+                    Spannung U<sub>1</sub> =  
+                    U<sub>out</sub> - U<sub>in</sub>
+                =
+                    ${Uout}V - ${Uin}V
+                = ${U1}V <br>`;
+            }
+
+            // === Spannung Uout ===
+            if(!Uout && Uin && R1 && R2)
+            {
+                // Uout = Uin * R2 / (R1 + R2)
+                result_unb += `
+                    Spannung U<sub>out</sub> = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>in</sub> &lowast; R<sub>2</sub></span><br>
+                        <span>R<sub>1</sub> + R<sub>2</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uin}V &lowast; ${R2}&Omega;</span><br>
+                        <span>${R1}&Omega; + ${R2}&Omega;</span>
+                    </div> 
+                = ${formatWithPrefix((parseInput(Uin) * parseInput(R2))/(parseInput(R1) + parseInput(R2)) , "V")}<br>`;
+            }
+
+            if(!Uout && R2 && I)
+            {
+                // Uout = R2 * I
+                Uout = formatPrefixNoUnit(parseInput(R2) * parseInput(I));
+
+                result += `
+                    Spannung U<sub>out</sub> =  
+                    R<sub>2</sub> &lowast; I
+                =
+                    ${R2}&Omega; &lowast; ${I}A
+                = ${Uout}V <br>`;
+            }
+
+            if(!Uout && U1 && Uin)
+            {
+                // Uout = U1 + Uin
+                Uout = formatPrefixNoUnit(parseInput(U1) + parseInput(Uin));
+
+                result += `
+                    Spannung U<sub>out</sub> =  
+                    U<sub>1</sub> + U<sub>in</sub>
+                =
+                    ${U1}V + ${Uin}V
+                = ${Uout}V <br>`;
+            }
+
         }
 
 
         document.getElementById('result_unb').innerHTML = result_unb;
     }
 
-    function calculateParametersBel_Spannungsteiler()   // belasteter Spannungsteiler
+    function calculateBel_Spannungsteiler()   // belasteter Spannungsteiler
     {
         let result_bel = ``;
+        let prevResult_bel = `1`;
 
-        const Iges = document.getElementById("Iges_bel").value;
-        const IR2 = document.getElementById("IR2_bel").value;
-        const IRL = document.getElementById("IRL_bel").value;
-        const R1 = document.getElementById("R1_bel").value;
-        const R2 = document.getElementById("R2_bel").value;
-        const RL = document.getElementById("RL_bel").value;
-        const Uin = document.getElementById("Uin_bel").value;
-        const U1 = document.getElementById("U1_bel").value;
-        const Uout = document.getElementById("Uout_bel").value;
+        let Iges = document.getElementById("Iges_bel").value;
+        let IR2 = document.getElementById("IR2_bel").value;
+        let IRL = document.getElementById("IRL_bel").value;
+        let R1 = document.getElementById("R1_bel").value;
+        let R2 = document.getElementById("R2_bel").value;
+        let RL = document.getElementById("RL_bel").value;
+        let Uin = document.getElementById("Uin_bel").value;
+        let U1 = document.getElementById("U1_bel").value;
+        let Uout = document.getElementById("Uout_bel").value;
 
-        if(!Uout && Uin && R1 && R2 && RL)
+        while(prevResult_bel != result_bel)     // do as long as new Results are found
         {
-            result_bel += `
+            prevResult_bel = result_bel;
 
-                Spannung U<sub>out</sub> = 
-                <div class ="fraction">
-                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; <div class ="fraction">
-                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
-                    <span>R<sub>2</sub> + R<sub>L</sub></span>
-                </div> </span><br>
-                    <span>R<sub>1</sub> + <div class ="fraction">
-                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
-                    <span>R<sub>2</sub> + R<sub>L</sub></span>
-                </div> </span>
-                </div> 
-            =
-                <div class ="fraction">
-                    <span class="fraction-numerator"> ${Uin}V &lowast; <div class ="fraction">
-                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
-                    <span>${R2}&Omega; + ${RL}&Omega;</span>
-                </div> </span><br>
-                    <span>${R1}&Omega; + <div class ="fraction">
-                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
-                    <span>${R2}&Omega; + ${RL}&Omega;</span>
-                </div> </span>
-                </div> 
-            = ${formatWithPrefix((parseInput(Uin) * ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL))))/(parseInput(R1) + ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL)))) , "V")}<br>`;
+            // === Strom Iges ===
+
+            // === Strom IR2 ===
+
+            // === Strom IRL ===
+
+            // === Widerstand R1 ===
+
+            // === Widerstand R2 ===
+
+            // === Widerstand RL ===
+
+            // === Spannung Uin ===
+            if(!Uin && Uout && R1 && R2 && RL)
+            {
+                // Uin = (Uout * (R1 + R2))/R2
+                Uin = formatPrefixNoUnit((parseInput(Uout) * (parseInput(R1) + ((parseInput(R2) * parseInput(RL)) / (parseInput(R2) + parseInput(RL))))) / ((parseInput(R2) * parseInput(RL)) / (parseInput(R2) + parseInput(RL))));
+
+                result_bel += `
+                    Spannung U<sub>in</sub> = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> &lowast; (R<sub>1</sub> + <div class ="fraction">
+                        <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                        <span>R<sub>2</sub> + R<sub>L</sub></span>
+                    </div>) </span><br>
+                        <span><div class ="fraction">
+                        <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                        <span>R<sub>2</sub> + R<sub>L</sub></span>
+                    </div> </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V &lowast; (R<sub>1</sub> + <div class ="fraction">
+                        <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                        <span>${R2}&Omega; + ${RL}&Omega;</span>
+                    </div>) </span><br>
+                        <span><div class ="fraction">
+                        <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                        <span>${R2}&Omega; + ${RL}&Omega;</span>
+                    </div> </span>
+                    </div> 
+                = ${Uin}V <br>`;
+            }
+
+            // === Spannung U1 ===
+
+            // === Spnnung Uout ===
+            if(!Uout && Uin && R1 && R2 && RL)
+            {
+                // Uout = Uin * R2 / (R1 + R2)
+                Uout = formatPrefixNoUnit((parseInput(Uin) * ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL))))/(parseInput(R1) + ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL)))));
+
+                result_bel += `
+
+                    Spannung U<sub>out</sub> = 
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>in</sub> &lowast; <div class ="fraction">
+                        <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                        <span>R<sub>2</sub> + R<sub>L</sub></span>
+                    </div> </span><br>
+                        <span>R<sub>1</sub> + <div class ="fraction">
+                        <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                        <span>R<sub>2</sub> + R<sub>L</sub></span>
+                    </div> </span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uin}V &lowast; <div class ="fraction">
+                        <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                        <span>${R2}&Omega; + ${RL}&Omega;</span>
+                    </div> </span><br>
+                        <span>${R1}&Omega; + <div class ="fraction">
+                        <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                        <span>${R2}&Omega; + ${RL}&Omega;</span>
+                    </div> </span>
+                    </div> 
+                = ${Uout}V <br>`;
+            }
         }
 
 
@@ -873,48 +1136,48 @@
 
     // Serie Parallel
     function selectOPV(opv, button) {
-            const buttonGroup = button.closest('div');
-            const buttons = buttonGroup.querySelectorAll('.opv-button');
-            const inputFields = document.getElementById('inputFieldsSerieParallel');
+        const buttonGroup = button.closest('div');
+        const buttons = buttonGroup.querySelectorAll('.opv-button');
+        const inputFields = document.getElementById('inputFieldsSerieParallel');
 
-            if (button.classList.contains('selected')) {
-                // If the button is already selected, deselect it
-                button.classList.remove('selected');
-                inputFields.innerHTML = ''; // Clear input fields
+        if (button.classList.contains('selected')) {
+            // If the button is already selected, deselect it
+            button.classList.remove('selected');
+            inputFields.innerHTML = ''; // Clear input fields
+            document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
+        } else {
+            // Remove 'selected' class from all buttons in the same group
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+
+            let inputHTML = '';
+            
+            switch (opv) {          // if else anstelle von switch case
+                case 'serie_schaltung':
+                case 'parallel_schaltung':
+                    // debugger;
+                    inputHTML = `
+                        <div class="form-row">
+                            <label>Widerstand R<sub>1</sub></label>
+                            <input type="text" id="r1" style="border-color: var(--Widerstand);">
+                            <label>&Omega; [Ohm]</label>
+                        </div>
+                        <div class="form-row">
+                            <label>Widerstand R<sub>2</sub></label>
+                            <input type="text" id="r2" style="border-color: var(--Widerstand);">
+                            <label>&Omega; [Ohm]</label>
+                        </div>
+                        <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate('${opv}')">
+                        <br><br><div id="result_S_P"></div>
+                    `;
+                    break;
+                default:
+                    inputHTML = '';
+            }
+            inputFields.innerHTML = inputHTML;
                 document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
-            } else {
-                // Remove 'selected' class from all buttons in the same group
-                buttons.forEach(btn => btn.classList.remove('selected'));
-
-                // Add 'selected' class to the clicked button
-                button.classList.add('selected');
-
-                let inputHTML = '';
-                
-                switch (opv) {          // if else anstelle von switch case
-                    case 'serie_schaltung':
-                    case 'parallel_schaltung':
-                        // debugger;
-                        inputHTML = `
-                            <div class="form-row">
-                                <label>Widerstand R<sub>1</sub></label>
-                                <input type="text" id="r1" style="border-color: var(--Widerstand);">
-                                <label>&Omega; [Ohm]</label>
-                            </div>
-                            <div class="form-row">
-                                <label>Widerstand R<sub>2</sub></label>
-                                <input type="text" id="r2" style="border-color: var(--Widerstand);">
-                                <label>&Omega; [Ohm]</label>
-                            </div>
-                            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculate('${opv}')">
-                            <br><br><div id="result_S_P"></div>
-                        `;
-                        break;
-                    default:
-                        inputHTML = '';
-                }
-                inputFields.innerHTML = inputHTML;
-                 document.getElementById('result_S_P').innerHTML = ''; // Clear previous result
             }
         }
 

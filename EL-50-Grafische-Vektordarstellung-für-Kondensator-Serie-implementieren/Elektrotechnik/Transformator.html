@@ -10,83 +10,6 @@
     <meta name="keywords" content="Elektronik Rechner, Transformator, Trafo, Widerstand, Spannung, Strom, 
     Elektrotechnik, Online Rechner, Windungszahl, &Uuml;berstzungsverh&auml;ltnis">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
-    <style>
-
-        input {
-            border: 2px solid;
-            border-radius: 3px;
-        }
-
-        input:focus {
-            outline: none; /* Entfernt den Standard-Umrandungsring */
-        }
-
-        /* Stil fuer das Formular und Layout */
-        .input-numbers {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            max-width: 600px; /* Setzt eine maximale Breite */
-            margin: 0 auto; /* Zentriert das Formular */
-            /*margin-left: 10px;*/
-        }
-
-        .comment{
-            font-size: smaller;
-            font-style: italic;
-            color:rgb(179, 179, 179);
-            margin-left: 10px;
-        }
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-            margin-left: 10px;
-            
-        }
-
-        .form-row label {
-            flex: 3;
-            text-align: left;
-            margin-right: 10px;
-
-        }
-
-        h3 {
-            margin-top: 20px;
-        }
-
-        .results{
-            line-height: 2; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction
-        {
-            display: inline-block; 
-            vertical-align: middle; 
-            text-align: center;
-            margin-top: 1px;
-            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */
-        }
-
-        .fraction-numerator{
-            border-bottom: 1px solid;
-            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */
-            display: inline-block; /* Macht die Anpassungen besser sichtbar */
-        }
-
-        .fraction-denumerator {
-            border-top: 1px solid white;
-        }
-
-        img{
-            width: 80%;
-            max-width: 600px;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -123,9 +46,14 @@
             <br><div>
                 <h1>Transformator</h1>
             </div>
-            <button onclick="resetInputs()" class="Button_Berechnen">Eingaben löschen</button>
 
             <div class="input-numbers">
+                <div class="form-row">
+                    <label></label>
+                    <button onclick="resetInputs()" class="Button_Berechnen">L&ouml;schen</button>
+                    <label></label>
+                </div>
+
                 <div class="comment">
                     Werte mit Massvorsatz eingeben z.B. I<sub>2</sub> = 5mA &rarr; Eingabe: 5m (nicht 5mA)<br><br>
                 </div>
@@ -220,8 +148,13 @@
                     <label>1</label>
                 </div>
 
+                <div class="form-row">
+                    <label></label>
+                    <button onclick="calculateParameters()" class="Button_Berechnen">Berechnen</button>
+                    <label></label>
+                </div>
+
             </div>
-            <input type="button" value="Berechnen" class="Button_Berechnen" onclick="calculateParameters()">
             
             <h3>Resultate</h3>
             <p id="result"></p>
@@ -715,60 +648,6 @@
                     = ${eta} = ${parseInput(eta) * 100}%<br>`;
                 }
 
-                /*if(!eta)
-                {
-                    if(P2 && U1 && I1)
-                    {
-                        eta = formatPrefixNoUnit(parseInput(P2) / (parseInput(U1) * parseInput(I1)));
-                        result += `
-                            Wirkungsgrad &eta; = 
-                            <div class ="fraction">
-                                <span>P<sub>2</sub></span><br>
-                                <span class="fraction-denumerator">U<sub>1</sub> &lowast; I<sub>1</sub></span>
-                            </div> 
-                        =
-                            <div class ="fraction">
-                                <span> ${P2}W</span><br>
-                                <span class="fraction-denumerator">${U1}V &lowast; ${I1}A </span>
-                            </div> 
-                        = ${eta}<br>`;
-                    }
-
-                    if(R2 && I2 && U1 && U1)
-                    {
-                        eta = formatPrefixNoUnit(parseInput(R2) * Math.pow(parseInput(I2), 2)) / (parseInput(U1) * parseInput(I1));
-                        result += `
-                            Wirkungsgrad &eta; = 
-                            <div class ="fraction">
-                                <span class="fraction-numerator">R<sub>2</sub> &lowast; (I<sub>2</sub>)<sup>2</sup></span><br>
-                                <span>U<sub>1</sub> &lowast; I<sub>1</sub></span>
-                            </div> 
-                        =
-                            <div class ="fraction">
-                                <span class="fraction-numerator"> ${R2}&Omega; &lowast; (${I2}A)<sup>2</sup></span><br>
-                                <span>${U1}V &lowast; ${I1}A</span>
-                            </div> 
-                        = ${eta}<br>`;
-                    }
-
-                    if(U1 && ue && R2 && I1)
-                    {
-                        eta = formatPrefixNoUnit(parseInput(U1)/ ( Math.pow(parseInput(ue), 2) * parseInput(R2) * parseInput(I1)));
-                        result += `
-                            Wirkungsgrad &eta; = 
-                            <div class ="fraction">
-                                <span>U<sub>1</sub></span><br>
-                                <span class="fraction-denumerator">(&uuml;)<sup>2</sup> R<sub>2</sub> &lowast; I<sub>1</sub></span>
-                            </div> 
-                        =
-                            <div class ="fraction">
-                                <span> ${U1}V </span><br>
-                                <span class="fraction-denumerator">${ue}<sup>2</sup> ${R2}&Omega; &lowast; ${I1}A</span>
-                            </div> 
-                        = ${eta}<br>`;
-                    }
-                }*/
-
                 // === Widerstand R ===
                 if(!R1 && U1 && I1)
                 {
@@ -899,24 +778,6 @@
                         </div> 
                     = ${R2}&Omega;<br>`;
                 }
-
-                /*if(!R2 && U1 && I1 && ue)   // ET Aufgabe 7
-                {
-                    R2 = formatPrefixNoUnit(parseInput(U1) / (parseInput(I1) * Math.pow(parseInput(ue) ,2)));
-                    // debugger;
-                    result += `
-                        Widerstand R<sub>2</sub> = 
-                        <div class ="fraction">
-                            <span">U<sub>1</sub></span><br>
-                            <span class="fraction-denumerator">I<sub>1</sub> &lowast; &uuml;<sup>2</sup></span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span> ${U1}V</span><br>
-                            <span class="fraction-denumerator">${I1}A &lowast; ${ue}<sup>2</sup></span>
-                        </div> 
-                    = ${R2}&Omega;<br>`;
-                }*/
 
                 // === Kondensator C ===
                 if(!C1 && ue && C2)

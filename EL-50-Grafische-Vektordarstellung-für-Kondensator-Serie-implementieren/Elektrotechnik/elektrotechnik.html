@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <!--
+        =============================================================================
+        Project:      Elecalculate - Elektrotechnik Seite
+        File:         Elektrotechnik.html
+        Author:       Jana Ruch, Paul Dresch
+        Purpose:      Übersicht und Anzeige von Elektrotechnik-Inhalten,
+                      inklusive PDF-Viewer Integration mit PDFObject.
+        Notes:        - Uses PDFObject to embed 'Elektrotechnik.pdf' directly.
+                      - The PDF 'Elektrotechnik.pdf' must be in the same folder as this HTML file.
+                      - For customization, see comments throughout the code.
+        =============================================================================
+    -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elektrotechnik</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../Pictures/favicon.png">
-    <style>
-        .pdf {
-        width:80%;
-        max-width: 1000px;
-        aspect-ratio: 4 / 5;
-    }
-    </style>
 </head>
 <body>
+    <!--
+        =========================
+        Header & Navigation
+        =========================
+        Contains:
+        - Burger menu for mobile navigation
+        - Main menu (horizontally scrollable)
+        - Dropdown menu for mobile devices
+    -->
     <header>
         <div class="burger-menu" onclick="toggleMenu()">
             <div class="bar1"></div>
@@ -44,25 +59,64 @@
             </ul>
         </nav>
     </header>
+
+    <!--
+        =========================
+        Main Content
+        =========================
+        Contains:
+        - Page title
+        - PDFObject viewer for Elektrotechnik.pdf
+        - Download/Open buttons for better UX
+        - Fallback message for unsupported browsers
+    -->
     <div class="wrapper">
         <main>
             <div>
                 <h1><br>Elektrotechnik</h1>
             </div>
-            <div>
-                <iframe class="pdf" 
-                    src=
-                    "Elektrotechnik.pdf"
-                    >
-                </iframe>
+            <!-- Action buttons for download and open in new tab -->
+            <div id="pdf-actions">
+                <a href="Elektrotechnik.pdf" download class="PDF_Button PDF_Button-Download">PDF herunterladen</a>
+                <a href="Elektrotechnik.pdf" target="_blank" class="PDF_Button">Im neuen Tab öffnen</a>
+            </div>
+            <!-- PDFObject Viewer Container -->
+            <div id="pdfjs-viewer">
+                <p style="margin:0;">
+                    Ihr Browser kann keine eingebetteten PDFs anzeigen.
+                    <a href="Elektrotechnik.pdf" target="_blank" class="PDF_Button">Hier öffnen</a>
+                </p>
             </div>
             <br>
         </main>
         <div>
-            <footer>&copy 2025 Elecalculate</footer>
+            <footer>&copy; 2025 Elecalculate</footer>
         </div>
     </div>
+    <!--
+        =========================
+        Scripts
+        =========================
+        - scripts.js: Contains general JS functions (e.g., menu)
+        - PDFObject: Embeds the PDF in the viewer container
+    -->
     <script src="../scripts.js"></script>
-    
+    <!-- PDFObject CDN -->
+    <script src="https://unpkg.com/pdfobject"></script>
+    <script>
+        /*
+            ----------------------------------------------------------------------------
+            PDFObject Integration
+            ----------------------------------------------------------------------------
+            Purpose:
+            - Embeds 'Elektrotechnik.pdf' using PDFObject in the #pdfjs-viewer div.
+            - The PDF must be in the same folder as this HTML file.
+            - For more options, see https://pdfobject.com/
+        */
+        PDFObject.embed("Elektrotechnik.pdf", "#pdfjs-viewer", {
+            height: "80vh",
+            page: 1
+        });
+    </script>
 </body>
 </html>
