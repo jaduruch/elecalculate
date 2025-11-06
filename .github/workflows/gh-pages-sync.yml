@@ -21,51 +21,90 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🛑 Skip gh-pages branch
+      - name: Skip gh-pages branch
         if: github.ref == 'refs/heads/gh-pages'
         run: |
           echo "::notice::Skipping deployment for gh-pages branch."
           exit 0
 
-      - name: 🗺️ Determine Deployment Path
+      - name: Determine Deployment Path and Build Type
         id: set-path
         run: |
           branch_name="${GITHUB_REF##*/}"
           safe_branch_name="${branch_name//\//-}"
+          
           if [ "$branch_name" = "main" ]; then
             echo "path=." >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/" >> $GITHUB_ENV
+            echo "build_type=none" >> $GITHUB_ENV
+            echo "publish_dir=." >> $GITHUB_ENV
             echo "::notice::Deploying main branch to root (/)."
           elif [ "$branch_name" = "development" ]; then
             echo "path=dev" >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/dev/" >> $GITHUB_ENV
+            echo "build_type=none" >> $GITHUB_ENV
+            echo "publish_dir=." >> $GITHUB_ENV
             echo "::notice::Deploying development branch to /dev."
+          elif [ "$branch_name" = "angular" ]; then
+            echo "path=angular" >> $GITHUB_ENV
+            echo "DEPLOY_URL=https://elecalculate.com/angular/" >> $GITHUB_ENV
+            echo "build_type=angular" >> $GITHUB_ENV
+            echo "publish_dir=dist" >> $GITHUB_ENV
+            echo "::notice::Building and deploying angular branch."
+          elif [ "$branch_name" = "nextjs" ]; then
+            echo "path=nextjs" >> $GITHUB_ENV
+            echo "DEPLOY_URL=https://elecalculate.com/nextjs/" >> $GITHUB_ENV
+            echo "build_type=nextjs" >> $GITHUB_ENV
+            echo "publish_dir=out" >> $GITHUB_ENV
+            echo "::notice::Building and deploying nextjs branch."
           else
             echo "path=$safe_branch_name" >> $GITHUB_ENV
             echo "DEPLOY_URL=https://elecalculate.com/$safe_branch_name/" >> $GITHUB_ENV
+            echo "build_type=none" >> $GITHUB_ENV
+            echo "publish_dir=." >> $GITHUB_ENV
             echo "::notice::Deploying $branch_name branch to /$safe_branch_name."
           fi
 
-      - name: 📂 List files to be deployed
+      - name: Setup Node.js
+        if: env.build_type != 'none'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        if: env.build_type != 'none'
+        run: npm ci
+
+      - name: Build Angular Project
+        if: env.build_type == 'angular'
+        run: npm run build
+
+      - name: Build Next.js Project
+        if: env.build_type == 'nextjs'
+        run: |
+          npm run build
+          npx next export
+
+      - name: List files to be deployed
         run: |
           echo "::group::Files to be deployed"
-          ls -lhA
+          ls -lhA "${{ env.publish_dir }}"
           echo "::endgroup::"
 
-      - name: 🚀 Deploy Content to GitHub Pages
+      - name: Deploy Content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ${{ env.publish_dir }}
           destination_dir: ${{ env.path }}
           keep_files: true
 
-      - name: ✅ Deployment Summary
+      - name: Deployment Summary
         run: |
           echo "::notice::Deployment complete!"
           echo "Branch: ${GITHUB_REF##*/}"

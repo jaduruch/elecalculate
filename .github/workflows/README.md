@@ -2,8 +2,6 @@
 
 This repository uses a unified GitHub Actions workflow to automate branch preview deployments, maintain a clean GitHub Pages environment, generate cryptographically verifiable offline builds, and manage semantic versioned releases with downloadable artifacts—including a single-file Windows self-extractor EXE.
 
----
-
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -117,7 +115,7 @@ flowchart TD
     S --> T[Force-push artifact commit to offline-deployment]
     T --> U[Checkout offline-deployment for assets]
     U --> V[Package ZIP and TAR.GZ from offline-deployment]
-    V --> W[Build all-in-one Windows EXE (embedded ZIP)]
+    V --> W[Build all-in-one Windows EXE > embedded ZIP]
     W --> X[Create GitHub Release on main]
     X --> Y[Attach ZIP, TAR.GZ, and EXE to release]
     P -.->|Manual trigger| N
