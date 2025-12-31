@@ -1903,12 +1903,14 @@
             overlay.id = 'quantum-new-year';
             overlay.innerHTML = `
                 <div class="qny-content">
-                    <div class="qny-equation" id="qny-eq1">\\[|\\psi\\rangle = \\frac{1}{\\sqrt{2}}\\left(|2025\\rangle + |2026\\rangle\\right)\\]</div>
-                    <div class="qny-arrow">↓ Measurement ↓</div>
-                    <div class="qny-result" id="qny-eq2">\\[|2026\\rangle\\]</div>
-                    <div class="qny-message">🎆 Quantum New Year! 🎆</div>
-                    <div class="qny-subtitle">The universe collapsed you into 2026</div>
-                    <button class="qny-close" onclick="closeQuantumNewYear()">Continue to 2026 →</button>
+                    <div class="qny-pretext">Before midnight, time existed in superposition...</div>
+                    <div class="qny-equation" id="qny-eq1">\\[|\\psi_{\\text{time}}\\rangle = \\frac{1}{\\sqrt{2}}\\left(|2025\\rangle + |2026\\rangle\\right)\\]</div>
+                    <div class="qny-arrow">↓ Your observation collapsed the wavefunction ↓</div>
+                    <div class="qny-result" id="qny-eq2">\\[|\\psi\\rangle \\rightarrow |2026\\rangle\\]</div>
+                    <div class="qny-message">🎆 Quantum New Year!</div>
+                    <div class="qny-subtitle">In quantum mechanics, measurement forces a definite outcome.<br>By observing the new year, you've irreversibly collapsed<br>the universe into the 2026 eigenstate.</div>
+                    <div class="qny-footnote">* According to the Copenhagen interpretation</div>
+                    <button class="qny-close" onclick="closeQuantumNewYear()">Accept reality → 2026</button>
                 </div>
             `;
             
@@ -1983,11 +1985,26 @@
                     margin: 30px 0 10px;
                     animation: qnySlideDown 0.6s ease 0.8s both;
                 }
+                .qny-pretext {
+                    font-size: 16px;
+                    color: #aaa;
+                    margin-bottom: 15px;
+                    font-style: italic;
+                    animation: qnySlideDown 0.6s ease 0.1s both;
+                }
                 .qny-subtitle {
-                    font-size: 18px;
-                    color: #888;
-                    margin-bottom: 40px;
+                    font-size: 16px;
+                    color: #aaa;
+                    margin-bottom: 20px;
+                    line-height: 1.6;
                     animation: qnySlideDown 0.6s ease 1s both;
+                }
+                .qny-footnote {
+                    font-size: 12px;
+                    color: #666;
+                    font-style: italic;
+                    margin-bottom: 30px;
+                    animation: qnySlideDown 0.6s ease 1.1s both;
                 }
                 .qny-close {
                     padding: 15px 40px;
