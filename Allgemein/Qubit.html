@@ -1901,16 +1901,21 @@
             // Create celebration overlay
             const overlay = document.createElement('div');
             overlay.id = 'quantum-new-year';
+            // Dynamic year calculation
+            const now = new Date();
+            const currentYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(); // If January, we just transitioned
+            const nextYear = currentYear + 1;
+            
             overlay.innerHTML = `
                 <div class="qny-content">
                     <div class="qny-pretext">Before midnight, time existed in superposition...</div>
-                    <div class="qny-equation" id="qny-eq1">\\[|\\psi_{\\text{time}}\\rangle = \\frac{1}{\\sqrt{2}}\\left(|2025\\rangle + |2026\\rangle\\right)\\]</div>
+                    <div class="qny-equation" id="qny-eq1">\\[|\\psi_{\\text{time}}\\rangle = \\frac{1}{\\sqrt{2}}\\left(|${currentYear}\\rangle + |${nextYear}\\rangle\\right)\\]</div>
                     <div class="qny-arrow">↓ Your observation collapsed the wavefunction ↓</div>
-                    <div class="qny-result" id="qny-eq2">\\[|\\psi\\rangle \\rightarrow |2026\\rangle\\]</div>
+                    <div class="qny-result" id="qny-eq2">\\[|\\psi\\rangle \\rightarrow |${nextYear}\\rangle\\]</div>
                     <div class="qny-message">🎆 Quantum New Year!</div>
-                    <div class="qny-subtitle">In quantum mechanics, measurement forces a definite outcome.<br>By observing the new year, you've irreversibly collapsed<br>the universe into the 2026 eigenstate.</div>
+                    <div class="qny-subtitle">In quantum mechanics, measurement forces a definite outcome.<br>By observing the new year, you've irreversibly collapsed<br>the universe into the ${nextYear} eigenstate.</div>
                     <div class="qny-footnote">* According to the Copenhagen interpretation</div>
-                    <button class="qny-close" onclick="closeQuantumNewYear()">Accept reality → 2026</button>
+                    <button class="qny-close" onclick="closeQuantumNewYear()">Accept reality → ${nextYear}</button>
                 </div>
             `;
             
