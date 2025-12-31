@@ -2026,6 +2026,47 @@
                     transform: scale(1.05);
                     box-shadow: 0 5px 30px rgba(78, 205, 196, 0.4);
                 }
+                
+                /* Mobile responsive styles */
+                @media (max-width: 768px) {
+                    .qny-content {
+                        padding: 15px;
+                    }
+                    .qny-pretext {
+                        font-size: 12px;
+                        margin-bottom: 10px;
+                    }
+                    .qny-equation {
+                        font-size: 14px;
+                        margin-bottom: 10px;
+                        overflow-x: auto;
+                    }
+                    .qny-arrow {
+                        font-size: 14px;
+                        margin: 8px 0;
+                    }
+                    .qny-result {
+                        font-size: 28px;
+                        margin: 10px 0;
+                    }
+                    .qny-message {
+                        font-size: 22px;
+                        margin: 15px 0 8px;
+                    }
+                    .qny-subtitle {
+                        font-size: 12px;
+                        margin-bottom: 12px;
+                        line-height: 1.5;
+                    }
+                    .qny-footnote {
+                        font-size: 10px;
+                        margin-bottom: 15px;
+                    }
+                    .qny-close {
+                        padding: 12px 25px;
+                        font-size: 14px;
+                    }
+                }
             `;
             document.head.appendChild(style);
 
