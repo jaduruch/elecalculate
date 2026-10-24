@@ -24,6 +24,10 @@ diagram code. `branch-snapshots.json` records every retired head.
 
 ## Necessary corrections
 
+- The source referenced missing R_Serie.png and R_Parallel.png files. Both
+  circuits now have native SVG schematics, and route tests verify every image
+  finishes loading.
+
 - The voltage-divider code referred to a different function's `result` variable,
   and its loaded case could repeatedly append output without resolving its
   unknown value. Both are now handled by a pure, typed dependency solver, with

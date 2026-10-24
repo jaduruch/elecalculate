@@ -16,6 +16,21 @@ for (const entry of catalog)
 				await page.locator(".page-body canvas").count(),
 			).toBeGreaterThanOrEqual(entry.canvases);
 		expect(errors).toEqual([]);
+		await expect
+			.poll(() =>
+				page
+					.locator(".page-body img")
+					.evaluateAll((images) =>
+						images
+							.filter(
+								(image) =>
+									!(image as HTMLImageElement).complete ||
+									!(image as HTMLImageElement).naturalWidth,
+							)
+							.map((image) => image.getAttribute("src")),
+					),
+			)
+			.toEqual([]);
 		expect(
 			await page.evaluate(
 				() => document.documentElement.scrollWidth <= window.innerWidth,

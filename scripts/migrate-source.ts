@@ -101,6 +101,7 @@ function text(n: Node): string {
 		: (n.childNodes ?? []).map(text).join("");
 }
 function resolveAsset(url: string, file: string) {
+	url = url.replace(/R_(Serie|Parallel)\.png$/, "R_$1.svg");
 	if (/^(?:https?:|data:|mailto:|tel:|#)/.test(url)) return url;
 	if (url.startsWith("/")) return url;
 	return (

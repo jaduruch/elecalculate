@@ -418,7 +418,7 @@ export default function Page() {
 									);
 								}}
 							>
-								<img src="/Pictures/R_Serie.png" alt="Serie Schaltung" />
+								<img src="/Pictures/R_Serie.svg" alt="Serie Schaltung" />
 								<span>{"Serie"}</span>
 							</button>
 							<button
@@ -433,7 +433,7 @@ export default function Page() {
 									);
 								}}
 							>
-								<img src="/Pictures/R_Parallel.png" alt="Parallel Schaltung" />
+								<img src="/Pictures/R_Parallel.svg" alt="Parallel Schaltung" />
 								<span>{"Parallel"}</span>
 							</button>
 						</div>
