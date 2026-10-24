@@ -27,39 +27,22 @@ function Index() {
 	return (
 		<div className="directory">
 			<div className="directory-heading">
-				<h1>Was möchtest du berechnen?</h1>
-				<p>
-					Elecalculate erklärt den Weg zum Ergebnis. Wähle ein Thema und gib die
-					bekannten Werte ein. Fehlende Größen werden berechnet, die einzelnen
-					Schritte bleiben sichtbar.
-				</p>
+				<h1>Home</h1>
 			</div>
-			<div className="featured-topic">
-				<div>
-					<span>Direkt zum Rechner</span>
-					<h2>
-						<Link to="/Elektrotechnik/Gleichstrom/">
-							Ohmsches Gesetz und Spannungsteiler
-						</Link>
-					</h2>
-					<p>
-						Spannung U, Strom I, Widerstand R und Leistung P. Zwei Werte
-						reichen.
-					</p>
-					<Link className="text-link" to="/Elektrotechnik/Gleichstrom/">
-						Gleichstrom berechnen →
-					</Link>
-				</div>
-				<Link
-					to="/Elektrotechnik/Gleichstrom/"
-					tabIndex={-1}
-					aria-hidden="true"
-				>
-					<img
-						src="/Pictures/Gliechstrom_Schematic.jpg"
-						alt="Schaltplan eines Gleichstromkreises"
-					/>
-				</Link>
+			<section className="home-banner">
+				<h2>Rechner für Elektronik und Elektrotechnik.</h2>
+			</section>
+			<div className="home-introduction">
+				<p>
+					Mit Elecalculate kannst du berechnen, was du in der Elektronik-Lehre
+					benötigst. Gib die bekannten Werte ein und erhalte das Ergebnis mit
+					Lösungsweg.
+				</p>
+				<p>Die Formeln basieren auf:</p>
+				<ul>
+					<li>Zastrow: Formeln der Elektronik</li>
+					<li>Europa: Formeln Elektrotechnik PLUS+</li>
+				</ul>
 			</div>
 			<div className="department-list">
 				{departments.map((d) => (

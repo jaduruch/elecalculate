@@ -9,6 +9,9 @@ simulation, supplies the source baseline.
 
 ![Migrated Gleichstrom calculator with worked solution](docs/screenshots/calculator-desktop.png)
 
+The refreshed interface retains the original black backgrounds, gray navigation
+bar, hamburger menu, centered calculators and educational variable colours.
+
 The site has 31 subject pages covering DC and AC circuits, filters, transformers,
 magnetism, capacitors, inductors, resonant circuits, operational amplifiers,
 transistor switches, materials, preferred resistor values, resistor colour codes,

@@ -6,7 +6,7 @@ import {
 	Link,
 	useRouterState,
 } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { catalog } from "../lib/catalog";
 import { OfflineButton } from "../components/offline-button";
 import { NotebookSave } from "../components/notebook";
@@ -18,8 +18,8 @@ const groups = [
 		path: "/Elektrotechnik/elektrotechnik",
 	},
 	{ id: "Elektronik", name: "Elektronik", path: "/Elektronik/elektronik" },
-	{ id: "Allgemein", name: "Grundlagen", path: "/Allgemein/Massvorsaetze" },
-	{ id: "HST", name: "Hard- & Software", path: "/HST/hst" },
+	{ id: "Allgemein", name: "Allgemein", path: "/Allgemein/Massvorsaetze" },
+	{ id: "HST", name: "HST", path: "/HST/hst" },
 ];
 export const Route = createRootRoute({
 	head: () => ({
@@ -32,7 +32,7 @@ export const Route = createRootRoute({
 				content:
 					"Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung.",
 			},
-			{ name: "theme-color", content: "#eeeae1" },
+			{ name: "theme-color", content: "#000000" },
 		],
 		links: [
 			{ rel: "stylesheet", href: appCSS },
@@ -55,19 +55,77 @@ export const Route = createRootRoute({
 		</div>
 	),
 });
+const topicOrder: Record<string, string[]> = {
+	Elektrotechnik: [
+		"elektrotechnik",
+		"Gleichstrom",
+		"Wechselstrom",
+		"Transformator",
+		"Magnetismus",
+		"Kondensator",
+		"Spule",
+		"Schwingkreis",
+		"Verstaerkung_Daempfung",
+		"Filter",
+		"Drehstrom",
+		"Drehstrom_Simulator",
+	],
+	Elektronik: [
+		"elektronik",
+		"Dioden",
+		"Transistor",
+		"OPV",
+		"FETs",
+		"Aktiv_Filter",
+	],
+	Allgemein: [
+		"E-Reihe",
+		"Mathe",
+		"Widerstandstabelle",
+		"Glossar",
+		"Massvorsaetze",
+		"Werkstoffe",
+		"Qubit",
+	],
+	HST: [
+		"hst",
+		"Massvorsaetze_Binaer",
+		"Ausgangs_Stufen",
+		"Gatter",
+		"Objekt_Orientiert",
+		"C_Syntax",
+	],
+};
 function Root() {
 	const path = useRouterState({
 		select: (s) => s.location.pathname.replace(/\/+$/, "") || "/",
 	});
+	const [menuOpen, setMenuOpen] = useState(false);
 	const [search, setSearch] = useState("");
 	const group = groups.find((g) => path.startsWith("/" + g.id + "/"));
-	const topics = catalog.filter(
-		(p) =>
-			(!group || p.category === group.id) &&
-			(p.title + " " + p.sections.join(" "))
-				.toLowerCase()
-				.includes(search.toLowerCase()),
-	);
+	const currentGroup = group?.id ?? "Allgemein";
+	const topics = catalog
+		.filter((p) => p.category === currentGroup)
+		.sort(
+			(a, b) =>
+				topicOrder[currentGroup].indexOf(
+					a.file.split("/")[1].replace(".html", ""),
+				) -
+				topicOrder[currentGroup].indexOf(
+					b.file.split("/")[1].replace(".html", ""),
+				),
+		);
+	useEffect(() => {
+		setMenuOpen(false);
+		setSearch("");
+	}, [path]);
+	useEffect(() => {
+		const close = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setMenuOpen(false);
+		};
+		window.addEventListener("keydown", close);
+		return () => window.removeEventListener("keydown", close);
+	}, []);
 	return (
 		<html lang="de">
 			<head>
@@ -77,91 +135,135 @@ function Root() {
 				<a className="skip-link" href="#content">
 					Zum Inhalt
 				</a>
-				<div className="site">
-					<header className="masthead">
-						<Link to="/" className="wordmark">
-							<img src="/Pictures/favicon.png" alt="" />
-							<span>elecalculate</span>
-						</Link>
-						<div className="masthead-note">
-							Elektronik und Elektrotechnik
-							<br />
-							Rechner mit Lösungsweg
-						</div>
-						<div className="masthead-actions">
-							<Link to="/notizbuch/">Notizbuch</Link>
-							<OfflineButton />
-						</div>
-					</header>
-					<nav className="subject-nav" aria-label="Fachbereiche">
-						{groups.map((g) => (
+				<header className="classic-header">
+					<button
+						className="menu-toggle"
+						aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
+						aria-expanded={menuOpen}
+						aria-controls="site-menu"
+						onClick={() => setMenuOpen((v) => !v)}
+					>
+						<span />
+						<span />
+						<span />
+					</button>
+					<Link
+						className="compact-brand"
+						to="/"
+						aria-label="Elecalculate Startseite"
+					>
+						<img src="/Pictures/favicon_no_BG.svg" alt="" />
+						<span>Elecalculate</span>
+					</Link>
+					<nav className="topic-strip" aria-label="Themen">
+						{currentGroup === "Allgemein" && (
+							<Link to="/" className={path === "/" ? "current" : ""}>
+								Home
+							</Link>
+						)}
+						{topics.map((p) => (
 							<Link
-								key={g.id}
-								to={g.path}
-								className={group?.id === g.id ? "current" : ""}
+								to={"/" + p.file.replace(".html", "")}
+								key={p.slug}
+								className={
+									path === "/" + p.file.replace(".html", "") ? "current" : ""
+								}
 							>
-								{g.name}
+								{p.title}
 							</Link>
 						))}
 					</nav>
-					<div className={path === "/" ? "home-layout" : "document-layout"}>
-						{path !== "/" && (
-							<aside className="topic-nav">
-								<label htmlFor="topic-search">{group?.name ?? "Themen"}</label>
-								<input
-									id="topic-search"
-									placeholder="Thema suchen"
-									value={search}
-									onChange={(e) => setSearch(e.target.value)}
-								/>
-								<nav aria-label="Themen">
-									{topics.map((p) => (
-										<Link
-											to={"/" + p.file.replace(".html", "")}
-											key={p.slug}
-											className={
-												path === "/" + p.file.replace(".html", "")
-													? "current"
-													: ""
-											}
-										>
-											{p.title}
-										</Link>
-									))}
-									{!topics.length && <p>Kein passendes Thema.</p>}
-								</nav>
-								<a
-									className="source-link"
-									href="https://github.com/jaduruch/elecalculate"
-									target="_blank"
-									rel="noreferrer"
-								>
-									Quellcode auf GitHub
-								</a>
-							</aside>
-						)}
-						<main id="content" className="min-w-0">
-							{path !== "/" && (
-								<div className="document-toolbar">
-									<Link to="/">Übersicht</Link>
-									<span aria-hidden="true">/</span>
-									<span>{group?.name ?? "Notizbuch"}</span>
-									{group && <NotebookSave route={path} />}
-								</div>
-							)}
-							<Outlet />
-						</main>
-					</div>
-					<footer className="site-footer">
-						<span>Elecalculate von Jana Ruch</span>
-						<a
-							href="https://github.com/jaduruch/elecalculate"
-							target="_blank"
-							rel="noreferrer"
+				</header>
+				{menuOpen && (
+					<button
+						className="menu-backdrop"
+						aria-label="Menü schließen"
+						onClick={() => setMenuOpen(false)}
+					/>
+				)}
+				<nav
+					id="site-menu"
+					className="site-menu"
+					aria-label="Fachbereiche"
+					hidden={!menuOpen}
+				>
+					<Link to="/" onClick={() => setMenuOpen(false)}>
+						Home
+					</Link>
+					{groups.map((g) => (
+						<Link
+							key={g.id}
+							to={g.path}
+							className={group?.id === g.id ? "current" : ""}
+							onClick={() => setMenuOpen(false)}
 						>
-							Open Source
-						</a>
-						<span>Berechnungen ohne KI und ohne Datenversand.</span>
+							{g.name}
+						</Link>
+					))}
+					<label htmlFor="topic-search">Thema suchen</label>
+					<input
+						id="topic-search"
+						value={search}
+						placeholder="Alle Themen"
+						onChange={(e) => setSearch(e.target.value)}
+					/>
+					{search && (
+						<div className="menu-search-results">
+							{catalog
+								.filter((p) =>
+									(p.title + " " + p.sections.join(" "))
+										.toLowerCase()
+										.includes(search.toLowerCase()),
+								)
+								.map((p) => (
+									<Link
+										key={p.slug}
+										to={"/" + p.file.replace(".html", "")}
+										onClick={() => setMenuOpen(false)}
+									>
+										{p.title}
+									</Link>
+								))}
+						</div>
+					)}
+				</nav>
+				<div className="site">
+					<main id="content" className="min-w-0">
+						<div className="site-tools">
+							<Link to="/notizbuch/">Notizbuch</Link>
+							<OfflineButton />
+							{group && <NotebookSave route={path} />}
+						</div>
+						<Outlet />
+					</main>
+					<footer className="site-footer">
+						<div className="footer-topics">
+							{groups.map((g) => (
+								<nav key={g.id} aria-label={g.name + " im Fußbereich"}>
+									<Link to={g.path}>
+										<strong>{g.name}</strong>
+									</Link>
+									{catalog
+										.filter((p) => p.category === g.id)
+										.map((p) => (
+											<Link key={p.slug} to={"/" + p.file.replace(".html", "")}>
+												{p.title}
+											</Link>
+										))}
+								</nav>
+							))}
+						</div>
+						<div className="footer-credit">
+							<span>Elecalculate von Jana Ruch</span>
+							<a
+								href="https://github.com/jaduruch/elecalculate"
+								target="_blank"
+								rel="noreferrer"
+							>
+								Quellcode auf GitHub
+							</a>
+							<span>Berechnungen ohne KI und ohne Datenversand.</span>
+						</div>
 					</footer>
 				</div>
 				<Scripts />

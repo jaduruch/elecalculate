@@ -87,3 +87,28 @@ test("glossary search and safe input boundary", async ({ page }) => {
 	).toBeVisible();
 	await expect(page.getByRole("alert")).toContainText("Zahlenwert");
 });
+
+test("original-style menu and topic bar work with pointer and keyboard", async ({
+	page,
+}) => {
+	await page.goto("/Elektrotechnik/Gleichstrom/");
+	await page.getByRole("button", { name: "Menü öffnen", exact: true }).click();
+	const menu = page.getByRole("navigation", {
+		name: "Fachbereiche",
+		exact: true,
+	});
+	await expect(menu).toBeVisible();
+	await menu.getByRole("link", { name: "Elektronik", exact: true }).click();
+	await expect(page).toHaveURL(/\/Elektronik\/elektronik\/$/);
+	await expect(menu).toBeHidden();
+	await page.getByRole("button", { name: "Menü öffnen", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(menu).toBeHidden();
+	await page
+		.getByRole("navigation", { name: "Themen", exact: true })
+		.getByRole("link", { name: "OPV", exact: true })
+		.click();
+	await expect(
+		page.getByRole("heading", { name: "OPV", exact: true }),
+	).toBeVisible();
+});

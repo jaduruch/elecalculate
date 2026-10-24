@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 test("rendered home, calculator and Qubit views", async ({ page }, info) => {
 	await page.goto("/");
 	await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
 		path: `test-results/home-${info.project.name}.png`,
 		fullPage: true,
@@ -17,6 +18,7 @@ test("rendered home, calculator and Qubit views", async ({ page }, info) => {
 	await page.locator("#R").fill("1k");
 	await page.locator('[data-action="calculateParametersURI"]').click();
 	await expect(page.locator("#result")).toContainText("12.000mA");
+	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
 		path: `test-results/calculator-${info.project.name}.png`,
 		fullPage: true,
@@ -31,6 +33,7 @@ test("rendered home, calculator and Qubit views", async ({ page }, info) => {
 		"data-ready",
 		"true",
 	);
+	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
 		path: `test-results/qubit-${info.project.name}.png`,
 		fullPage: true,

@@ -22,7 +22,7 @@ await copyFile("CNAME", join(root, "CNAME"));
 await writeFile(join(root, ".nojekyll"), "");
 await writeFile(
 	join(root, "404.html"),
-	'<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Seite nicht gefunden | Elecalculate</title><style>body{font-family:Arial,sans-serif;max-width:650px;margin:10vh auto;padding:25px;background:#eeeae1;color:#242926}a{color:#9e381f}</style><h1>Diese Seite gibt es nicht.</h1><a href="/">Zur Themenübersicht</a></html>',
+	'<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Seite nicht gefunden | Elecalculate</title><style>body{font-family:Arial,sans-serif;max-width:650px;margin:10vh auto;padding:25px;background:#000;color:#eee}a{color:#ddd}</style><h1>Diese Seite gibt es nicht.</h1><a href="/">Zur Themenübersicht</a></html>',
 );
 const commit =
 	process.env.GITHUB_SHA ??
