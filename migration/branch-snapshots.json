@@ -1,0 +1,47 @@
+{
+  "repository": "jaduruch/elecalculate",
+  "branches": [
+    {
+      "branch": "EL-52-Neuer-Algorithmus-für-Berechnungen",
+      "commit": "1515a5b5c2c3251138895b12281b63bd55a7c5ad",
+      "tag": "sunset/2026-10-25/el52",
+      "keepBranch": false
+    },
+    {
+      "branch": "angular",
+      "commit": "d34fa2ed9985fdc9ee333ffdc0ea3e02b6e39492",
+      "tag": "sunset/2026-10-25/angular",
+      "keepBranch": false
+    },
+    {
+      "branch": "development",
+      "commit": "79be0089b5d6a1b05f9246bb246326abc21d69f1",
+      "tag": "sunset/2026-10-25/development",
+      "keepBranch": false
+    },
+    {
+      "branch": "gh-pages",
+      "commit": "ec8ea825638db4d9d05fa55e3d43c48f283c4dad",
+      "tag": "sunset/2026-10-25/gh-pages",
+      "keepBranch": true
+    },
+    {
+      "branch": "main",
+      "commit": "9a6ba6da34ee314f5e83aad654e547d2b20f109c",
+      "tag": "sunset/2026-10-25/main",
+      "keepBranch": true
+    },
+    {
+      "branch": "nextjs",
+      "commit": "e7291d860a53ad9c945327526c67d8de50439db2",
+      "tag": "sunset/2026-10-25/nextjs",
+      "keepBranch": false
+    },
+    {
+      "branch": "offline-deployment",
+      "commit": "5d56d1d5ddde1241ee4a4c88d5983e98fa030a09",
+      "tag": "sunset/2026-10-25/offline-deployment",
+      "keepBranch": false
+    }
+  ]
+}

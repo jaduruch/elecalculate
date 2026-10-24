@@ -1,0 +1,882 @@
+[
+  {
+    "path": "Allgemein/E-Reihe.html",
+    "functions": [
+      "updateTable"
+    ],
+    "handlers": [
+      [
+        "change",
+        "updateTable()"
+      ]
+    ],
+    "scriptLines": 50,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Allgemein/Glossar.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Allgemein/Massvorsaetze.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Allgemein/Mathe.html",
+    "functions": [
+      "toggleDropdown",
+      "calculateKreis"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateKreis()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ]
+    ],
+    "scriptLines": 50,
+    "inputs": 3,
+    "canvas": 0
+  },
+  {
+    "path": "Allgemein/Werkstoffe.html",
+    "functions": [
+      "toggleDropdown",
+      "calculateLeitfaehigkeit",
+      "calculateTemperaturwiderstand",
+      "calculateStromdichte"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateLeitfaehigkeit()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateTemperaturwiderstand()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateStromdichte()"
+      ]
+    ],
+    "scriptLines": 638,
+    "inputs": 19,
+    "canvas": 0
+  },
+  {
+    "path": "Allgemein/Widerstandstabelle.html",
+    "functions": [
+      "toggleDropdown",
+      "calculateResistance",
+      "initializeDropdowns"
+    ],
+    "handlers": [],
+    "scriptLines": 115,
+    "inputs": 5,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/Aktiv_Filter.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/Dioden.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/FETs.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/OPV.html",
+    "functions": [
+      "toggleSelection",
+      "updateImage1",
+      "updateImage2",
+      "updateImage3",
+      "updateImage4",
+      "calculate_invertierender_Verstaerker",
+      "calculate_nicht_invertierender_Verstaerker",
+      "calculate_summier_Verstaeker",
+      "calculate_differenz_Verstaerker"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleSelection(this, 'invertierender_Verstaerker')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'nicht_invertierender_Verstaerker')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'summier_Verstaerker')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'differenz_Verstaerker')"
+      ],
+      [
+        "click",
+        "selectOPV('invertierenderSchmittTrigger', this)"
+      ],
+      [
+        "click",
+        "selectOPV('nichtinvertierenderSchmittTrigger', this)"
+      ],
+      [
+        "click",
+        "updateImage1('OPV_Bilder/Invertierender_Verstaerker_R1.JPG')"
+      ],
+      [
+        "click",
+        "updateImage1('OPV_Bilder/Invertierender_Verstaerker_R2.JPG')"
+      ],
+      [
+        "click",
+        "updateImage1('OPV_Bilder/Invertierender_Verstaerker_Uin.JPG')"
+      ],
+      [
+        "click",
+        "updateImage1('OPV_Bilder/Invertierender_Verstaerker_Uout.JPG')"
+      ],
+      [
+        "click",
+        "updateImage1('OPV_Bilder/Invertierender_Verstaerker_Beschriftet.JPG')"
+      ],
+      [
+        "click",
+        "calculate_invertierender_Verstaerker()"
+      ],
+      [
+        "click",
+        "updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_R1.JPG')"
+      ],
+      [
+        "click",
+        "updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_R2.JPG')"
+      ],
+      [
+        "click",
+        "updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Uin.JPG')"
+      ],
+      [
+        "click",
+        "updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Uout.JPG')"
+      ],
+      [
+        "click",
+        "updateImage2('OPV_Bilder/Nicht_Invertierender_Verstaerker_Beschriftet.JPG')"
+      ],
+      [
+        "click",
+        "calculate_nicht_invertierender_Verstaerker()"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_R11.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_R12.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_R2.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_Uin1.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_Uin2.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_Uout.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG')"
+      ],
+      [
+        "click",
+        "updateImage3('OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG')"
+      ],
+      [
+        "click",
+        "calculate_summier_Verstaeker()"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_R1_R3.JPG')"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_R2_R4.JPG')"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_Uin1.JPG')"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_Uin2.JPG')"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_Uout.JPG')"
+      ],
+      [
+        "click",
+        "updateImage4('OPV_Bilder/Differenz_Verstaerker_Beschriftet.JPG')"
+      ],
+      [
+        "click",
+        "calculate_differenz_Verstaerker()"
+      ]
+    ],
+    "scriptLines": 554,
+    "inputs": 28,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/Transistor.html",
+    "functions": [
+      "calculateTransistorAsSwitch",
+      "toggleDropdown"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateTransistorAsSwitch()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ]
+    ],
+    "scriptLines": 174,
+    "inputs": 11,
+    "canvas": 0
+  },
+  {
+    "path": "Elektronik/elektronik.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Drehstrom.html",
+    "functions": [
+      "toggleCircuit",
+      "toggleNeutral",
+      "toggleSymmetry",
+      "updateOutputVoltage"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleCircuit()"
+      ],
+      [
+        "click",
+        "toggleNeutral()"
+      ],
+      [
+        "click",
+        "toggleSymmetry('star')"
+      ],
+      [
+        "click",
+        "toggleSymmetry('delta')"
+      ]
+    ],
+    "scriptLines": 75,
+    "inputs": 3,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Drehstrom_Simulator.html",
+    "functions": [
+      "drawWave",
+      "drawSumWave",
+      "animate",
+      "togglePhase"
+    ],
+    "handlers": [
+      [
+        "click",
+        "togglePhase('red')"
+      ],
+      [
+        "click",
+        "togglePhase('green')"
+      ],
+      [
+        "click",
+        "togglePhase('blue')"
+      ]
+    ],
+    "scriptLines": 99,
+    "inputs": 0,
+    "canvas": 1
+  },
+  {
+    "path": "Elektrotechnik/Filter.html",
+    "functions": [
+      "toggleSelection",
+      "calculate_HP_RC",
+      "calculate_HP_RL",
+      "calculate_TP_RC",
+      "calculate_TP_RL"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleSelection(this, 'HP_RC')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'HP_RL')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'TP_RC')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'TP_RL')"
+      ],
+      [
+        "click",
+        "calculate_HP_RC()"
+      ],
+      [
+        "click",
+        "calculate_HP_RL()"
+      ],
+      [
+        "click",
+        "calculate_TP_RC()"
+      ],
+      [
+        "click",
+        "calculate_TP_RL()"
+      ]
+    ],
+    "scriptLines": 523,
+    "inputs": 41,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Gleichstrom.html",
+    "functions": [
+      "calculateParametersURI",
+      "calculateParametersUnb_Spannungsteiler",
+      "calculateParametersBel_Spannungsteiler",
+      "toggleDropdown",
+      "selectOPV",
+      "calculate"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateParametersURI()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateParametersUnb_Spannungsteiler()"
+      ],
+      [
+        "click",
+        "calculateParametersBel_Spannungsteiler()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "selectOPV('serie_schaltung', this)"
+      ],
+      [
+        "click",
+        "selectOPV('parallel_schaltung', this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ]
+    ],
+    "scriptLines": 445,
+    "inputs": 26,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Kondensator.html",
+    "functions": [
+      "calculateCapacitorParameters",
+      "toggleSelection",
+      "toggleRAD",
+      "calculateSerieAC",
+      "toggleRADp",
+      "calculateParallelAC",
+      "calculateRC",
+      "generate_e_curve_from_RCinputs",
+      "showCanvasWarning",
+      "drawWiderstandsdreieckSerie",
+      "drawSpannungsdreieckSerie",
+      "showExampleSerieTriangle",
+      "drawMarkerOnCurve",
+      "getBestSIPrefix",
+      "formatWithSIPrefix",
+      "drawCurveDynamic",
+      "drawDownloadIcon",
+      "pointToSegment",
+      "drawLabelWithSubscript",
+      "drawWatermark",
+      "drawRightAngleMarker",
+      "formatSI",
+      "exportCanvasAsPNG",
+      "drawArrow",
+      "toggleDropdown"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateCapacitorParameters()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'Serie'); showExampleSerieTriangle();"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'Parallel')"
+      ],
+      [
+        "click",
+        "toggleRAD()"
+      ],
+      [
+        "click",
+        "calculateSerieAC()"
+      ],
+      [
+        "click",
+        "toggleRADp()"
+      ],
+      [
+        "click",
+        "calculateParallelAC()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateRC()"
+      ]
+    ],
+    "scriptLines": 3924,
+    "inputs": 55,
+    "canvas": 4
+  },
+  {
+    "path": "Elektrotechnik/Magnetismus.html",
+    "functions": [
+      "calculateParameters"
+    ],
+    "handlers": [
+      [
+        "click",
+        "calculateParameters()"
+      ]
+    ],
+    "scriptLines": 144,
+    "inputs": 14,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Schwingkreis.html",
+    "functions": [
+      "toggleSelection",
+      "calculateSerie",
+      "calculateParallel"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleSelection(this, 'serie')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'parallel')"
+      ],
+      [
+        "click",
+        "calculateSerie()"
+      ],
+      [
+        "click",
+        "calculateParallel()"
+      ]
+    ],
+    "scriptLines": 734,
+    "inputs": 26,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Spule.html",
+    "functions": [
+      "calculateInductorParameters",
+      "calculateRL",
+      "toggleDropdown"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateInductorParameters()"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "calculateRL()"
+      ]
+    ],
+    "scriptLines": 1242,
+    "inputs": 23,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Transformator.html",
+    "functions": [
+      "calculateParameters",
+      "resetInputs"
+    ],
+    "handlers": [
+      [
+        "click",
+        "resetInputs()"
+      ],
+      [
+        "click",
+        "calculateParameters()"
+      ]
+    ],
+    "scriptLines": 756,
+    "inputs": 15,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Verstaerkung_Daempfung.html",
+    "functions": [
+      "calculateParameters",
+      "getlg"
+    ],
+    "handlers": [
+      [
+        "click",
+        "calculateParameters()"
+      ]
+    ],
+    "scriptLines": 733,
+    "inputs": 11,
+    "canvas": 0
+  },
+  {
+    "path": "Elektrotechnik/Wechselstrom.html",
+    "functions": [
+      "toggleSelection",
+      "toggleRAD",
+      "toggleDuty",
+      "drawDownloadIcon",
+      "calculate_Sinus",
+      "drawWatermark",
+      "exportCanvasAsPNG",
+      "drawSinus",
+      "animate",
+      "drawAxesAndLabels",
+      "drawMarkerAndLegend",
+      "formatNumber",
+      "fillExampleValues",
+      "calculate_Rechteck",
+      "calculate_Dreieck",
+      "calculate_PWM"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleSelection(this, 'Sinus')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'Rechteck')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'Dreieck')"
+      ],
+      [
+        "click",
+        "toggleSelection(this, 'PWM')"
+      ],
+      [
+        "click",
+        "toggleRAD()"
+      ],
+      [
+        "click",
+        "fillExampleValues('euroNet')"
+      ],
+      [
+        "click",
+        "fillExampleValues('functionGen')"
+      ],
+      [
+        "click",
+        "calculate_Sinus()"
+      ],
+      [
+        "click",
+        "calculate_Rechteck()"
+      ],
+      [
+        "click",
+        "calculate_Dreieck()"
+      ],
+      [
+        "click",
+        "toggleDuty()"
+      ],
+      [
+        "click",
+        "calculate_PWM()"
+      ]
+    ],
+    "scriptLines": 1099,
+    "inputs": 26,
+    "canvas": 1
+  },
+  {
+    "path": "Elektrotechnik/elektrotechnik.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/Ausgangs_Stufen.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/C_Syntax.html",
+    "functions": [
+      "copyToClipboard",
+      "toggleDropdown"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "copyToClipboard(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "copyToClipboard(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "copyToClipboard(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "copyToClipboard(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "copyToClipboard(this)"
+      ]
+    ],
+    "scriptLines": 22,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/Gatter.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/Massvorsaetze_Binaer.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/Objekt_Orientiert.html",
+    "functions": [
+      "toggleDropdown"
+    ],
+    "handlers": [
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ],
+      [
+        "click",
+        "toggleDropdown(this)"
+      ]
+    ],
+    "scriptLines": 6,
+    "inputs": 0,
+    "canvas": 0
+  },
+  {
+    "path": "HST/hst.html",
+    "functions": [
+      "filterGlossary",
+      "scrollToLetter"
+    ],
+    "handlers": [
+      [
+        "mouseover",
+        "scrollToLetter('${letter}')"
+      ],
+      [
+        "keyup",
+        "filterGlossary()"
+      ]
+    ],
+    "scriptLines": 25,
+    "inputs": 1,
+    "canvas": 0
+  },
+  {
+    "path": "index.html",
+    "functions": [],
+    "handlers": [],
+    "scriptLines": 0,
+    "inputs": 0,
+    "canvas": 0
+  }
+]

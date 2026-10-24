@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.angular/
+out-tsc/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+.output/
+.tanstack/
+.data/
+.env
+.env.*
+!.env.example
