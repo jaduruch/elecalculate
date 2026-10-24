@@ -1,0 +1,1 @@
+import{a as e,i as t,n,r}from"./table-DJznFOlu.js";var i=n(`notebook`,{id:t().primaryKey(),title:t().notNull(),note:t().notNull().default(``),route:t().notNull(),snapshot:e().$type().notNull(),createdAt:r({withTimezone:!0}).notNull().defaultNow(),deletedAt:r({withTimezone:!0})});export{i as notebook};

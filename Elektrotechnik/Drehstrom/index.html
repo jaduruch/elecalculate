@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="de"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/Pictures/favicon.png"/><link rel="preload" as="image" href="/Pictures/Drehstrom_Stern_ohne_NL.jpg"/><link rel="preload" as="image" href="/Pictures/Drehstrom_Dreieck.jpg"/><link rel="stylesheet" href="/assets/styles-DNepKGtp.css" data-precedence="default"/><title>Drehstrom | Elecalculate</title><meta name="description" content="Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung."/><meta name="theme-color" content="#eeeae1"/><link rel="modulepreload" href="/assets/index-DLQr7EU_.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/rolldown-runtime-XKyaHtl9.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/jsx-runtime-C3cWAN_r.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/Elektrotechnik.Drehstrom-CG_ltEY1.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/shared-D1EaDO0j.js" fetchPriority="low"/><link rel="icon" href="/Pictures/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/></head><body><a class="skip-link" href="#content">Zum Inhalt</a><div class="site"><header class="masthead"><a class="wordmark" href="/"><img src="/Pictures/favicon.png" alt=""/><span>elecalculate</span></a><div class="masthead-note">Elektronik und Elektrotechnik<br/>Rechner mit Lösungsweg</div><div class="masthead-actions"><a href="/notizbuch/">Notizbuch</a><button>Offline speichern</button></div></header><nav class="subject-nav" aria-label="Fachbereiche"><a class="current" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a><a class="" href="/Elektronik/elektronik/">Elektronik</a><a class="" href="/Allgemein/Massvorsaetze/">Grundlagen</a><a class="" href="/HST/hst/">Hard- &amp; Software</a></nav><div class="document-layout"><aside class="topic-nav"><label for="topic-search">Elektrotechnik</label><input id="topic-search" placeholder="Thema suchen" value=""/><nav aria-label="Themen"><a class="current active" href="/Elektrotechnik/Drehstrom/" data-status="active" aria-current="page">Drehstrom</a><a class="" href="/Elektrotechnik/Drehstrom_Simulator/">Dreiphasen-Generator Simulation</a><a class="" href="/Elektrotechnik/Filter/">Filter</a><a class="" href="/Elektrotechnik/Gleichstrom/">Gleichstrom</a><a class="" href="/Elektrotechnik/Kondensator/">Kondensatoren</a><a class="" href="/Elektrotechnik/Magnetismus/">Magnetismus</a><a class="" href="/Elektrotechnik/Schwingkreis/">Schwingkreis</a><a class="" href="/Elektrotechnik/Spule/">Spulen</a><a class="" href="/Elektrotechnik/Transformator/">Transformator</a><a class="" href="/Elektrotechnik/Verstaerkung_Daempfung/">Verstärkung und Dämpfung</a><a class="" href="/Elektrotechnik/Wechselstrom/">Wechselstrom</a><a class="" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a></nav><a class="source-link" href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Quellcode auf GitHub</a></aside><main id="content" class="min-w-0"><div class="document-toolbar"><a href="/">Übersicht</a><span aria-hidden="true">/</span><span>Elektrotechnik</span><div class="notebook-save"><button aria-expanded="false">Werte merken</button></div></div><!--$--><div class="page-body "><style>@layer source { @scope (.page-body) {
+
+        /* Styling des Umschaltbuttons */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #7ff5be;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Layout für den gesamten Inhalt */
+        .content-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        /* Styling für das Eingabefeld und Label */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
+
+        .input-container label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .input-container input {
+            padding: 5px;
+            width: 100px;
+            text-align: center;
+            border: 2px solid #000;
+            background-color: #fff;
+        }
+
+        /* Styling für die Schaltungen */
+        .schaltung {
+            display: none;
+        }
+
+        .schaltung-aktiv {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Gemeinsames Styling der Buttons */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 20px; /* Abstand zwischen den Buttons */
+        }
+
+        .custom-button {
+            padding: 10px 20px;
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .custom-button.active {
+            border-color: #fff;
+        }
+    
+} }</style><div><h1><br/>Drehstrom</h1></div><label class="switch"><input type="checkbox" aria-label="Dreieckschaltung" id="toggleSwitch" data-action="toggleCircuit"/><span class="slider round"></span></label><br/><span id="circuitType">Sternschaltung</span><div class="content-container"><div class="input-container"><label for="inputVoltage">Eingangsstrangspannung (V):</label><input type="number" aria-label="Eingangsstrangspannung (V):" id="inputVoltage" value="230"/></div><br/><div class="input-container"><label for="outputVoltage">Verkettete Spannung (V):</label><input type="text" aria-label="Verkettete Spannung (V):" id="outputVoltage" readOnly="" value="outputVoltage"/></div><div id="starCircuit" class="schaltung schaltung-aktiv"><img src="/Pictures/Drehstrom_Stern_ohne_NL.jpg" alt="Sternschaltung" id="starImage"/><div class="button-container"><button type="button" id="neutralButton" class="custom-button" data-action="toggleNeutral">Neutralleiter Hinzufügen</button><button type="button" id="symmetryButtonStar" class="custom-button" data-action="toggleSymmetry">Symmetrisch</button></div></div><div id="deltaCircuit" class="schaltung"><img src="/Pictures/Drehstrom_Dreieck.jpg" alt="Dreieckschaltung" id="deltaImage"/><div class="button-container"><button type="button" id="symmetryButtonDelta" class="custom-button" data-action="toggleSymmetry">Symmetrisch</button></div></div></div><br/><br/><div><footer>© 2024 Elecalculate</footer></div></div><script>(function(a,f){let l;try{l=JSON.parse(sessionStorage.getItem(a)||"{}")}catch{return}const n=l?.[f||history.state?.__TSR_key];let c=!1;for(const t in n){const e=n[t],o=e?.scrollX,s=e?.scrollY;if(Number.isFinite(o)&&Number.isFinite(s)){if(t==="window")scrollTo(o,s),c=!0;else if(t)try{const r=document.querySelector(t);r&&(r.scrollLeft=o,r.scrollTop=s)}catch{}}}if(c)return;const i=location.hash.slice(1);if(i){const t=history.state?.__hashScrollIntoViewOptions??!0;if(t){const e=document.getElementById(i);e&&e.scrollIntoView(t)}return}scrollTo(0,0)})("tsr-scroll-restoration-v1_3");document.currentScript.remove()</script><!--/$--></main></div><footer class="site-footer"><span>Elecalculate von Jana Ruch</span><a href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Open Source</a><span>Berechnungen ohne KI und ohne Datenversand.</span></footer></div><script data-tsr-stream-part="">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/assets/index-DLQr7EU_.js","/assets/rolldown-runtime-XKyaHtl9.js","/assets/jsx-runtime-C3cWAN_r.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/assets/index-DLQr7EU_.js"}}]},"/Elektrotechnik/Drehstrom":$R[8]={preloads:$R[9]=["/assets/Elektrotechnik.Drehstrom-CG_ltEY1.js","/assets/shared-D1EaDO0j.js"]}}},matches:$R[10]=[$R[11]={i:"__root__#",u:1792885258392,s:"success",ssr:!0},$R[12]={i:"#Elektrotechnik#Drehstrom#Elektrotechnik#Drehstrom",u:1792885258392,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();{let s=document.currentScript,p;while((p=s.previousElementSibling)&&p.hasAttribute('data-tsr-stream-part'))p.remove();s.remove()}</script><script type="module" async="" src="/assets/index-DLQr7EU_.js"></script><script>document.currentScript.remove();/*$tsr-stream-boundary*/</script></body></html>

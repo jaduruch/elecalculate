@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="de"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/Pictures/favicon.png"/><link rel="stylesheet" href="/assets/styles-DNepKGtp.css" data-precedence="default"/><title>Widerstandstabelle | Elecalculate</title><meta name="description" content="Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung."/><meta name="theme-color" content="#eeeae1"/><link rel="modulepreload" href="/assets/index-DLQr7EU_.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/rolldown-runtime-XKyaHtl9.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/jsx-runtime-C3cWAN_r.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/Allgemein.Widerstandstabelle-DXPFIEqj.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/shared-D1EaDO0j.js" fetchPriority="low"/><link rel="icon" href="/Pictures/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/></head><body><a class="skip-link" href="#content">Zum Inhalt</a><div class="site"><header class="masthead"><a class="wordmark" href="/"><img src="/Pictures/favicon.png" alt=""/><span>elecalculate</span></a><div class="masthead-note">Elektronik und Elektrotechnik<br/>Rechner mit Lösungsweg</div><div class="masthead-actions"><a href="/notizbuch/">Notizbuch</a><button>Offline speichern</button></div></header><nav class="subject-nav" aria-label="Fachbereiche"><a class="" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a><a class="" href="/Elektronik/elektronik/">Elektronik</a><a class="current" href="/Allgemein/Massvorsaetze/">Grundlagen</a><a class="" href="/HST/hst/">Hard- &amp; Software</a></nav><div class="document-layout"><aside class="topic-nav"><label for="topic-search">Grundlagen</label><input id="topic-search" placeholder="Thema suchen" value=""/><nav aria-label="Themen"><a class="" href="/Allgemein/E-Reihe/">E-Reihe</a><a class="" href="/Allgemein/Glossar/">Glossar</a><a class="" href="/Allgemein/Massvorsaetze/">Massvorsätze</a><a class="" href="/Allgemein/Mathe/">Mathe</a><a class="" href="/Allgemein/Qubit/">Qubit Demonstration</a><a class="" href="/Allgemein/Werkstoffe/">Werkstoffe</a><a class="current active" href="/Allgemein/Widerstandstabelle/" data-status="active" aria-current="page">Widerstandstabelle</a></nav><a class="source-link" href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Quellcode auf GitHub</a></aside><main id="content" class="min-w-0"><div class="document-toolbar"><a href="/">Übersicht</a><span aria-hidden="true">/</span><span>Grundlagen</span><div class="notebook-save"><button aria-expanded="false">Werte merken</button></div></div><!--$--><div class="page-body "><style>@layer source { @scope (.page-body) {
+
+        .dropdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .dropdown-container div {
+            margin-bottom: 10px;
+        }
+        .dropdown-menus {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-select {
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            z-index: 1;
+            width: 120px;
+            border-radius: 4px;
+        }
+        .dropdown-content div {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .dropdown-content div:hover {
+            filter: brightness(0.75);
+        }
+        .dropdown-content div.selected {
+            background-color: lightgray;
+        }
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 10px;
+            border-radius: 4px;
+            /*border-width: 2px;
+            border-color:rgb(0, 37, 202);*/
+        }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+        }
+        
+        td {
+        min-width: 80px; /* Replace 'value' with the desired minimum width */
+        }
+
+    
+} }</style><div><h1><br/>Widerstandstabelle</h1></div><table style="max-width:150px"><tbody><tr><th>Farbe</th><th>Band 1</th><th>Band 2</th><th>Band 3</th><th>Multiplikator</th><th>Toleranz</th></tr><tr style="background-color:black;color:white"><td>Schwarz</td><td>0</td><td>0</td><td>0</td><td>*1Ω</td><td></td></tr><tr style="background-color:rgb(139, 72, 32);color:white"><td>Braun</td><td>1</td><td>1</td><td>1</td><td>*10Ω</td><td>±1%</td></tr><tr style="background-color:red;color:white"><td>Rot</td><td>2</td><td>2</td><td>2</td><td>*100Ω</td><td>±2%</td></tr><tr style="background-color:rgb(255, 145, 0);color:black"><td>Orange</td><td>3</td><td>3</td><td>3</td><td>*1kΩ</td><td></td></tr><tr style="background-color:rgb(255, 238, 0);color:black"><td>Gelb</td><td>4</td><td>4</td><td>4</td><td>*10kΩ</td><td></td></tr><tr style="background-color:rgb(0, 182, 0);color:rgb(0, 0, 0)"><td>Grün</td><td>5</td><td>5</td><td>5</td><td>*100kΩ</td><td>±0.5%</td></tr><tr style="background-color:rgb(0, 37, 202);color:white"><td>Blau</td><td>6</td><td>6</td><td>6</td><td>*1MΩ</td><td>±0.25%</td></tr><tr style="background-color:rgb(144, 0, 201);color:white"><td>Violett</td><td>7</td><td>7</td><td>7</td><td>*10MΩ</td><td>±0.1%</td></tr><tr style="background-color:gray;color:white"><td>Grau</td><td>8</td><td>8</td><td>8</td><td>*100MΩ</td><td>±0.05%</td></tr><tr style="background-color:white;color:black"><td>Weiß</td><td>9</td><td>9</td><td>9</td><td>*1GΩ</td><td></td></tr><tr style="background-color:#b68a22;color:white"><td>Gold</td><td></td><td></td><td></td><td>*0.1Ω</td><td>±5%</td></tr><tr style="background-color:rgb(207, 207, 207);color:black"><td>Silber</td><td></td><td></td><td></td><td>*0.01Ω</td><td>±10%</td></tr></tbody></table><br/><div class="dropdown"><button type="button" id="band1Select" class="dropdown-select"><span style="background-color:black" class="color-box"></span>
+                        Band 1
+                    </button><div id="band1Dropdown" class="dropdown-content"><button style="background-color:black;color:white" type="button" id="control-0" data-value="0">Schwarz</button><button style="background-color:brown;color:white" type="button" id="control-1" data-value="1">Braun</button><button style="background-color:red;color:white" type="button" id="control-2" data-value="2">Rot</button><button style="background-color:orange;color:black" type="button" id="control-3" data-value="3">Orange</button><button style="background-color:yellow;color:black" type="button" id="control-4" data-value="4">Gelb</button><button style="background-color:green;color:white" type="button" id="control-5" data-value="5">Grün</button><button style="background-color:blue;color:white" type="button" id="control-6" data-value="6">Blau</button><button style="background-color:purple;color:white" type="button" id="control-7" data-value="7">Violett</button><button style="background-color:gray;color:white" type="button" id="control-8" data-value="8">Grau</button><button style="background-color:white;color:black" type="button" id="control-9" data-value="9">Weiss</button></div></div><div class="dropdown"><button type="button" id="band2Select" class="dropdown-select"><span style="background-color:rgb(0, 0, 0)" class="color-box"></span>
+                        Band 2
+                    </button><div id="band2Dropdown" class="dropdown-content"><button style="background-color:black;color:white" type="button" id="control-10" data-value="0">Schwarz</button><button style="background-color:brown;color:white" type="button" id="control-11" data-value="1">Braun</button><button style="background-color:red;color:white" type="button" id="control-12" data-value="2">Rot</button><button style="background-color:orange;color:black" type="button" id="control-13" data-value="3">Orange</button><button style="background-color:yellow;color:black" type="button" id="control-14" data-value="4">Gelb</button><button style="background-color:green;color:white" type="button" id="control-15" data-value="5">Grün</button><button style="background-color:blue;color:white" type="button" id="control-16" data-value="6">Blau</button><button style="background-color:purple;color:white" type="button" id="control-17" data-value="7">Violett</button><button style="background-color:gray;color:white" type="button" id="control-18" data-value="8">Grau</button><button style="background-color:white;color:black" type="button" id="control-19" data-value="9">Weiss</button></div></div><div class="dropdown"><button type="button" id="band3Select" class="dropdown-select"><span style="background-color:black" class="color-box"></span>
+                        Band 3
+                    </button><div id="band3Dropdown" class="dropdown-content"><button type="button" id="control-20" data-value="-1" class="no-selection">keine</button><button style="background-color:black;color:white" type="button" id="control-21" data-value="0">Schwarz</button><button style="background-color:brown;color:white" type="button" id="control-22" data-value="1">Braun</button><button style="background-color:red;color:white" type="button" id="control-23" data-value="2">Rot</button><button style="background-color:orange;color:black" type="button" id="control-24" data-value="3">Orange</button><button style="background-color:yellow;color:black" type="button" id="control-25" data-value="4">Gelb</button><button style="background-color:green;color:white" type="button" id="control-26" data-value="5">Grün</button><button style="background-color:blue;color:white" type="button" id="control-27" data-value="6">Blau</button><button style="background-color:purple;color:white" type="button" id="control-28" data-value="7">Violett</button><button style="background-color:gray;color:white" type="button" id="control-29" data-value="8">Grau</button><button style="background-color:white;color:black" type="button" id="control-30" data-value="9">Weiss</button></div></div><div class="dropdown"><button type="button" id="multiplierSelect" class="dropdown-select">
+                        Multiplikator
+                    </button><div id="multiplierDropdown" class="dropdown-content"><button style="background-color:black;color:white" type="button" id="control-31" data-value="1">*1Ω</button><button style="background-color:brown;color:white" type="button" id="control-32" data-value="10">*10Ω</button><button style="background-color:red;color:white" type="button" id="control-33" data-value="100">*100Ω</button><button style="background-color:orange;color:black" type="button" id="control-34" data-value="1000">*1kΩ</button><button style="background-color:yellow;color:black" type="button" id="control-35" data-value="10000">*10kΩ</button><button style="background-color:green;color:white" type="button" id="control-36" data-value="100000">*100kΩ</button><button style="background-color:blue;color:white" type="button" id="control-37" data-value="1000000">*1MΩ</button><button style="background-color:purple;color:white" type="button" id="control-38" data-value="10000000">*10MΩ</button><button style="background-color:gray;color:white" type="button" id="control-39" data-value="100000000">*100MΩ</button><button style="background-color:white;color:black" type="button" id="control-40" data-value="1000000000">*1GΩ</button></div></div><div class="dropdown"><button type="button" id="toleranceSelect" class="dropdown-select">
+                        Toleranz
+                    </button><div id="toleranceDropdown" class="dropdown-content"><button type="button" id="control-41" data-value="0.01">±1%</button><button type="button" id="control-42" data-value="0.02">±2%</button><button type="button" id="control-43" data-value="0.05">±5%</button><button type="button" id="control-44" data-value="0.1">±10%</button><button type="button" id="control-45" data-value="0.2">±20%</button></div></div><input type="hidden" id="band1" value="0"/><input type="hidden" id="band2" value="0"/><input type="hidden" id="band3" value="-1"/><input type="hidden" id="multiplier" value="1"/><input type="hidden" id="tolerance" value="0"/><div id="result" aria-live="polite"><p id="resistanceValue">Widerstand: 0Ω</p><p id="toleranceValue">Toleranz: ±0%</p></div></div><script>(function(a,f){let l;try{l=JSON.parse(sessionStorage.getItem(a)||"{}")}catch{return}const n=l?.[f||history.state?.__TSR_key];let c=!1;for(const t in n){const e=n[t],o=e?.scrollX,s=e?.scrollY;if(Number.isFinite(o)&&Number.isFinite(s)){if(t==="window")scrollTo(o,s),c=!0;else if(t)try{const r=document.querySelector(t);r&&(r.scrollLeft=o,r.scrollTop=s)}catch{}}}if(c)return;const i=location.hash.slice(1);if(i){const t=history.state?.__hashScrollIntoViewOptions??!0;if(t){const e=document.getElementById(i);e&&e.scrollIntoView(t)}return}scrollTo(0,0)})("tsr-scroll-restoration-v1_3");document.currentScript.remove()</script><!--/$--></main></div><footer class="site-footer"><span>Elecalculate von Jana Ruch</span><a href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Open Source</a><span>Berechnungen ohne KI und ohne Datenversand.</span></footer></div><script data-tsr-stream-part="">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/assets/index-DLQr7EU_.js","/assets/rolldown-runtime-XKyaHtl9.js","/assets/jsx-runtime-C3cWAN_r.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/assets/index-DLQr7EU_.js"}}]},"/Allgemein/Widerstandstabelle":$R[8]={preloads:$R[9]=["/assets/Allgemein.Widerstandstabelle-DXPFIEqj.js","/assets/shared-D1EaDO0j.js"]}}},matches:$R[10]=[$R[11]={i:"__root__#",u:1792885258350,s:"success",ssr:!0},$R[12]={i:"#Allgemein#Widerstandstabelle#Allgemein#Widerstandstabelle",u:1792885258350,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();{let s=document.currentScript,p;while((p=s.previousElementSibling)&&p.hasAttribute('data-tsr-stream-part'))p.remove();s.remove()}</script><script type="module" async="" src="/assets/index-DLQr7EU_.js"></script><script>document.currentScript.remove();/*$tsr-stream-boundary*/</script></body></html>

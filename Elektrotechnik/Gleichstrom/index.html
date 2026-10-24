@@ -1,0 +1,213 @@
+<!DOCTYPE html><html lang="de"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/Pictures/favicon.png"/><link rel="preload" as="image" href="/Pictures/Gliechstrom_Schematic.jpg"/><link rel="preload" as="image" href="/Pictures/Spannungsteiler_unbelastet.png"/><link rel="preload" as="image" href="/Pictures/R_Serie.png"/><link rel="preload" as="image" href="/Pictures/R_Parallel.png"/><link rel="stylesheet" href="/assets/styles-DNepKGtp.css" data-precedence="default"/><title>Gleichstrom | Elecalculate</title><meta name="description" content="Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung."/><meta name="theme-color" content="#eeeae1"/><link rel="modulepreload" href="/assets/index-DLQr7EU_.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/rolldown-runtime-XKyaHtl9.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/jsx-runtime-C3cWAN_r.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/Elektrotechnik.Gleichstrom-DJgaIFv5.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/shared-D1EaDO0j.js" fetchPriority="low"/><link rel="icon" href="/Pictures/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/></head><body><a class="skip-link" href="#content">Zum Inhalt</a><div class="site"><header class="masthead"><a class="wordmark" href="/"><img src="/Pictures/favicon.png" alt=""/><span>elecalculate</span></a><div class="masthead-note">Elektronik und Elektrotechnik<br/>Rechner mit Lösungsweg</div><div class="masthead-actions"><a href="/notizbuch/">Notizbuch</a><button>Offline speichern</button></div></header><nav class="subject-nav" aria-label="Fachbereiche"><a class="current" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a><a class="" href="/Elektronik/elektronik/">Elektronik</a><a class="" href="/Allgemein/Massvorsaetze/">Grundlagen</a><a class="" href="/HST/hst/">Hard- &amp; Software</a></nav><div class="document-layout"><aside class="topic-nav"><label for="topic-search">Elektrotechnik</label><input id="topic-search" placeholder="Thema suchen" value=""/><nav aria-label="Themen"><a class="" href="/Elektrotechnik/Drehstrom/">Drehstrom</a><a class="" href="/Elektrotechnik/Drehstrom_Simulator/">Dreiphasen-Generator Simulation</a><a class="" href="/Elektrotechnik/Filter/">Filter</a><a class="current active" href="/Elektrotechnik/Gleichstrom/" data-status="active" aria-current="page">Gleichstrom</a><a class="" href="/Elektrotechnik/Kondensator/">Kondensatoren</a><a class="" href="/Elektrotechnik/Magnetismus/">Magnetismus</a><a class="" href="/Elektrotechnik/Schwingkreis/">Schwingkreis</a><a class="" href="/Elektrotechnik/Spule/">Spulen</a><a class="" href="/Elektrotechnik/Transformator/">Transformator</a><a class="" href="/Elektrotechnik/Verstaerkung_Daempfung/">Verstärkung und Dämpfung</a><a class="" href="/Elektrotechnik/Wechselstrom/">Wechselstrom</a><a class="" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a></nav><a class="source-link" href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Quellcode auf GitHub</a></aside><main id="content" class="min-w-0"><div class="document-toolbar"><a href="/">Übersicht</a><span aria-hidden="true">/</span><span>Elektrotechnik</span><div class="notebook-save"><button aria-expanded="false">Werte merken</button></div></div><!--$--><div class="page-body "><style>@layer source { @scope (.page-body) {
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #535353;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        /*input:checked + .slider {
+            background-color: #22aca0;
+        }*/
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        input {
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        input:focus {
+            outline: none; /* Entfernt den Standard-Umrandungsring */
+        }
+
+  
+
+        .dropdown-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #000;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .dropdown-header:hover {
+            background-color: #181818;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+
+        .dropdown.open .arrow {
+            transform: rotate(-180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px 20px;
+            background-color: #000000;
+            border-top: 1px solid #ddd;
+
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* Stil fuer das Formular und Layout */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 700px; /* Setzt eine maximale Breite */
+            margin: 0 auto; /* Zentriert das Formular */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            /*max-width: 150px;*/
+        }
+
+        .form-row label {
+            flex: 3;
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        .form-row input[type="number"], .form-row select {
+            flex: 1.5;
+            margin-right: 5px;
+        }
+
+        .form-row .unit {
+            flex: 0.8;
+        }
+
+
+        .opv-button {
+            position: relative;
+            width: 150px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            border: 2px solid transparent; /* Initially transparent */
+            padding: 0;
+            margin: 10px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .opv-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .opv-button:hover {
+            border-color: grey; /* grey border for hovered button */
+        }
+        
+        .opv-button.selected {
+            border-color: white; /* White border for selected button */
+        }
+        
+        .opv-button span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 2px 0;
+        }
+        
+        .input-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .input-container label, .input-container input, .input-container select, .input-container button {
+            display: block;
+            margin: 5px auto;
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .input-group input {
+            margin-right: 5px;
+        }
+        
+        .input-group select {
+            margin-left: 5px;
+        }
+
+    
+} }</style><br/><h1>Gleichstrom</h1><div class="dropdown-container"><div class="dropdown"><button type="button" id="control-0" class="dropdown-header" data-action="toggleDropdown">
+                        Ohmsches Gesetz (URI)<span class="arrow">▼</span></button><div class="dropdown-content"><div><img style="max-width:400px;width:80%" src="/Pictures/Gliechstrom_Schematic.jpg" alt="Schema Gleichstromtechnik"/></div><div class="input-numbers"><div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA → Eingabe: 5m (nicht 5mA)<br/><br/></div><div class="form-row"><label>Strom I</label><input style="border-color:var(--Strom)" type="text" aria-label="Strom I" id="I"/><label>A [Ampere]</label></div><div class="form-row"><label>Widerstand R</label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand R" id="R"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Leistung P</label><input style="border-color:var(--Leistung)" type="text" aria-label="Leistung P" id="P"/><label>P [Watt]</label></div><div class="form-row"><label>Spannung U</label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung U" id="U"/><label>V [Volt]</label></div><div class="form-row"><label></label><button type="button" id="control-1" data-action="calculateParametersURI" class="Button_Berechnen">Berechnen</button><label></label></div></div><p id="result" aria-live="polite"></p><br/></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-2" class="dropdown-header" data-action="toggleDropdown">
+                        Spannungsteiler <span class="arrow">▼</span></button><div class="dropdown-content"><label class="switch"><input type="checkbox" aria-label="Belasteter Spannungsteiler" id="modeSwitch"/><span class="slider round"></span></label><br/><br/><span id="modeLabel">unbelastet</span><br/><div id="circuitDiagram"><img style="max-width:400px;width:80%;height:auto" id="circuitImage" src="/Pictures/Spannungsteiler_unbelastet.png" alt="Schaltung unbelastet"/><div style="display:block" id="unbelastet" class="input-numbers"><div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA → Eingabe: 5m (nicht 5mA)<br/><br/></div><div class="form-row"><label>Strom I</label><input style="border-color:var(--Strom)" type="text" aria-label="Strom I" id="I_unb"/><label>A [Ampere]</label></div><div class="form-row"><label>Widerstand R<sub>1</sub></label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand R1" id="R1_unb"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Widerstand R<sub>2</sub></label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand R2" id="R2_unb"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Spannung U<sub>in</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung Uin" id="Uin_unb"/><label>V [Volt]</label></div><div class="form-row"><label>Spannung U<sub>1</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung U1" id="U1_unb"/><label>V [Volt]</label></div><div class="form-row"><label>Spannung U<sub>out</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung Uout" id="Uout_unb"/><label>V [Volt]</label></div><div class="form-row"><label></label><button type="button" id="control-3" data-action="calculateUnb_Spannungsteiler" class="Button_Berechnen">Berechnen</button><label></label></div><p id="result_unb" aria-live="polite"></p><br/></div><div style="display:none" id="belastet" class="input-numbers"><div class="comment">
+                                    Werte mit Massvorsatz eingeben z.B. I = 5mA → Eingabe: 5m (nicht 5mA)<br/><br/></div><div class="form-row"><label>Strom I<sub>ges</sub></label><input style="border-color:var(--Strom)" type="text" aria-label="Strom Iges" id="Iges_bel"/><label>A [Ampere]</label></div><div class="form-row"><label>Strom I<sub>R2</sub></label><input style="border-color:var(--Strom)" type="text" aria-label="Strom IR2" id="IR2_bel"/><label>A [Ampere]</label></div><div class="form-row"><label>Strom I<sub>RL</sub></label><input style="border-color:var(--Strom)" type="text" aria-label="Strom IRL" id="IRL_bel"/><label>A [Ampere]</label></div><div class="form-row"><label>Widerstand R<sub>1</sub></label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand R1" id="R1_bel"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Widerstand R<sub>2</sub></label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand R2" id="R2_bel"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Widerstand R<sub>L</sub></label><input style="border-color:var(--Widerstand)" type="text" aria-label="Widerstand RL" id="RL_bel"/><label>Ω [Ohm]</label></div><div class="form-row"><label>Spannung U<sub>in</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung Uin" id="Uin_bel"/><label>V [Volt]</label></div><div class="form-row"><label>Spannung U<sub>1</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung U1" id="U1_bel"/><label>V [Volt]</label></div><div class="form-row"><label>Spannung U<sub>out</sub></label><input style="border-color:var(--Spannung)" type="text" aria-label="Spannung Uout" id="Uout_bel"/><label>V [Volt]</label></div><input type="button" class="Button_Berechnen" data-action="calculateBel_Spannungsteiler" value="Berechnen"/><p id="result_bel" aria-live="polite"></p><br/></div></div></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-4" class="dropdown-header" data-action="toggleDropdown">
+                        Serie- und Parallelschaltung <span class="arrow">▼</span></button><div class="dropdown-content"><div><button type="button" id="control-5" class="opv-button" data-action="selectOPV"><img src="/Pictures/R_Serie.png" alt="Serie Schaltung"/><span>Serie</span></button><button type="button" id="control-6" class="opv-button" data-action="selectOPV"><img src="/Pictures/R_Parallel.png" alt="Parallel Schaltung"/><span>Parallel</span></button></div><div id="inputFieldsSerieParallel"></div><div id="result_S_P" aria-live="polite"></div><br/></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-7" class="dropdown-header" data-action="toggleDropdown">
+                        Stern- Dreickschaltung <span class="arrow">▼</span></button><div class="dropdown-content"><div>
+                            development in progress
+                        </div></div></div><div class="divider"></div></div></div><script>(function(a,f){let l;try{l=JSON.parse(sessionStorage.getItem(a)||"{}")}catch{return}const n=l?.[f||history.state?.__TSR_key];let c=!1;for(const t in n){const e=n[t],o=e?.scrollX,s=e?.scrollY;if(Number.isFinite(o)&&Number.isFinite(s)){if(t==="window")scrollTo(o,s),c=!0;else if(t)try{const r=document.querySelector(t);r&&(r.scrollLeft=o,r.scrollTop=s)}catch{}}}if(c)return;const i=location.hash.slice(1);if(i){const t=history.state?.__hashScrollIntoViewOptions??!0;if(t){const e=document.getElementById(i);e&&e.scrollIntoView(t)}return}scrollTo(0,0)})("tsr-scroll-restoration-v1_3");document.currentScript.remove()</script><!--/$--></main></div><footer class="site-footer"><span>Elecalculate von Jana Ruch</span><a href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Open Source</a><span>Berechnungen ohne KI und ohne Datenversand.</span></footer></div><script data-tsr-stream-part="">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/assets/index-DLQr7EU_.js","/assets/rolldown-runtime-XKyaHtl9.js","/assets/jsx-runtime-C3cWAN_r.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/assets/index-DLQr7EU_.js"}}]},"/Elektrotechnik/Gleichstrom":$R[8]={preloads:$R[9]=["/assets/Elektrotechnik.Gleichstrom-DJgaIFv5.js","/assets/shared-D1EaDO0j.js"]}}},matches:$R[10]=[$R[11]={i:"__root__#",u:1792885258418,s:"success",ssr:!0},$R[12]={i:"#Elektrotechnik#Gleichstrom#Elektrotechnik#Gleichstrom",u:1792885258418,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();{let s=document.currentScript,p;while((p=s.previousElementSibling)&&p.hasAttribute('data-tsr-stream-part'))p.remove();s.remove()}</script><script type="module" async="" src="/assets/index-DLQr7EU_.js"></script><script>document.currentScript.remove();/*$tsr-stream-boundary*/</script></body></html>

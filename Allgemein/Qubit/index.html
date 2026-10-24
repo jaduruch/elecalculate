@@ -1,0 +1,620 @@
+<!DOCTYPE html><html lang="de"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/Pictures/favicon.png"/><link rel="stylesheet" href="/assets/styles-DNepKGtp.css" data-precedence="default"/><title>Qubit Demonstration | Elecalculate</title><meta name="description" content="Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung."/><meta name="theme-color" content="#eeeae1"/><link rel="modulepreload" href="/assets/index-DLQr7EU_.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/rolldown-runtime-XKyaHtl9.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/jsx-runtime-C3cWAN_r.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/Allgemein.Qubit-Cq0-8g87.js" fetchPriority="low"/><link rel="modulepreload" href="/assets/shared-D1EaDO0j.js" fetchPriority="low"/><link rel="icon" href="/Pictures/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/></head><body><a class="skip-link" href="#content">Zum Inhalt</a><div class="site"><header class="masthead"><a class="wordmark" href="/"><img src="/Pictures/favicon.png" alt=""/><span>elecalculate</span></a><div class="masthead-note">Elektronik und Elektrotechnik<br/>Rechner mit Lösungsweg</div><div class="masthead-actions"><a href="/notizbuch/">Notizbuch</a><button>Offline speichern</button></div></header><nav class="subject-nav" aria-label="Fachbereiche"><a class="" href="/Elektrotechnik/elektrotechnik/">Elektrotechnik</a><a class="" href="/Elektronik/elektronik/">Elektronik</a><a class="current" href="/Allgemein/Massvorsaetze/">Grundlagen</a><a class="" href="/HST/hst/">Hard- &amp; Software</a></nav><div class="document-layout"><aside class="topic-nav"><label for="topic-search">Grundlagen</label><input id="topic-search" placeholder="Thema suchen" value=""/><nav aria-label="Themen"><a class="" href="/Allgemein/E-Reihe/">E-Reihe</a><a class="" href="/Allgemein/Glossar/">Glossar</a><a class="" href="/Allgemein/Massvorsaetze/">Massvorsätze</a><a class="" href="/Allgemein/Mathe/">Mathe</a><a class="current active" href="/Allgemein/Qubit/" data-status="active" aria-current="page">Qubit Demonstration</a><a class="" href="/Allgemein/Werkstoffe/">Werkstoffe</a><a class="" href="/Allgemein/Widerstandstabelle/">Widerstandstabelle</a></nav><a class="source-link" href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Quellcode auf GitHub</a></aside><main id="content" class="min-w-0"><div class="document-toolbar"><a href="/">Übersicht</a><span aria-hidden="true">/</span><span>Grundlagen</span><div class="notebook-save"><button aria-expanded="false">Werte merken</button></div></div><!--$--><div class="page-body qubit-page"><style>@layer source { @scope (.page-body) {
+
+        /* Qubit page specific styles */
+        .bloch-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #bloch-canvas-container {
+            width: 450px;
+            height: 450px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 16px;
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #050510 100%);
+            position: relative;
+            touch-action: none;
+            overflow: hidden;
+        }
+
+        .canvas-hint {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            color: rgba(78, 205, 196, 0.4);
+            cursor: help;
+            transition: all 0.3s ease;
+            z-index: 10;
+            padding: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .canvas-hint:hover {
+            color: rgba(78, 205, 196, 0.9);
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(1.1);
+        }
+
+        .controls-panel {
+            min-width: 300px;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .gate-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.1) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gate-section h3 {
+            margin: 0 0 12px 0;
+            color: #00d4aa;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gate-section h3::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 12px;
+            background: currentColor;
+            border-radius: 2px;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .gate-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gate-btn {
+            width: 56px;
+            height: 56px;
+            border: 2px solid #00d4aa;
+            border-radius: 12px;
+            background: rgba(0, 212, 170, 0.05);
+            color: #00d4aa;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .gate-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, currentColor 0%, transparent 70%);
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gate-btn:hover {
+            transform: scale(1.05);
+            background: rgba(0, 212, 170, 0.15);
+        }
+
+        .gate-btn:hover::before {
+            width: 120%;
+            height: 120%;
+            opacity: 0.1;
+        }
+
+        .gate-btn:active {
+            transform: scale(0.95);
+        }
+
+        .gate-btn.pauli { 
+            border-color: #ff6b6b; 
+            color: #ff6b6b; 
+            background: rgba(255, 107, 107, 0.08);
+        }
+        .gate-btn.pauli:hover { 
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .gate-btn.hadamard { 
+            border-color: #4ecdc4; 
+            color: #4ecdc4; 
+            background: rgba(78, 205, 196, 0.08);
+        }
+        .gate-btn.hadamard:hover { 
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .gate-btn.phase { 
+            border-color: #ffe66d; 
+            color: #ffe66d; 
+            background: rgba(255, 230, 109, 0.08);
+        }
+        .gate-btn.phase:hover { 
+            background: rgba(255, 230, 109, 0.2);
+        }
+
+        .gate-btn.measure { 
+            border-color: #c44dff; 
+            color: #c44dff; 
+            width: auto; 
+            padding: 0 20px; 
+            background: rgba(196, 77, 255, 0.08);
+        }
+        .gate-btn.measure:hover { 
+            background: rgba(196, 77, 255, 0.2);
+        }
+
+        .gate-btn.reset { 
+            border-color: #888; 
+            color: #888; 
+            width: auto; 
+            padding: 0 20px; 
+            background: rgba(136, 136, 136, 0.08);
+        }
+        .gate-btn.reset:hover { 
+            background: rgba(136, 136, 136, 0.2);
+        }
+
+        /* Ripple animation on click */
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+        }
+
+        .gate-btn.clicked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        .state-display {
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.95) 0%, rgba(10, 10, 20, 0.98) 100%);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+            height: 180px;
+        }
+
+        .state-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.5), transparent);
+        }
+
+        .state-display h4 {
+            margin: 0 0 15px 0;
+            color: #00d4aa;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .state-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.97) 0%, rgba(10, 10, 20, 0.99) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            border-radius: 12px;
+        }
+        .state-overlay.active {
+            opacity: 1;
+        }
+        .state-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: rgba(78, 205, 196, 0.8);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .quantum-spinner {
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            border-top-color: #4ecdc4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .state-line {
+            margin: 8px 0;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            min-width: 320px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            transition: opacity 0.15s ease;
+            text-overflow: ellipsis;
+        }
+
+        .state-psi { 
+            color: #4ecdc4; 
+        }
+        .state-prob { 
+            color: #ffe66d; 
+        }
+        .state-coords { 
+            color: #ff6b6b; 
+        }
+
+        /* Hide raw MathJax during rendering */
+        .state-line.rendering {
+            opacity: 0.3;
+        }
+
+        /* Easter egg hint */
+        .easter-egg-hint {
+            font-size: 10px;
+            color: rgba(255, 230, 109, 0.6);
+            text-align: center;
+            margin-top: 8px;
+            font-style: italic;
+            animation: hintPulse 3s ease-in-out infinite;
+        }
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Fraction styling for quantum notation */
+        .frac {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .frac sup {
+            display: block;
+            font-size: 0.85em;
+            line-height: 1;
+            border-bottom: 1px solid currentColor;
+            padding-bottom: 2px;
+        }
+        .frac sub {
+            display: block;
+            font-size: 0.85em;
+            line-height: 1;
+            padding-top: 2px;
+        }
+
+        .custom-rotation {
+            margin-top: 15px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            gap: 15px;
+        }
+
+        .slider-row label {
+            width: 30px;
+            color: #4ecdc4;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+        }
+
+        .slider-row input[type="range"] {
+            flex: 1;
+            height: 8px;
+            background: linear-gradient(90deg, rgba(78, 205, 196, 0.2) 0%, rgba(255, 107, 107, 0.2) 100%);
+            border-radius: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, #4ecdc4 0%, #00d4aa 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slider-row input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(78, 205, 196, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .slider-row input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, #4ecdc4 0%, #00d4aa 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slider-row .value {
+            width: 60px;
+            text-align: right;
+            color: #00d4aa;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
+        }
+
+        .apply-rotation-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: 2px solid #00d4aa;
+            border-radius: 10px;
+            background: rgba(0, 212, 170, 0.08);
+            color: #00d4aa;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .apply-rotation-btn:hover {
+            background: rgba(0, 212, 170, 0.2);
+        }
+
+        .apply-rotation-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Educational dropdown content */
+        .info-text {
+            line-height: 1.6;
+            color: #ccc;
+            text-align: left;
+        }
+
+        .info-text p {
+            margin: 10px 0;
+        }
+
+        .info-text ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .info-text li {
+            margin: 5px 0;
+        }
+
+        .info-text code {
+            background: #222;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00d4aa;
+        }
+
+        .gate-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gate-info-card {
+            background: linear-gradient(135deg, rgba(30, 30, 45, 0.8) 0%, rgba(15, 15, 25, 0.9) 100%);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gate-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.5), transparent);
+        }
+
+        .gate-info-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(78, 205, 196, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(78, 205, 196, 0.1);
+        }
+
+        .gate-info-card h5 {
+            margin: 0 0 10px 0;
+            color: #4ecdc4;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .gate-info-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            #bloch-canvas-container {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .controls-panel {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .gate-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+
+            .gate-section {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+
+            .gate-section h3 {
+                margin-bottom: 6px;
+                font-size: 10px;
+            }
+
+            .gate-buttons {
+                gap: 6px;
+            }
+
+            /* Compact layout: all gates in one row-based grid */
+            .controls-panel {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .state-display {
+                grid-column: 1 / -1;
+                height: auto;
+                min-height: 120px;
+                padding: 12px;
+                margin-top: 0;
+            }
+
+            .state-display h4 {
+                margin-bottom: 8px;
+            }
+
+            .state-line {
+                height: 28px;
+                font-size: 12px;
+                padding: 4px 8px;
+                margin: 4px 0;
+            }
+
+            .custom-rotation {
+                grid-column: 1 / -1;
+                padding: 10px;
+            }
+
+            .custom-rotation h3 {
+                font-size: 11px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .slider-row {
+                margin-bottom: 6px;
+            }
+
+            .easter-egg-hint {
+                font-size: 9px;
+            }
+        }
+
+        /* Extra visual polish */
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .controls-panel {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tooltip styling */
+        .gate-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            font-weight: normal;
+        }
+    
+} }</style><div><h1><br/>Qubit Demonstration</h1></div><div class="bloch-container"><div id="bloch-canvas-container"><div class="canvas-hint" title="Drag to rotate · Scroll to zoom"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="M12 8v8M8 12h8"></path><path d="M7 7l2 2M17 7l-2 2M7 17l2-2M17 17l-2-2"></path></svg></div></div><div class="controls-panel"><div class="gate-section"><h3>Pauli Gates</h3><div class="gate-buttons"><button type="button" id="control-0" class="gate-btn pauli" data-action="applyGate" title="Bit flip (rotation around X-axis)">X</button><button type="button" id="control-1" class="gate-btn pauli" data-action="applyGate" title="Rotation around Y-axis">Y</button><button type="button" id="control-2" class="gate-btn pauli" data-action="applyGate" title="Phase flip (rotation around Z-axis)">Z</button></div></div><div class="gate-section"><h3>Hadamard Gate</h3><div class="gate-buttons"><button type="button" id="control-3" class="gate-btn hadamard" data-action="applyGate" title="Creates superposition">H</button></div></div><div class="gate-section"><h3>Phase Gates</h3><div class="gate-buttons"><button type="button" id="control-4" class="gate-btn phase" data-action="applyGate" title="π/2 phase rotation">S</button><button type="button" id="control-5" class="gate-btn phase" data-action="applyGate" title="π/4 phase rotation">T</button></div></div><div class="gate-section"><h3>Actions</h3><div class="gate-buttons"><button type="button" id="control-6" class="gate-btn measure" data-action="measureQubit" title="Collapse to |0⟩ or |1⟩">Measure</button><button type="button" id="control-7" class="gate-btn reset" data-action="resetQubit" title="Reset to |0⟩">Reset</button></div><div style="display:none" id="easter-egg-hint" class="easter-egg-hint">
+                            ✨ Press H then Measure for a quantum surprise! But a bit of luck is required! ✨
+                        </div></div><div class="state-display" id="state-display"><div class="state-overlay" id="state-overlay"><div class="state-loading"><div class="quantum-spinner"></div><span>Evolving...</span></div></div><h4>Current State</h4><div class="state-line state-psi" id="state-dirac">|ψ⟩ = |0⟩</div><div class="state-line state-prob" id="state-prob">P(|0⟩) = 100%   P(|1⟩) = 0%</div><div class="state-line state-coords" id="state-coords">θ = 0°   φ = 0°</div></div><div class="custom-rotation"><h3 style="color:#00d4aa;font-size:14px;text-transform:uppercase;letter-spacing:1px">Custom Rotation</h3><div class="slider-row"><label>θ</label><input type="range" id="theta-slider" min="0" max="180" value="0"/><span class="value" id="theta-value">0°</span></div><div class="slider-row"><label>φ</label><input type="range" id="phi-slider" min="0" max="360" value="0"/><span class="value" id="phi-value">0°</span></div><button type="button" id="control-8" class="apply-rotation-btn" data-action="applyCustomRotation">Set State</button></div></div></div><div class="dropdown-container"><div class="dropdown"><button type="button" id="control-9" class="dropdown-header" data-action="toggleDropdown">
+                        What is a Qubit? <span class="arrow">▼</span></button><div class="dropdown-content"><div class="info-text"><p>A <strong>qubit</strong> (quantum bit) is the fundamental unit of quantum information. Unlike classical bits that can only be 0 or 1, a qubit can exist in a <strong>superposition</strong> of both states simultaneously.</p><p>The general state of a qubit is written as:</p><p style="text-align:center;font-size:20px;color:#4ecdc4">\[|\psi\rangle = \alpha|0\rangle + \beta|1\rangle\]</p><p>Where \(\alpha\) and \(\beta\) are complex numbers called <strong>probability amplitudes</strong>, satisfying \(|\alpha|^2 + |\beta|^2 = 1\).</p><p>On the Bloch sphere, any pure state can be written as:</p><p style="text-align:center;font-size:18px;color:#ffe66d">\[|\psi\rangle = \cos\frac{\theta}{2}|0\rangle + e^{i\varphi}\sin\frac{\theta}{2}|1\rangle\]</p><p>The <strong>Bloch sphere</strong> is a geometric representation of a qubit&#x27;s state:</p><ul><li><strong>North pole</strong> \(|0\rangle\): The classical &quot;0&quot; state</li><li><strong>South pole</strong> \(|1\rangle\): The classical &quot;1&quot; state</li><li><strong>Equator</strong>: Equal superposition states like \(|+\rangle\) and \(|-\rangle\)</li><li><strong>Any point on the surface</strong>: A valid pure qubit state</li></ul></div></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-10" class="dropdown-header" data-action="toggleDropdown">
+                        Quantum Gates Explained <span class="arrow">▼</span></button><div class="dropdown-content"><div class="info-text"><p>Quantum gates are operations that transform qubit states. On the Bloch sphere, they correspond to rotations.</p><div class="gate-info-grid"><div class="gate-info-card"><h5>X Gate (Pauli-X)</h5><p>Bit flip gate. Rotates \(\pi\) around X-axis.<br/>\(|0\rangle \rightarrow |1\rangle\), \(|1\rangle \rightarrow |0\rangle\)</p></div><div class="gate-info-card"><h5>Y Gate (Pauli-Y)</h5><p>Rotates \(\pi\) around Y-axis.<br/>\(|0\rangle \rightarrow i|1\rangle\), \(|1\rangle \rightarrow -i|0\rangle\)</p></div><div class="gate-info-card"><h5>Z Gate (Pauli-Z)</h5><p>Phase flip gate. Rotates \(\pi\) around Z-axis.<br/>\(|0\rangle \rightarrow |0\rangle\), \(|1\rangle \rightarrow -|1\rangle\)</p></div><div class="gate-info-card"><h5>H Gate (Hadamard)</h5><p>Creates superposition.<br/>\(|0\rangle \rightarrow |+\rangle\), \(|1\rangle \rightarrow |-\rangle\)</p></div><div class="gate-info-card"><h5>S Gate (Phase)</h5><p>Rotates \(\frac{\pi}{2}\) around Z-axis.<br/>\(|1\rangle \rightarrow i|1\rangle\), also \(\sqrt{Z}\)</p></div><div class="gate-info-card"><h5>T Gate</h5><p>Rotates \(\frac{\pi}{4}\) around Z-axis.<br/>\(|1\rangle \rightarrow e^{i\pi/4}|1\rangle\)</p></div></div></div></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-11" class="dropdown-header" data-action="toggleDropdown">
+                        Quantum Measurement <span class="arrow">▼</span></button><div class="dropdown-content"><div class="info-text"><p>When a qubit is <strong>measured</strong>, its superposition state <strong>collapses</strong> to one of the basis states:</p><ul><li>Collapses to \(|0\rangle\) with probability \(|\alpha|^2 = \cos^2(\theta/2)\)</li><li>Collapses to \(|1\rangle\) with probability \(|\beta|^2 = \sin^2(\theta/2)\)</li></ul><p>This is fundamentally probabilistic, you cannot predict which outcome will occur, only the probabilities. After measurement, the qubit is in the measured state.</p><p>On the Bloch sphere, measurement projects the state to either the north pole (\(|0\rangle\)) or south pole (\(|1\rangle\)).</p></div></div></div><div class="divider"></div><div class="dropdown"><button type="button" id="control-12" class="dropdown-header" data-action="toggleDropdown">
+                        References <span class="arrow">▼</span></button><div class="dropdown-content"><div class="info-text"><ul><li><a style="color:#4ecdc4" href="https://en.wikipedia.org/wiki/Bloch_sphere" target="_blank">Bloch Sphere - Wikipedia</a></li><li><a style="color:#4ecdc4" href="https://en.wikipedia.org/wiki/Qubit" target="_blank">Qubit - Wikipedia</a></li><li><a style="color:#4ecdc4" href="https://quantum.country/qcvc" target="_blank">Quantum Computing for the Very Curious</a></li><li><a style="color:#4ecdc4" href="https://www.quantum.amsterdam/" target="_blank">Quantum Amsterdam</a></li></ul></div></div></div></div><br/></div><script>(function(a,f){let l;try{l=JSON.parse(sessionStorage.getItem(a)||"{}")}catch{return}const n=l?.[f||history.state?.__TSR_key];let c=!1;for(const t in n){const e=n[t],o=e?.scrollX,s=e?.scrollY;if(Number.isFinite(o)&&Number.isFinite(s)){if(t==="window")scrollTo(o,s),c=!0;else if(t)try{const r=document.querySelector(t);r&&(r.scrollLeft=o,r.scrollTop=s)}catch{}}}if(c)return;const i=location.hash.slice(1);if(i){const t=history.state?.__hashScrollIntoViewOptions??!0;if(t){const e=document.getElementById(i);e&&e.scrollIntoView(t)}return}scrollTo(0,0)})("tsr-scroll-restoration-v1_3");document.currentScript.remove()</script><!--/$--></main></div><footer class="site-footer"><span>Elecalculate von Jana Ruch</span><a href="https://github.com/jaduruch/elecalculate" target="_blank" rel="noreferrer">Open Source</a><span>Berechnungen ohne KI und ohne Datenversand.</span></footer></div><script data-tsr-stream-part="">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/assets/index-DLQr7EU_.js","/assets/rolldown-runtime-XKyaHtl9.js","/assets/jsx-runtime-C3cWAN_r.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/assets/index-DLQr7EU_.js"}}]},"/Allgemein/Qubit":$R[8]={preloads:$R[9]=["/assets/Allgemein.Qubit-Cq0-8g87.js","/assets/shared-D1EaDO0j.js"]}}},matches:$R[10]=[$R[11]={i:"__root__#",u:1792885258288,s:"success",ssr:!0},$R[12]={i:"#Allgemein#Qubit#Allgemein#Qubit",u:1792885258288,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();{let s=document.currentScript,p;while((p=s.previousElementSibling)&&p.hasAttribute('data-tsr-stream-part'))p.remove();s.remove()}</script><script type="module" async="" src="/assets/index-DLQr7EU_.js"></script><script>document.currentScript.remove();/*$tsr-stream-boundary*/</script></body></html>
