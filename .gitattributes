@@ -1,0 +1,4 @@
+# Historical fixtures and generated formula templates retain original whitespace.
+migration/source/** -whitespace
+migration/unmerged-el52/** -whitespace
+src/calculations/** -whitespace
