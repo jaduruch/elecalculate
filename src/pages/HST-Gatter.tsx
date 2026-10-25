@@ -28,7 +28,7 @@ export default function Page() {
 				</div>
 				<div>
 					<h2>{"BUFFER (Identität)"}</h2>
-					<table>
+					<table tabIndex={0} aria-label="Tabelle: Gatter">
 						<tbody>
 							<tr>
 								<th>{"Eingang A"}</th>
@@ -45,7 +45,7 @@ export default function Page() {
 						</tbody>
 					</table>
 					<h2>{"AND"}</h2>
-					<table>
+					<table tabIndex={0} aria-label="Tabelle: Gatter">
 						<tbody>
 							<tr>
 								<th>{"Eingang A"}</th>
@@ -75,7 +75,7 @@ export default function Page() {
 						</tbody>
 					</table>
 					<h2>{"OR"}</h2>
-					<table>
+					<table tabIndex={0} aria-label="Tabelle: Gatter">
 						<tbody>
 							<tr>
 								<th>{"Eingang A"}</th>
@@ -105,7 +105,7 @@ export default function Page() {
 						</tbody>
 					</table>
 					<h2>{"EXOR (XOR)"}</h2>
-					<table>
+					<table tabIndex={0} aria-label="Tabelle: Gatter">
 						<tbody>
 							<tr>
 								<th>{"Eingang A"}</th>
@@ -136,7 +136,7 @@ export default function Page() {
 					</table>
 				</div>
 				<h2>{"NOT"}</h2>
-				<table>
+				<table tabIndex={0} aria-label="Tabelle: Gatter">
 					<tbody>
 						<tr>
 							<th>{"Eingang A"}</th>
@@ -153,7 +153,7 @@ export default function Page() {
 					</tbody>
 				</table>
 				<h2>{"NAND"}</h2>
-				<table>
+				<table tabIndex={0} aria-label="Tabelle: Gatter">
 					<tbody>
 						<tr>
 							<th>{"Eingang A"}</th>
@@ -183,7 +183,7 @@ export default function Page() {
 					</tbody>
 				</table>
 				<h2>{"NOR"}</h2>
-				<table>
+				<table tabIndex={0} aria-label="Tabelle: Gatter">
 					<tbody>
 						<tr>
 							<th>{"Eingang A"}</th>
@@ -213,7 +213,7 @@ export default function Page() {
 					</tbody>
 				</table>
 				<h2>{"EXNOR (XNOR)"}</h2>
-				<table>
+				<table tabIndex={0} aria-label="Tabelle: Gatter">
 					<tbody>
 						<tr>
 							<th>{"Eingang A"}</th>

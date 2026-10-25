@@ -28,7 +28,11 @@ export default function Page() {
 						{"Widerstandstabelle"}
 					</h1>
 				</div>
-				<table style={{ maxWidth: "150px" }}>
+				<table
+					tabIndex={0}
+					aria-label="Tabelle: Widerstandstabelle"
+					style={{ maxWidth: "150px" }}
+				>
 					<tbody>
 						<tr>
 							<th>{"Farbe"}</th>

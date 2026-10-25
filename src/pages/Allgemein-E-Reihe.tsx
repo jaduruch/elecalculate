@@ -44,7 +44,12 @@ export default function Page() {
 					</select>
 				</div>
 				<div id="tableContainer">
-					<table style={{ maxWidth: "80px" }} id="eReiheTable">
+					<table
+						tabIndex={0}
+						aria-label="Tabelle: E-Reihe"
+						style={{ maxWidth: "80px" }}
+						id="eReiheTable"
+					>
 						<thead>
 							<tr>
 								<th>{"Werte:"}</th>

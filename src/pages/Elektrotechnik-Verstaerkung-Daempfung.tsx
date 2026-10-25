@@ -35,7 +35,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="I1">
 							{"Strom I"}
 							<sub>{"1"}</sub>
 						</label>
@@ -45,11 +45,12 @@ export default function Page() {
 							type="text"
 							aria-label="Strom I1"
 							id="I1"
+							aria-describedby="I1-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="I1-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="I2">
 							{"Strom I"}
 							<sub>{"2"}</sub>
 						</label>
@@ -59,33 +60,36 @@ export default function Page() {
 							type="text"
 							aria-label="Strom I2"
 							id="I2"
+							aria-describedby="I2-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="I2-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkungsmass g"}</label>
+						<label htmlFor="g">{"Verstärkungsmass g"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsmass)" }}
 							type="text"
 							aria-label="Verstärkungsmass g"
 							id="g"
+							aria-describedby="g-unit"
 						/>
-						<label>{"1 [dB]"}</label>
+						<label id="g-unit">{"1 [dB]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Dämpfungssmass a"}</label>
+						<label htmlFor="a">{"Dämpfungssmass a"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Daempfungsmass)" }}
 							type="text"
 							aria-label="Dämpfungssmass a"
 							id="a"
+							aria-describedby="a-unit"
 						/>
-						<label>{"1 [dB]"}</label>
+						<label id="a-unit">{"1 [dB]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="P1">
 							{"Leistung P"}
 							<sub>{"1"}</sub>
 						</label>
@@ -95,11 +99,12 @@ export default function Page() {
 							type="text"
 							aria-label="Leistung P1"
 							id="P1"
+							aria-describedby="P1-unit"
 						/>
-						<label>{"W [Watt]"}</label>
+						<label id="P1-unit">{"W [Watt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="P2">
 							{"Leistung P"}
 							<sub>{"2"}</sub>
 						</label>
@@ -109,11 +114,12 @@ export default function Page() {
 							type="text"
 							aria-label="Leistung P2"
 							id="P2"
+							aria-describedby="P2-unit"
 						/>
-						<label>{"W [Watt]"}</label>
+						<label id="P2-unit">{"W [Watt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="U1">
 							{"Spannung U"}
 							<sub>{"1"}</sub>
 						</label>
@@ -123,11 +129,12 @@ export default function Page() {
 							type="text"
 							aria-label="Spannung U1"
 							id="U1"
+							aria-describedby="U1-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="U1-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="U2">
 							{"Spannung U"}
 							<sub>{"2"}</sub>
 						</label>
@@ -137,30 +144,33 @@ export default function Page() {
 							type="text"
 							aria-label="Spannung U2"
 							id="U2"
+							aria-describedby="U2-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="U2-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Spannungs-/Stromfaktor V"}</label>
+						<label htmlFor="V">{"Spannungs-/Stromfaktor V"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
 							type="text"
 							aria-label="Verstärkungsfaktor V"
 							id="V"
+							aria-describedby="V-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V-unit">{"1"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Spannungs-/Stromdämpfungsfaktor D"}</label>
+						<label htmlFor="D">{"Spannungs-/Stromdämpfungsfaktor D"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Daempfungsfaktor)" }}
 							type="text"
 							aria-label="Dämpfungsfaktor D"
 							id="D"
+							aria-describedby="D-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="D-unit">{"1"}</label>
 					</div>
 				</div>
 				<input

@@ -42,7 +42,7 @@ export default function Page() {
 								);
 							}}
 						>
-							{"\n                        Kondensator berechnungen"}
+							{"\n                        Kondensatorberechnungen"}
 							<span className="arrow" aria-hidden="true">
 								<Chevron direction="down" />
 							</span>
@@ -72,40 +72,43 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Strom I"}</label>
+									<label htmlFor="I">{"Strom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Strom I"
 										id="I"
+										aria-describedby="I-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Kraft F"}</label>
+									<label htmlFor="F">{"Kraft F"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Kraft)" }}
 										type="text"
 										aria-label="Kraft F"
 										id="F"
+										aria-describedby="F-unit"
 									/>
-									<label>{"N [Newton]"}</label>
+									<label id="F-unit">{"N [Newton]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Feldstärke E"}</label>
+									<label htmlFor="E">{"Feldstärke E"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Feldstaerke)" }}
 										type="text"
 										aria-label="Feldstärke E"
 										id="E"
+										aria-describedby="E-unit"
 									/>
-									<label>{"V/m [Volt / meter]"}</label>
+									<label id="E-unit">{"V/m [Volt / meter]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="er">
 										{"Dielektrizitätszahl ε"}
 										<sub>{"r"}</sub>
 									</label>
@@ -115,100 +118,109 @@ export default function Page() {
 										type="text"
 										aria-label="Dielektrizitätszahl εr"
 										id="er"
+										aria-describedby="er-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="er-unit">{"1"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Fläche A"}</label>
+									<label htmlFor="A">{"Fläche A"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Fläche A"
 										id="A"
+										aria-describedby="A-unit"
 									/>
-									<label>
+									<label id="A-unit">
 										{"m"}
 										<sup>{"2"}</sup>
 										{" [Quadratmeter]"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Plattendurchmesser D"}</label>
+									<label htmlFor="d">{"Plattendurchmesser D"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Plattendurchmesser D"
 										id="d"
+										aria-describedby="d-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="d-unit">{"m [meter]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Elektronenabstand s"}</label>
+									<label htmlFor="s">{"Elektronenabstand s"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Elektronenabstand)" }}
 										type="text"
 										aria-label="Elektronenabstand s"
 										id="s"
+										aria-describedby="s-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="s-unit">{"m [meter]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Kapazität C"}</label>
+									<label htmlFor="C">{"Kapazität C"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Kapazitaet)" }}
 										type="text"
 										aria-label="Kapazität C"
 										id="C"
+										aria-describedby="C-unit"
 									/>
-									<label>{"F [Farad]"}</label>
+									<label id="C-unit">{"F [Farad]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Spannung U"}</label>
+									<label htmlFor="U">{"Spannung U"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Spannung U"
 										id="U"
+										aria-describedby="U-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="U-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Energie W"}</label>
+									<label htmlFor="W">{"Energie W"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Energie)" }}
 										type="text"
 										aria-label="Energie W"
 										id="W"
+										aria-describedby="W-unit"
 									/>
-									<label>{"J [Joule]"}</label>
+									<label id="W-unit">{"J [Joule]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Ladung Q"}</label>
+									<label htmlFor="Q">{"Ladung Q"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Ladung)" }}
 										type="text"
 										aria-label="Ladung Q"
 										id="Q"
+										aria-describedby="Q-unit"
 									/>
-									<label>{"C [Coulomb]"}</label>
+									<label id="Q-unit">{"C [Coulomb]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Zeit"}</label>
+									<label htmlFor="t">{"Zeit"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Zeit)" }}
 										type="text"
 										aria-label="Zeit"
 										id="t"
+										aria-describedby="t-unit"
 									/>
-									<label>{"s [sekunden]"}</label>
+									<label id="t-unit">{"s [sekunden]"}</label>
 								</div>
 								<button
 									disabled={!controller.ready}
@@ -316,15 +328,16 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Winkel φ"}</label>
+									<label htmlFor="phi_AC">{"Winkel φ"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Winkel)" }}
 										type="text"
 										aria-label="Winkel φ"
 										id="phi_AC"
+										aria-describedby="phi_AC-unit"
 									/>
-									<label>
+									<label id="phi_AC-unit">
 										<button
 											disabled={!controller.ready}
 											type="button"
@@ -343,29 +356,31 @@ export default function Page() {
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Gesamtstrom I"}</label>
+									<label htmlFor="I_AC">{"Gesamtstrom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Gesamtstrom I"
 										id="I_AC"
+										aria-describedby="I_AC-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I_AC-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkwiderstand R"}</label>
+									<label htmlFor="R_AC">{"Wirkwiderstand R"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Wirkwiderstand R"
 										id="R_AC"
+										aria-describedby="R_AC-unit"
 									/>
-									<label>{"Ω[Ohm]"}</label>
+									<label id="R_AC-unit">{"Ω[Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Xc_AC">
 										{"Blindwiderstand X"}
 										<sub>{"C"}</sub>
 									</label>
@@ -375,44 +390,48 @@ export default function Page() {
 										type="text"
 										aria-label="Blindwiderstand XC"
 										id="Xc_AC"
+										aria-describedby="Xc_AC-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="Xc_AC-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Scheinwiderstand/Impedanz Z"}</label>
+									<label htmlFor="Z_AC">{"Scheinwiderstand/Impedanz Z"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Scheinwiderstand/Impedanz Z"
 										id="Z_AC"
+										aria-describedby="Z_AC-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="Z_AC-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Kapazität C"}</label>
+									<label htmlFor="C_AC">{"Kapazität C"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Kapazitaet)" }}
 										type="text"
 										aria-label="Kapazität C"
 										id="C_AC"
+										aria-describedby="C_AC-unit"
 									/>
-									<label>{"F [Farad]"}</label>
+									<label id="C_AC-unit">{"F [Farad]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkleistung P"}</label>
+									<label htmlFor="P_AC">{"Wirkleistung P"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Leistung)" }}
 										type="text"
 										aria-label="Wirkleistung P"
 										id="P_AC"
+										aria-describedby="P_AC-unit"
 									/>
-									<label>{"W [Watt]"}</label>
+									<label id="P_AC-unit">{"W [Watt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Qc_AC">
 										{"Blindleistung Q"}
 										<sub>{"C"}</sub>
 									</label>
@@ -422,22 +441,24 @@ export default function Page() {
 										type="text"
 										aria-label="Blindleistung QC"
 										id="Qc_AC"
+										aria-describedby="Qc_AC-unit"
 									/>
-									<label>{"var"}</label>
+									<label id="Qc_AC-unit">{"var"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Scheinleistung S"}</label>
+									<label htmlFor="S_AC">{"Scheinleistung S"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Leistung)" }}
 										type="text"
 										aria-label="Scheinleistung S"
 										id="S_AC"
+										aria-describedby="S_AC-unit"
 									/>
-									<label>{"VA [Volt × Ampere]"}</label>
+									<label id="S_AC-unit">{"VA [Volt × Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Ur_AC">
 										{"Wirkspannung U"}
 										<sub>{"R"}</sub>
 									</label>
@@ -447,11 +468,12 @@ export default function Page() {
 										type="text"
 										aria-label="Wirkspannung UR"
 										id="Ur_AC"
+										aria-describedby="Ur_AC-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="Ur_AC-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Uc_AC">
 										{"Blindspannung U"}
 										<sub>{"C"}</sub>
 									</label>
@@ -461,52 +483,57 @@ export default function Page() {
 										type="text"
 										aria-label="Blindspannung UC"
 										id="Uc_AC"
+										aria-describedby="Uc_AC-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="Uc_AC-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Gesamtspannung U"}</label>
+									<label htmlFor="U_AC">{"Gesamtspannung U"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Gesamtspannung U"
 										id="U_AC"
+										aria-describedby="U_AC-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="U_AC-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Frequenz f"}</label>
+									<label htmlFor="f_AC">{"Frequenz f"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Frequenz)" }}
 										type="text"
 										aria-label="Frequenz f"
 										id="f_AC"
+										aria-describedby="f_AC-unit"
 									/>
-									<label>{"Hz [Herz]"}</label>
+									<label id="f_AC-unit">{"Hz [Herz]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkfaktor cos(φ)"}</label>
+									<label htmlFor="cosphi_AC">{"Wirkfaktor cos(φ)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Daempfungsfaktor)" }}
 										type="text"
 										aria-label="Wirkfaktor cos(φ)"
 										id="cosphi_AC"
+										aria-describedby="cosphi_AC-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="cosphi_AC-unit">{"1"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Blindfaktor sin(φ)"}</label>
+									<label htmlFor="sinphi_AC">{"Blindfaktor sin(φ)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Daempfungsfaktor)" }}
 										type="text"
 										aria-label="Blindfaktor sin(φ)"
 										id="sinphi_AC"
+										aria-describedby="sinphi_AC-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="sinphi_AC-unit">{"1"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}
@@ -704,15 +731,16 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Winkel φ"}</label>
+									<label htmlFor="phi_ACp">{"Winkel φ"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Winkel)" }}
 										type="text"
 										aria-label="Winkel φ"
 										id="phi_ACp"
+										aria-describedby="phi_ACp-unit"
 									/>
-									<label>
+									<label id="phi_ACp-unit">
 										<button
 											disabled={!controller.ready}
 											type="button"
@@ -731,7 +759,7 @@ export default function Page() {
 									</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Ir_ACp">
 										{"Wirkstrom I"}
 										<sub>{"R"}</sub>
 									</label>
@@ -741,11 +769,12 @@ export default function Page() {
 										type="text"
 										aria-label="Wirkstrom IR"
 										id="Ir_ACp"
+										aria-describedby="Ir_ACp-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="Ir_ACp-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Ic_ACp">
 										{"Blindstrom I"}
 										<sub>{"C"}</sub>
 									</label>
@@ -755,33 +784,36 @@ export default function Page() {
 										type="text"
 										aria-label="Blindstrom IC"
 										id="Ic_ACp"
+										aria-describedby="Ic_ACp-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="Ic_ACp-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Gesamtstrom I"}</label>
+									<label htmlFor="I_ACp">{"Gesamtstrom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Gesamtstrom I"
 										id="I_ACp"
+										aria-describedby="I_ACp-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I_ACp-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkleitwert G"}</label>
+									<label htmlFor="G_ACp">{"Wirkleitwert G"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Wirkleitwert G"
 										id="G_ACp"
+										aria-describedby="G_ACp-unit"
 									/>
-									<label>{"S [Siemens]"}</label>
+									<label id="G_ACp-unit">{"S [Siemens]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Bc_ACp">
 										{"Blindleitwert B"}
 										<sub>{"C"}</sub>
 									</label>
@@ -791,44 +823,48 @@ export default function Page() {
 										type="text"
 										aria-label="Blindleitwert BC"
 										id="Bc_ACp"
+										aria-describedby="Bc_ACp-unit"
 									/>
-									<label>{"S [Siemens]"}</label>
+									<label id="Bc_ACp-unit">{"S [Siemens]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Scheinleitwert/Admitanz Y"}</label>
+									<label htmlFor="Y_ACp">{"Scheinleitwert/Admitanz Y"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Scheinleitwert/Admitanz Y"
 										id="Y_ACp"
+										aria-describedby="Y_ACp-unit"
 									/>
-									<label>{"S [Siemens]"}</label>
+									<label id="Y_ACp-unit">{"S [Siemens]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Kapazität C"}</label>
+									<label htmlFor="C_ACp">{"Kapazität C"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Kapazitaet)" }}
 										type="text"
 										aria-label="Kapazität C"
 										id="C_ACp"
+										aria-describedby="C_ACp-unit"
 									/>
-									<label>{"F [Farad]"}</label>
+									<label id="C_ACp-unit">{"F [Farad]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkleistung P"}</label>
+									<label htmlFor="P_ACp">{"Wirkleistung P"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Leistung)" }}
 										type="text"
 										aria-label="Wirkleistung P"
 										id="P_ACp"
+										aria-describedby="P_ACp-unit"
 									/>
-									<label>{"W [Watt]"}</label>
+									<label id="P_ACp-unit">{"W [Watt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Q_ACp">
 										{"Blindleistung Q"}
 										<sub>{"C"}</sub>
 									</label>
@@ -838,63 +874,69 @@ export default function Page() {
 										type="text"
 										aria-label="Blindleistung QC"
 										id="Q_ACp"
+										aria-describedby="Q_ACp-unit"
 									/>
-									<label>{"var"}</label>
+									<label id="Q_ACp-unit">{"var"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Scheinleistung S"}</label>
+									<label htmlFor="S_ACp">{"Scheinleistung S"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Leistung)" }}
 										type="text"
 										aria-label="Scheinleistung S"
 										id="S_ACp"
+										aria-describedby="S_ACp-unit"
 									/>
-									<label>{"VA [Volt × Ampere]"}</label>
+									<label id="S_ACp-unit">{"VA [Volt × Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Spannung U"}</label>
+									<label htmlFor="U_ACp">{"Spannung U"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Spannung U"
 										id="U_ACp"
+										aria-describedby="U_ACp-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="U_ACp-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Frequenz f"}</label>
+									<label htmlFor="f_ACp">{"Frequenz f"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Frequenz)" }}
 										type="text"
 										aria-label="Frequenz f"
 										id="f_ACp"
+										aria-describedby="f_ACp-unit"
 									/>
-									<label>{"Hz [Herz]"}</label>
+									<label id="f_ACp-unit">{"Hz [Herz]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Wirkfaktor cos(φ)"}</label>
+									<label htmlFor="cosphi_ACp">{"Wirkfaktor cos(φ)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Daempfungsfaktor)" }}
 										type="text"
 										aria-label="Wirkfaktor cos(φ)"
 										id="cosphi_ACp"
+										aria-describedby="cosphi_ACp-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="cosphi_ACp-unit">{"1"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Blindfaktor sin(φ)"}</label>
+									<label htmlFor="sinphi_ACp">{"Blindfaktor sin(φ)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Daempfungsfaktor)" }}
 										type="text"
 										aria-label="Blindfaktor sin(φ)"
 										id="sinphi_ACp"
+										aria-describedby="sinphi_ACp-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="sinphi_ACp-unit">{"1"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}
@@ -1082,6 +1124,7 @@ export default function Page() {
 										id="modeSwitch"
 									/>
 									<span className="slider round"></span>
+									<span className="switch-label">Entladen</span>
 								</label>
 								<br />
 								<br />
@@ -1104,92 +1147,100 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Speisungsstrom I"}</label>
+									<label htmlFor="I_RC">{"Speisungsstrom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Speisungsstrom I"
 										id="I_RC"
+										aria-describedby="I_RC-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I_RC-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Momentanstrom i(t)"}</label>
+									<label htmlFor="It_RC">{"Momentanstrom i(t)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Momentanstrom i(t)"
 										id="It_RC"
+										aria-describedby="It_RC-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="It_RC-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Zeitkonstante 𝝉"}</label>
+									<label htmlFor="tau_RC">{"Zeitkonstante 𝝉"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Zeitkonstante)" }}
 										type="text"
 										aria-label="Zeitkonstante 𝝉"
 										id="tau_RC"
+										aria-describedby="tau_RC-unit"
 									/>
-									<label>{"s [sekunden]"}</label>
+									<label id="tau_RC-unit">{"s [sekunden]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Widerstand R"}</label>
+									<label htmlFor="R_RC">{"Widerstand R"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Widerstand R"
 										id="R_RC"
+										aria-describedby="R_RC-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="R_RC-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Kapazität C"}</label>
+									<label htmlFor="C_RC">{"Kapazität C"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Kapazitaet)" }}
 										type="text"
 										aria-label="Kapazität C"
 										id="C_RC"
+										aria-describedby="C_RC-unit"
 									/>
-									<label>{"F [Farad]"}</label>
+									<label id="C_RC-unit">{"F [Farad]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Speisespannung U"}</label>
+									<label htmlFor="U_RC">{"Speisespannung U"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Speisespannung U"
 										id="U_RC"
+										aria-describedby="U_RC-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="U_RC-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Momentanspannung u(t)"}</label>
+									<label htmlFor="Ut_RC">{"Momentanspannung u(t)"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Momentanspannung u(t)"
 										id="Ut_RC"
+										aria-describedby="Ut_RC-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="Ut_RC-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Zeit t"}</label>
+									<label htmlFor="t_RC">{"Zeit t"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Zeit)" }}
 										type="text"
 										aria-label="Zeit t"
 										id="t_RC"
+										aria-describedby="t_RC-unit"
 									/>
-									<label>{"s [sekunden]"}</label>
+									<label id="t_RC-unit">{"s [sekunden]"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}

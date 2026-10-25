@@ -43,6 +43,7 @@ export default function Page() {
 						}}
 					/>
 					<span className="slider round"></span>
+					<span className="switch-label">Dreieckschaltung</span>
 				</label>
 				<br />
 				<span id="circuitType">{"Sternschaltung"}</span>

@@ -100,6 +100,14 @@ calculators and explanations rather than replacing them with a new demo.
 - No marketing dashboard, slogan hero, numbered instrument cards, neon badge
   decoration, em dashes or en dashes. The UI is a technical reference organized
   around the existing topics, source diagrams, forms, tables and worked solutions.
+- Shared UI refinements live in `styles-navigation.css`, `styles-calculators.css`
+  and `styles-notebook.css`, linked after the base stylesheet. Keep mobile numeric
+  fields at least 16px to avoid Safari focus zoom, and action buttons at least
+  44px. Long notebook text must wrap without widening the page.
+- The open category menu makes obscured content inert and contains keyboard
+  focus. Keep its selected topic visible in the horizontal strip.
+- The generator connects existing visible field labels/units without changing
+  IDs used by saved entries. Preserve these associations during error cleanup.
 - Preserve the educational SI-variable colour meanings. Keep readable contrast,
   native keyboard controls, reduced-motion styles and mobile layouts.
 - Only `main` and `gh-pages` remain active branches. Retired heads are preserved

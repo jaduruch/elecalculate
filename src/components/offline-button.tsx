@@ -61,6 +61,7 @@ export function OfflineButton() {
 	const [dismissed, setDismissed] = useState(false);
 	const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
 	const mounted = useRef(true);
+	const installButton = useRef<HTMLButtonElement>(null);
 	const removeObservers = useRef<(() => void)[]>([]);
 	const activating = useRef(false);
 	const lastWaiting = useRef<ServiceWorker | null>(null);
@@ -250,7 +251,12 @@ export function OfflineButton() {
 
 	return (
 		<>
-			<button onClick={install} disabled={busy}>
+			<button
+				ref={installButton}
+				type="button"
+				onClick={install}
+				disabled={busy}
+			>
 				{busy
 					? activating.current
 						? "Wird aktualisiert…"
@@ -258,7 +264,7 @@ export function OfflineButton() {
 					: "Offline speichern"}
 			</button>
 			{(status || waiting) && !dismissed && (
-				<div className="notification" role="status">
+				<div className="notification" role="status" aria-atomic="true">
 					<span>
 						{status ||
 							(waiting
@@ -275,6 +281,7 @@ export function OfflineButton() {
 						onClick={() => {
 							setStatus("");
 							setDismissed(true);
+							installButton.current?.focus();
 						}}
 					>
 						Schließen

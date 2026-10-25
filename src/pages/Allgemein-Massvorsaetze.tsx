@@ -24,7 +24,11 @@ export default function Page() {
 						{"Massvorsätze"}
 					</h1>
 				</div>
-				<table style={{ maxWidth: "80px" }}>
+				<table
+					tabIndex={0}
+					aria-label="Tabelle: Massvorsätze"
+					style={{ maxWidth: "80px" }}
+				>
 					<tbody>
 						<tr>
 							<th>{"Wert "}</th>

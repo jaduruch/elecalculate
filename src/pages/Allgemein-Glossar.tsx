@@ -24,7 +24,11 @@ export default function Page() {
 						{"Glossar"}
 					</h1>
 				</div>
-				<table style={{ maxWidth: "80px" }}>
+				<table
+					tabIndex={0}
+					aria-label="Tabelle: Glossar"
+					style={{ maxWidth: "80px" }}
+				>
 					<tbody>
 						<tr>
 							<th>{"Bezeichnung"}</th>

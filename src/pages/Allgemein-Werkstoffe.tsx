@@ -61,7 +61,7 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="R">
 										{"Gesamtwiderstand R"}
 										<sub>{"ges"}</sub>
 									</label>
@@ -71,75 +71,81 @@ export default function Page() {
 										type="text"
 										aria-label="Gesamtwiderstand Rges"
 										id="R"
+										aria-describedby="R-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="R-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leitfähigkeit χ"}</label>
+									<label htmlFor="x">{"Leitfähigkeit χ"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "gray" }}
 										type="text"
 										aria-label="Leitfähigkeit χ"
 										id="x"
+										aria-describedby="x-unit"
 									/>
-									<label>
+									<label id="x-unit">
 										{"m/(Ω ∗ mm"}
 										<sup>{"2"}</sup>
 										{")"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"spezifischer Widerstand ρ"}</label>
+									<label htmlFor="p">{"spezifischer Widerstand ρ"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "gray" }}
 										type="text"
 										aria-label="spezifischer Widerstand ρ"
 										id="p"
+										aria-describedby="p-unit"
 									/>
-									<label>
+									<label id="p-unit">
 										{"(Ω ∗ mm"}
 										<sup>{"2"}</sup>
 										{")/m"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leiterquerschnitt A"}</label>
+									<label htmlFor="A">{"Leiterquerschnitt A"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Leiterquerschnitt A"
 										id="A"
+										aria-describedby="A-unit"
 									/>
-									<label>
+									<label id="A-unit">
 										{"m"}
 										<sup>{"2"}</sup>
 										{" [Quadratmeter]"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leiterdurchmesser d"}</label>
+									<label htmlFor="d">{"Leiterdurchmesser d"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Leiterdurchmesser d"
 										id="d"
+										aria-describedby="d-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="d-unit">{"m [meter]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leiterlänge l"}</label>
+									<label htmlFor="l">{"Leiterlänge l"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Laenge)" }}
 										type="text"
 										aria-label="Leiterlänge l"
 										id="l"
+										aria-describedby="l-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="l-unit">{"m [meter]"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}
@@ -191,18 +197,19 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Kaltwiderstand R"}</label>
+									<label htmlFor="Rk">{"Kaltwiderstand R"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Kaltwiderstand R"
 										id="Rk"
+										aria-describedby="Rk-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="Rk-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Rw">
 										{"Warmwiderstand R"}
 										<sub>{"ϑ"}</sub>
 									</label>
@@ -212,37 +219,40 @@ export default function Page() {
 										type="text"
 										aria-label="Warmwiderstand Rϑ"
 										id="Rw"
+										aria-describedby="Rw-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="Rw-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Temperaturbeiwert α"}</label>
+									<label htmlFor="alpha">{"Temperaturbeiwert α"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "gray" }}
 										type="text"
 										aria-label="Temperaturbeiwert α"
 										id="alpha"
+										aria-describedby="alpha-unit"
 									/>
-									<label>
+									<label id="alpha-unit">
 										{"K"}
 										<sup>{"-1"}</sup>
 										{" [1/Klevin]"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Temperaturänderung ΔT"}</label>
+									<label htmlFor="T">{"Temperaturänderung ΔT"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Temperatur)" }}
 										type="text"
 										aria-label="Temperaturänderung ΔT"
 										id="T"
+										aria-describedby="T-unit"
 									/>
-									<label>{"K [Kelvin]"}</label>
+									<label id="T-unit">{"K [Kelvin]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Tw">
 										{"Warmwert T"}
 										<sub>{"w"}</sub>
 									</label>
@@ -252,11 +262,12 @@ export default function Page() {
 										type="text"
 										aria-label="Warmwert Tw"
 										id="Tw"
+										aria-describedby="Tw-unit"
 									/>
-									<label>{"°C [Celsius]"}</label>
+									<label id="Tw-unit">{"°C [Celsius]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="Tk">
 										{"Kaltwert T"}
 										<sub>{"k"}</sub>
 									</label>
@@ -266,8 +277,9 @@ export default function Page() {
 										type="text"
 										aria-label="Kaltwert Tk"
 										id="Tk"
+										aria-describedby="Tk-unit"
 									/>
-									<label>{"°C [Celsius]"}</label>
+									<label id="Tk-unit">{"°C [Celsius]"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}
@@ -319,52 +331,56 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Strom I"}</label>
+									<label htmlFor="I_J">{"Strom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Strom I"
 										id="I_J"
+										aria-describedby="I_J-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I_J-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leiterdurchmesser d"}</label>
+									<label htmlFor="d_J">{"Leiterdurchmesser d"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Leiterdurchmesser d"
 										id="d_J"
+										aria-describedby="d_J-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="d_J-unit">{"m [meter]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Querschnittsfläche A"}</label>
+									<label htmlFor="A_J">{"Querschnittsfläche A"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Querschnittsfläche A"
 										id="A_J"
+										aria-describedby="A_J-unit"
 									/>
-									<label>
+									<label id="A_J-unit">
 										{"m"}
 										<sup>{"2"}</sup>
 										{" [Quadratmeter]"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Stromdichte J"}</label>
+									<label htmlFor="J">{"Stromdichte J"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "gray" }}
 										type="text"
 										aria-label="Stromdichte J"
 										id="J"
+										aria-describedby="J-unit"
 									/>
-									<label>
+									<label id="J-unit">
 										{"A/mm"}
 										<sup>{"2"}</sup>
 									</label>

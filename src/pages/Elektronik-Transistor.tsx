@@ -67,7 +67,7 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="IC">
 										{"Kollektorstrom I"}
 										<sub>{"C"}</sub>
 									</label>
@@ -77,11 +77,12 @@ export default function Page() {
 										type="text"
 										aria-label="Kollektorstrom IC"
 										id="IC"
+										aria-describedby="IC-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="IC-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="IB">
 										{"Basisstrom I"}
 										<sub>{"B"}</sub>
 									</label>
@@ -91,11 +92,12 @@ export default function Page() {
 										type="text"
 										aria-label="Basisstrom IB"
 										id="IB"
+										aria-describedby="IB-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="IB-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="RL">
 										{"Lastwiderstand R"}
 										<sub>{"L"}</sub>
 									</label>
@@ -105,11 +107,12 @@ export default function Page() {
 										type="text"
 										aria-label="Lastwiderstand RL"
 										id="RL"
+										aria-describedby="RL-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="RL-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="RB">
 										{"Widerstand R"}
 										<sub>{"B"}</sub>
 									</label>
@@ -119,11 +122,12 @@ export default function Page() {
 										type="text"
 										aria-label="Widerstand RB"
 										id="RB"
+										aria-describedby="RB-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="RB-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="USpeisung">
 										{"Speisespannung U"}
 										<sub>{"b"}</sub>
 									</label>
@@ -133,11 +137,12 @@ export default function Page() {
 										type="text"
 										aria-label="Speisespannung Ub"
 										id="USpeisung"
+										aria-describedby="USpeisung-unit"
 									/>
-									<label>{"U [Volt]"}</label>
+									<label id="USpeisung-unit">{"U [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="UB">
 										{"Basisspannung U"}
 										<sub>{"B"}</sub>
 									</label>
@@ -147,11 +152,12 @@ export default function Page() {
 										type="text"
 										aria-label="Basisspannung UB"
 										id="UB"
+										aria-describedby="UB-unit"
 									/>
-									<label>{"U [Volt]"}</label>
+									<label id="UB-unit">{"U [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="UBE">
 										{"Basis-Emitter-Spannung U"}
 										<sub>{"BE"}</sub>
 									</label>
@@ -162,11 +168,12 @@ export default function Page() {
 										aria-label="Basis-Emitter-Spannung UBE"
 										id="UBE"
 										placeholder="0.7"
+										aria-describedby="UBE-unit"
 									/>
-									<label>{"U [Volt]"}</label>
+									<label id="UBE-unit">{"U [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>
+									<label htmlFor="UCE">
 										{"Kollektor-Emitter-Spannung U"}
 										<sub>{"CE"}</sub>
 									</label>
@@ -177,22 +184,24 @@ export default function Page() {
 										aria-label="Kollektor-Emitter-Spannung UCE"
 										id="UCE"
 										placeholder="0.2"
+										aria-describedby="UCE-unit"
 									/>
-									<label>{"U [Volt]"}</label>
+									<label id="UCE-unit">{"U [Volt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Basisstromverstärkung B"}</label>
+									<label htmlFor="B">{"Basisstromverstärkung B"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
 										type="text"
 										aria-label="Basisstromverstärkung B"
 										id="B"
+										aria-describedby="B-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="B-unit">{"1"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Übersteuerungsfaktor ü"}</label>
+									<label htmlFor="ue">{"Übersteuerungsfaktor ü"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -200,8 +209,9 @@ export default function Page() {
 										aria-label="Übersteuerungsfaktor ü"
 										id="ue"
 										placeholder="3"
+										aria-describedby="ue-unit"
 									/>
-									<label>{"1"}</label>
+									<label id="ue-unit">{"1"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}

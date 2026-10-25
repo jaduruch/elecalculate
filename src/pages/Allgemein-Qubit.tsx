@@ -248,7 +248,7 @@ export default function Page() {
 								{"Custom Rotation"}
 							</h3>
 							<div className="slider-row">
-								<label>{"θ"}</label>
+								<label htmlFor="theta-slider">{"θ"}</label>
 								<input
 									disabled={!controller.ready}
 									type="range"
@@ -262,13 +262,14 @@ export default function Page() {
 											event.currentTarget,
 										);
 									}}
+									aria-label="Polar angle θ (degrees)"
 								/>
 								<span className="value" id="theta-value">
 									{"0°"}
 								</span>
 							</div>
 							<div className="slider-row">
-								<label>{"φ"}</label>
+								<label htmlFor="phi-slider">{"φ"}</label>
 								<input
 									disabled={!controller.ready}
 									type="range"
@@ -282,6 +283,7 @@ export default function Page() {
 											event.currentTarget,
 										);
 									}}
+									aria-label="Azimuthal angle φ (degrees)"
 								/>
 								<span className="value" id="phi-value">
 									{"0°"}

@@ -1,0 +1,90 @@
+/* Shared reference and calculator polish, above the preserved source styles. */
+.page-body .form-row > label:empty {
+	display: none;
+}
+.page-body .form-row:has(> button):not(:has(> input:not([type="button"]))) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.page-body .form-row > button,
+.page-body .form-row > input[type="button"] {
+	min-width: max-content;
+}
+.page-body .code-block {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	margin-inline: 0;
+}
+/* Inline mathematical expressions must remain readable inside a narrow panel. */
+.page-body p:has(.katex) {
+	overflow-x: auto;
+	max-width: 100%;
+}
+.qubit-page .state-line {
+	min-width: 0;
+	max-width: 100%;
+	height: auto;
+	min-height: 36px;
+	display: block;
+	overflow-x: auto;
+	text-overflow: clip;
+}
+@media (max-width: 600px) {
+	/* 16px avoids Safari zooming the entire layout when an input gains focus. */
+	.page-body
+		input:not([type="button"]):not([type="checkbox"]):not([type="range"]):not(
+			[type="hidden"]
+		),
+	.page-body select,
+	.page-body textarea {
+		font-size: 16px;
+		min-height: 44px;
+	}
+	.page-body button,
+	.page-body input[type="button"],
+	.qubit-page .gate-btn {
+		min-height: 44px;
+		min-width: 44px;
+	}
+	.page-body .custom-dropdown > .dropdown-content > button {
+		min-height: 44px;
+	}
+	.page-body .results,
+	.page-body [id^="result"] {
+		font-size: 14px;
+	}
+	.page-body table {
+		font-size: 12px;
+	}
+	.page-body .comment {
+		font-size: 12px;
+	}
+	.page-body .switch {
+		min-height: 44px;
+		margin-block: 8px;
+	}
+	.qubit-page .slider-row input[type="range"] {
+		height: 32px;
+		min-height: 32px;
+		margin-block: 0;
+	}
+}
+@media (max-width: 400px) {
+	/* Keep the value and unit together without shrinking either to illegibility. */
+	.page-body
+		.form-row:has(> input:not([type="button"]):not([type="checkbox"])) {
+		grid-template-columns: minmax(0, 1fr) minmax(65px, 85px);
+		gap: 6px 10px;
+		margin-block: 17px;
+	}
+	.page-body
+		.form-row:has(> input:not([type="button"]):not([type="checkbox"]))
+		> label:first-child {
+		grid-column: 1 / -1;
+		font-size: 13px;
+	}
+	.page-body .form-row > label:last-child {
+		font-size: 11px;
+	}
+}

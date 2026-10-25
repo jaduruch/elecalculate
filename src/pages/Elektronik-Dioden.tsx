@@ -25,7 +25,11 @@ export default function Page() {
 					</h1>
 				</div>
 				<div>
-					<table style={{ maxWidth: "150px" }}>
+					<table
+						tabIndex={0}
+						aria-label="Tabelle: Dioden"
+						style={{ maxWidth: "150px" }}
+					>
 						<tbody>
 							<tr>
 								<th>{"Diode"}</th>

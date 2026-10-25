@@ -188,7 +188,7 @@
         "Ohmsches Gesetz (URI)▼",
         "Spannungsteiler ▼",
         "Serie- und Parallelschaltung ▼",
-        "Stern- Dreickschaltung ▼"
+        "Stern-Dreieckschaltung ▼"
       ]
     },
     {
@@ -213,7 +213,7 @@
         "calculateRC()"
       ],
       "sections": [
-        "Kondensator berechnungen▼",
+        "Kondensatorberechnungen▼",
         "Kondensator an Wechselstrom ▼",
         "RC-Glied ▼"
       ]
@@ -266,7 +266,7 @@
         "calculateRL()"
       ],
       "sections": [
-        "Spulen berechnungen▼",
+        "Spulenberechnungen▼",
         "Spule an Wechselstrom ▼",
         "RL-Glied ▼"
       ]

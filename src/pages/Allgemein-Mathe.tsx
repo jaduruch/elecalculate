@@ -57,30 +57,32 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Fläche A"}</label>
+									<label htmlFor="A">{"Fläche A"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Flaeche)" }}
 										type="text"
 										aria-label="Fläche A"
 										id="A"
+										aria-describedby="A-unit"
 									/>
-									<label>
+									<label id="A-unit">
 										{"m"}
 										<sup>{"2"}</sup>
 										{" [Quadratmeter]"}
 									</label>
 								</div>
 								<div className="form-row">
-									<label>{"Durchmesser d"}</label>
+									<label htmlFor="d">{"Durchmesser d"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Laenge)" }}
 										type="text"
 										aria-label="Durchmesser d"
 										id="d"
+										aria-describedby="d-unit"
 									/>
-									<label>{"m [meter]"}</label>
+									<label id="d-unit">{"m [meter]"}</label>
 								</div>
 								<input
 									disabled={!controller.ready}

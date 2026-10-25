@@ -1,0 +1,139 @@
+/* Local work should remain readable with long titles, small screens and zoom. */
+.notebook-save .save-form {
+	top: calc(100% + 8px);
+	max-height: calc(100dvh - 130px);
+	overflow: auto;
+	overscroll-behavior: contain;
+	scrollbar-gutter: stable;
+}
+.save-form .field-error {
+	display: block;
+	margin-top: 7px;
+	color: #ffa994;
+	line-height: 1.6;
+}
+.save-form input[aria-invalid="true"] {
+	border-color: #ffa994;
+}
+.save-form textarea {
+	min-height: 90px;
+	resize: vertical;
+}
+.save-form > button {
+	min-height: 40px;
+}
+.notebook-page .notebook-filter {
+	min-height: 44px;
+	padding: 8px 0;
+	font-size: 14px;
+}
+.notebook-entries article {
+	min-width: 0;
+	align-items: flex-start;
+}
+.notebook-entries .notebook-entry-content {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.notebook-entries h2 {
+	line-height: 1.5;
+}
+.notebook-entries small {
+	display: block;
+	font-size: 12px;
+	line-height: 1.7;
+}
+.notebook-entries .notebook-entry-actions {
+	display: flex;
+	flex: 0 0 auto;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+}
+.notebook-entry-actions > a,
+.notebook-entry-actions > button,
+.undo-note button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	line-height: 1.5;
+	font-size: 13px;
+}
+.undo-note {
+	overflow-wrap: anywhere;
+	line-height: 1.7;
+}
+.notification {
+	flex-wrap: wrap;
+	max-width: min(600px, calc(100vw - 40px));
+	max-height: calc(100dvh - 90px);
+	overflow: auto;
+	font-size: 13px;
+	line-height: 1.6;
+	bottom: max(20px, env(safe-area-inset-bottom));
+}
+.notification > span {
+	flex: 1 1 250px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.notification > button {
+	min-height: 40px;
+	font-size: 13px;
+}
+@media (max-width: 600px) {
+	.save-form input,
+	.save-form textarea {
+		font-size: 16px;
+	}
+	.save-form > button {
+		min-height: 44px;
+	}
+	.notebook-entries .notebook-entry-content,
+	.notebook-entries .notebook-entry-actions {
+		flex-basis: 100%;
+	}
+	.notebook-entries article {
+		gap: 5px;
+		padding: 18px 0;
+	}
+	.notification {
+		left: 14px;
+		right: 14px;
+		max-width: none;
+		bottom: max(14px, env(safe-area-inset-bottom));
+		gap: 8px 20px;
+	}
+	.notification > span {
+		flex-basis: 100%;
+	}
+	.notification > button {
+		min-height: 44px;
+	}
+}
+
+.save-form .save-field {
+	margin: 14px 0;
+}
+.save-form .save-field label {
+	margin: 0;
+}
+/* These shared tools stay usable before and after a calculator is expanded. */
+.site-tools {
+	flex-wrap: wrap;
+	column-gap: 12px;
+	row-gap: 0;
+	min-height: 56px;
+	font-size: 12px;
+}
+.site-tools > a,
+.site-tools > button,
+.site-tools .notebook-save > button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+}
+.site-tools .notebook-save > button {
+	font-size: 12px;
+	padding-inline: 10px;
+}

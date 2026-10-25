@@ -138,7 +138,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R1-1">
 							{"Widerstand R"}
 							<sub>{"1"}</sub>
 						</label>
@@ -156,11 +156,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Invertierender_Verstaerker_R1.JPG",
 								);
 							}}
+							aria-describedby="R1-1-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R1-1-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R2-1">
 							{"Widerstand R"}
 							<sub>{"2"}</sub>
 						</label>
@@ -178,11 +179,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Invertierender_Verstaerker_R2.JPG",
 								);
 							}}
+							aria-describedby="R2-1-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R2-1-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uin-1">
 							{"Spannung U"}
 							<sub>{"in"}</sub>
 						</label>
@@ -200,11 +202,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Invertierender_Verstaerker_Uin.JPG",
 								);
 							}}
+							aria-describedby="Uin-1-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin-1-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uout-1">
 							{"Spannung U"}
 							<sub>{"out"}</sub>
 						</label>
@@ -222,11 +225,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Invertierender_Verstaerker_Uout.JPG",
 								);
 							}}
+							aria-describedby="Uout-1-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uout-1-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkung V"}</label>
+						<label htmlFor="V-1">{"Verstärkung V"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -241,8 +245,9 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Invertierender_Verstaerker_Beschriftet.JPG",
 								);
 							}}
+							aria-describedby="V-1-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V-1-unit">{"1"}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -280,7 +285,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R1-2">
 							{"Widerstand R"}
 							<sub>{"1"}</sub>
 						</label>
@@ -298,11 +303,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Nicht_Invertierender_Verstaerker_R1.JPG",
 								);
 							}}
+							aria-describedby="R1-2-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R1-2-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R2-2">
 							{"Widerstand R"}
 							<sub>{"2"}</sub>
 						</label>
@@ -320,11 +326,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Nicht_Invertierender_Verstaerker_R2.JPG",
 								);
 							}}
+							aria-describedby="R2-2-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R2-2-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uin-2">
 							{"Spannung U"}
 							<sub>{"in"}</sub>
 						</label>
@@ -342,11 +349,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Nicht_Invertierender_Verstaerker_Uin.JPG",
 								);
 							}}
+							aria-describedby="Uin-2-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin-2-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uout-2">
 							{"Spannung U"}
 							<sub>{"out"}</sub>
 						</label>
@@ -364,11 +372,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Nicht_Invertierender_Verstaerker_Uout.JPG",
 								);
 							}}
+							aria-describedby="Uout-2-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uout-2-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkung V"}</label>
+						<label htmlFor="V-2">{"Verstärkung V"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -383,8 +392,9 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Nicht_Invertierender_Verstaerker_Beschriftet.JPG",
 								);
 							}}
+							aria-describedby="V-2-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V-2-unit">{"1"}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -425,7 +435,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R11-3">
 							{"Widerstand R"}
 							<sub>{"11"}</sub>
 						</label>
@@ -443,11 +453,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_R11.JPG",
 								);
 							}}
+							aria-describedby="R11-3-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R11-3-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R12-3">
 							{"Widerstand R"}
 							<sub>{"12"}</sub>
 						</label>
@@ -465,11 +476,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_R12.JPG",
 								);
 							}}
+							aria-describedby="R12-3-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R12-3-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R2-3">
 							{"Widerstand R"}
 							<sub>{"2"}</sub>
 						</label>
@@ -487,11 +499,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_R2.JPG",
 								);
 							}}
+							aria-describedby="R2-3-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R2-3-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uin1-3">
 							{"Spannung U"}
 							<sub>{"in1"}</sub>
 						</label>
@@ -509,11 +522,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_Uin1.JPG",
 								);
 							}}
+							aria-describedby="Uin1-3-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin1-3-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uin2-3">
 							{"Spannung U"}
 							<sub>{"in2"}</sub>
 						</label>
@@ -531,11 +545,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_Uin2.JPG",
 								);
 							}}
+							aria-describedby="Uin2-3-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin2-3-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uout-3">
 							{"Spannung U"}
 							<sub>{"out"}</sub>
 						</label>
@@ -553,11 +568,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_Uout.JPG",
 								);
 							}}
+							aria-describedby="Uout-3-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uout-3-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkung V1"}</label>
+						<label htmlFor="V1-3">{"Verstärkung V1"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -572,11 +588,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG",
 								);
 							}}
+							aria-describedby="V1-3-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V1-3-unit">{"1"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkung V2"}</label>
+						<label htmlFor="V2-3">{"Verstärkung V2"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -591,8 +608,9 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Summier_Verstaerker_Beschriftet.JPG",
 								);
 							}}
+							aria-describedby="V2-3-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V2-3-unit">{"1"}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -630,7 +648,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="R13-4">
 							{"Widerstand R"}
 							<sub>{"1"}</sub>
 							{"/R"}
@@ -650,11 +668,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_R1_R3.JPG",
 								);
 							}}
+							aria-describedby="R13-4-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R13-4-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Widerstand R2/R4"}</label>
+						<label htmlFor="R24-4">{"Widerstand R2/R4"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Widerstand)" }}
@@ -669,11 +688,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_R2_R4.JPG",
 								);
 							}}
+							aria-describedby="R24-4-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R24-4-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uin1-4">
 							{"Spannung U"}
 							<sub>{"in1"}</sub>
 						</label>
@@ -691,11 +711,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_Uin1.JPG",
 								);
 							}}
+							aria-describedby="Uin1-4-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin1-4-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Spannung Uin2"}</label>
+						<label htmlFor="Uin2-4">{"Spannung Uin2"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Spannung)" }}
@@ -710,11 +731,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_Uin2.JPG",
 								);
 							}}
+							aria-describedby="Uin2-4-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uin2-4-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Uout-4">
 							{"Spannung U"}
 							<sub>{"out"}</sub>
 						</label>
@@ -732,11 +754,12 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_Uout.JPG",
 								);
 							}}
+							aria-describedby="Uout-4-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="Uout-4-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Verstärkung V"}</label>
+						<label htmlFor="V-4">{"Verstärkung V"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
@@ -751,8 +774,9 @@ export default function Page() {
 									"/Elektronik/OPV_Bilder/Differenz_Verstaerker_Beschriftet.JPG",
 								);
 							}}
+							aria-describedby="V-4-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="V-4-unit">{"1"}</label>
 					</div>
 					<input
 						disabled={!controller.ready}

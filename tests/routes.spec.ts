@@ -25,6 +25,29 @@ for (const entry of catalog)
 				.map(([id]) => id);
 		});
 		expect(duplicateIds).toEqual([]);
+		// Visible field labels are actual controls, and units remain available to
+		// assistive technology rather than being disconnected decorative labels.
+		const fieldLabels = await page
+			.locator(".page-body .form-row")
+			.evaluateAll((rows) =>
+				rows.flatMap((row) => {
+					const fields = row.querySelectorAll(
+						":scope > input, :scope > select, :scope > textarea",
+					);
+					const label = row.querySelector<HTMLLabelElement>(":scope > label");
+					if (
+						fields.length !== 1 ||
+						!label ||
+						!(fields[0] as HTMLInputElement).id
+					)
+						return [];
+					return label.control === fields[0]
+						? []
+						: [(fields[0] as HTMLInputElement).id];
+				}),
+			);
+		expect(fieldLabels).toEqual([]);
+
 		await expect
 			.poll(() =>
 				page

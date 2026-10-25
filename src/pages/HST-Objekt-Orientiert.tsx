@@ -56,7 +56,10 @@ export default function Page() {
 							</span>
 						</button>
 						<div className="dropdown-content">
-							<table>
+							<table
+								tabIndex={0}
+								aria-label="Tabelle: Objekt Orientiertes Programmieren"
+							>
 								<tbody>
 									<tr>
 										<th>{"Begriff"}</th>

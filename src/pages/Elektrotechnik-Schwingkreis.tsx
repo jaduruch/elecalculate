@@ -82,18 +82,19 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>{"Widerstand R"}</label>
+						<label htmlFor="R-serie">{"Widerstand R"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Widerstand)" }}
 							type="text"
 							aria-label="Widerstand R"
 							id="R-serie"
+							aria-describedby="R-serie-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R-serie-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="XL-serie">
 							{"Bildwiderstand  X"}
 							<sub>{"L"}</sub>
 						</label>
@@ -103,11 +104,12 @@ export default function Page() {
 							type="text"
 							aria-label="Bildwiderstand  XL"
 							id="XL-serie"
+							aria-describedby="XL-serie-unit"
 						/>
-						<label>{"Ω [Ohm ∠ +90°]"}</label>
+						<label id="XL-serie-unit">{"Ω [Ohm ∠ +90°]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="XC-serie">
 							{"Bildwiderstand  X"}
 							<sub>{"C"}</sub>
 						</label>
@@ -117,55 +119,60 @@ export default function Page() {
 							type="text"
 							aria-label="Bildwiderstand  XC"
 							id="XC-serie"
+							aria-describedby="XC-serie-unit"
 						/>
-						<label>{"Ω [Ohm ∠ -90°]"}</label>
+						<label id="XC-serie-unit">{"Ω [Ohm ∠ -90°]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Induktivität L"}</label>
+						<label htmlFor="L-serie">{"Induktivität L"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Induktivitaet)" }}
 							type="text"
 							aria-label="Induktivität L"
 							id="L-serie"
+							aria-describedby="L-serie-unit"
 						/>
-						<label>{"H [Henry]"}</label>
+						<label id="L-serie-unit">{"H [Henry]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"(Kreis) Güte Q"}</label>
+						<label htmlFor="Q-serie">{"(Kreis) Güte Q"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Guete)" }}
 							type="text"
 							aria-label="(Kreis) Güte Q"
 							id="Q-serie"
+							aria-describedby="Q-serie-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="Q-serie-unit">{"1"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Kapazität C"}</label>
+						<label htmlFor="C-serie">{"Kapazität C"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Kapazitaet)" }}
 							type="text"
 							aria-label="Kapazität C"
 							id="C-serie"
+							aria-describedby="C-serie-unit"
 						/>
-						<label>{"F [Farad]"}</label>
+						<label id="C-serie-unit">{"F [Farad]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Spannung U"}</label>
+						<label htmlFor="U-serie">{"Spannung U"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Spannung)" }}
 							type="text"
 							aria-label="Spannung U"
 							id="U-serie"
+							aria-describedby="U-serie-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="U-serie-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="UR-serie">
 							{"Spannung U"}
 							<sub>{"R"}</sub>
 						</label>
@@ -175,11 +182,12 @@ export default function Page() {
 							type="text"
 							aria-label="Spannung UR"
 							id="UR-serie"
+							aria-describedby="UR-serie-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="UR-serie-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="UL-serie">
 							{"Spannung U"}
 							<sub>{"L"}</sub>
 						</label>
@@ -189,11 +197,12 @@ export default function Page() {
 							type="text"
 							aria-label="Spannung UL"
 							id="UL-serie"
+							aria-describedby="UL-serie-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="UL-serie-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="UC-serie">
 							{"Spannung U"}
 							<sub>{"C"}</sub>
 						</label>
@@ -203,30 +212,33 @@ export default function Page() {
 							type="text"
 							aria-label="Spannung UC"
 							id="UC-serie"
+							aria-describedby="UC-serie-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="UC-serie-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Frequenz f"}</label>
+						<label htmlFor="f-serie">{"Frequenz f"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Frequenz f"
 							id="f-serie"
+							aria-describedby="f-serie-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="f-serie-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Bandbreite b"}</label>
+						<label htmlFor="b-serie">{"Bandbreite b"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Bandbreite b"
 							id="b-serie"
+							aria-describedby="b-serie-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="b-serie-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -258,7 +270,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="I-parallel">
 							{"Strom I"}
 							<sub>{"ges"}</sub>
 						</label>
@@ -268,11 +280,12 @@ export default function Page() {
 							type="text"
 							aria-label="Strom Iges"
 							id="I-parallel"
+							aria-describedby="I-parallel-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="I-parallel-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="IR-parallel">
 							{"Strom I"}
 							<sub>{"R"}</sub>
 						</label>
@@ -282,11 +295,12 @@ export default function Page() {
 							type="text"
 							aria-label="Strom IR"
 							id="IR-parallel"
+							aria-describedby="IR-parallel-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="IR-parallel-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="IL-parallel">
 							{"Strom I"}
 							<sub>{"L"}</sub>
 						</label>
@@ -296,11 +310,12 @@ export default function Page() {
 							type="text"
 							aria-label="Strom IL"
 							id="IL-parallel"
+							aria-describedby="IL-parallel-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="IL-parallel-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="IC-parallel">
 							{"Strom I"}
 							<sub>{"C"}</sub>
 						</label>
@@ -310,22 +325,24 @@ export default function Page() {
 							type="text"
 							aria-label="Strom IC"
 							id="IC-parallel"
+							aria-describedby="IC-parallel-unit"
 						/>
-						<label>{"A [Ampere]"}</label>
+						<label id="IC-parallel-unit">{"A [Ampere]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Widerstand R"}</label>
+						<label htmlFor="R-parallel">{"Widerstand R"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Widerstand)" }}
 							type="text"
 							aria-label="Widerstand R"
 							id="R-parallel"
+							aria-describedby="R-parallel-unit"
 						/>
-						<label>{"Ω [Ohm]"}</label>
+						<label id="R-parallel-unit">{"Ω [Ohm]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="XL-parallel">
 							{"Bildwiderstand  X"}
 							<sub>{"L"}</sub>
 						</label>
@@ -335,11 +352,12 @@ export default function Page() {
 							type="text"
 							aria-label="Bildwiderstand  XL"
 							id="XL-parallel"
+							aria-describedby="XL-parallel-unit"
 						/>
-						<label>{"Ω [Ohm ∠ -90°]"}</label>
+						<label id="XL-parallel-unit">{"Ω [Ohm ∠ -90°]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="XC-parallel">
 							{"Bildwiderstand  X"}
 							<sub>{"C"}</sub>
 						</label>
@@ -349,63 +367,69 @@ export default function Page() {
 							type="text"
 							aria-label="Bildwiderstand  XC"
 							id="XC-parallel"
+							aria-describedby="XC-parallel-unit"
 						/>
-						<label>{"Ω [Ohm ∠ +90°]"}</label>
+						<label id="XC-parallel-unit">{"Ω [Ohm ∠ +90°]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Induktivität L"}</label>
+						<label htmlFor="L-parallel">{"Induktivität L"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Induktivitaet)" }}
 							type="text"
 							aria-label="Induktivität L"
 							id="L-parallel"
+							aria-describedby="L-parallel-unit"
 						/>
-						<label>{"H [Henry]"}</label>
+						<label id="L-parallel-unit">{"H [Henry]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"(Kreis) Güte Q"}</label>
+						<label htmlFor="Q-parallel">{"(Kreis) Güte Q"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Guete)" }}
 							type="text"
 							aria-label="(Kreis) Güte Q"
 							id="Q-parallel"
+							aria-describedby="Q-parallel-unit"
 						/>
-						<label>{"1"}</label>
+						<label id="Q-parallel-unit">{"1"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Kapazität C"}</label>
+						<label htmlFor="C-parallel">{"Kapazität C"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Kapazitaet)" }}
 							type="text"
 							aria-label="Kapazität C"
 							id="C-parallel"
+							aria-describedby="C-parallel-unit"
 						/>
-						<label>{"F [Farad]"}</label>
+						<label id="C-parallel-unit">{"F [Farad]"}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Frequenz f"}</label>
+						<label htmlFor="f-parallel">{"Frequenz f"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Frequenz f"
 							id="f-parallel"
+							aria-describedby="f-parallel-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="f-parallel-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Bandbreite b"}</label>
+						<label htmlFor="b-parallel">{"Bandbreite b"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Bandbreite b"
 							id="b-parallel"
+							aria-describedby="b-parallel-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="b-parallel-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<input
 						disabled={!controller.ready}

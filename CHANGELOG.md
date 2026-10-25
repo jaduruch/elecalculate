@@ -1,5 +1,19 @@
 # Changes
 
+## 2.1.2
+
+- Kept the active topic visible on direct navigation, improved menu keyboard
+  containment and search feedback, and enlarged shared touch targets.
+- Made phone-sized calculator fields, units, results and tables readable without
+  focus zoom. Narrow forms retain their labels and keep actions usable.
+- Contained long Qubit results and inline maths; wrapped long C examples and
+  corrected inherited spelling errors in calculator headings.
+- Connected visible field labels and units, named the sphere sliders, labelled
+  bare switches and made reference tables keyboard-focusable.
+- Fixed notebook overflow from long titles/notes, grouped entry actions, and
+  kept the save form usable on short screens. Closing save/offline controls
+  returns focus, and validation errors describe their field.
+
 ## 2.1.1
 
 - Replaced platform-dependent topic arrows and accordion glyphs with consistent,

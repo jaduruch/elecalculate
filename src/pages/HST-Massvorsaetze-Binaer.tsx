@@ -22,7 +22,11 @@ export default function Page() {
 					<br />
 					<h1>{"Massvorsätze Binär"}</h1>
 				</div>
-				<table style={{ maxWidth: "80px" }}>
+				<table
+					tabIndex={0}
+					aria-label="Tabelle: Massvorsätze Binär"
+					style={{ maxWidth: "80px" }}
+				>
 					<tbody>
 						<tr>
 							<th>{"Wert"}</th>

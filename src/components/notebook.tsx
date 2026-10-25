@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
 	capture,
 	entrySchema,
@@ -19,6 +19,16 @@ function NotebookEditor({ route }: { route: string }) {
 		[status, setStatus] = useState(""),
 		[error, setError] = useState("");
 	const saving = useRef(false);
+	const toggle = useRef<HTMLButtonElement>(null);
+	const formId = useId();
+	const titleErrorId = useId();
+	const titleId = useId();
+	const focusAfterSaving = useRef(false);
+	const closeEditor = () => {
+		if (saving.current) return;
+		setOpen(false);
+		toggle.current?.focus();
+	};
 	const client = useQueryClient();
 	const mutation = useMutation({
 		networkMode: "always",
@@ -26,9 +36,16 @@ function NotebookEditor({ route }: { route: string }) {
 		onSuccess: () => {
 			void client.invalidateQueries({ queryKey: ["notebook"] });
 			setOpen(false);
+			focusAfterSaving.current = true;
 			setStatus("Im lokalen Notizbuch gespeichert.");
 		},
 	});
+	useEffect(() => {
+		if (!open && !mutation.isPending && focusAfterSaving.current) {
+			focusAfterSaving.current = false;
+			toggle.current?.focus();
+		}
+	}, [open, mutation.isPending]);
 	const form = useForm({
 		defaultValues: { title: "", note: "" },
 		onSubmit: async ({ value, formApi }) => {
@@ -61,6 +78,9 @@ function NotebookEditor({ route }: { route: string }) {
 	return (
 		<div className="notebook-save">
 			<button
+				ref={toggle}
+				type="button"
+				aria-controls={formId}
 				disabled={mutation.isPending}
 				onClick={() => {
 					setOpen((v) => !v);
@@ -73,7 +93,16 @@ function NotebookEditor({ route }: { route: string }) {
 			</button>
 			{open && (
 				<form
+					id={formId}
 					className="save-form"
+					aria-label="Eingaben speichern"
+					onKeyDown={(event) => {
+						if (event.key === "Escape") {
+							event.stopPropagation();
+							event.preventDefault();
+							closeEditor();
+						}
+					}}
 					aria-busy={mutation.isPending}
 					onSubmit={(event) => {
 						event.preventDefault();
@@ -86,9 +115,10 @@ function NotebookEditor({ route }: { route: string }) {
 						validators={{ onChange: validateTitle, onSubmit: validateTitle }}
 					>
 						{(field) => (
-							<label>
-								Name
+							<div className="save-field">
+								<label htmlFor={titleId}>Name</label>
 								<input
+									id={titleId}
 									value={field.state.value}
 									onChange={(event) => field.handleChange(event.target.value)}
 									onBlur={field.handleBlur}
@@ -96,15 +126,20 @@ function NotebookEditor({ route }: { route: string }) {
 									disabled={mutation.isPending}
 									autoFocus
 									aria-invalid={field.state.meta.errors.length > 0}
+									aria-describedby={
+										field.state.meta.errors.length > 0
+											? titleErrorId
+											: undefined
+									}
 								/>
-								{Array.from(new Set(field.state.meta.errors.map(String))).map(
-									(message, index) => (
-										<span key={index} className="field-error" role="alert">
-											{String(message)}
-										</span>
-									),
+								{field.state.meta.errors.length > 0 && (
+									<span id={titleErrorId} className="field-error" role="alert">
+										{Array.from(
+											new Set(field.state.meta.errors.map(String)),
+										).join(" ")}
+									</span>
 								)}
-							</label>
+							</div>
 						)}
 					</form.Field>
 					<form.Field name="note">
@@ -126,7 +161,7 @@ function NotebookEditor({ route }: { route: string }) {
 					<button
 						type="button"
 						disabled={mutation.isPending}
-						onClick={() => setOpen(false)}
+						onClick={closeEditor}
 					>
 						Abbrechen
 					</button>
@@ -197,7 +232,13 @@ export function Notebook() {
 				werden nicht an einen Server übertragen. Geladene Eingaben kannst du im
 				jeweiligen Rechner erneut berechnen.
 			</p>
-			<button className="underline" onClick={() => setShowRemoved((v) => !v)}>
+			<button
+				className="underline notebook-filter"
+				type="button"
+				aria-pressed={showRemoved}
+				aria-controls="notebook-entries"
+				onClick={() => setShowRemoved((v) => !v)}
+			>
 				{showRemoved
 					? "Aktive Einträge anzeigen"
 					: "Entfernte Einträge anzeigen"}
@@ -223,11 +264,11 @@ export function Notebook() {
 						: "Noch keine Einträge. Öffne einen Rechner und wähle „Werte merken“."}
 				</p>
 			)}
-			<div className="notebook-entries">
+			<div id="notebook-entries" className="notebook-entries">
 				{entries.data?.map((entry) => (
-					<article key={entry.id}>
-						<div>
-							<h2>
+					<article key={entry.id} aria-labelledby={`entry-${entry.id}`}>
+						<div className="notebook-entry-content">
+							<h2 id={`entry-${entry.id}`}>
 								{showRemoved ? (
 									entry.title
 								) : (
@@ -242,28 +283,32 @@ export function Notebook() {
 								{entry.route.split("/").pop()?.replaceAll("_", " ")}
 							</small>
 						</div>
-						{showRemoved ? (
-							<button
-								disabled={mutation.isPending}
-								onClick={() => mutation.mutate({ id: entry.id, restore: true })}
-							>
-								Wiederherstellen
-							</button>
-						) : (
-							<>
-								<Link to={entry.route} search={{ notiz: entry.id }}>
-									Eingaben laden
-								</Link>
+						<div className="notebook-entry-actions">
+							{showRemoved ? (
 								<button
 									disabled={mutation.isPending}
 									onClick={() =>
-										mutation.mutate({ id: entry.id, title: entry.title })
+										mutation.mutate({ id: entry.id, restore: true })
 									}
 								>
-									Entfernen
+									Wiederherstellen
 								</button>
-							</>
-						)}
+							) : (
+								<>
+									<Link to={entry.route} search={{ notiz: entry.id }}>
+										Eingaben laden
+									</Link>
+									<button
+										disabled={mutation.isPending}
+										onClick={() =>
+											mutation.mutate({ id: entry.id, title: entry.title })
+										}
+									>
+										Entfernen
+									</button>
+								</>
+							)}
+						</div>
 					</article>
 				))}
 			</div>

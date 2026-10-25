@@ -119,18 +119,19 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>{"Momentanwert u(t)"}</label>
+						<label htmlFor="ut-Sinus">{"Momentanwert u(t)"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Spannung)" }}
 							type="text"
 							aria-label="Momentanwert u(t)"
 							id="ut-Sinus"
+							aria-describedby="ut-Sinus-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="ut-Sinus-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="up-Sinus">
 							{"Peakspannung u"}
 							<sub>{"p"}</sub>
 							{" / û"}
@@ -141,11 +142,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peakspannung up / û"
 							id="up-Sinus"
+							aria-describedby="up-Sinus-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="up-Sinus-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="upp-Sinus">
 							{"Peak-Peakspannung u"}
 							<sub>{"pp"}</sub>
 						</label>
@@ -155,11 +157,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peak-Peakspannung upp"
 							id="upp-Sinus"
+							aria-describedby="upp-Sinus-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="upp-Sinus-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Ueff-Sinus">
 							{"Effektivspannung U"}
 							<sub>{"eff"}</sub>
 						</label>
@@ -169,52 +172,59 @@ export default function Page() {
 							type="text"
 							aria-label="Effektivspannung Ueff"
 							id="Ueff-Sinus"
+							aria-describedby="Ueff-Sinus-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="Ueff-Sinus-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Frequenz f"}</label>
+						<label htmlFor="f-Sinus">{"Frequenz f"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Frequenz f"
 							id="f-Sinus"
+							aria-describedby="f-Sinus-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="f-Sinus-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"aktueller Zeitpunkt t"}</label>
+						<label htmlFor="t-Sinus">{"aktueller Zeitpunkt t"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Zeit)" }}
 							type="text"
 							aria-label="aktueller Zeitpunkt t"
 							id="t-Sinus"
+							aria-describedby="t-Sinus-unit"
 						/>
-						<label>{"s [sekunden] "}</label>
+						<label id="t-Sinus-unit">{"s [sekunden] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Periodendauer T"}</label>
+						<label htmlFor="T-Sinus">{"Periodendauer T"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Zeit)" }}
 							type="text"
 							aria-label="Periodendauer T"
 							id="T-Sinus"
+							aria-describedby="T-Sinus-unit"
 						/>
-						<label>{"s [sekunden] "}</label>
+						<label id="T-Sinus-unit">{"s [sekunden] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Phasenverschiebung φ (Sinusgenerator)"}</label>
+						<label htmlFor="phi-Sinus">
+							{"Phasenverschiebung φ (Sinusgenerator)"}
+						</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Winkel)" }}
 							type="text"
 							aria-label="Phasenverschiebung φ (Sinusgenerator)"
 							id="phi-Sinus"
+							aria-describedby="phi-Sinus-unit"
 						/>
-						<label>
+						<label id="phi-Sinus-unit">
 							<button
 								disabled={!controller.ready}
 								type="button"
@@ -353,7 +363,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="up-Rechteck">
 							{"Peakspannung u"}
 							<sub>{"p"}</sub>
 							{" / û"}
@@ -364,11 +374,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peakspannung up / û"
 							id="up-Rechteck"
+							aria-describedby="up-Rechteck-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="up-Rechteck-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="upp-Rechteck">
 							{"Peak-Peakspannung u"}
 							<sub>{"pp"}</sub>
 						</label>
@@ -378,11 +389,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peak-Peakspannung upp"
 							id="upp-Rechteck"
+							aria-describedby="upp-Rechteck-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="upp-Rechteck-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Ueff-Rechteck">
 							{"Effektivspannung U"}
 							<sub>{"eff"}</sub>
 						</label>
@@ -392,8 +404,9 @@ export default function Page() {
 							type="text"
 							aria-label="Effektivspannung Ueff"
 							id="Ueff-Rechteck"
+							aria-describedby="Ueff-Rechteck-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="Ueff-Rechteck-unit">{"V [Volt] "}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -421,7 +434,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="up-Dreieck">
 							{"Peakspannung u"}
 							<sub>{"p"}</sub>
 							{" / û"}
@@ -432,11 +445,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peakspannung up / û"
 							id="up-Dreieck"
+							aria-describedby="up-Dreieck-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="up-Dreieck-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="upp-Dreieck">
 							{"Peak-Peakspannung u"}
 							<sub>{"pp"}</sub>
 						</label>
@@ -446,11 +460,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peak-Peakspannung upp"
 							id="upp-Dreieck"
+							aria-describedby="upp-Dreieck-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="upp-Dreieck-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Ueff-Dreieck">
 							{"Effektivspannung U"}
 							<sub>{"eff"}</sub>
 						</label>
@@ -460,8 +475,9 @@ export default function Page() {
 							type="text"
 							aria-label="Effektivspannung Ueff"
 							id="Ueff-Dreieck"
+							aria-describedby="Ueff-Dreieck-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="Ueff-Dreieck-unit">{"V [Volt] "}</label>
 					</div>
 					<input
 						disabled={!controller.ready}
@@ -492,7 +508,7 @@ export default function Page() {
 						<br />
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="up-PWM">
 							{"Peakspannung u"}
 							<sub>{"p"}</sub>
 							{" / û"}
@@ -503,11 +519,12 @@ export default function Page() {
 							type="text"
 							aria-label="Peakspannung up / û"
 							id="up-PWM"
+							aria-describedby="up-PWM-unit"
 						/>
-						<label>{"V [Volt]"}</label>
+						<label id="up-PWM-unit">{"V [Volt]"}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="Ueff-PWM">
 							{"Effektivspannung U"}
 							<sub>{"eff"}</sub>
 						</label>
@@ -517,22 +534,24 @@ export default function Page() {
 							type="text"
 							aria-label="Effektivspannung Ueff"
 							id="Ueff-PWM"
+							aria-describedby="Ueff-PWM-unit"
 						/>
-						<label>{"V [Volt] "}</label>
+						<label id="Ueff-PWM-unit">{"V [Volt] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Frequenz f"}</label>
+						<label htmlFor="f-PWM">{"Frequenz f"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Frequenz)" }}
 							type="text"
 							aria-label="Frequenz f"
 							id="f-PWM"
+							aria-describedby="f-PWM-unit"
 						/>
-						<label>{"Hz [Hertz] "}</label>
+						<label id="f-PWM-unit">{"Hz [Hertz] "}</label>
 					</div>
 					<div className="form-row">
-						<label>
+						<label htmlFor="tin-PWM">
 							{"Impulsdauer t"}
 							<sub>{"in"}</sub>
 						</label>
@@ -542,30 +561,33 @@ export default function Page() {
 							type="text"
 							aria-label="Impulsdauer tin"
 							id="tin-PWM"
+							aria-describedby="tin-PWM-unit"
 						/>
-						<label>{"s [sekunden] "}</label>
+						<label id="tin-PWM-unit">{"s [sekunden] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Periodendauer T"}</label>
+						<label htmlFor="T-PWM">{"Periodendauer T"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "var(--Zeit)" }}
 							type="text"
 							aria-label="Periodendauer T"
 							id="T-PWM"
+							aria-describedby="T-PWM-unit"
 						/>
-						<label>{"s [sekunden] "}</label>
+						<label id="T-PWM-unit">{"s [sekunden] "}</label>
 					</div>
 					<div className="form-row">
-						<label>{"Duty-Cycle g"}</label>
+						<label htmlFor="g-PWM">{"Duty-Cycle g"}</label>
 						<input
 							disabled={!controller.ready}
 							style={{ borderColor: "gray" }}
 							type="text"
 							aria-label="Duty-Cycle g"
 							id="g-PWM"
+							aria-describedby="g-PWM-unit"
 						/>
-						<label>
+						<label id="g-PWM-unit">
 							<button
 								disabled={!controller.ready}
 								type="button"

@@ -64,48 +64,52 @@ export default function Page() {
 									<br />
 								</div>
 								<div className="form-row">
-									<label>{"Strom I"}</label>
+									<label htmlFor="I">{"Strom I"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Strom)" }}
 										type="text"
 										aria-label="Strom I"
 										id="I"
+										aria-describedby="I-unit"
 									/>
-									<label>{"A [Ampere]"}</label>
+									<label id="I-unit">{"A [Ampere]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Widerstand R"}</label>
+									<label htmlFor="R">{"Widerstand R"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Widerstand)" }}
 										type="text"
 										aria-label="Widerstand R"
 										id="R"
+										aria-describedby="R-unit"
 									/>
-									<label>{"Ω [Ohm]"}</label>
+									<label id="R-unit">{"Ω [Ohm]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Leistung P"}</label>
+									<label htmlFor="P">{"Leistung P"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Leistung)" }}
 										type="text"
 										aria-label="Leistung P"
 										id="P"
+										aria-describedby="P-unit"
 									/>
-									<label>{"W [Watt]"}</label>
+									<label id="P-unit">{"W [Watt]"}</label>
 								</div>
 								<div className="form-row">
-									<label>{"Spannung U"}</label>
+									<label htmlFor="U">{"Spannung U"}</label>
 									<input
 										disabled={!controller.ready}
 										style={{ borderColor: "var(--Spannung)" }}
 										type="text"
 										aria-label="Spannung U"
 										id="U"
+										aria-describedby="U-unit"
 									/>
-									<label>{"V [Volt]"}</label>
+									<label id="U-unit">{"V [Volt]"}</label>
 								</div>
 								<div className="form-row">
 									<label></label>
@@ -162,6 +166,7 @@ export default function Page() {
 									id="modeSwitch"
 								/>
 								<span className="slider round"></span>
+								<span className="switch-label">Belasteter Spannungsteiler</span>
 							</label>
 							<br />
 							<br />
@@ -187,18 +192,19 @@ export default function Page() {
 										<br />
 									</div>
 									<div className="form-row">
-										<label>{"Strom I"}</label>
+										<label htmlFor="I_unb">{"Strom I"}</label>
 										<input
 											disabled={!controller.ready}
 											style={{ borderColor: "var(--Strom)" }}
 											type="text"
 											aria-label="Strom I"
 											id="I_unb"
+											aria-describedby="I_unb-unit"
 										/>
-										<label>{"A [Ampere]"}</label>
+										<label id="I_unb-unit">{"A [Ampere]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="R1_unb">
 											{"Widerstand R"}
 											<sub>{"1"}</sub>
 										</label>
@@ -208,11 +214,12 @@ export default function Page() {
 											type="text"
 											aria-label="Widerstand R1"
 											id="R1_unb"
+											aria-describedby="R1_unb-unit"
 										/>
-										<label>{"Ω [Ohm]"}</label>
+										<label id="R1_unb-unit">{"Ω [Ohm]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="R2_unb">
 											{"Widerstand R"}
 											<sub>{"2"}</sub>
 										</label>
@@ -222,11 +229,12 @@ export default function Page() {
 											type="text"
 											aria-label="Widerstand R2"
 											id="R2_unb"
+											aria-describedby="R2_unb-unit"
 										/>
-										<label>{"Ω [Ohm]"}</label>
+										<label id="R2_unb-unit">{"Ω [Ohm]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="Uin_unb">
 											{"Spannung U"}
 											<sub>{"in"}</sub>
 										</label>
@@ -236,11 +244,12 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung Uin"
 											id="Uin_unb"
+											aria-describedby="Uin_unb-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="Uin_unb-unit">{"V [Volt]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="U1_unb">
 											{"Spannung U"}
 											<sub>{"1"}</sub>
 										</label>
@@ -250,11 +259,12 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung U1"
 											id="U1_unb"
+											aria-describedby="U1_unb-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="U1_unb-unit">{"V [Volt]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="Uout_unb">
 											{"Spannung U"}
 											<sub>{"out"}</sub>
 										</label>
@@ -264,8 +274,9 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung Uout"
 											id="Uout_unb"
+											aria-describedby="Uout_unb-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="Uout_unb-unit">{"V [Volt]"}</label>
 									</div>
 									<div className="form-row">
 										<label></label>
@@ -302,7 +313,7 @@ export default function Page() {
 										<br />
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="Iges_bel">
 											{"Strom I"}
 											<sub>{"ges"}</sub>
 										</label>
@@ -312,11 +323,12 @@ export default function Page() {
 											type="text"
 											aria-label="Strom Iges"
 											id="Iges_bel"
+											aria-describedby="Iges_bel-unit"
 										/>
-										<label>{"A [Ampere]"}</label>
+										<label id="Iges_bel-unit">{"A [Ampere]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="IR2_bel">
 											{"Strom I"}
 											<sub>{"R2"}</sub>
 										</label>
@@ -326,11 +338,12 @@ export default function Page() {
 											type="text"
 											aria-label="Strom IR2"
 											id="IR2_bel"
+											aria-describedby="IR2_bel-unit"
 										/>
-										<label>{"A [Ampere]"}</label>
+										<label id="IR2_bel-unit">{"A [Ampere]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="IRL_bel">
 											{"Strom I"}
 											<sub>{"RL"}</sub>
 										</label>
@@ -340,11 +353,12 @@ export default function Page() {
 											type="text"
 											aria-label="Strom IRL"
 											id="IRL_bel"
+											aria-describedby="IRL_bel-unit"
 										/>
-										<label>{"A [Ampere]"}</label>
+										<label id="IRL_bel-unit">{"A [Ampere]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="R1_bel">
 											{"Widerstand R"}
 											<sub>{"1"}</sub>
 										</label>
@@ -354,11 +368,12 @@ export default function Page() {
 											type="text"
 											aria-label="Widerstand R1"
 											id="R1_bel"
+											aria-describedby="R1_bel-unit"
 										/>
-										<label>{"Ω [Ohm]"}</label>
+										<label id="R1_bel-unit">{"Ω [Ohm]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="R2_bel">
 											{"Widerstand R"}
 											<sub>{"2"}</sub>
 										</label>
@@ -368,11 +383,12 @@ export default function Page() {
 											type="text"
 											aria-label="Widerstand R2"
 											id="R2_bel"
+											aria-describedby="R2_bel-unit"
 										/>
-										<label>{"Ω [Ohm]"}</label>
+										<label id="R2_bel-unit">{"Ω [Ohm]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="RL_bel">
 											{"Widerstand R"}
 											<sub>{"L"}</sub>
 										</label>
@@ -382,11 +398,12 @@ export default function Page() {
 											type="text"
 											aria-label="Widerstand RL"
 											id="RL_bel"
+											aria-describedby="RL_bel-unit"
 										/>
-										<label>{"Ω [Ohm]"}</label>
+										<label id="RL_bel-unit">{"Ω [Ohm]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="Uin_bel">
 											{"Spannung U"}
 											<sub>{"in"}</sub>
 										</label>
@@ -396,11 +413,12 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung Uin"
 											id="Uin_bel"
+											aria-describedby="Uin_bel-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="Uin_bel-unit">{"V [Volt]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="U1_bel">
 											{"Spannung U"}
 											<sub>{"1"}</sub>
 										</label>
@@ -410,11 +428,12 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung U1"
 											id="U1_bel"
+											aria-describedby="U1_bel-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="U1_bel-unit">{"V [Volt]"}</label>
 									</div>
 									<div className="form-row">
-										<label>
+										<label htmlFor="Uout_bel">
 											{"Spannung U"}
 											<sub>{"out"}</sub>
 										</label>
@@ -424,8 +443,9 @@ export default function Page() {
 											type="text"
 											aria-label="Spannung Uout"
 											id="Uout_bel"
+											aria-describedby="Uout_bel-unit"
 										/>
-										<label>{"V [Volt]"}</label>
+										<label id="Uout_bel-unit">{"V [Volt]"}</label>
 									</div>
 									<input
 										disabled={!controller.ready}
@@ -532,7 +552,7 @@ export default function Page() {
 								);
 							}}
 						>
-							{"\n                        Stern- Dreickschaltung "}
+							{"\n                        Stern-Dreieckschaltung "}
 							<span className="arrow" aria-hidden="true">
 								<Chevron direction="down" />
 							</span>

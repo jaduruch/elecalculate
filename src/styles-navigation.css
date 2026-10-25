@@ -1,0 +1,52 @@
+/* Shell refinements keep the original fixed bar and black navigation. */
+.classic-header .menu-toggle {
+	width: 44px;
+	height: 44px;
+	padding: 10px;
+	align-items: center;
+}
+.site-menu {
+	max-width: 100vw;
+	overscroll-behavior: contain;
+}
+.site-menu input {
+	min-height: 44px;
+	font-size: 16px;
+}
+.menu-search-status {
+	margin: 12px 22px 4px;
+	font-size: 12px;
+	line-height: 1.6;
+	color: #bbb;
+}
+.topic-strip {
+	scroll-padding-inline: 12px;
+}
+.topic-strip a:focus-visible {
+	outline-offset: -4px;
+}
+.site-menu a:focus-visible {
+	outline-offset: -4px;
+}
+.footer-topics nav {
+	gap: 4px;
+}
+.footer-topics nav a {
+	display: flex;
+	align-items: center;
+	min-height: 28px;
+}
+@media (pointer: coarse) {
+	.footer-topics nav {
+		gap: 0;
+		font-size: 12px;
+	}
+	.footer-topics nav a {
+		min-height: 44px;
+	}
+	.footer-credit a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+	}
+}

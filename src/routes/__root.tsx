@@ -11,6 +11,9 @@ import { catalog } from "../lib/catalog";
 import { OfflineButton } from "../components/offline-button";
 import { NotebookSave } from "../components/notebook";
 import appCSS from "../styles.css?url";
+import navigationCSS from "../styles-navigation.css?url";
+import calculatorCSS from "../styles-calculators.css?url";
+import notebookCSS from "../styles-notebook.css?url";
 const groups = [
 	{
 		id: "Elektrotechnik",
@@ -37,6 +40,9 @@ export const Route = createRootRoute({
 		],
 		links: [
 			{ rel: "stylesheet", href: appCSS },
+			{ rel: "stylesheet", href: navigationCSS },
+			{ rel: "stylesheet", href: calculatorCSS },
+			{ rel: "stylesheet", href: notebookCSS },
 			{ rel: "icon", href: "/Pictures/favicon.png" },
 			{ rel: "manifest", href: "/manifest.webmanifest" },
 		],
@@ -104,7 +110,16 @@ function Root() {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuToggle = useRef<HTMLButtonElement>(null);
 	const menu = useRef<HTMLElement>(null);
+	const topicStrip = useRef<HTMLElement>(null);
 	const [search, setSearch] = useState("");
+	const query = search.trim().toLocaleLowerCase("de");
+	const searchResults = query
+		? catalog.filter((p) =>
+				(p.title + " " + p.sections.join(" "))
+					.toLocaleLowerCase("de")
+					.includes(query),
+			)
+		: [];
 	const group = groups.find((g) => path.startsWith("/" + g.id + "/"));
 	const currentGroup = group?.id ?? "Allgemein";
 	const topics = catalog
@@ -123,10 +138,59 @@ function Root() {
 		setSearch("");
 	}, [path]);
 	useEffect(() => {
+		const strip = topicStrip.current;
+		const selected = strip?.querySelector<HTMLElement>('[aria-current="page"]');
+		if (!strip || !selected) return;
+		const stripRect = strip.getBoundingClientRect();
+		const selectedRect = selected.getBoundingClientRect();
+		if (
+			selectedRect.left < stripRect.left ||
+			selectedRect.right > stripRect.right
+		) {
+			strip.scrollLeft +=
+				selectedRect.left -
+				stripRect.left -
+				(strip.clientWidth - selectedRect.width) / 2;
+		}
+	}, [path]);
+	useEffect(() => {
+		if (!menuOpen) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		return () => {
+			document.body.style.overflow = previousOverflow;
+		};
+	}, [menuOpen]);
+	useEffect(() => {
 		const close = (event: KeyboardEvent) => {
 			if (event.key === "Escape" && menuOpen) {
 				setMenuOpen(false);
 				menuToggle.current?.focus();
+				event.preventDefault();
+			}
+			if (event.key === "Tab" && menuOpen) {
+				const controls = [
+					menuToggle.current,
+					...Array.from(
+						menu.current?.querySelectorAll<HTMLElement>("a[href], input") ?? [],
+					),
+				].filter((element): element is HTMLElement => !!element);
+				const first = controls[0];
+				const last = controls.at(-1);
+				if (
+					event.shiftKey &&
+					(document.activeElement === first ||
+						document.activeElement === controls[1])
+				) {
+					event.preventDefault();
+					(document.activeElement === controls[1] ? first : last)?.focus();
+				} else if (!event.shiftKey && document.activeElement === last) {
+					event.preventDefault();
+					first?.focus();
+				} else if (!event.shiftKey && document.activeElement === first) {
+					event.preventDefault();
+					controls[1]?.focus();
+				}
 			}
 		};
 		window.addEventListener("keydown", close);
@@ -159,15 +223,25 @@ function Root() {
 					</button>
 					<Link
 						className="compact-brand"
+						inert={menuOpen}
 						to="/"
 						aria-label="Elecalculate Startseite"
 					>
 						<img src="/Pictures/favicon_no_BG.svg" alt="" />
 						<span>Elecalculate</span>
 					</Link>
-					<nav className="topic-strip" aria-label="Themen">
+					<nav
+						ref={topicStrip}
+						className="topic-strip"
+						aria-label="Themen"
+						inert={menuOpen}
+					>
 						{currentGroup === "Allgemein" && (
-							<Link to="/" className={path === "/" ? "current" : ""}>
+							<Link
+								to="/"
+								className={path === "/" ? "current" : ""}
+								aria-current={path === "/" ? "page" : undefined}
+							>
 								Home
 							</Link>
 						)}
@@ -175,6 +249,11 @@ function Root() {
 							<Link
 								to={"/" + p.file.replace(".html", "")}
 								key={p.slug}
+								aria-current={
+									path === "/" + p.file.replace(".html", "")
+										? "page"
+										: undefined
+								}
 								className={
 									path === "/" + p.file.replace(".html", "") ? "current" : ""
 								}
@@ -187,6 +266,7 @@ function Root() {
 				{menuOpen && (
 					<button
 						className="menu-backdrop"
+						tabIndex={-1}
 						aria-label="Menü schließen"
 						onClick={() => {
 							setMenuOpen(false);
@@ -217,32 +297,34 @@ function Root() {
 					<label htmlFor="topic-search">Thema suchen</label>
 					<input
 						id="topic-search"
+						type="search"
+						autoComplete="off"
+						aria-controls={query ? "topic-search-results" : undefined}
 						value={search}
 						placeholder="Alle Themen"
 						onChange={(e) => setSearch(e.target.value)}
 					/>
-					{search && (
-						<div className="menu-search-results">
-							{catalog
-								.filter((p) =>
-									(p.title + " " + p.sections.join(" "))
-										.toLowerCase()
-										.includes(search.toLowerCase()),
-								)
-								.map((p) => (
-									<Link
-										key={p.slug}
-										to={"/" + p.file.replace(".html", "")}
-										onClick={() => setMenuOpen(false)}
-									>
-										{p.title}
-									</Link>
-								))}
+					{query && (
+						<div id="topic-search-results" className="menu-search-results">
+							<p className="menu-search-status" role="status">
+								{searchResults.length
+									? `${searchResults.length} ${searchResults.length === 1 ? "Thema gefunden" : "Themen gefunden"}`
+									: "Keine Themen gefunden."}
+							</p>
+							{searchResults.map((p) => (
+								<Link
+									key={p.slug}
+									to={"/" + p.file.replace(".html", "")}
+									onClick={() => setMenuOpen(false)}
+								>
+									{p.title}
+								</Link>
+							))}
 						</div>
 					)}
 				</nav>
-				<div className="site">
-					<main id="content" className="min-w-0">
+				<div className="site" inert={menuOpen}>
+					<main id="content" tabIndex={-1} className="min-w-0">
 						<div className="site-tools">
 							<Link to="/notizbuch/">Notizbuch</Link>
 							<OfflineButton />

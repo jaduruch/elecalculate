@@ -172,7 +172,11 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			.replaceAll("P [Watt]", "W [Watt]")
 			.replaceAll("Landung Q", "Ladung Q")
 			.replaceAll("[Henri]", "[Henry]")
-			.replaceAll("Activ Filter", "Aktive Filter");
+			.replaceAll("Activ Filter", "Aktive Filter")
+			.replaceAll("Stern- Dreickschaltung", "Stern-Dreieckschaltung")
+			.replaceAll("Spulen berechnungen", "Spulenberechnungen")
+			.replaceAll("Kondensator berechnungen", "Kondensatorberechnungen")
+			.replaceAll("E-Reihe Auswählen:", "E-Reihe auswählen:");
 		if (file === "Elektrotechnik/Spule.html")
 			raw = raw
 				.replace("C = 15&mu;H", "L = 15&mu;H")
@@ -183,6 +187,51 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 		const dom = parseHTML(raw.replace(/<tr">/g, "<tr>")) as unknown as Node;
 		const main = walk(dom, (n) => n.tagName === "main")[0];
 		if (!main) throw Error("Missing main: " + file);
+		// Connect existing visible labels and units without changing saved field IDs.
+		for (const parent of walk(main, (n) => !!n.childNodes)) {
+			const fields = parent.childNodes!.filter((n) =>
+				["input", "select", "textarea"].includes(n.tagName ?? ""),
+			);
+			const labels = parent.childNodes!.filter((n) => n.tagName === "label");
+			if (fields.length !== 1 || !labels.length) continue;
+			const field = fields[0];
+			const id = field.attrs?.find((a) => a.name === "id")?.value;
+			if (!id) continue;
+			const label = labels[0];
+			label.attrs ??= [];
+			if (!label.attrs.some((a) => a.name === "for"))
+				label.attrs.push({ name: "for", value: id });
+			if (
+				labels.length > 1 &&
+				parent.attrs?.some(
+					(a) =>
+						a.name === "class" && a.value.split(/\s+/).includes("form-row"),
+				)
+			) {
+				const unit = labels.at(-1)!;
+				unit.attrs ??= [];
+				let unitId = unit.attrs.find((a) => a.name === "id")?.value;
+				if (!unitId) {
+					unitId = id + "-unit";
+					unit.attrs.push({ name: "id", value: unitId });
+				}
+				field.attrs ??= [];
+				const description = field.attrs.find(
+					(a) => a.name === "aria-describedby",
+				);
+				if (description) description.value += " " + unitId;
+				else field.attrs.push({ name: "aria-describedby", value: unitId });
+			}
+			if (id === "theta-slider" || id === "phi-slider")
+				field.attrs!.push({
+					name: "aria-label",
+					value:
+						id === "theta-slider"
+							? "Polar angle θ (degrees)"
+							: "Azimuthal angle φ (degrees)",
+				});
+		}
+
 		if (file === "Elektrotechnik/Wechselstrom.html") {
 			const times = walk(
 				main,
@@ -486,6 +535,22 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 				tag = "button";
 			if (tag === 'tr"') tag = "tr";
 			const a: string[] = [];
+			if (tag === "table") {
+				a.push("tabIndex={0}");
+				if (
+					!attrs.some(
+						(a) => a.name === "aria-label" || a.name === "aria-labelledby",
+					)
+				)
+					a.push(
+						"aria-label=" +
+							JSON.stringify(
+								"Tabelle: " +
+									text(walk(main, (n) => n.tagName === "h1")[0] ?? main).trim(),
+							),
+					);
+			}
+
 			if (
 				["button", "input", "select", "textarea"].includes(tag) &&
 				!attrs.some((a) => a.name === "disabled")
@@ -634,6 +699,24 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			) {
 				a.push('aria-hidden="true"');
 				content = '<Chevron direction="down" />';
+			}
+
+			if (
+				tag === "label" &&
+				attrs.some(
+					(a) => a.name === "class" && a.value.split(/\s+/).includes("switch"),
+				) &&
+				!text(n).trim()
+			) {
+				const field = n.childNodes?.find((child) => child.tagName === "input");
+				const id = field?.attrs?.find((a) => a.name === "id")?.value;
+				const label =
+					id === "toggleSwitch"
+						? "Dreieckschaltung"
+						: file.includes("Gleichstrom")
+							? "Belasteter Spannungsteiler"
+							: "Entladen";
+				content += `<span className="switch-label">${label}</span>`;
 			}
 			if (attrs.some((a) => a.name === "id" && a.value === "pdfjs-viewer"))
 				content =

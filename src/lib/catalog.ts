@@ -175,7 +175,7 @@ export const catalog = [
 			"Ohmsches Gesetz (URI)▼",
 			"Spannungsteiler ▼",
 			"Serie- und Parallelschaltung ▼",
-			"Stern- Dreickschaltung ▼",
+			"Stern-Dreieckschaltung ▼",
 		],
 	},
 	{
@@ -200,7 +200,7 @@ export const catalog = [
 			"calculateRC()",
 		],
 		sections: [
-			"Kondensator berechnungen▼",
+			"Kondensatorberechnungen▼",
 			"Kondensator an Wechselstrom ▼",
 			"RC-Glied ▼",
 		],
@@ -246,7 +246,7 @@ export const catalog = [
 			"resetInputsRL()",
 			"calculateRL()",
 		],
-		sections: ["Spulen berechnungen▼", "Spule an Wechselstrom ▼", "RL-Glied ▼"],
+		sections: ["Spulenberechnungen▼", "Spule an Wechselstrom ▼", "RL-Glied ▼"],
 	},
 	{
 		file: "Elektrotechnik/Transformator.html",

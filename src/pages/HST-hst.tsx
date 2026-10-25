@@ -52,7 +52,7 @@ export default function Page() {
 					placeholder="Begriff suchen..."
 					className="search"
 				/>
-				<table>
+				<table tabIndex={0} aria-label="Tabelle: Hard- und Softwaretechnik">
 					<tbody>
 						<tr>
 							<th>{"Begriff"}</th>
