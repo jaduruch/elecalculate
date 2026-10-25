@@ -324,6 +324,7 @@ test("finite but impossible Qubit resume data is discarded without a reload erro
 test("an update waits for a running Qubit gate instead of saving an intermediate state", async ({
 	page,
 }) => {
+	await page.clock.install({ time: new Date("2026-10-25T12:00:00Z") });
 	await mockInstallingUpdate(page);
 	await page.goto("/Allgemein/Qubit/");
 	await expect(page.locator(".page-body")).toHaveAttribute(
@@ -331,6 +332,7 @@ test("an update waits for a running Qubit gate instead of saving an intermediate
 		"true",
 	);
 	await finish(page);
+	await page.clock.pauseAt(new Date("2026-10-25T12:01:00Z"));
 	await page.getByRole("button", { name: "X", exact: true }).click();
 	await expect(page.locator("#state-display")).toHaveAttribute(
 		"aria-busy",
@@ -343,6 +345,8 @@ test("an update waits for a running Qubit gate instead of saving an intermediate
 			sessionStorage.getItem("elecalculate.offline-resume.v1"),
 		),
 	).toBeNull();
+	await page.clock.runFor(1000);
+	await page.clock.resume();
 	await expect(page.locator("#state-display")).toHaveAttribute(
 		"aria-busy",
 		"false",

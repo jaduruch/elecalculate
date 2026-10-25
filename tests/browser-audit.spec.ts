@@ -160,15 +160,19 @@ test("reset removes invalid state and the previous inductor curves", async ({
 test("qubit operations disclose their busy state instead of dropping an accepted click", async ({
 	page,
 }) => {
+	await page.clock.install({ time: new Date("2026-10-25T12:00:00Z") });
 	await page.goto("/Allgemein/Qubit/");
 	await expect(page.locator(".page-body")).toHaveAttribute(
 		"data-ready",
 		"true",
 	);
+	await page.clock.pauseAt(new Date("2026-10-25T12:01:00Z"));
 	await page.getByRole("button", { name: "H", exact: true }).click();
 	await expect(
 		page.getByRole("button", { name: "Measure", exact: true }),
 	).toBeDisabled();
+	await page.clock.runFor(1000);
+	await page.clock.resume();
 	await expect(
 		page.getByRole("button", { name: "Measure", exact: true }),
 	).toBeEnabled();
