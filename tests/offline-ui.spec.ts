@@ -357,3 +357,61 @@ test("an update waits for a running Qubit gate instead of saving an intermediate
 	]);
 	await expect(page.locator("#theta-slider")).toHaveValue("180");
 });
+
+test("update reload with a notebook URL preserves live edits instead of reloading the saved entry", async ({
+	page,
+}) => {
+	test.setTimeout(60000);
+	await mockInstallingUpdate(page);
+	await page.goto("/Elektrotechnik/Gleichstrom/");
+	await page.getByRole("button", { name: "Ohmsches Gesetz" }).click();
+	await page.locator("#R").fill("1k");
+	await page.locator("#U").fill("12");
+	await page.getByRole("button", { name: "Werte merken" }).click();
+	await page
+		.getByLabel("Name", { exact: true })
+		.fill("Gespeicherter Ausgangsversuch");
+	await page.getByRole("button", { name: "Speichern", exact: true }).click();
+	await expect(page.locator(".save-status")).toContainText("gespeichert", {
+		timeout: 45000,
+	});
+	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
+	await page.getByRole("link", { name: "Eingaben laden", exact: true }).click();
+	await expect(page).toHaveURL(/notiz=/);
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: 45000 },
+	);
+	await expect(page.locator("#R")).toHaveValue("1k");
+	await expect(page.locator("#U")).toHaveValue("12");
+	await page.locator("#R").fill("2.2k");
+	await page.locator("#U").fill("24");
+	await finish(page);
+	await Promise.all([
+		page.waitForEvent("load"),
+		page.getByRole("button", { name: "Jetzt aktualisieren" }).click(),
+	]);
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: 45000 },
+	);
+	await expect(page.locator("#R")).toHaveValue("2.2k");
+	await expect(page.locator("#U")).toHaveValue("24");
+	expect(
+		await page.evaluate(() =>
+			sessionStorage.getItem("elecalculate.offline-resume.v1"),
+		),
+	).toBeNull();
+	// Updating the displayed experiment must not mutate the saved notebook entry.
+	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
+	await page.getByRole("link", { name: "Eingaben laden", exact: true }).click();
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: 45000 },
+	);
+	await expect(page.locator("#R")).toHaveValue("1k");
+	await expect(page.locator("#U")).toHaveValue("12");
+});

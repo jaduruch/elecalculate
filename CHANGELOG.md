@@ -13,11 +13,15 @@ subject structure remain.
   checks read unrounded SI results instead of treating the old code as an oracle.
 - Corrected three-phase voltage relationships and the simulator's instantaneous
   phase sum. Added pause/reduced-motion controls and preserved actual Qubit state.
+  Mathematical state updates precede GPU drawing, and idle decoration yields CPU
+  while notes are edited or saved.
 - Fixed fractional resistor multipliers, duplicate fields/results, annotation URLs,
   stale reset charts, stale-chart export prevention, example/unit semantics and
   accessible PNG exports.
 - Saved work restores every calculator mode, dynamic fields, units and simulation
-  state. Local storage works immediately offline, across tabs and through failure
+  state. Saved entries show an explicit loading state and cannot overwrite new
+  edits while loading; save drafts are frozen during a pending write. Local
+  storage works immediately offline, across tabs and through failure
   and retry. Removed entries remain recoverable after reload.
 - Offline updates now distinguish download completion from an old active worker,
   require explicit activation, preserve unfinished calculator work, retain chunks

@@ -161,8 +161,19 @@ export function notebookError(error: unknown): string {
 	return "Das lokale Notizbuch konnte nicht gespeichert oder geöffnet werden. Bitte erneut versuchen. Deine Eingaben bleiben erhalten.";
 }
 export function capture(root: HTMLElement): FormSnapshot {
+	return captureSnapshot(root, false);
+}
+function captureSnapshot(
+	root: HTMLElement,
+	allowPendingRestore: boolean,
+): FormSnapshot {
+	if (!allowPendingRestore && root.dataset.restoring === "true")
+		throw new CaptureUnavailableError(
+			"Bitte warten, bis die gespeicherten Eingaben vollständig geladen sind.",
+		);
 	if (
-		root.matches('[aria-busy="true"]') ||
+		(root.matches('[aria-busy="true"]') &&
+			!(allowPendingRestore && root.dataset.restoring === "true")) ||
 		root.querySelector('[aria-busy="true"]')
 	)
 		throw new CaptureUnavailableError(
@@ -211,7 +222,7 @@ export function restore(root: HTMLElement, snapshot: FormSnapshot) {
 		throw new SnapshotRestoreError(true);
 	}
 	// Capture can reject a currently running simulation before any fields change.
-	const prior = capture(root);
+	const prior = captureSnapshot(root, true);
 	const outputs = Array.from(
 		root.querySelectorAll<HTMLElement>('[id^="result"],.results'),
 	).map((element) => ({

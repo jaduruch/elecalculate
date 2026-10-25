@@ -156,6 +156,12 @@ export function patchCalculationProgram(file: string, program: any) {
 			node.body = body(
 				"ctx.beginPath();ctx.strokeStyle='white';ctx.lineWidth=2;for(let x=0;x<width;x++){const sum=phaseSum((x+time)*frequency,[showRed,showGreen,showBlue],amplitude);const y=centerY+sum;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();",
 			);
+		if (file === "Allgemein/Qubit.html" && name === "onWindowResize")
+			node.body.body.push(...parse("scheduleQuantumRender();").program.body);
+		if (file === "Allgemein/Qubit.html" && name === "updateStateDisplay")
+			node.body.body.push(
+				...parse("if(paused)scheduleQuantumRender();").program.body,
+			);
 		if (file === "Allgemein/Qubit.html" && name === "formatQuantumState") {
 			for (const statement of node.body.body) {
 				if (statement.type === "VariableDeclaration")
@@ -190,11 +196,11 @@ export function patchSimulationSource(file: string, code: string) {
 	if (file === "Allgemein/Qubit.html") {
 		code = code.replace(
 			"requestAnimationFrame(animate);",
-			"animationFrame=requestAnimationFrame(animate);",
+			"animationFrame=requestAnimationFrame(animate);if(scope.isNoteOpen()&&!isAnimating&&!isDragging)return;if(timestamp-lastRender<(isAnimating||isDragging?1000/30:100))return;lastRender=timestamp;",
 		);
 		code = code.replace(
 			"let isAnimating = false;",
-			"let isAnimating = false;let stateEpoch=0;let animationFrame=0;let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;",
+			"let isAnimating = false;let stateEpoch=0;let animationFrame=0;let renderFrame=0;let lastRender=-Infinity;let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;",
 		);
 		code = code.replace(
 			/ANIMATION_DURATION:\s*750/,
@@ -202,7 +208,7 @@ export function patchSimulationSource(file: string, code: string) {
 		);
 		code = code.replace(
 			"function animate() {",
-			"function animate() { if(paused){renderer.render(scene,camera);return;}",
+			"function animate(timestamp=performance.now()) { if(paused){scheduleQuantumRender();return;}",
 		);
 		code = code.replace(
 			"function animateToState(targetTheta, targetPhi) {",
@@ -231,11 +237,11 @@ export function patchSimulationSource(file: string, code: string) {
 		);
 		code = code.replace(
 			"function updateStateDisplay() {",
-			"function updateStateDisplay() { document.getElementById('theta-slider').value=String(qubitState.theta*180/Math.PI);document.getElementById('phi-slider').value=String((qubitState.phi*180/Math.PI+360)%360);updateSliderDisplay();if(paused)renderer.render(scene,camera);",
+			"function updateStateDisplay() { document.getElementById('theta-slider').value=String(qubitState.theta*180/Math.PI);document.getElementById('phi-slider').value=String((qubitState.phi*180/Math.PI+360)%360);updateSliderDisplay();",
 		);
-		code += `\nfunction setQuantumBusy(busy){document.querySelectorAll('.gate-btn,.apply-rotation-btn,#theta-slider,#phi-slider').forEach(button=>{button.disabled=busy;button.setAttribute('aria-disabled',String(busy));});document.getElementById('state-display')?.setAttribute('aria-busy',String(busy));}
+		code += `\nfunction scheduleQuantumRender(){if(renderFrame)return;renderFrame=requestAnimationFrame(()=>{renderFrame=0;renderer.render(scene,camera);});}\nfunction setQuantumBusy(busy){document.querySelectorAll('.gate-btn,.apply-rotation-btn,#theta-slider,#phi-slider').forEach(button=>{button.disabled=busy;button.setAttribute('aria-disabled',String(busy));});document.getElementById('state-display')?.setAttribute('aria-busy',String(busy));}
 function toggleAnimation(){paused=!paused;if(paused)cancelAnimationFrame(animationFrame);const button=document.getElementById('animation-toggle');button.textContent=paused?'Animation fortsetzen':'Animation pausieren';button.setAttribute('aria-pressed',String(paused));if(!paused)animate();}
-document.addEventListener('DOMContentLoaded',()=>{const host=document.getElementById('bloch-canvas-container');for(const event of ['mousemove','touchmove','wheel'])scope.listen(host,event,()=>{if(paused)renderer.render(scene,camera);});const button=document.getElementById('animation-toggle');button.textContent=paused?'Animation fortsetzen':'Animation pausieren';button.setAttribute('aria-pressed',String(paused));});`;
+document.addEventListener('DOMContentLoaded',()=>{const host=document.getElementById('bloch-canvas-container');for(const event of ['mousemove','touchmove','wheel'])scope.listen(host,event,()=>{if(paused||scope.isNoteOpen())scheduleQuantumRender();});const button=document.getElementById('animation-toggle');button.textContent=paused?'Animation fortsetzen':'Animation pausieren';button.setAttribute('aria-pressed',String(paused));});`;
 	}
 	if (file === "Elektrotechnik/Drehstrom_Simulator.html") {
 		code = code.replace(

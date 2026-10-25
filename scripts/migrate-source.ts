@@ -668,7 +668,7 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			.replaceAll("–", "-");
 		await writeFile(
 			"src/pages/" + slug + ".tsx",
-			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\nexport default function Page(){const controller=useCalculator(createController);return <div ref={controller.root} data-ready={controller.ready ? "true" : undefined} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div>;}\n`,
+			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\nexport default function Page(){const controller=useCalculator(createController);return <>{controller.restoring&&<p className="notebook-loading" role="status">Gespeicherte Eingaben werden geladen…</p>}<div ref={controller.root} inert={controller.restoring} aria-busy={controller.restoring || undefined} data-restoring={controller.restoring ? "true" : "false"} data-ready={controller.ready ? "true" : undefined} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div></>;}\n`,
 		);
 		const route = file.replace(".html", "");
 		const routeFile = route.replaceAll("/", ".");

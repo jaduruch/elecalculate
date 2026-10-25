@@ -207,3 +207,4 @@ html{scroll-padding-top:70px}
 .page-body .content-container>#voltage-explanation,.page-body .content-container>.schaltung{grid-column:1/-1;min-width:0;width:100%;max-width:100%}
 .page-body .content-container .button-container{flex-wrap:wrap;gap:10px}
 @media(max-width:600px){.page-body .content-container{grid-template-columns:minmax(0,1fr)}}
+.notebook-loading{max-width:850px;margin:15px auto;padding:12px 16px;border:1px solid #444;border-radius:4px;background:#111;color:#ddd;font-size:13px;line-height:1.7}.page-body[data-restoring="true"]{opacity:.65}

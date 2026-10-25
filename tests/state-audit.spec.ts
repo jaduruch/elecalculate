@@ -4,7 +4,7 @@ async function save(page: Page, title: string) {
 	await page.getByLabel("Name", { exact: true }).fill(title);
 	await page.getByRole("button", { name: "Speichern", exact: true }).click();
 	await expect(page.locator(".save-status")).toContainText("gespeichert", {
-		timeout: 25000,
+		timeout: 45000,
 	});
 }
 test("waveform unit switches preserve physical phase and duty, including saved modes", async ({
@@ -24,6 +24,11 @@ test("waveform unit switches preserve physical phase and duty, including saved m
 	await save(page, "Phase in Grad");
 	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 	await page.getByRole("link", { name: "Phase in Grad", exact: true }).click();
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: 45000 },
+	);
 	await expect(page.locator("#Rad-Button")).toContainText("360");
 	await expect(page.locator("#phi-Sinus")).toHaveValue("90");
 	await page.locator("[data-action=calculate_Sinus]").click();
@@ -70,6 +75,11 @@ test("Qubit notebook preserves actual gate state and pause, not stale slider def
 	await page
 		.getByRole("link", { name: "Superposition pausiert", exact: true })
 		.click();
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: 45000 },
+	);
 	await expect(page.locator("#state-prob")).toContainText("50.0%");
 	await expect(page.locator("#theta-slider")).toHaveValue("90");
 	await expect(
@@ -141,4 +151,74 @@ test("near-basis quantum states are displayed as approximations rather than fals
 	).toBeEnabled();
 	await expect(page.locator("#state-dirac annotation")).toContainText("approx");
 	await expect(page.locator("#state-dirac annotation")).not.toContainText("|+");
+});
+
+test("saved inputs remain protected while the local database is still loading", async ({
+	page,
+	context,
+}) => {
+	test.setTimeout(90000);
+	await page.goto("/Elektrotechnik/Gleichstrom/");
+	await page
+		.getByRole("button", { name: "Ohmsches Gesetz", exact: false })
+		.click();
+	await page.locator("#R").fill("1k");
+	await page.locator("#U").fill("12");
+	const title = "Eingaben nach verzögertem Laden";
+	await save(page, title);
+	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
+	const savedLink = page.getByRole("link", { name: title, exact: true });
+	await expect(savedLink).toBeVisible({ timeout: 25000 });
+	const href = await savedLink.getAttribute("href");
+	expect(href).toBeTruthy();
+	let release!: () => void;
+	const held = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	let heldRequests = 0;
+	const pattern = "**/assets/pglite-*.wasm";
+	await context.route(pattern, async (route) => {
+		heldRequests++;
+		await held;
+		try {
+			await route.continue();
+		} catch (error) {
+			if (!page.isClosed()) throw error;
+		}
+	});
+	try {
+		await page.goto(href!);
+		const root = page.locator(".page-body");
+		const loading = page
+			.getByRole("status")
+			.filter({ hasText: "Gespeicherte Eingaben werden geladen" });
+		await expect(loading).toBeVisible();
+		await expect(root).toHaveAttribute("data-restoring", "true");
+		await expect(root).toHaveAttribute("inert", "");
+		await expect
+			.poll(() => heldRequests, { timeout: 15000 })
+			.toBeGreaterThan(0);
+		// A user cannot type into the default form and have that work overwritten.
+		const resistance = page.locator("#R");
+		await resistance.evaluate((element) =>
+			(element as HTMLInputElement).focus(),
+		);
+		await expect(resistance).not.toBeFocused();
+		await page.keyboard.type("999");
+		await expect(resistance).toHaveValue("");
+		release();
+		await expect(root).toHaveAttribute("data-restoring", "false", {
+			timeout: 45000,
+		});
+		await expect(root).not.toHaveAttribute("inert", "");
+		await expect(loading).toBeHidden();
+		await expect(resistance).toBeVisible();
+		await expect(resistance).toHaveValue("1k");
+		await expect(page.locator("#U")).toHaveValue("12");
+		await resistance.fill("2k");
+		await expect(resistance).toHaveValue("2k");
+	} finally {
+		release();
+		await context.unroute(pattern);
+	}
 });

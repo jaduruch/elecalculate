@@ -1,4 +1,4 @@
-import { restore } from "../../src/lib/notebook";
+import { capture, restore } from "../../src/lib/notebook";
 import {
 	registerCalculatorState,
 	type CalculatorSnapshot,
@@ -43,4 +43,24 @@ registerCalculatorState(root, {
 	} catch (error) {
 		return (error as Error).message;
 	}
+};
+
+(
+	window as unknown as { testNotebookPending: () => string }
+).testNotebookPending = () => {
+	root.dataset.restoring = "true";
+	root.setAttribute("aria-busy", "true");
+	let message = "";
+	try {
+		capture(root);
+	} catch (error) {
+		message = (error as Error).message;
+	}
+	restore(root, {
+		values: { U: "24", R: "2k" },
+		selected: [],
+		open: [],
+		controller: { kind: "test", values: { theta: 2 } },
+	});
+	return message;
 };

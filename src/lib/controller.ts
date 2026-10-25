@@ -91,6 +91,9 @@ export function createScope(root: HTMLElement) {
 		},
 	});
 	return {
+		isNoteOpen: () =>
+			!!document.querySelector(".save-form") ||
+			root.dataset.restoring === "true",
 		document: scopedDocument,
 		window: scopedWindow,
 		MathJax: math,

@@ -50,3 +50,19 @@ test("busy restoration refuses the operation before changing any values", async 
 	await expect(page.locator("#state")).toHaveText("1");
 	await expect(page.locator("#result")).toHaveText("Previous worked solution");
 });
+
+test("pending notebook loading blocks public snapshots while allowing its own transactional restore", async ({
+	page,
+}) => {
+	await page.setContent("<!doctype html><html><body></body></html>");
+	await page.addScriptTag({ path: bundle });
+	const error = await page.evaluate(() =>
+		(
+			window as unknown as { testNotebookPending: () => string }
+		).testNotebookPending(),
+	);
+	expect(error).toContain("vollständig geladen");
+	await expect(page.locator("#U")).toHaveValue("24");
+	await expect(page.locator("#R")).toHaveValue("2k");
+	await expect(page.locator("#state")).toHaveText("2");
+});

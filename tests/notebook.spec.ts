@@ -1,4 +1,16 @@
 import { test, expect } from "@playwright/test";
+// A first PostgreSQL initialization has a 45-second application deadline.
+// Assertions await that public lifecycle instead of treating default UI as loaded.
+const NOTEBOOK_STARTUP_TIMEOUT = 45000;
+test.setTimeout(60000);
+async function expectRestored(page: import("@playwright/test").Page) {
+	await expect(page.locator(".page-body")).toHaveAttribute(
+		"data-restoring",
+		"false",
+		{ timeout: NOTEBOOK_STARTUP_TIMEOUT },
+	);
+}
+
 test("Drizzle PostgreSQL notebook saves, reloads, restores and undoes removal", async ({
 	page,
 	context,
@@ -15,7 +27,7 @@ test("Drizzle PostgreSQL notebook saves, reloads, restores and undoes removal", 
 	await page.getByLabel("Notiz", { exact: true }).fill("Widerstand 2.2 kΩ");
 	await page.getByRole("button", { name: "Speichern", exact: true }).click();
 	await expect(page.locator(".save-status")).toContainText("gespeichert", {
-		timeout: 25000,
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
 	});
 	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 	await expect(
@@ -32,8 +44,11 @@ test("Drizzle PostgreSQL notebook saves, reloads, restores and undoes removal", 
 	).toBeVisible({ timeout: 20000 });
 	await second.close();
 	await page.getByRole("link", { name: "Eingaben laden" }).click();
+	await expectRestored(page);
 	await expect(page.locator("#R")).toBeVisible();
-	await expect(page.locator("#R")).toHaveValue("2.2k");
+	await expect(page.locator("#R")).toHaveValue("2.2k", {
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
+	});
 	await expect(page.locator("#U")).toHaveValue("24");
 	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 	await page.getByRole("button", { name: "Entfernen", exact: true }).click();
@@ -55,7 +70,7 @@ async function saveCurrent(
 	await page.getByLabel("Name", { exact: true }).fill(title);
 	await page.getByRole("button", { name: "Speichern", exact: true }).click();
 	await expect(page.locator(".save-status")).toContainText("gespeichert", {
-		timeout: 25000,
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
 	});
 }
 
@@ -72,6 +87,7 @@ test("saved resistor colours restore both controls and computed resistance", asy
 	await saveCurrent(page, "Farbringe 4.7 kΩ");
 	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 	await page.getByRole("link", { name: "Eingaben laden", exact: true }).click();
+	await expectRestored(page);
 	await expect(page.locator("#resistanceValue")).toContainText("4700");
 	await expect(page.locator("#band1Select")).toContainText("Gelb");
 	await expect(page.locator("#band2Select")).toContainText("Violett");
@@ -87,6 +103,7 @@ test("saved three-phase configuration restores neutral and symmetry toggles", as
 	await saveCurrent(page, "Stern mit Neutralleiter");
 	await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 	await page.getByRole("link", { name: "Eingaben laden", exact: true }).click();
+	await expectRestored(page);
 	await expect(page.locator("#neutralButton")).toContainText("Entfernen");
 	await expect(page.locator("#starImage")).toHaveAttribute(
 		"src",
@@ -198,7 +215,10 @@ test("same-route notebook selection changes replace inputs and clear stale load 
 		.getByRole("link", { name: "Zweiter Versuch", exact: true })
 		.getAttribute("href");
 	await page.getByRole("link", { name: "Erster Versuch", exact: true }).click();
-	await expect(page.locator("#R")).toHaveValue("1k");
+	await expectRestored(page);
+	await expect(page.locator("#R")).toHaveValue("1k", {
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
+	});
 	const changeAddress = async (href: string) =>
 		page.evaluate((url) => {
 			history.pushState({}, "", url);
@@ -209,11 +229,15 @@ test("same-route notebook selection changes replace inputs and clear stale load 
 	);
 	await expect(page.getByRole("alert")).toContainText("nicht gefunden");
 	await changeAddress(second!);
-	await expect(page.locator("#R")).toHaveValue("2.2k");
+	await expect(page.locator("#R")).toHaveValue("2.2k", {
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
+	});
 	await expect(page.locator("#U")).toHaveValue("24");
 	await expect(page.getByRole("alert")).toHaveCount(0);
 	await changeAddress(first!);
-	await expect(page.locator("#R")).toHaveValue("1k");
+	await expect(page.locator("#R")).toHaveValue("1k", {
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
+	});
 	await expect(page.locator("#U")).toHaveValue("12");
 });
 
@@ -253,7 +277,7 @@ test("a stalled database startup has a deadline and remains retryable", async ({
 test("snapshots wait for a quantum gate to settle instead of saving intermediate state", async ({
 	page,
 }) => {
-	test.setTimeout(60000);
+	test.setTimeout(90000);
 	await page.clock.install({ time: new Date("2026-10-25T12:00:00Z") });
 	await page.goto("/Allgemein/Qubit/");
 	await expect(page.locator(".page-body")).toHaveAttribute(
@@ -280,7 +304,7 @@ test("snapshots wait for a quantum gate to settle instead of saving intermediate
 	);
 	await page.getByRole("button", { name: "Speichern", exact: true }).click();
 	await expect(page.locator(".save-status")).toContainText("gespeichert", {
-		timeout: 25000,
+		timeout: NOTEBOOK_STARTUP_TIMEOUT,
 	});
 });
 
@@ -342,6 +366,7 @@ for (const mode of savedModes)
 		await saveCurrent(page, title);
 		await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 		await page.getByRole("link", { name: title, exact: true }).click();
+		await expectRestored(page);
 		await expect(page.locator(`[data-target="${mode.target}"]`)).toHaveClass(
 			/selected/,
 		);
@@ -366,6 +391,7 @@ for (const mode of ["serie_schaltung", "parallel_schaltung"])
 		await saveCurrent(page, mode);
 		await page.getByRole("link", { name: "Notizbuch", exact: true }).click();
 		await page.getByRole("link", { name: mode, exact: true }).click();
+		await expectRestored(page);
 		await expect(page.locator("#r1")).toBeVisible();
 		await expect(page.locator("#r1")).toHaveValue("1k");
 		await expect(page.locator("#r2")).toHaveValue("2k");

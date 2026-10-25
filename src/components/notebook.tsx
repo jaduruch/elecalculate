@@ -74,6 +74,7 @@ function NotebookEditor({ route }: { route: string }) {
 			{open && (
 				<form
 					className="save-form"
+					aria-busy={mutation.isPending}
 					onSubmit={(event) => {
 						event.preventDefault();
 						void form.handleSubmit();
@@ -92,6 +93,7 @@ function NotebookEditor({ route }: { route: string }) {
 									onChange={(event) => field.handleChange(event.target.value)}
 									onBlur={field.handleBlur}
 									maxLength={80}
+									disabled={mutation.isPending}
 									autoFocus
 									aria-invalid={field.state.meta.errors.length > 0}
 								/>
@@ -113,6 +115,7 @@ function NotebookEditor({ route }: { route: string }) {
 									value={field.state.value}
 									onChange={(event) => field.handleChange(event.target.value)}
 									maxLength={500}
+									disabled={mutation.isPending}
 								/>
 							</label>
 						)}
@@ -127,6 +130,12 @@ function NotebookEditor({ route }: { route: string }) {
 					>
 						Abbrechen
 					</button>
+					{mutation.isPending && (
+						<p aria-live="polite">
+							Wird lokal gespeichert. Bitte die Seite bis zur Bestätigung
+							geöffnet lassen. Die erste Vorbereitung kann etwas länger dauern.
+						</p>
+					)}
 					{error && <p role="alert">{error}</p>}
 				</form>
 			)}

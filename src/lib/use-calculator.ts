@@ -81,6 +81,7 @@ function synchronizeDisclosures(root: HTMLElement) {
 }
 export function useCalculator(factory: Factory) {
 	const [ready, setReady] = useState(false);
+	const [loadedNoteKey, setLoadedNoteKey] = useState<string | null>(null);
 	const root = useRef<HTMLDivElement>(null),
 		controller = useRef<Controller | null>(null);
 	const location = useRouterState({
@@ -89,6 +90,9 @@ export function useCalculator(factory: Factory) {
 			search: s.location.searchStr,
 		}),
 	});
+	const requestedNote = new URLSearchParams(location.search).get("notiz");
+	const noteKey = location.path + "?notiz=" + (requestedNote ?? "");
+	const restoring = ready && !!requestedNote && loadedNoteKey !== noteKey;
 	useEffect(() => {
 		const element = root.current;
 		if (!element) return;
@@ -296,6 +300,7 @@ export function useCalculator(factory: Factory) {
 			.forEach((node) => node.remove());
 		let cancelled = false;
 		if (restoreOfflineResume(element)) {
+			setLoadedNoteKey(noteKey);
 			synchronizeDisclosures(element);
 			return;
 		}
@@ -333,12 +338,16 @@ export function useCalculator(factory: Factory) {
 						? error.message
 						: "Gespeicherte Eingaben konnten nicht geladen werden.";
 				element.prepend(notice);
+			})
+			.finally(() => {
+				if (!cancelled && element.isConnected) setLoadedNoteKey(noteKey);
 			});
 		return () => {
 			cancelled = true;
 		};
 	}, [factory, ready, location.path, location.search]);
 	return {
+		restoring,
 		ready,
 		root,
 		get current() {

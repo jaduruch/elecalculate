@@ -37,6 +37,13 @@ calculators and explanations rather than replacing them with a new demo.
   `calculator-state.ts`. Replay colour selectors; do not restore readonly derived
   outputs or scrape rendered formulas. Keep explicit generated control IDs stable.
   Busy simulations refuse capture until the accepted operation completes.
+- Saved-entry loading is an explicit `data-restoring`/inert state. It must finish
+  logically before editing or public capture is permitted; transactional restore
+  alone may bypass its own root loading flag. Keep user resume edits ahead of
+  loading the original `?notiz` record after an update.
+- Qubit mathematical DOM updates precede coalesced GPU drawing. Idle ornament
+  rendering is budgeted and yields during notebook work; active gestures remain
+  responsive. Do not put synchronous GPU work ahead of restored results.
 - Removed entries remain recoverable after reload. Worker startup waits for real
   readiness, loads bundled WASM/data explicitly, and has bounded error/retry paths.
   No calculator data is sent to a server.

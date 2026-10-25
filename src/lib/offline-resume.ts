@@ -1,11 +1,6 @@
 import { z } from "zod";
-import {
-	capture,
-	restore,
-	routeSchema,
-	snapshotSchema,
-	SnapshotRestoreError,
-} from "./notebook";
+import { capture, restore, routeSchema, snapshotSchema } from "./notebook";
+import { captureControllerState } from "./calculator-state";
 export const OFFLINE_RESUME_KEY = "elecalculate.offline-resume.v1";
 const MAX_LENGTH = 500000;
 const MAX_AGE = 24 * 60 * 60 * 1000;
@@ -62,20 +57,19 @@ export function restoreOfflineResume(root: HTMLElement): boolean {
 		} catch {}
 		return false;
 	}
-	let initial: z.infer<typeof snapshotSchema>;
+	// Public capture intentionally refuses while a ?notiz load is pending.
+	// Only the registered model kind is needed here; restore owns its atomic
+	// prior capture and rollback, including the private pending-load bypass.
+	let kind: string | undefined;
 	try {
-		initial = capture(root);
+		kind = captureControllerState(root)?.kind;
 	} catch {
 		try {
 			sessionStorage.removeItem(OFFLINE_RESUME_KEY);
 		} catch {}
 		return false;
 	}
-	// Generic JSON validation is not enough: simulation kind belongs to the page.
-	if (
-		record.snapshot.controller &&
-		record.snapshot.controller.kind !== initial.controller?.kind
-	) {
+	if (record.snapshot.controller && record.snapshot.controller.kind !== kind) {
 		try {
 			sessionStorage.removeItem(OFFLINE_RESUME_KEY);
 		} catch {}
@@ -83,14 +77,9 @@ export function restoreOfflineResume(root: HTMLElement): boolean {
 	}
 	try {
 		restore(root, record.snapshot);
-	} catch (error) {
-		// Notebook restoration already rolls back its fields and worked results.
-		// Reapplying a snapshot after that would erase those restored results.
-		if (!(error instanceof SnapshotRestoreError && error.rolledBack)) {
-			try {
-				restore(root, initial);
-			} catch {}
-		}
+	} catch {
+		// Atomic restoration has already attempted rollback. A second public
+		// capture/restore would refuse the pending state or erase worked results.
 		try {
 			sessionStorage.removeItem(OFFLINE_RESUME_KEY);
 		} catch {}
