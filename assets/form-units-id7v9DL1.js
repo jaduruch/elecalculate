@@ -1,1 +1,0 @@
-import{p as e}from"./shared-B2WX6C5w.js";function t(t,n,r){let i=t.getElementById(n);if(!i?.value.trim())return;let a=e(i.value);if(!Number.isFinite(a))return;let o=a*r;if(!Number.isFinite(o))throw Error(`Die Umrechnung überschreitet den darstellbaren Zahlenbereich.`);i.value=String(Number(o.toPrecision(15))),i.dispatchEvent(new Event(`input`,{bubbles:!0}))}export{t};
