@@ -68,16 +68,17 @@ test("calculation errors identify their input and disappear after correction", a
 	await page.locator("[data-action=calculateParametersURI]").click();
 	const input = page.locator("#R");
 	await expect(input).toHaveAttribute("aria-invalid", "true");
-	const errorId = await input.getAttribute("aria-describedby");
-	expect(errorId).toBeTruthy();
-	await expect(page.locator(`[id="${errorId}"]`)).toHaveAttribute(
-		"role",
-		"alert",
-	);
+	const descriptionIds =
+		(await input.getAttribute("aria-describedby"))?.split(/\s+/) ?? [];
+	expect(descriptionIds).toContain("R-unit");
+	const error = page.locator("[data-input-error]");
+	await expect(error).toHaveAttribute("role", "alert");
+	expect(descriptionIds).toContain(await error.getAttribute("id"));
 	await input.fill("1k");
 	await page.locator("[data-action=calculateParametersURI]").click();
 	await expect(page.getByRole("alert")).toHaveCount(0);
 	await expect(input).not.toHaveAttribute("aria-invalid", "true");
+	await expect(input).toHaveAccessibleDescription("Ω [Ohm]");
 	await expect(page.locator('#result [data-result-key="I"]')).toHaveAttribute(
 		"data-result-value",
 		"0.012",
