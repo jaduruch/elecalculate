@@ -59,6 +59,8 @@ export function createController(scope) {
 	let isAnimating = false;
 	let stateEpoch = 0;
 	let animationFrame = 0;
+	let renderFrame = 0;
+	let lastRender = -Infinity;
 	let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	let scene, camera, renderer, sphere, stateArrow, controls;
 	let isDragging = false;
@@ -534,13 +536,18 @@ export function createController(scope) {
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
 		renderer.setSize(width, height);
+		scheduleQuantumRender();
 	}
-	function animate() {
+	function animate(timestamp = performance.now()) {
 		if (paused) {
-			renderer.render(scene, camera);
+			scheduleQuantumRender();
 			return;
 		}
 		animationFrame = requestAnimationFrame(animate);
+		if (scope.isNoteOpen() && !isAnimating && !isDragging) return;
+		if (timestamp - lastRender < (isAnimating || isDragging ? 1000 / 30 : 100))
+			return;
+		lastRender = timestamp;
 		time += 0.016;
 		if (particles) {
 			particles.rotation.y += 0.0003;
@@ -1174,7 +1181,6 @@ export function createController(scope) {
 			((qubitState.phi * 180) / Math.PI + 360) % 360,
 		);
 		updateSliderDisplay();
-		if (paused) renderer.render(scene, camera);
 		const theta = qubitState.theta;
 		const phi = qubitState.phi;
 		const alpha = Math.cos(theta / 2);
@@ -1218,6 +1224,7 @@ export function createController(scope) {
 		} else {
 			hideStateOverlay();
 		}
+		if (paused) scheduleQuantumRender();
 	}
 	function formatQuantumState(theta, phi, alpha, betaReal, betaImag, betaMag) {
 		const tol = 1e-10;
@@ -1373,6 +1380,13 @@ export function createController(scope) {
 			if (hint) hint.style.display = "block";
 		}
 	});
+	function scheduleQuantumRender() {
+		if (renderFrame) return;
+		renderFrame = requestAnimationFrame(() => {
+			renderFrame = 0;
+			renderer.render(scene, camera);
+		});
+	}
 	function setQuantumBusy(busy) {
 		document
 			.querySelectorAll(
@@ -1400,7 +1414,7 @@ export function createController(scope) {
 		const host = document.getElementById("bloch-canvas-container");
 		for (const event of ["mousemove", "touchmove", "wheel"])
 			scope.listen(host, event, () => {
-				if (paused) renderer.render(scene, camera);
+				if (paused || scope.isNoteOpen()) scheduleQuantumRender();
 			});
 		const button = document.getElementById("animation-toggle");
 		button.textContent = paused
@@ -1478,6 +1492,7 @@ export function createController(scope) {
 			toggleDropdown,
 			addButtonEffects,
 			createButtonBurst,
+			scheduleQuantumRender,
 			setQuantumBusy,
 			toggleAnimation,
 			changeSlide,
