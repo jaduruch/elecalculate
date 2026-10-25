@@ -195,3 +195,15 @@ main{min-height:65vh;max-width:900px;margin:0 auto}
  .qubit-page #bloch-canvas-container{height:320px}.qubit-page .controls-panel{gap:10px 18px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Keep anchor targets and keyboard focus below the fixed topic bar. */
+html{scroll-padding-top:70px}
+/* Original controls must fit the narrow WebKit viewport as well as Chromium. */
+.page-body select{margin-inline:0}
+.page-body .content-container{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start;justify-content:normal}
+.page-body .content-container>br{display:none}
+.page-body .content-container>.input-container{min-width:0;margin:0}
+.page-body .content-container>.input-container label{overflow-wrap:anywhere;font-size:13px}
+.page-body .content-container>#voltage-explanation,.page-body .content-container>.schaltung{grid-column:1/-1;min-width:0;width:100%;max-width:100%}
+.page-body .content-container .button-container{flex-wrap:wrap;gap:10px}
+@media(max-width:600px){.page-body .content-container{grid-template-columns:minmax(0,1fr)}}

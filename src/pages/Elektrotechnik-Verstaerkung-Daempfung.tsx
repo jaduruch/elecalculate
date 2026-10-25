@@ -3,7 +3,11 @@ import { createController } from "../calculations/Elektrotechnik-Verstaerkung-Da
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        input:checked + .slider:before {\n            transform: translateX(14px);\n        }\n\n        input {\n            border: 2px solid;\n            border-radius: 3px;\n        }\n\n        input:focus {\n            outline: none; /* Entfernt den Standard-Umrandungsring */\n        }\n\n        /* Stil fuer das Formular und Layout */\n        .input-numbers {\n            display: flex;\n            flex-direction: column;\n            align-items: flex-start;\n            margin-bottom: 20px;\n            max-width: 600px; /* Setzt eine maximale Breite */\n            margin: 0 auto; /* Zentriert das Formular */\n            /*margin-left: 10px;*/\n        }\n\n        .comment{\n            font-size: smaller;\n            font-style: italic;\n            color:rgb(179, 179, 179);\n            margin-left: 10px;\n        }\n\n        .form-row {\n            display: flex;\n            align-items: center;\n            margin-bottom: 10px;\n            width: 100%;\n            margin-left: 10px;\n            \n        }\n\n        .form-row label {\n            flex: 3;\n            text-align: left;\n            margin-right: 10px;\n\n        }\n\n        h3 {\n            margin-top: 20px;\n        }\n\n        .results{\n            line-height: 2; /* Multiplikator fuer die Schriftgroesse */\n        }\n\n        .fraction\n        {\n            display: inline-block; \n            vertical-align: middle; \n            text-align: center;\n            margin-top: 1px;\n            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */\n        }\n\n        .fraction-numerator{\n            border-bottom: 1px solid;\n            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */\n            display: inline-block; /* Macht die Anpassungen besser sichtbar */\n        }\n        img{\n            width: 80%;\n            max-width: 600px;\n        }\n    \n} }"
@@ -27,6 +31,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Strom)" }}
 						type="text"
 						aria-label="Strom I1"
@@ -40,6 +45,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Strom)" }}
 						type="text"
 						aria-label="Strom I2"
@@ -50,6 +56,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Verstärkungsmass g"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Verstaerkungsmass)" }}
 						type="text"
 						aria-label="Verstärkungsmass g"
@@ -60,6 +67,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Dämpfungssmass a"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsmass)" }}
 						type="text"
 						aria-label="Dämpfungssmass a"
@@ -73,6 +81,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Leistung)" }}
 						type="text"
 						aria-label="Leistung P1"
@@ -86,6 +95,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Leistung)" }}
 						type="text"
 						aria-label="Leistung P2"
@@ -99,6 +109,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung U1"
@@ -112,6 +123,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung U2"
@@ -120,8 +132,9 @@ export default function Page() {
 					<label>{"V [Volt]"}</label>
 				</div>
 				<div className="form-row">
-					<label>{"Verstärkungsfaktor V"}</label>
+					<label>{"Spannungs-/Stromfaktor V"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
 						type="text"
 						aria-label="Verstärkungsfaktor V"
@@ -130,8 +143,9 @@ export default function Page() {
 					<label>{"1"}</label>
 				</div>
 				<div className="form-row">
-					<label>{"Dämpfungsfaktor D"}</label>
+					<label>{"Spannungs-/Stromdämpfungsfaktor D"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsfaktor)" }}
 						type="text"
 						aria-label="Dämpfungsfaktor D"
@@ -141,16 +155,20 @@ export default function Page() {
 				</div>
 			</div>
 			<input
+				disabled={!controller.ready}
 				type="button"
 				defaultValue="Berechnen"
 				className="Button_Berechnen"
 				data-action="calculateParameters"
 				onClick={(event) => {
-					controller.current?.handlers.calculateParameters?.();
+					controller.current?.invoke?.(
+						"calculateParameters",
+						event.currentTarget,
+					);
 				}}
 			/>
 			<h3>{"Resultate"}</h3>
-			<p id="result" aria-live="polite"></p>
+			<div id="result" aria-live="polite"></div>
 			<br />
 			<br />
 		</div>

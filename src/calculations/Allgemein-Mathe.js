@@ -1,8 +1,21 @@
 import { parseInput, parseInputsquare } from "../lib/si";
 import { setHTML } from "../lib/safe-html";
 import { calculateDivider } from "../lib/divider-controller";
+import { calculateOpamp } from "../lib/opamp-controller";
+import { updateThreePhase, phaseSum } from "../lib/three-phase";
+import { quantumGate, validateQubit } from "../lib/quantum";
+import { calculateBasic } from "../lib/basic-solvers";
+import { calculateNetwork } from "../lib/resistor-network";
+import { convertNumericField } from "../lib/form-units";
+import {
+	calculatePassive,
+	calculatePassiveTransient,
+	calculatePassiveCapacitorAC,
+} from "../lib/passive-controller";
+import { drawPassivePhasors } from "../lib/passive-phasors";
+import { calculateACFilter, calculateACResonator } from "../lib/ac-controller";
 import { createShared } from "./shared.js";
-/** Existing calculation algorithms, isolated to this route's mount lifecycle. */
+/** Calculator presentation and reviewed domain adapters, isolated to this route's mount lifecycle. */
 export function createController(scope) {
 	const {
 		document,
@@ -32,38 +45,7 @@ export function createController(scope) {
 		dropdown.classList.toggle("open");
 	}
 	function calculateKreis() {
-		let result_Kreis = ``;
-		const A = document.getElementById("A").value;
-		const d = document.getElementById("d").value;
-		if (A && !d) {
-			result_Kreis += `
-                    Leiterdurchmesser d = 
-                    &radic;(<div class ="fraction">
-                        <span class="fraction-numerator">4 &lowast; A</span><br>
-                        <span>&pi;</span>
-                    </div>) 
-                =
-                    &radic;(<div class ="fraction">
-                        <span class="fraction-numerator">4 &lowast; ${A}m<sup>2</sup> </span><br>
-                        <span>&pi;</span>
-                    </div>)
-                = ${formatWithPrefix(Math.pow((4 * parseInputsquare(A)) / Math.PI, 0.5), "m")}<br>`;
-		}
-		if (d && !A) {
-			result_Kreis += `
-                    Fl&auml;che A = 
-                    <div class ="fraction">
-                        <span class="fraction-numerator">&pi; &lowast; d<sup>2</sup></span><br>
-                        <span>4</span>
-                    </div> 
-                =
-                    <div class ="fraction">
-                        <span class="fraction-numerator">&pi; &lowast; (${d}m)<sup>2</sup> </span><br>
-                        <span>4</span>
-                    </div> 
-                = ${formatWithPrefixsquare((Math.PI * Math.pow(parseInput(d), 2)) / 4, "m<sup>2</sup>")}<br>`;
-		}
-		setHTML(document.getElementById("result_Kreis"), result_Kreis);
+		return calculateBasic(document, "circle");
 	}
 	return {
 		handlers: {

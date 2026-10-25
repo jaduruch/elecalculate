@@ -1,6 +1,6 @@
 {
 	"name": "elecalculate",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"private": true,
 	"type": "module",
 	"packageManager": "bun@1.4.4",
@@ -13,7 +13,9 @@
 		"test:e2e": "playwright test",
 		"migrate:source": "bun scripts/migrate-source.ts",
 		"db:generate": "drizzle-kit generate",
-		"verify": "bun run test && bun run build && bun run typecheck && bun run test:e2e"
+		"verify": "bun run test && bun run build && bun run typecheck && bun run test:e2e && bun run test:webkit",
+		"test:webkit": "playwright test --config playwright.webkit.config.ts",
+		"verify:live": "bun scripts/verify-live.ts"
 	},
 	"dependencies": {
 		"@electric-sql/pglite": "0.5.11",

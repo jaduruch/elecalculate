@@ -6,7 +6,7 @@ import {
 	Link,
 	useRouterState,
 } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { catalog } from "../lib/catalog";
 import { OfflineButton } from "../components/offline-button";
 import { NotebookSave } from "../components/notebook";
@@ -33,6 +33,7 @@ export const Route = createRootRoute({
 					"Rechner und Grundlagen für Elektronik, Elektrotechnik und Hardware. Mit vollständigem Lösungsweg und Offline-Nutzung.",
 			},
 			{ name: "theme-color", content: "#000000" },
+			{ name: "elecalculate-build", content: __ELECALCULATE_BUILD_ID__ },
 		],
 		links: [
 			{ rel: "stylesheet", href: appCSS },
@@ -101,6 +102,8 @@ function Root() {
 		select: (s) => s.location.pathname.replace(/\/+$/, "") || "/",
 	});
 	const [menuOpen, setMenuOpen] = useState(false);
+	const menuToggle = useRef<HTMLButtonElement>(null);
+	const menu = useRef<HTMLElement>(null);
 	const [search, setSearch] = useState("");
 	const group = groups.find((g) => path.startsWith("/" + g.id + "/"));
 	const currentGroup = group?.id ?? "Allgemein";
@@ -121,11 +124,17 @@ function Root() {
 	}, [path]);
 	useEffect(() => {
 		const close = (event: KeyboardEvent) => {
-			if (event.key === "Escape") setMenuOpen(false);
+			if (event.key === "Escape" && menuOpen) {
+				setMenuOpen(false);
+				menuToggle.current?.focus();
+			}
 		};
 		window.addEventListener("keydown", close);
 		return () => window.removeEventListener("keydown", close);
-	}, []);
+	}, [menuOpen]);
+	useEffect(() => {
+		if (menuOpen) menu.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+	}, [menuOpen]);
 	return (
 		<html lang="de">
 			<head>
@@ -137,6 +146,7 @@ function Root() {
 				</a>
 				<header className="classic-header">
 					<button
+						ref={menuToggle}
 						className="menu-toggle"
 						aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
 						aria-expanded={menuOpen}
@@ -178,10 +188,14 @@ function Root() {
 					<button
 						className="menu-backdrop"
 						aria-label="Menü schließen"
-						onClick={() => setMenuOpen(false)}
+						onClick={() => {
+							setMenuOpen(false);
+							menuToggle.current?.focus();
+						}}
 					/>
 				)}
 				<nav
+					ref={menu}
 					id="site-menu"
 					className="site-menu"
 					aria-label="Fachbereiche"

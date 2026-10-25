@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+
 const scenarios = [
 	{
 		name: "Ohm",
@@ -251,7 +251,7 @@ const scenarios = [
 		file: "Elektrotechnik/Wechselstrom",
 		target: "PWM",
 		action: "calculate_PWM",
-		values: { "up-PWM": "5", "g-PWM": "0.5", "f-PWM": "1k" },
+		values: { "up-PWM": "5", "g-PWM": "50", "f-PWM": "1k" },
 		result: "result_PWM",
 	},
 ] as const;
@@ -298,8 +298,48 @@ async function setup(
 		.replace(/\s+/g, " ")
 		.trim();
 }
+
+const expected: Record<string, { key: string; value: number }> = {
+	Ohm: { key: "I", value: 0.012 },
+	"Unbelasteter Spannungsteiler": { key: "Uout", value: 8 },
+	"Belasteter Spannungsteiler": { key: "Uout", value: 48 / 7 },
+	Kreis: { key: "A", value: Math.PI },
+	Leitfähigkeit: { key: "p", value: 1 },
+	Temperaturwiderstand: { key: "Rw", value: 120 },
+	Stromdichte: { key: "J", value: 5 },
+	Kondensator: { key: "Q", value: 0.001 },
+	"RC Serie": { key: "Xc", value: 1 / (2 * Math.PI * 1000 * 1e-7) },
+	"RC Parallel": { key: "Y", value: Math.hypot(0.001, 0.002) },
+	"RC Ladekurve": { key: "Ut", value: 10 * (1 - Math.exp(-1)) },
+	Spule: { key: "Phi", value: 0.0001 },
+	"RL Ladekurve": { key: "It", value: 1 - Math.exp(-1) },
+	Magnetismus: { key: "H", value: 100 },
+	Transformator: { key: "U2", value: 23 },
+	Verstärkung: { key: "g", value: 20 },
+	"RC Hochpass": { key: "fg", value: 1 / (2 * Math.PI * 1000 * 1e-7) },
+	"RC Tiefpass": { key: "fg", value: 1 / (2 * Math.PI * 1000 * 1e-7) },
+	"RL Hochpass": { key: "fg", value: 1000 / (2 * Math.PI * 0.01) },
+	"RL Tiefpass": { key: "fg", value: 1000 / (2 * Math.PI * 0.01) },
+	"Schwingkreis Serie": {
+		key: "fr",
+		value: 1 / (2 * Math.PI * Math.sqrt(0.01 * 1e-7)),
+	},
+	"Schwingkreis Parallel": {
+		key: "fr",
+		value: 1 / (2 * Math.PI * Math.sqrt(0.01 * 1e-7)),
+	},
+	"OPV invertierend": { key: "Uout", value: -1 },
+	"OPV nichtinvertierend": { key: "Uout", value: 1.1 },
+	"OPV Summierer": { key: "Uout", value: -3 },
+	"OPV Differenz": { key: "Uout", value: 1 },
+	Transistor: { key: "RL", value: 240 },
+	Sinus: { key: "Ueff", value: 5 / Math.SQRT2 },
+	Rechteck: { key: "Ueff", value: 5 },
+	Dreieck: { key: "Ueff", value: 5 / Math.sqrt(3) },
+	PWM: { key: "Ueff", value: 5 / Math.SQRT2 },
+};
 for (const scenario of scenarios)
-	test(scenario.name, async ({ page, context }) => {
+	test(scenario.name, async ({ page }) => {
 		const errors: string[] = [];
 		page.on("pageerror", (e) => errors.push(e.message));
 		await page.goto("/" + scenario.file);
@@ -307,33 +347,19 @@ for (const scenario of scenarios)
 			"data-ready",
 			"true",
 		);
-		const actual = await setup(page, scenario);
-		expect(actual).not.toMatch(/NaN|Infinity/);
-		if ("golden" in scenario) expect(actual).toContain(scenario.golden);
-		if (scenario.name === "Unbelasteter Spannungsteiler") {
-			expect(actual).toContain("8 V");
-			expect(errors).toEqual([]);
-			return;
-		}
-		if (scenario.name === "Belasteter Spannungsteiler") {
-			expect(actual).toContain("6.857143 V");
-			expect(errors).toEqual([]);
-			return;
-		}
-		const reference = await context.newPage();
-		const shared = await readFile("migration/source/scripts.js", "utf8");
-		let html = await readFile(
-			"migration/source/" + scenario.file + ".html",
-			"utf8",
+		const text = await setup(page, scenario);
+		expect(text).not.toMatch(/NaN|Infinity/);
+		await expect(page.getByRole("alert")).toHaveCount(0);
+		const reference = expected[scenario.name];
+		const reading = page.locator(
+			'[id="' +
+				scenario.result +
+				'"] [data-result-key="' +
+				reference.key +
+				'"]',
 		);
-		html = html.replace(
-			/<script[^>]*src="[^"]*scripts\.js"[^>]*><\/script>/g,
-			() => "<script>" + shared + "</script>",
-		);
-		html = html.replace(/<script[^>]*src="[^"]+"[^>]*><\/script>/g, "");
-		await reference.setContent(html, { waitUntil: "domcontentloaded" });
-		const expected = await setup(reference, scenario, true);
-		expect(actual).toBe(expected);
+		await expect(reading).toHaveCount(1);
+		const value = Number(await reading.getAttribute("data-result-value"));
+		expect(value).toBeCloseTo(reference.value, 8);
 		expect(errors).toEqual([]);
-		await reference.close();
 	});

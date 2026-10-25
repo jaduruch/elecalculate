@@ -3,7 +3,11 @@ import { createController } from "../calculations/HST-C-Syntax.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					'@layer source { @scope (.page-body) {\n\n\n        /* Code-Block Styling */\n        .code-block {\n            position: relative;\n            background-color: #222;\n            color: #fff;\n            font-family: "Courier New", monospace;\n            padding: 10px;\n            margin: 10px;\n            border-radius: 5px;\n            overflow-x: auto;\n            white-space: nowrap;\n            text-align: left;\n        }\n\n        /* Kopiersymbol oben rechts im Codeblock */\n        .copy-icon {\n            position: absolute;\n            top: 10px;\n            right: 10px;\n            color: white;\n            font-size: 18px;\n            cursor: pointer;\n        }\n\n        /* Hover-Effekt für das Kopiersymbol */\n        .copy-icon:hover {\n            color: #aaaaaa;\n        }\n\n        /* Syntax-Highlighting */\n        .code-keyword {\n            color: orange;\n        }\n\n        .code-condition {\n            color: white;\n        }\n\n        .code-comment {\n            color: #6a9955;\n        }\n\n        .code-brace {\n            color: #00aaff;\n        }\n\n        .explanation {\n            margin-top: 10px;\n            color: #ffffff;\n        }\n    \n} }'
@@ -18,12 +22,16 @@ export default function Page() {
 			<div className="dropdown-container">
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-0"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -64,12 +72,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-1"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -127,12 +139,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-2"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -171,12 +187,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-3"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -228,12 +248,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-4"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}

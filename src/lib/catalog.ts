@@ -273,7 +273,7 @@ export const catalog = [
 		title: "Wechselstrom",
 		category: "Elektrotechnik",
 		slug: "Elektrotechnik-Wechselstrom",
-		inputs: 25,
+		inputs: 24,
 		canvases: 1,
 		handlers: [
 			"toggleSelection(this, 'Sinus')",

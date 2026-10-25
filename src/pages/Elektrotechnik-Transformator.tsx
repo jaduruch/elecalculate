@@ -3,7 +3,11 @@ import { createController } from "../calculations/Elektrotechnik-Transformator.j
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>{"@layer source { @scope (.page-body) {\n\n} }"}</style>
 			<br />
 			<div>
@@ -13,11 +17,12 @@ export default function Page() {
 				<div className="form-row">
 					<label></label>
 					<button
+						disabled={!controller.ready}
 						type="button"
 						id="control-0"
 						data-action="resetInputs"
 						onClick={(event) => {
-							controller.current?.handlers.resetInputs?.();
+							controller.current?.invoke?.("resetInputs", event.currentTarget);
 						}}
 						className="Button_Berechnen"
 					>
@@ -38,6 +43,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Strom)" }}
 						type="text"
 						aria-label="Strom I1"
@@ -51,6 +57,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Strom)" }}
 						type="text"
 						aria-label="Strom I2"
@@ -64,6 +71,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R1"
@@ -77,6 +85,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R2"
@@ -90,6 +99,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Leistung)" }}
 						type="text"
 						aria-label="Leistung P1"
@@ -103,6 +113,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Leistung)" }}
 						type="text"
 						aria-label="Leistung P2"
@@ -116,6 +127,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Windungszahl)" }}
 						type="text"
 						aria-label="Windungszahl N1"
@@ -129,6 +141,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Windungszahl)" }}
 						type="text"
 						aria-label="Windungszahl N2"
@@ -139,6 +152,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Kapazität C1"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Kapazitaet)" }}
 						type="text"
 						aria-label="Kapazität C1"
@@ -149,6 +163,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Kapazität C2"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Kapazitaet)" }}
 						type="text"
 						aria-label="Kapazität C2"
@@ -162,6 +177,7 @@ export default function Page() {
 						<sub>{"1"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung U1"
@@ -175,6 +191,7 @@ export default function Page() {
 						<sub>{"2"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung U2"
@@ -185,6 +202,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Übersetzungsverhältnis ü"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Verstaerkungsfaktor)" }}
 						type="text"
 						aria-label="Übersetzungsverhältnis ü"
@@ -195,6 +213,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Wirkungsgrad η"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsfaktor)" }}
 						type="text"
 						aria-label="Wirkungsgrad η"
@@ -205,11 +224,15 @@ export default function Page() {
 				<div className="form-row">
 					<label></label>
 					<button
+						disabled={!controller.ready}
 						type="button"
 						id="control-1"
 						data-action="calculateParameters"
 						onClick={(event) => {
-							controller.current?.handlers.calculateParameters?.();
+							controller.current?.invoke?.(
+								"calculateParameters",
+								event.currentTarget,
+							);
 						}}
 						className="Button_Berechnen"
 					>
@@ -219,7 +242,7 @@ export default function Page() {
 				</div>
 			</div>
 			<h3>{"Resultate"}</h3>
-			<p id="result" aria-live="polite"></p>
+			<div id="result" aria-live="polite"></div>
 			<br />
 			<br />
 		</div>

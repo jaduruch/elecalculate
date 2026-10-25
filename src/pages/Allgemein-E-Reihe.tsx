@@ -3,7 +3,11 @@ import { createController } from "../calculations/Allgemein-E-Reihe.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        table {\n            border-collapse: collapse;\n            /*width: 100%;*/\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid black;\n            padding: 10px;\n            text-align: center;\n        }\n        th {\n            background-color: black;\n            text-decoration: underline;\n            color: white;\n            font-size: 1.2em;\n        }\n        select {\n            padding: 10px;\n            font-size: 1em;\n            margin: 20px;\n            border-radius: 4px;\n        }\n        label {\n            font-weight: bold;\n            font-size: 1.2em;\n        }\n       \n    \n} }"
@@ -16,9 +20,10 @@ export default function Page() {
 				</h1>
 				<label htmlFor="eReiheSelect">{"E-Reihe Auswählen:"}</label>
 				<select
+					disabled={!controller.ready}
 					id="eReiheSelect"
 					onChange={(event) => {
-						controller.current?.handlers.updateTable?.();
+						controller.current?.invoke?.("updateTable", event.currentTarget);
 					}}
 				>
 					<option value="E3">{"E3"}</option>

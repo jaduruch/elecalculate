@@ -3,7 +3,11 @@ import { createController } from "../calculations/Elektrotechnik-Magnetismus.js"
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>{"@layer source { @scope (.page-body) {\n\n} }"}</style>
 			<br />
 			<div>
@@ -13,11 +17,12 @@ export default function Page() {
 				<div className="form-row">
 					<label></label>
 					<button
+						disabled={!controller.ready}
 						type="button"
 						id="control-0"
 						data-action="resetInputs"
 						onClick={(event) => {
-							controller.current?.handlers.resetInputs?.();
+							controller.current?.invoke?.("resetInputs", event.currentTarget);
 						}}
 						className="Button_Berechnen"
 					>
@@ -35,6 +40,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Strom I"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Strom)" }}
 						type="text"
 						aria-label="Strom I"
@@ -45,6 +51,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Feldstärke H"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Feldstaerke)" }}
 						type="text"
 						aria-label="Feldstärke H"
@@ -55,6 +62,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Durchflutung Θ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Durchflutung)" }}
 						type="text"
 						aria-label="Durchflutung Θ"
@@ -68,6 +76,7 @@ export default function Page() {
 						<sub>{"r"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Dielektrizitaetszahl)" }}
 						type="text"
 						aria-label="Permeabilitätszahl μr"
@@ -78,6 +87,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Windungszahl N"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Windungszahl)" }}
 						type="text"
 						aria-label="Windungszahl N"
@@ -91,6 +101,7 @@ export default function Page() {
 						<sub>{"m"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Mag_Widerstand)" }}
 						type="text"
 						aria-label="Mag. Widerstand Rm"
@@ -101,6 +112,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Fläche A"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Flaeche)" }}
 						type="text"
 						aria-label="Fläche A"
@@ -115,6 +127,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Mag. Fluss Φ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Mag_Fluss)" }}
 						type="text"
 						aria-label="Mag. Fluss Φ"
@@ -125,6 +138,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Spannung U"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung U"
@@ -135,6 +149,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Länge l"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Laenge)" }}
 						type="text"
 						aria-label="Länge l"
@@ -145,6 +160,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Mag. Flussdichte B"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Mag_Flussdichte)" }}
 						type="text"
 						aria-label="Mag. Flussdichte B"
@@ -155,6 +171,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Zeit t"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Zeit)" }}
 						type="text"
 						aria-label="Zeit t"
@@ -165,11 +182,15 @@ export default function Page() {
 				<div className="form-row">
 					<label></label>
 					<button
+						disabled={!controller.ready}
 						type="button"
 						id="control-1"
 						data-action="calculateParameters"
 						onClick={(event) => {
-							controller.current?.handlers.calculateParameters?.();
+							controller.current?.invoke?.(
+								"calculateParameters",
+								event.currentTarget,
+							);
 						}}
 						className="Button_Berechnen"
 					>
@@ -178,7 +199,7 @@ export default function Page() {
 					<label></label>
 				</div>
 			</div>
-			<p id="result" aria-live="polite"></p>
+			<div id="result" aria-live="polite"></div>
 			<br />
 		</div>
 	);

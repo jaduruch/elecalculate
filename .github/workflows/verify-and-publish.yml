@@ -13,7 +13,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: oven-sh/setup-bun@v2.2.0
@@ -23,8 +23,9 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run typecheck
-      - run: bunx playwright install --with-deps chromium
+      - run: bunx playwright install --with-deps chromium webkit
       - run: bun run test:e2e
+      - run: bun run test:webkit
       - uses: actions/upload-artifact@v7.0.2
         with:
           name: website
@@ -34,7 +35,9 @@ jobs:
         if: failure()
         with:
           name: browser-test-results
-          path: test-results
+          path: |
+            test-results
+            test-results-webkit
   publish:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verify

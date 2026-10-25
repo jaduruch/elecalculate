@@ -17,7 +17,7 @@ export function parseInput(value: string): number {
 		.trim()
 		.replace(",", ".")
 		.match(
-			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*([pnuµμmcdkMGT]?)$/,
+			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)\s*([pnuµμmcdkMGT]?)$/,
 		);
 	if (!match) return NaN;
 	const n = Number(match[1]) * (factors[match[2]] ?? 1);
@@ -28,7 +28,7 @@ export function parseInputsquare(value: string): number {
 		.trim()
 		.replace(",", ".")
 		.match(
-			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*([pnuµμmcdkMGT]?)$/,
+			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)\s*([pnuµμmcdkMGT]?)$/,
 		);
 	if (!match) return NaN;
 	const n = Number(match[1]) * (factors[match[2]] ?? 1) ** 2;

@@ -16,6 +16,15 @@ for (const entry of catalog)
 				await page.locator(".page-body canvas").count(),
 			).toBeGreaterThanOrEqual(entry.canvases);
 		expect(errors).toEqual([]);
+		const duplicateIds = await page.locator("[id]").evaluateAll((nodes) => {
+			const counts = new Map<string, number>();
+			for (const node of nodes)
+				counts.set(node.id, (counts.get(node.id) ?? 0) + 1);
+			return Array.from(counts)
+				.filter(([, count]) => count > 1)
+				.map(([id]) => id);
+		});
+		expect(duplicateIds).toEqual([]);
 		await expect
 			.poll(() =>
 				page

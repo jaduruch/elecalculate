@@ -10,35 +10,109 @@ export interface Step {
 	formula: string;
 	inputs: Record<string, number>;
 }
+export interface EquationIssue {
+	kind: "input" | "domain" | "contradiction" | "unbounded";
+	target: string;
+	formula?: string;
+	actual?: number;
+	expected?: number;
+}
+export interface SolveOptions {
+	positive?: readonly string[];
+	relativeTolerance?: number;
+	absoluteTolerance?: number;
+}
 export function solveEquations(
 	given: Record<string, number>,
 	rules: readonly Rule[],
+	options: SolveOptions = {},
 ) {
-	const values = { ...given };
+	const values: Record<string, number> = {};
 	const steps: Step[] = [];
-	const variables = new Set(rules.map((r) => r.target));
+	const issues: EquationIssue[] = [];
+	const positive = new Set(options.positive ?? []);
+	const addIssue = (issue: EquationIssue) => {
+		if (
+			!issues.some(
+				(existing) =>
+					existing.kind === issue.kind && existing.target === issue.target,
+			)
+		)
+			issues.push(issue);
+	};
+	for (const [key, value] of Object.entries(given)) {
+		if (!Number.isFinite(value))
+			addIssue({ kind: "input", target: key, actual: value });
+		else if (positive.has(key) && value <= 0)
+			addIssue({ kind: "domain", target: key, actual: value });
+		else values[key] = value;
+	}
+	if (issues.length) return { values, steps, issues };
+	const variables = new Set(rules.map((rule) => rule.target));
 	for (let pass = 0; pass <= variables.size; pass++) {
 		let changed = false;
 		for (const rule of rules) {
 			if (
 				values[rule.target] !== undefined ||
-				!rule.inputs.every((k) => values[k] !== undefined)
+				!rule.inputs.every((key) => values[key] !== undefined)
 			)
 				continue;
-			const n = rule.solve(values);
-			if (!Number.isFinite(n)) continue;
-			values[rule.target] = n;
+			const value = rule.solve(values);
+			if (!Number.isFinite(value)) continue;
+			if (positive.has(rule.target) && value <= 0) {
+				addIssue({
+					kind: "domain",
+					target: rule.target,
+					formula: rule.formula,
+					actual: value,
+				});
+				continue;
+			}
+			values[rule.target] = value;
 			steps.push({
 				target: rule.target,
-				value: n,
+				value,
 				formula: rule.formula,
-				inputs: Object.fromEntries(rule.inputs.map((k) => [k, values[k]])),
+				inputs: Object.fromEntries(
+					rule.inputs.map((key) => [key, values[key]]),
+				),
 			});
 			changed = true;
 		}
 		if (!changed) break;
 	}
-	return { values, steps };
+	// Check every fully determined relationship, including supplied outputs. Keeping
+	// the first derivation alone would silently hide inconsistent user constraints.
+	const relativeTolerance = options.relativeTolerance ?? 1e-6;
+	const absoluteTolerance = options.absoluteTolerance ?? 0;
+	for (const rule of rules) {
+		if (!rule.inputs.every((key) => values[key] !== undefined)) continue;
+		const expected = rule.solve(values);
+		const actual = values[rule.target];
+		if (actual === undefined) {
+			if (expected === Infinity || expected === -Infinity)
+				addIssue({
+					kind: "unbounded",
+					target: rule.target,
+					formula: rule.formula,
+				});
+			continue;
+		}
+		if (!Number.isFinite(expected)) continue;
+		const tolerance = Math.max(
+			absoluteTolerance,
+			relativeTolerance * Math.max(Math.abs(actual), Math.abs(expected)),
+		);
+		if (Math.abs(actual - expected) > tolerance)
+			addIssue({
+				kind: "contradiction",
+				target: rule.target,
+				formula: rule.formula,
+				actual,
+				expected,
+			});
+	}
+	return { values, steps, issues };
 }
 const rule = (
 	target: string,

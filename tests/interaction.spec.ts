@@ -5,13 +5,32 @@ test("preferred resistor values and colour codes", async ({ page }) => {
 	await expect(page.locator("#eReiheTable td")).toHaveCount(96);
 	await expect(page.locator("#eReiheTable")).toContainText("9.76");
 	await page.goto("/Allgemein/Widerstandstabelle");
+	await expect(page.locator("#band1Select")).toHaveAttribute(
+		"aria-expanded",
+		"false",
+	);
 	await page.locator("#band1Select").click();
+	await expect(page.locator("#band1Select")).toHaveAttribute(
+		"aria-expanded",
+		"true",
+	);
 	await page.locator('#band1Dropdown [data-value="4"]').click();
 	await page.locator("#band2Select").click();
 	await page.locator('#band2Dropdown [data-value="7"]').click();
 	await page.locator("#multiplierSelect").click();
 	await page.locator('#multiplierDropdown [data-value="100"]').click();
 	await expect(page.locator("#resistanceValue")).toContainText("4700");
+	await page.locator("#multiplierSelect").click();
+	await page.locator('#multiplierDropdown [data-value="0.1"]').click();
+	await expect(page.locator("#resistanceValue")).toHaveText("Widerstand: 4.7Ω");
+	await page.locator("#multiplierSelect").click();
+	await page.locator('#multiplierDropdown [data-value="0.01"]').click();
+	await expect(page.locator("#resistanceValue")).toHaveText(
+		"Widerstand: 0.47Ω",
+	);
+	await page.locator("#toleranceSelect").click();
+	await page.locator('#toleranceDropdown [data-value="0.05"]').click();
+	await expect(page.locator("#toleranceValue")).toContainText("±5%");
 });
 test("three-phase switch, neutral wire and live voltage conversion", async ({
 	page,
@@ -19,8 +38,9 @@ test("three-phase switch, neutral wire and live voltage conversion", async ({
 	const errors: string[] = [];
 	page.on("pageerror", (e) => errors.push(e.message));
 	await page.goto("/Elektrotechnik/Drehstrom");
+	await expect(page.locator("#outputVoltage")).toHaveValue("398.37");
 	await page.locator("#inputVoltage").fill("230");
-	await expect(page.locator("#outputVoltage")).toHaveValue("398.36");
+	await expect(page.locator("#outputVoltage")).toHaveValue("398.37");
 	await page.getByLabel("Dreieckschaltung").check();
 	await expect(page.locator("#circuitType")).toContainText("Dreieckschaltung");
 	await expect(page.locator("#deltaCircuit")).toBeVisible();

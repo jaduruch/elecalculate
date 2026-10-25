@@ -1,8 +1,21 @@
 import { parseInput, parseInputsquare } from "../lib/si";
 import { setHTML } from "../lib/safe-html";
 import { calculateDivider } from "../lib/divider-controller";
+import { calculateOpamp } from "../lib/opamp-controller";
+import { updateThreePhase, phaseSum } from "../lib/three-phase";
+import { quantumGate, validateQubit } from "../lib/quantum";
+import { calculateBasic } from "../lib/basic-solvers";
+import { calculateNetwork } from "../lib/resistor-network";
+import { convertNumericField } from "../lib/form-units";
+import {
+	calculatePassive,
+	calculatePassiveTransient,
+	calculatePassiveCapacitorAC,
+} from "../lib/passive-controller";
+import { drawPassivePhasors } from "../lib/passive-phasors";
+import { calculateACFilter, calculateACResonator } from "../lib/ac-controller";
 import { createShared } from "./shared.js";
-/** Existing calculation algorithms, isolated to this route's mount lifecycle. */
+/** Calculator presentation and reviewed domain adapters, isolated to this route's mount lifecycle. */
 export function createController(scope) {
 	const {
 		document,
@@ -71,6 +84,11 @@ export function createController(scope) {
 	}
 	let isRADactive = true;
 	function toggleRAD() {
+		convertNumericField(
+			document,
+			"phi-Sinus",
+			isRADactive ? 180 / Math.PI : Math.PI / 180,
+		);
 		let button = document.getElementById("Rad-Button");
 		if (isRADactive) {
 			setHTML(button, "360&deg;");
@@ -82,6 +100,7 @@ export function createController(scope) {
 	}
 	let isPercent = true;
 	function toggleDuty() {
+		convertNumericField(document, "g-PWM", isPercent ? 0.01 : 100);
 		let button = document.getElementById("Duty-Button");
 		if (isPercent) {
 			setHTML(button, "1");
@@ -119,158 +138,23 @@ export function createController(scope) {
 		};
 	}
 	function calculate_Sinus() {
-		let result_Sinus = "";
-		const ut = parseInput(document.getElementById("ut-Sinus").value);
-		let up = parseInput(document.getElementById("up-Sinus").value);
-		const upp = parseInput(document.getElementById("upp-Sinus").value);
-		const Ueff = parseInput(document.getElementById("Ueff-Sinus").value);
-		const f = parseInput(document.getElementById("f-Sinus").value);
-		const t = parseInput(document.getElementById("t-Sinus").value);
-		const T = parseInput(document.getElementById("T-Sinus").value);
-		const phi = parseInput(document.getElementById("phi-Sinus").value);
-		let phi_rad = phi;
-		if (phi && !isRADactive) {
-			phi_rad = phi * (Math.PI / 180);
+		const result = calculateBasic(document, "sinus", {
+			radians: isRADactive,
+		});
+		const v = result.values;
+		if (
+			!result.errors.length &&
+			Number.isFinite(v.up) &&
+			Number.isFinite(v.f) &&
+			v.f > 0
+		)
+			drawSinus(v.up, v.f, v.phi ?? 0, v.t ?? 0, 2, 8);
+		else {
+			const c = document.getElementById("sinusCanvas");
+			if (c) c.dataset.calculated = "false";
+			c?.getContext("2d")?.clearRect(0, 0, c.width, c.height);
 		}
-		if (!ut) {
-			if (up && f && t) {
-				const calculated_ut =
-					up * Math.sin(2 * Math.PI * f * t + (phi_rad || 0));
-				result_Sinus += `
-                        \\[
-                        u(t) = \\hat{u} \\cdot \\sin(2\\pi f t + \\varphi) \\\\
-                        = ${up}\\,\\mathrm{V} \\cdot \\sin(2\\pi \\cdot ${f}\\,\\mathrm{Hz} \\cdot ${t}\\,\\mathrm{s} + ${formatNumber(phi_rad, 3)}\\,\\mathrm{rad}) \\\\
-                        = ${formatNumber(calculated_ut, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			}
-		}
-		if (!up) {
-			if (ut && f && t) {
-				up = ut / Math.sin(2 * Math.PI * f * t + (phi_rad || 0));
-				result_Sinus += `
-                        \\[
-                        \\hat{u} = \\frac{u(t)}{\\sin(2\\pi f t + \\varphi)} \\\\
-                        = \\frac{${formatNumber(ut, 3)}\\,\\mathrm{V}}{\\sin(2\\pi \\cdot ${f}\\,\\mathrm{Hz} \\cdot ${t}\\,\\mathrm{s} + ${formatNumber(phi_rad, 3)}\\,\\mathrm{rad})} \\\\
-                        = ${formatNumber(up, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			} else if (upp) {
-				up = upp / 2;
-				result_Sinus += `
-                        \\[
-                        \\hat{u} = \\frac{u_{pp}}{2} \\\\
-                        = \\frac{${formatNumber(upp, 3)}\\,\\mathrm{V}}{2} \\\\
-                        = ${formatNumber(up, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			} else if (Ueff) {
-				up = Ueff * Math.sqrt(2);
-				result_Sinus += `
-                        \\[
-                        \\hat{u} = U_{\\mathrm{eff}} \\cdot \\sqrt{2} \\\\
-                        = ${formatNumber(Ueff, 3)}\\,\\mathrm{V} \\cdot \\sqrt{2} \\\\
-                        = ${formatNumber(up, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			}
-		}
-		let calculated_upp = upp;
-		if (!upp) {
-			if (up) {
-				calculated_upp = up * 2;
-				result_Sinus += `
-                        \\[
-                        u_{pp} = \\hat{u} \\cdot 2 \\\\
-                        = ${formatNumber(up, 3)}\\,\\mathrm{V} \\cdot 2 \\\\
-                        = ${formatNumber(calculated_upp, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			} else if (Ueff) {
-				calculated_upp = Ueff * 2 * Math.sqrt(2);
-				result_Sinus += `
-                        \\[
-                        u_{pp} = U_{\\mathrm{eff}} \\cdot 2 \\cdot \\sqrt{2} \\\\
-                        = ${formatNumber(Ueff, 3)}\\,\\mathrm{V} \\cdot 2 \\cdot \\sqrt{2} \\\\
-                        = ${formatNumber(calculated_upp, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			}
-		}
-		let calculated_Ueff = Ueff;
-		if (!Ueff) {
-			if (up) {
-				calculated_Ueff = up / Math.sqrt(2);
-				result_Sinus += `
-                        \\[
-                        U_{\\mathrm{eff}} = \\frac{\\hat{u}}{\\sqrt{2}} \\\\
-                        = \\frac{${formatNumber(up, 3)}\\,\\mathrm{V}}{\\sqrt{2}} \\\\
-                        = ${formatNumber(calculated_Ueff, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			} else if (upp) {
-				calculated_Ueff = upp / (2 * Math.sqrt(2));
-				result_Sinus += `
-                        \\[
-                        U_{\\mathrm{eff}} = \\frac{u_{pp}}{2 \\cdot \\sqrt{2}} \\\\
-                        = \\frac{${formatNumber(upp, 3)}\\,\\mathrm{V}}{2 \\cdot \\sqrt{2}} \\\\
-                        = ${formatNumber(calculated_Ueff, 3)}\\,\\mathrm{V}
-                        \\]
-                    `;
-			}
-		}
-		let calculated_f = f;
-		if (!f) {
-			if (T) {
-				calculated_f = 1 / T;
-				result_Sinus += `
-                        \\[
-                        f = \\frac{1}{T} \\\\
-                        = \\frac{1}{${formatNumber(T, 3)}\\,\\mathrm{s}} \\\\
-                        = ${formatNumber(calculated_f, 3)}\\,\\mathrm{Hz}
-                        \\]
-                    `;
-			}
-		}
-		let calculated_T = T;
-		if (!T) {
-			if (f) {
-				calculated_T = 1 / f;
-				result_Sinus += `
-                        \\[
-                        T = \\frac{1}{f} \\\\
-                        = \\frac{1}{${formatNumber(f, 3)}\\,\\mathrm{Hz}} \\\\
-                        = ${formatNumber(calculated_T * 1000, 3)}\\,\\mathrm{ms}
-                        \\]
-                    `;
-			}
-		}
-		let calculated_phi_rad = phi_rad;
-		let calculated_phi_deg = phi;
-		if (!phi) {
-			if (ut && up && f && t) {
-				const angle = Math.asin(ut / up);
-				calculated_phi_rad = angle - 2 * Math.PI * f * t;
-				calculated_phi_deg = calculated_phi_rad * (180 / Math.PI);
-				result_Sinus += `
-                        \\[
-                        \\varphi = \\arcsin\\left(\\frac{u(t)}{\\hat{u}}\\right) - 2\\pi f t \\\\
-                        = \\arcsin\\left(\\frac{${formatNumber(ut, 3)}\\,\\mathrm{V}}{${formatNumber(up, 3)}\\,\\mathrm{V}}\\right) - 2\\pi \\cdot ${formatNumber(f, 3)}\\,\\mathrm{Hz} \\cdot ${formatNumber(t, 3)}\\,\\mathrm{s} \\\\
-                        = ${formatNumber(calculated_phi_rad, 3)}\\,\\mathrm{rad} = ${formatNumber(calculated_phi_deg, 3)}\\,\\mathrm{°}
-                        \\]
-                    `;
-			}
-		}
-		setHTML(document.getElementById("result_Sinus"), result_Sinus);
-		MathJax.typeset();
-		drawSinus(
-			up || calculated_Ueff * Math.sqrt(2),
-			calculated_f || f,
-			calculated_phi_rad || phi_rad,
-			t || 0,
-			2,
-			8,
-		);
+		return result;
 	}
 	function drawWatermark(ctx, canvas, size = 70, margin = 10) {
 		if (watermarkLoaded) {
@@ -289,15 +173,28 @@ export function createController(scope) {
 	}
 	function exportCanvasAsPNG(canvasId) {
 		const canvas = document.getElementById(canvasId);
-		if (!canvas) return;
-		const link = document.createElement("a");
-		link.download = canvasId + ".png";
-		link.href = canvas.toDataURL("image/png");
-		link.click();
+		if (
+			!canvas ||
+			(canvasId === "sinusCanvas" && canvas.dataset.calculated !== "true") ||
+			canvas.closest("[data-calculation-stale=true]")
+		)
+			return;
+		const copy = document.createElement("canvas");
+		copy.width = canvas.width;
+		copy.height = canvas.height;
+		const ctx = copy.getContext("2d");
+		ctx.fillStyle = "#000";
+		ctx.fillRect(0, 0, copy.width, copy.height);
+		ctx.drawImage(canvas, 0, 0);
+		const a = document.createElement("a");
+		a.download = canvasId + ".png";
+		a.href = copy.toDataURL("image/png");
+		a.click();
 	}
 	function drawSinus(up, f, phi, tMarker, periods = 2, speed = 1) {
 		const canvas = document.getElementById("sinusCanvas");
 		if (!canvas) return;
+		canvas.dataset.calculated = "true";
 		const ctx = canvas.getContext("2d");
 		const W = canvas.width,
 			H = canvas.height;
@@ -308,7 +205,7 @@ export function createController(scope) {
 		const Tsec = 1 / f;
 		const total = periods * Tsec;
 		const pxPerS = plotW / total;
-		const scaleY = (midY - 20) / up;
+		const scaleY = (midY - 20) / (up === 0 ? 1 : up);
 		ctx.clearRect(0, 0, W, H);
 		drawAxesAndLabels(
 			ctx,
@@ -327,7 +224,7 @@ export function createController(scope) {
 		drawWatermark(ctx, canvas);
 		const downloadIconArea = drawDownloadIcon(ctx, canvas);
 		if (!canvas._downloadHandlerAdded) {
-			canvas.addEventListener("click", function (e) {
+			scope.listen(canvas, "click", function (e) {
 				const rect = canvas.getBoundingClientRect();
 				const scaleX = canvas.width / rect.width;
 				const scaleY = canvas.height / rect.height;
@@ -521,375 +418,65 @@ export function createController(scope) {
 	function fillExampleValues(exampleName) {
 		const examples = {
 			euroNet: {
-				ut: "",
-				up: "",
-				upp: "",
 				Ueff: "230",
 				f: "50",
 				t: "0.022",
-				T: "",
 				phi: "0",
-				angleUnit: "deg",
 			},
 			functionGen: {
-				ut: "",
 				up: "5",
-				upp: "",
-				Ueff: "",
 				f: "1k",
 				t: "0.00050",
-				T: "",
 				phi: "-45",
-				angleUnit: "deg",
 			},
 		};
 		const values = examples[exampleName];
 		if (!values) return;
-		document.getElementById("ut-Sinus").value = values.ut;
-		document.getElementById("up-Sinus").value = values.up;
-		document.getElementById("upp-Sinus").value = values.upp;
-		document.getElementById("Ueff-Sinus").value = values.Ueff;
-		document.getElementById("f-Sinus").value = values.f;
-		document.getElementById("t-Sinus").value = values.t;
-		document.getElementById("T-Sinus").value = values.T;
-		document.getElementById("phi-Sinus").value = values.phi;
-		if (values.angleUnit === "deg" && isRADactive) {
-			toggleRAD();
-		} else if (values.angleUnit === "rad" && !isRADactive) {
-			toggleRAD();
-		}
-		calculate_Sinus();
+		isRADactive = false;
+		document.getElementById("Rad-Button").textContent = "360°";
+		for (const key of ["ut", "up", "upp", "Ueff", "f", "t", "T", "phi"])
+			document.getElementById(key + "-Sinus").value = values[key] ?? "";
+		return calculate_Sinus();
 	}
 	function calculate_Rechteck() {
-		let result_Rechteck = ``;
-		const up = document.getElementById("up-Rechteck").value;
-		const upp = document.getElementById("upp-Rechteck").value;
-		const Ueff = document.getElementById("Ueff-Rechteck").value;
-		if (!up) {
-			if (upp) {
-				result_Rechteck += `
-                        Peakspannung &ucirc; =
-                        <div class="fraction">
-                            <span>u<sub>pp</sub></span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div>
-                        = <div class="fraction">
-                            <span>${upp}V</span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div>
-                        = ${formatWithPrefix(parseInput(upp) / 2, "V")}<br>`;
-			}
-			if (Ueff) {
-				result_Rechteck += `
-                        Peakspannung &ucirc; = U<sub>eff</sub>
-                        = ${Ueff}V<br>`;
-			}
-		}
-		if (!upp) {
-			if (up) {
-				result_Rechteck += `
-                        Peak-Peakspannung u<sub>pp</sub> = 2 &lowast; &ucirc;
-                        = 2 &lowast; ${up}V
-                        = ${formatWithPrefix(2 * parseInput(up), "V")}<br>`;
-			}
-			if (Ueff) {
-				result_Rechteck += `
-                        Peak-Peakspannung u<sub>pp</sub> = 2 &lowast; U<sub>eff</sub>
-                        = 2 &lowast; ${Ueff}V
-                        = ${formatWithPrefix(2 * parseInput(Ueff), "V")}<br>`;
-			}
-		}
-		if (!Ueff) {
-			if (up) {
-				result_Rechteck += `
-                        Effektivspannung U<sub>eff</sub> = &ucirc;
-                        = ${up}V<br>`;
-			}
-			if (upp) {
-				result_Rechteck += `
-                        Effektivspannung U<sub>eff</sub> =
-                        <div class="fraction">
-                            <span>u<sub>pp</sub></span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div>
-                        = <div class="fraction">
-                            <span>${upp}V</span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div>
-                        = ${formatWithPrefix(parseInput(upp) / 2, "V")}<br>`;
-			}
-		}
-		setHTML(document.getElementById("result_Rechteck"), result_Rechteck);
+		return calculateBasic(document, "rectangle");
 	}
 	function calculate_Dreieck() {
-		let result_Dreieck = ``;
-		const Ueff = document.getElementById("Ueff-Dreieck").value;
-		const up = document.getElementById("up-Dreieck").value;
-		const upp = document.getElementById("upp-Dreieck").value;
-		if (!up) {
-			if (upp) {
-				result_Dreieck += `
-                        Peakspannung &ucirc; = 
-                        <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(upp) / 2, "V")}<br>`;
-			}
-			if (Ueff) {
-				result_Dreieck += `
-                        Peakspannung &ucirc; = U<sub>eff</sub> &lowast; &radic;3
-                    =
-                        ${Ueff}V &lowast; &radic;3
-                    = ${formatWithPrefix(parseInput(Ueff) * Math.pow(3, 0.5), "V")}<br>`;
-			}
-		}
-		if (!upp) {
-			if (up) {
-				result_Dreieck += `
-                        Peak-Peakspannung u<sub>pp</sub> =  u<sub>p</sub> &lowast; 2 
-                    =
-                        ${up}V &lowast; 2 
-                    = ${formatWithPrefix(parseInput(up) * 2, "V")}<br>`;
-			}
-			if (Ueff) {
-				result_Dreieck += `
-                        Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 &lowast; &radic;3
-                    =
-                        ${Ueff}V &lowast; 2 &lowast; &radic;3
-                    = ${formatWithPrefix(parseInput(Ueff) * 2 * Math.pow(3, 0.5), "V")}<br>`;
-			}
-		}
-		if (!Ueff) {
-			if (up) {
-				result_Dreieck += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> &ucirc; </span><br>
-                            <span class="fraction-denominator">&radic;3</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${up}V<br>
-                            <span class="fraction-denominator">&radic;3</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(up) / Math.pow(3, 0.5), "V")}<br>`;
-			}
-			if (upp) {
-				result_Dreieck += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2 &lowast; &radic;3</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
-                            <span class="fraction-denominator">2 &lowast; &radic;3</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(upp) / (2 * Math.pow(3, 0.5)), "V")}<br>`;
-			}
-		}
-		setHTML(document.getElementById("result_Dreieck"), result_Dreieck);
+		return calculateBasic(document, "triangle");
 	}
 	function calculate_PWM() {
-		let result_PWM = ``;
-		const up = document.getElementById("up-PWM").value;
-		const Ueff = document.getElementById("Ueff-PWM").value;
-		const f = document.getElementById("f-PWM").value;
-		const tin = document.getElementById("tin-PWM").value;
-		const T = document.getElementById("T-PWM").value;
-		const g = document.getElementById("g-PWM").value;
-		if (!up) {
-			if (up && g && isPercent) {
-				result_PWM += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&radic;g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">&radic;${g}%</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(Ueff) / Math.pow(parseInput(g) / 100, 0.5), "V")}<br>`;
-			}
-			if (up && g && !isPercent) {
-				result_PWM += `
-                        Effektivspannung U<sub>eff</sub> = 
-                        <div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&radic;g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">&radic;${g}</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(Ueff) / Math.pow(parseInput(g), 0.5), "V")}<br>`;
-			}
-		}
-		if (!Ueff) {
-			if (up && g && isPercent) {
-				result_PWM += `
-                    Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
-                =
-                    ${up}V &lowast; &radic;${g}%
-                = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g) / 100, 0.5), "V")}<br>`;
-			}
-			if (up && g && !isPercent) {
-				result_PWM += `
-                    Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
-                =
-                    ${up}V &lowast; &radic;${g}
-                = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g), 0.5), "V")}<br>`;
-			}
-		}
-		if (!f) {
-			if (T) {
-				result_PWM += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> 1 </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${T}s</span>
-                        </div> 
-                    = ${formatWithPrefix(1 / parseInput(T), "Hz")}<br>`;
-			}
-		}
-		if (!tin) {
-			if (T && g && isPercent) {
-				result_PWM += `
-                    Impulsdauer t<sub>in</sub> = T &lowast; g
-                =
-                    ${T}s &lowast; ${g}%
-                = ${formatWithPrefix((parseInput(T) * parseInput(g)) / 100, "s")}<br>`;
-			}
-			if (T && g && !isPercent) {
-				result_PWM += `
-                    Impulsdauer t<sub>in</sub> = T &lowast; g
-                =
-                    ${T}s &lowast; ${g}
-                = ${formatWithPrefix(parseInput(T) * parseInput(g), "s")}<br>`;
-			}
-			if (f && g && isPercent) {
-				result_PWM += `
-                        Impulsdauer t<sub>in</sub> = 
-                        <div class ="fraction">
-                            <span> g </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${g}%<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                = ${formatWithPrefix(parseInput(g) / (parseInput(f) * 100), "s")}<br>`;
-			}
-			if (f && g && !isPercent) {
-				result_PWM += `
-                        Impulsdauer t<sub>in</sub> = 
-                        <div class ="fraction">
-                            <span> g </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${g}<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                = ${formatWithPrefix(parseInput(g) / parseInput(f), "s")}<br>`;
-			}
-		}
-		if (!T) {
-			if (f) {
-				result_PWM += `
-                        Periodendauer T = 
-                        <div class ="fraction">
-                            <span> 1 </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(1 / parseInput(f), "s")}<br>`;
-			}
-			if (tin && g && isPercent) {
-				result_PWM += `
-                        Periodenzeit = 
-                        <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${g}%</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(tin) / (parseInput(g) / 100), "s")}<br>`;
-			}
-			if (tin && g && !isPercent) {
-				result_PWM += `
-                        Periodenzeit = 
-                        <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${g}</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(tin) / parseInput(g), "s")}<br>`;
-			}
-		}
-		if (!g) {
-			if (tin && T) {
-				result_PWM += `
-                        Duty-Cycle g = 
-                        <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${T}s</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(tin) / parseInput(T), "")}
-                    = ${formatWithPrefix((parseInput(tin) * 100) / parseInput(T), "%")}<br>`;
-			}
-			if (Ueff && up) {
-				result_PWM += `
-                        Duty-Cycle g = 
-                        (<div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>)<sup>2</sup>
-                    =
-                        (<div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>)<sup>2</sup>
-                    = ${formatWithPrefix(Math.pow(parseInput(Ueff) / parseInput(up), 2), "")}
-                    = ${formatWithPrefix(100 * Math.pow(parseInput(Ueff) / parseInput(up), 2), "%")}<br>`;
-			}
-		}
-		setHTML(document.getElementById("result_PWM"), result_PWM);
+		return calculateBasic(document, "pwm", {
+			percent: isPercent,
+		});
 	}
 	return {
+		captureState() {
+			return {
+				kind: "waveform-options",
+				values: { radians: isRADactive, percent: isPercent },
+			};
+		},
+		restoreState(snapshot) {
+			if (
+				snapshot.kind !== "waveform-options" ||
+				!["radians", "percent"].every(
+					(key) => typeof snapshot.values[key] === "boolean",
+				)
+			)
+				throw Error("Ungültige gespeicherte Einheiteneinstellung.");
+			if (typeof snapshot.values.radians === "boolean") {
+				isRADactive = snapshot.values.radians;
+				document.getElementById("Rad-Button").textContent = isRADactive
+					? "2π"
+					: "360°";
+			}
+			if (typeof snapshot.values.percent === "boolean") {
+				isPercent = snapshot.values.percent;
+				document.getElementById("Duty-Button").textContent = isPercent
+					? "%"
+					: "1";
+			}
+		},
 		handlers: {
 			toggleSelection,
 			toggleRAD,

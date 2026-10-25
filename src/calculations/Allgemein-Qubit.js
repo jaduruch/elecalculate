@@ -1,9 +1,22 @@
 import { parseInput, parseInputsquare } from "../lib/si";
 import { setHTML } from "../lib/safe-html";
 import { calculateDivider } from "../lib/divider-controller";
+import { calculateOpamp } from "../lib/opamp-controller";
+import { updateThreePhase, phaseSum } from "../lib/three-phase";
+import { quantumGate, validateQubit } from "../lib/quantum";
+import { calculateBasic } from "../lib/basic-solvers";
+import { calculateNetwork } from "../lib/resistor-network";
+import { convertNumericField } from "../lib/form-units";
+import {
+	calculatePassive,
+	calculatePassiveTransient,
+	calculatePassiveCapacitorAC,
+} from "../lib/passive-controller";
+import { drawPassivePhasors } from "../lib/passive-phasors";
+import { calculateACFilter, calculateACResonator } from "../lib/ac-controller";
 import { createShared } from "./shared.js";
 import * as THREE from "three";
-/** Existing calculation algorithms, isolated to this route's mount lifecycle. */
+/** Calculator presentation and reviewed domain adapters, isolated to this route's mount lifecycle. */
 export function createController(scope) {
 	const {
 		document,
@@ -29,7 +42,10 @@ export function createController(scope) {
 		formatWithSIPrefix,
 	} = createShared(scope);
 	const CONFIG = {
-		ANIMATION_DURATION: 750,
+		ANIMATION_DURATION: window.matchMedia("(prefers-reduced-motion: reduce)")
+			.matches
+			? 1
+			: 750,
 		PULSE_SPEED: 0.5,
 	};
 	let qubitState = {
@@ -41,6 +57,9 @@ export function createController(scope) {
 		phi: 0,
 	};
 	let isAnimating = false;
+	let stateEpoch = 0;
+	let animationFrame = 0;
+	let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	let scene, camera, renderer, sphere, stateArrow, controls;
 	let isDragging = false;
 	let previousMousePosition = {
@@ -438,14 +457,14 @@ export function createController(scope) {
 		}
 	}
 	function setupMouseControls(container) {
-		container.addEventListener("mousedown", (e) => {
+		scope.listen(container, "mousedown", (e) => {
 			isDragging = true;
 			previousMousePosition = {
 				x: e.clientX,
 				y: e.clientY,
 			};
 		});
-		container.addEventListener("mousemove", (e) => {
+		scope.listen(container, "mousemove", (e) => {
 			if (!isDragging) return;
 			const deltaX = e.clientX - previousMousePosition.x;
 			const deltaY = e.clientY - previousMousePosition.y;
@@ -462,13 +481,13 @@ export function createController(scope) {
 				y: e.clientY,
 			};
 		});
-		container.addEventListener("mouseup", () => {
+		scope.listen(container, "mouseup", () => {
 			isDragging = false;
 		});
-		container.addEventListener("mouseleave", () => {
+		scope.listen(container, "mouseleave", () => {
 			isDragging = false;
 		});
-		container.addEventListener("touchstart", (e) => {
+		scope.listen(container, "touchstart", (e) => {
 			if (e.touches.length === 1) {
 				isDragging = true;
 				previousMousePosition = {
@@ -477,7 +496,7 @@ export function createController(scope) {
 				};
 			}
 		});
-		container.addEventListener("touchmove", (e) => {
+		scope.listen(container, "touchmove", (e) => {
 			if (!isDragging || e.touches.length !== 1) return;
 			e.preventDefault();
 			const deltaX = e.touches[0].clientX - previousMousePosition.x;
@@ -495,10 +514,10 @@ export function createController(scope) {
 				y: e.touches[0].clientY,
 			};
 		});
-		container.addEventListener("touchend", () => {
+		scope.listen(container, "touchend", () => {
 			isDragging = false;
 		});
-		container.addEventListener("wheel", (e) => {
+		scope.listen(container, "wheel", (e) => {
 			e.preventDefault();
 			const zoomSpeed = 0.001;
 			const distance = camera.position.length();
@@ -517,7 +536,11 @@ export function createController(scope) {
 		renderer.setSize(width, height);
 	}
 	function animate() {
-		requestAnimationFrame(animate);
+		if (paused) {
+			renderer.render(scene, camera);
+			return;
+		}
+		animationFrame = requestAnimationFrame(animate);
 		time += 0.016;
 		if (particles) {
 			particles.rotation.y += 0.0003;
@@ -544,137 +567,8 @@ export function createController(scope) {
 	}
 	function applyGate(gateName) {
 		if (isAnimating) return;
-		let newTheta = qubitState.theta;
-		let newPhi = qubitState.phi;
-		switch (gateName) {
-			case "X":
-				if (
-					Math.abs(qubitState.theta - Math.PI / 2) < 0.05 &&
-					(isPhiNear(qubitState.phi, 0, 0.05) ||
-						isPhiNear(qubitState.phi, Math.PI, 0.05))
-				) {
-					showNoEffectMessage("X");
-					return;
-				}
-				newTheta = Math.PI - qubitState.theta;
-				if (
-					qubitState.theta < 0.01 ||
-					Math.abs(qubitState.theta - Math.PI) < 0.01
-				) {
-					newPhi = 0;
-				} else {
-					newPhi = -qubitState.phi;
-				}
-				break;
-			case "Y":
-				if (
-					Math.abs(qubitState.theta - Math.PI / 2) < 0.05 &&
-					(isPhiNear(qubitState.phi, Math.PI / 2, 0.05) ||
-						isPhiNear(qubitState.phi, (3 * Math.PI) / 2, 0.05))
-				) {
-					showNoEffectMessage("Y");
-					return;
-				}
-				newTheta = Math.PI - qubitState.theta;
-				if (
-					qubitState.theta < 0.01 ||
-					Math.abs(qubitState.theta - Math.PI) < 0.01
-				) {
-					newPhi = 0;
-				} else {
-					newPhi = Math.PI - qubitState.phi;
-				}
-				break;
-			case "Z":
-				if (
-					qubitState.theta < 0.01 ||
-					Math.abs(qubitState.theta - Math.PI) < 0.01
-				) {
-					showNoEffectMessage("Z");
-					return;
-				} else {
-					newPhi = qubitState.phi + Math.PI;
-				}
-				break;
-			case "H":
-				const tolerance = 0.05;
-				const phiNormalized = normalizePhi(qubitState.phi);
-				if (qubitState.theta < tolerance) {
-					newTheta = Math.PI / 2;
-					newPhi = 0;
-				} else if (Math.abs(qubitState.theta - Math.PI) < tolerance) {
-					newTheta = Math.PI / 2;
-					newPhi = Math.PI;
-				} else if (
-					Math.abs(qubitState.theta - Math.PI / 2) < tolerance &&
-					isPhiNear(phiNormalized, 0, tolerance)
-				) {
-					newTheta = 0;
-					newPhi = 0;
-				} else if (
-					Math.abs(qubitState.theta - Math.PI / 2) < tolerance &&
-					isPhiNear(phiNormalized, Math.PI, tolerance)
-				) {
-					newTheta = Math.PI;
-					newPhi = 0;
-				} else if (
-					Math.abs(qubitState.theta - Math.PI / 2) < tolerance &&
-					isPhiNear(phiNormalized, Math.PI / 2, tolerance)
-				) {
-					newTheta = Math.PI / 2;
-					newPhi = (3 * Math.PI) / 2;
-				} else if (
-					Math.abs(qubitState.theta - Math.PI / 2) < tolerance &&
-					isPhiNear(phiNormalized, (3 * Math.PI) / 2, tolerance)
-				) {
-					newTheta = Math.PI / 2;
-					newPhi = Math.PI / 2;
-				} else {
-					const x = Math.sin(qubitState.theta) * Math.cos(qubitState.phi);
-					const y = Math.sin(qubitState.theta) * Math.sin(qubitState.phi);
-					const z = Math.cos(qubitState.theta);
-					const newX = z;
-					const newY = -y;
-					const newZ = x;
-					newTheta = Math.acos(Math.max(-1, Math.min(1, newZ)));
-					newPhi = Math.atan2(newY, newX);
-					if (isNaN(newTheta)) newTheta = 0;
-					if (isNaN(newPhi)) newPhi = 0;
-				}
-				break;
-			case "S":
-				if (
-					qubitState.theta < 0.01 ||
-					Math.abs(qubitState.theta - Math.PI) < 0.01
-				) {
-					showNoEffectMessage("S");
-					return;
-				} else {
-					newPhi = qubitState.phi + Math.PI / 2;
-				}
-				break;
-			case "T":
-				if (
-					qubitState.theta < 0.01 ||
-					Math.abs(qubitState.theta - Math.PI) < 0.01
-				) {
-					showNoEffectMessage("T");
-					return;
-				} else {
-					newPhi = qubitState.phi + Math.PI / 4;
-				}
-				break;
-		}
-		while (newPhi < 0) newPhi += 2 * Math.PI;
-		while (newPhi >= 2 * Math.PI) newPhi -= 2 * Math.PI;
-		newTheta = Math.max(0, Math.min(Math.PI, newTheta));
-		const snapResult = snapToNearestBasisState(newTheta, newPhi);
-		newTheta = snapResult.theta;
-		newPhi = snapResult.phi;
-		if (newTheta < 0.001 || Math.abs(newTheta - Math.PI) < 0.001) {
-			newPhi = 0;
-		}
-		animateToState(newTheta, newPhi);
+		const next = quantumGate(qubitState, gateName);
+		animateToState(next.theta, next.phi);
 	}
 	function showNoEffectMessage(gateName) {
 		let notification = document.getElementById("gate-notification");
@@ -827,7 +721,9 @@ export function createController(scope) {
 	let trailParticles = null;
 	let trailPositions = [];
 	function animateToState(targetTheta, targetPhi) {
+		const epoch = ++stateEpoch;
 		isAnimating = true;
+		setQuantumBusy(true);
 		showStateOverlay();
 		const startState = {
 			theta: qubitState.theta,
@@ -840,6 +736,7 @@ export function createController(scope) {
 		if (deltaPhi > Math.PI) deltaPhi -= 2 * Math.PI;
 		if (deltaPhi < -Math.PI) deltaPhi += 2 * Math.PI;
 		function animationStep(currentTime) {
+			if (epoch !== stateEpoch) return;
 			const elapsed = currentTime - startTime;
 			const progress = Math.min(elapsed / CONFIG.ANIMATION_DURATION, 1);
 			const eased =
@@ -867,6 +764,7 @@ export function createController(scope) {
 				while (qubitState.phi >= 2 * Math.PI) qubitState.phi -= 2 * Math.PI;
 				updateStateArrow();
 				isAnimating = false;
+				setQuantumBusy(false);
 				updateStateDisplay();
 				fadeOutTrail();
 			}
@@ -1269,6 +1167,14 @@ export function createController(scope) {
 		if (overlay) overlay.classList.remove("active");
 	}
 	function updateStateDisplay() {
+		document.getElementById("theta-slider").value = String(
+			(qubitState.theta * 180) / Math.PI,
+		);
+		document.getElementById("phi-slider").value = String(
+			((qubitState.phi * 180) / Math.PI + 360) % 360,
+		);
+		updateSliderDisplay();
+		if (paused) renderer.render(scene, camera);
 		const theta = qubitState.theta;
 		const phi = qubitState.phi;
 		const alpha = Math.cos(theta / 2);
@@ -1314,7 +1220,7 @@ export function createController(scope) {
 		}
 	}
 	function formatQuantumState(theta, phi, alpha, betaReal, betaImag, betaMag) {
-		const tol = 0.02;
+		const tol = 1e-10;
 		const sqrt2inv = 1 / Math.sqrt(2);
 		if (theta < tol) {
 			return "\\(|\\psi\\rangle = |0\\rangle\\)";
@@ -1345,7 +1251,7 @@ export function createController(scope) {
 		if (Math.abs(theta - Math.PI / 2) < tol && Math.abs(phiNorm) < tol) {
 			return "\\(|\\psi\\rangle = |+\\rangle = \\frac{1}{\\sqrt{2}}(|0\\rangle + |1\\rangle)\\)";
 		}
-		let latex = "|\\psi\\rangle = ";
+		let latex = "|\\psi\\rangle \\approx ";
 		if (Math.abs(alpha) > 0.001) {
 			if (Math.abs(alpha - 1) < tol) {
 				latex += "|0\\rangle";
@@ -1401,7 +1307,7 @@ export function createController(scope) {
 	}
 	function addButtonEffects() {
 		document.querySelectorAll(".gate-btn").forEach((btn) => {
-			btn.addEventListener("click", function (e) {
+			scope.listen(btn, "click", function (e) {
 				this.classList.add("clicked");
 				setTimeout(() => this.classList.remove("clicked"), 600);
 				createButtonBurst(e.target);
@@ -1467,7 +1373,72 @@ export function createController(scope) {
 			if (hint) hint.style.display = "block";
 		}
 	});
+	function setQuantumBusy(busy) {
+		document
+			.querySelectorAll(
+				".gate-btn,.apply-rotation-btn,#theta-slider,#phi-slider",
+			)
+			.forEach((button) => {
+				button.disabled = busy;
+				button.setAttribute("aria-disabled", String(busy));
+			});
+		document
+			.getElementById("state-display")
+			?.setAttribute("aria-busy", String(busy));
+	}
+	function toggleAnimation() {
+		paused = !paused;
+		if (paused) cancelAnimationFrame(animationFrame);
+		const button = document.getElementById("animation-toggle");
+		button.textContent = paused
+			? "Animation fortsetzen"
+			: "Animation pausieren";
+		button.setAttribute("aria-pressed", String(paused));
+		if (!paused) animate();
+	}
+	document.addEventListener("DOMContentLoaded", () => {
+		const host = document.getElementById("bloch-canvas-container");
+		for (const event of ["mousemove", "touchmove", "wheel"])
+			scope.listen(host, event, () => {
+				if (paused) renderer.render(scene, camera);
+			});
+		const button = document.getElementById("animation-toggle");
+		button.textContent = paused
+			? "Animation fortsetzen"
+			: "Animation pausieren";
+		button.setAttribute("aria-pressed", String(paused));
+	});
 	return {
+		captureState() {
+			return {
+				kind: "qubit",
+				values: { theta: qubitState.theta, phi: qubitState.phi, paused },
+			};
+		},
+		restoreState(snapshot) {
+			if (
+				snapshot.kind !== "qubit" ||
+				typeof snapshot.values.paused !== "boolean"
+			)
+				throw Error("Ungültiger gespeicherter Simulationstyp.");
+			const next = {
+				theta: Number(snapshot.values.theta),
+				phi: Number(snapshot.values.phi),
+			};
+			validateQubit(next);
+			++stateEpoch;
+			qubitState = next;
+			isAnimating = false;
+			setQuantumBusy(false);
+			const wasPaused = paused;
+			paused = !!snapshot.values.paused;
+			updateStateArrow();
+			updateStateDisplay();
+			const b = document.getElementById("animation-toggle");
+			b.textContent = paused ? "Animation fortsetzen" : "Animation pausieren";
+			b.setAttribute("aria-pressed", String(paused));
+			if (wasPaused && !paused) animate();
+		},
 		handlers: {
 			initBlochSphere,
 			createParticles,
@@ -1507,6 +1478,8 @@ export function createController(scope) {
 			toggleDropdown,
 			addButtonEffects,
 			createButtonBurst,
+			setQuantumBusy,
+			toggleAnimation,
 			changeSlide,
 			showSlides,
 			formatPrefixNoUnit,

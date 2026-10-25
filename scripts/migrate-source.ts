@@ -2,6 +2,11 @@ import { parse as parseHTML } from "parse5";
 import { parse as parseJS } from "@babel/parser";
 import generate from "@babel/generator";
 import traverse from "@babel/traverse";
+import {
+	patchCalculationProgram,
+	patchSimulationSource,
+	simulationState,
+} from "./calculation-patches";
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, posix } from "node:path";
 type Node = {
@@ -22,12 +27,26 @@ const sharedBody = sharedAST.program.body.filter(
 			["parseInput", "parseInputsquare", "toggleMenu"].includes(n.id.name)
 		),
 );
+const formatterNames = [
+	"formatWithPrefix",
+	"formatWithPrefixsquare",
+	"formatPrefixNoUnit",
+	"formatPrefixNoUnitSquare",
+];
+const sharedFunctions = sharedBody.filter(
+	(n) =>
+		!(
+			n.type === "FunctionDeclaration" &&
+			n.id &&
+			formatterNames.includes(n.id.name)
+		),
+);
 const sharedMethods = sharedBody
 	.filter((n) => n.type === "FunctionDeclaration" && n.id)
 	.map((n) => (n as any).id.name);
 await writeFile(
 	"src/calculations/shared.js",
-	`export function createShared(scope){const {document,window,requestAnimationFrame,cancelAnimationFrame,setTimeout,clearTimeout}=scope;${sharedBody.map((n) => generate(n, { comments: false }).code).join("\n")}return {${sharedMethods.join(",")}};}`
+	`import {${formatterNames.join(",")}} from '../lib/format-si';\nexport function createShared(scope){const {document,window,requestAnimationFrame,cancelAnimationFrame,setTimeout,clearTimeout}=scope;${sharedFunctions.map((n) => generate(n, { comments: false }).code).join("\n")}return {${sharedMethods.join(",")}};}`
 		.replaceAll("../Pictures/", "/Pictures/")
 		.replaceAll("\u2014", ", ")
 		.replaceAll("\u2013", "-"),
@@ -126,6 +145,9 @@ function style(value: string) {
 	return out;
 }
 function expression(code: string) {
+	code = code
+		.replaceAll("'OPV_Bilder/", "'/Elektronik/OPV_Bilder/")
+		.replaceAll('"OPV_Bilder/', '"/Elektronik/OPV_Bilder/');
 	const ast = parseJS(code, {
 		allowReturnOutsideFunction: true,
 		sourceType: "script",
@@ -137,7 +159,7 @@ function expression(code: string) {
 		.replace(/(?<![.\w])([A-Za-z_$][\w$]*)\s*\(/g, (m, name) =>
 			["if", "Number", "parseFloat", "parseInt"].includes(name)
 				? m
-				: `controller.current?.handlers.${name}?.(`,
+				: `controller.current?.invoke?.(${JSON.stringify(name)},event.currentTarget, `,
 		);
 }
 for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
@@ -145,10 +167,74 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 		.filter((f) => f.endsWith(".html"))
 		.sort()) {
 		const file = section + "/" + filename;
-		const raw = await readFile(join(source, file), "utf8");
+		let raw = await readFile(join(source, file), "utf8");
+		raw = raw
+			.replaceAll("P [Watt]", "W [Watt]")
+			.replaceAll("Landung Q", "Ladung Q")
+			.replaceAll("[Henri]", "[Henry]");
+		if (file === "Elektrotechnik/Spule.html")
+			raw = raw
+				.replace("C = 15&mu;H", "L = 15&mu;H")
+				.replace("nicht 15uF", "nicht 15uH");
 		const dom = parseHTML(raw.replace(/<tr">/g, "<tr>")) as unknown as Node;
 		const main = walk(dom, (n) => n.tagName === "main")[0];
 		if (!main) throw Error("Missing main: " + file);
+		if (file === "Elektrotechnik/Wechselstrom.html") {
+			const times = walk(
+				main,
+				(n) =>
+					n.attrs?.some((a) => a.name === "id" && a.value === "t-Sinus") ===
+					true,
+			);
+			for (const duplicate of times.slice(1)) {
+				const row = (duplicate as any).parentNode;
+				const parent = row?.parentNode;
+				if (parent)
+					parent.childNodes = parent.childNodes.filter(
+						(child: Node) => child !== row,
+					);
+			}
+		}
+
+		if (file === "Allgemein/Widerstandstabelle.html") {
+			const options = walk(
+				main,
+				(n) =>
+					n.attrs?.some(
+						(a) => a.name === "id" && a.value === "multiplierDropdown",
+					) === true,
+			)[0];
+			if (options)
+				for (const [id, value, label, color] of [
+					["multiplier-gold", "0.1", "Gold", "#b79c40"],
+					["multiplier-silver", "0.01", "Silber", "#c0c0c0"],
+				])
+					options.childNodes!.push({
+						nodeName: "div",
+						tagName: "div",
+						attrs: [
+							{ name: "id", value: id },
+							{ name: "data-value", value },
+							{ name: "style", value: `background-color:${color};color:#000;` },
+						],
+						childNodes: [{ nodeName: "#text", value: label }],
+					});
+		}
+
+		if (file === "Elektronik/OPV.html")
+			for (const [id, label] of [
+				["R24-4", "Widerstand R2/R4"],
+				["Uin2-4", "Spannung Uin2"],
+			]) {
+				const input = walk(
+					main,
+					(n) =>
+						n.attrs?.some((a) => a.name === "id" && a.value === id) === true,
+				)[0];
+				const row = (input as any)?.parentNode;
+				const name = row?.childNodes?.find((n: Node) => n.tagName === "label");
+				if (name) name.childNodes = [{ nodeName: "#text", value: label }];
+			}
 		const slug = (section + "-" + filename.replace(".html", "")).replaceAll(
 			"_",
 			"-",
@@ -168,6 +254,11 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 				".dropdown-content button",
 			);
 		// Dynamic controls are dispatched through an explicit method name, never evaluated.
+		if (file.includes("Widerstandstabelle"))
+			pageCode = pageCode.replaceAll(
+				"${resistance}Ω",
+				"${Number(resistance.toPrecision(12))}Ω",
+			);
 		pageCode = pageCode
 			.replace(
 				/onclick="calculate\('\$\{opv\}'\)"/g,
@@ -182,7 +273,9 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			.replaceAll("../Pictures/", "/Pictures/")
 			.replaceAll("'OPV_Bilder/", "'/Elektronik/OPV_Bilder/")
 			.replaceAll('"OPV_Bilder/', '"/Elektronik/OPV_Bilder/');
+		pageCode = pageCode.replace('<br><br><div id="result_S_P"></div>', "");
 		pageCode = pageCode.replace(/PDFObject\.embed\([\s\S]*?\);/g, "");
+		pageCode = patchSimulationSource(file, pageCode);
 		const pageAST = parseJS(pageCode, { sourceType: "script" });
 		for (let i = 0; i < pageAST.program.body.length; i++) {
 			const node = pageAST.program.body[i];
@@ -198,7 +291,80 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 					`function ${node.id.name}(){return calculateDivider(document,${node.id.name === "calculateBel_Spannungsteiler"});}`,
 				).program.body[0];
 		}
+
+		const opamps: Record<string, string> = {
+			calculate_invertierender_Verstaerker: "inverting",
+			calculate_nicht_invertierender_Verstaerker: "noninverting",
+			calculate_summier_Verstaeker: "summing",
+			calculate_differenz_Verstaerker: "difference",
+		};
+		for (let i = 0; i < pageAST.program.body.length; i++) {
+			const n = pageAST.program.body[i];
+			if (n.type !== "FunctionDeclaration" || !n.id) continue;
+			if (file.includes("/OPV.html") && opamps[n.id.name])
+				pageAST.program.body[i] = parseJS(
+					`function ${n.id.name}(){return calculateOpamp(document,${JSON.stringify(opamps[n.id.name])});}`,
+				).program.body[0];
+			if (
+				file === "Elektrotechnik/Drehstrom.html" &&
+				n.id.name === "updateOutputVoltage"
+			)
+				pageAST.program.body[i] = parseJS(
+					"function updateOutputVoltage(){return updateThreePhase(document);}",
+				).program.body[0];
+			if (
+				file === "Elektrotechnik/Drehstrom.html" &&
+				["toggleCircuit", "toggleSymmetry", "toggleNeutral"].includes(n.id.name)
+			)
+				n.body.body.push(parseJS("updateOutputVoltage();").program.body[0]);
+		}
+		if (file === "Elektrotechnik/Drehstrom.html")
+			pageAST.program.body.push(
+				parseJS(
+					"document.addEventListener('DOMContentLoaded',()=>updateOutputVoltage());",
+				).program.body[0],
+			);
+		patchCalculationProgram(file, pageAST.program);
 		traverse(pageAST, {
+			CallExpression(path) {
+				const n = path.node;
+				if (
+					n.callee.type === "MemberExpression" &&
+					!n.callee.computed &&
+					n.callee.property.type === "Identifier" &&
+					n.callee.property.name === "addEventListener" &&
+					!(
+						n.callee.object.type === "Identifier" &&
+						["window", "document"].includes(n.callee.object.name)
+					)
+				) {
+					path.replaceWith({
+						type: "CallExpression",
+						callee: {
+							type: "MemberExpression",
+							object: { type: "Identifier", name: "scope" },
+							property: { type: "Identifier", name: "listen" },
+							computed: false,
+						},
+						arguments: [n.callee.object, ...n.arguments],
+					} as any);
+					path.skip();
+				}
+			},
+			VariableDeclarator(path) {
+				const n = path.node;
+				if (
+					file.includes("Widerstandstabelle") &&
+					n.id.type === "Identifier" &&
+					n.id.name === "multiplier" &&
+					n.init?.type === "CallExpression" &&
+					n.init.callee.type === "Identifier" &&
+					n.init.callee.name === "parseInt"
+				) {
+					n.init.callee.name = "parseFloat";
+					n.init.arguments = n.init.arguments.slice(0, 1);
+				}
+			},
 			AssignmentExpression(path) {
 				const n = path.node;
 				if (
@@ -246,12 +412,21 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 						["parseInput", "parseInputsquare"].includes(n.id.name))
 				),
 		);
+		if (file === "Elektrotechnik/Drehstrom_Simulator.html") {
+			const toggle = pageAST.program.body.find(
+				(n) => n.type === "FunctionDeclaration" && n.id?.name === "togglePhase",
+			);
+			if (toggle?.type === "FunctionDeclaration")
+				toggle.body.body.push(
+					...parseJS("syncPhaseControls();if(paused)animate();").program.body,
+				);
+		}
 		const program = pageAST.program.body;
 		const methods = program
 			.filter((n) => n.type === "FunctionDeclaration" && n.id)
 			.map((n) => (n as any).id.name);
 		const qubit = file.endsWith("Qubit.html");
-		const controller = `import { parseInput, parseInputsquare } from '../lib/si';\nimport { setHTML } from '../lib/safe-html';\nimport { calculateDivider } from '../lib/divider-controller';\nimport { createShared } from './shared.js';\n${qubit ? "import * as THREE from 'three';\n" : ""}/** Existing calculation algorithms, isolated to this route's mount lifecycle. */\nexport function createController(scope) {\nconst {document,window,MathJax,requestAnimationFrame,cancelAnimationFrame,setTimeout,clearTimeout,setInterval,clearInterval}=scope;\nconst {${sharedMethods.filter((name) => !pageNames.has(name)).join(",")}}=createShared(scope);\n${program.map((n) => generate(n, { comments: false }).code).join("\n")}\nreturn {handlers:{${[...new Set([...methods, ...sharedMethods.filter((name) => !pageNames.has(name)), "parseInput", "parseInputsquare"])].join(",")}},dispose(){${qubit ? "if(scene)scene.traverse(obj=>{obj.geometry?.dispose();const materials=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of materials)if(m){for(const value of Object.values(m))if(value?.isTexture)value.dispose();m.dispose();}});renderer?.dispose();renderer?.forceContextLoss();" : ""}}};\n}\n`;
+		const controller = `import { parseInput, parseInputsquare } from '../lib/si';\nimport { setHTML } from '../lib/safe-html';\nimport { calculateDivider } from '../lib/divider-controller';\nimport { calculateOpamp } from '../lib/opamp-controller';\nimport { updateThreePhase, phaseSum } from '../lib/three-phase';\nimport { quantumGate, validateQubit } from '../lib/quantum';\nimport { calculateBasic } from '../lib/basic-solvers';\nimport { calculateNetwork } from '../lib/resistor-network';\nimport { convertNumericField } from '../lib/form-units';\nimport { calculatePassive,calculatePassiveTransient,calculatePassiveCapacitorAC } from '../lib/passive-controller';\nimport { drawPassivePhasors } from '../lib/passive-phasors';\nimport { calculateACFilter,calculateACResonator } from '../lib/ac-controller';\nimport { createShared } from './shared.js';\n${qubit ? "import * as THREE from 'three';\n" : ""}/** Calculator presentation and reviewed domain adapters, isolated to this route's mount lifecycle. */\nexport function createController(scope) {\nconst {document,window,MathJax,requestAnimationFrame,cancelAnimationFrame,setTimeout,clearTimeout,setInterval,clearInterval}=scope;\nconst {${sharedMethods.filter((name) => !pageNames.has(name)).join(",")}}=createShared(scope);\n${program.map((n) => generate(n, { comments: false }).code).join("\n")}\nreturn {${simulationState(file)}handlers:{${[...new Set([...methods, ...sharedMethods.filter((name) => !pageNames.has(name)), "parseInput", "parseInputsquare"])].join(",")}},dispose(){${qubit ? "if(scene)scene.traverse(obj=>{obj.geometry?.dispose();const materials=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of materials)if(m){for(const value of Object.values(m))if(value?.isTexture)value.dispose();m.dispose();}});renderer?.dispose();renderer?.forceContextLoss();" : ""}}};\n}\n`;
 		await writeFile(
 			"src/calculations/" + slug + ".js",
 			controller
@@ -265,7 +440,15 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 		function jsx(n: Node): string {
 			if (n.nodeName === "#text")
 				return n.value?.trim()
-					? `{${JSON.stringify(n.value.replaceAll("—", ", ").replaceAll("–", "-"))}}`
+					? `{${JSON.stringify(
+							n.value
+								.replaceAll("—", ", ")
+								.replaceAll("–", "-")
+								.replace(
+									/development in progress|coming soon/gi,
+									"In dieser Version nicht umgesetzt.",
+								),
+						)}}`
 					: "";
 			if (!n.tagName || ["script", "style"].includes(n.tagName)) {
 				if (n.tagName === "script" && text(n).includes("document.write"))
@@ -286,6 +469,11 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			if (tag === "h1" && headingCount++ > 0) tag = "h2";
 			const attrs = n.attrs ?? [];
 			if (
+				tag === "p" &&
+				attrs.some((a) => a.name === "id" && a.value.startsWith("result"))
+			)
+				tag = "div";
+			if (
 				tag === "div" &&
 				attrs.some(
 					(a) => a.name === "class" && a.value.includes("dropdown-header"),
@@ -294,6 +482,12 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 				tag = "button";
 			if (tag === 'tr"') tag = "tr";
 			const a: string[] = [];
+			if (
+				["button", "input", "select", "textarea"].includes(tag) &&
+				!attrs.some((a) => a.name === "disabled")
+			)
+				a.push("disabled={!controller.ready}");
+
 			const css = style(attrs.find((a) => a.name === "style")?.value ?? "");
 			for (const dim of ["width", "height"]) {
 				const v = attrs.find((a) => a.name === dim)?.value;
@@ -303,6 +497,12 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 				a.push("style={" + JSON.stringify(css) + "}");
 			if (tag === "button") {
 				a.push('type="button"');
+				if (
+					attrs.some(
+						(a) => a.name === "class" && a.value.includes("dropdown-header"),
+					)
+				)
+					a.push('aria-expanded="false"');
 				if (!attrs.some((a) => a.name === "id"))
 					a.push("id=" + JSON.stringify("control-" + index++));
 			}
@@ -343,6 +543,11 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 					if (name === "checked") a.push("defaultChecked");
 					continue;
 				}
+				if (
+					name === "value" &&
+					attrs.some((a) => a.name === "id" && a.value === "outputVoltage")
+				)
+					value = "";
 				if (name === "value" && ["input", "textarea", "select"].includes(tag))
 					name = "defaultValue";
 				if (
@@ -429,7 +634,31 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 				(voids.has(tag) ? " />" : ">" + content + "</" + tag + ">")
 			);
 		}
-		const markup = (main.childNodes ?? []).map(jsx).join("");
+		let markup = (main.childNodes ?? [])
+			.map(jsx)
+			.join("")
+			.replace(
+				/(<canvas[^>]*id="sinusCanvas"[^>]*><\/canvas>)/,
+				'$1<button type="button" data-action="exportCanvasAsPNG" onClick={(event)=>controller.current?.invoke?.("exportCanvasAsPNG",event.currentTarget,"sinusCanvas")}>Diagramm als PNG speichern</button>',
+			);
+		if (
+			file === "Allgemein/Qubit.html" ||
+			file === "Elektrotechnik/Drehstrom_Simulator.html"
+		)
+			markup =
+				'<div className="simulation-controls"><button id="animation-toggle" type="button" onClick={(event)=>controller.current?.invoke?.("toggleAnimation",event.currentTarget)}>Animation pausieren</button></div>' +
+				markup;
+		if (file === "Elektrotechnik/Schwingkreis.html")
+			markup =
+				'<p className="comment">f ist die Signalfrequenz. Leer gelassen wird bei Resonanz gerechnet; abgeleitete Resonanzannahmen stehen im Lösungsweg.</p>' +
+				markup;
+		if (file === "Elektrotechnik/Verstaerkung_Daempfung.html")
+			markup = markup
+				.replace("Verstärkungsfaktor V", "Spannungs-/Stromfaktor V")
+				.replace("Dämpfungsfaktor D", "Spannungs-/Stromdämpfungsfaktor D");
+		if (file === "Elektronik/Aktiv_Filter.html")
+			markup +=
+				'<p className="comment">Dieser Fachbereich wurde im Original nicht umgesetzt. Es gibt hier keinen Rechner.</p>';
 		const h1 = walk(main, (n) => n.tagName === "h1")[0];
 		const title = h1 ? text(h1).trim() : filename.replace(".html", "");
 		const styles = walk(dom, (n) => n.tagName === "style")
@@ -439,7 +668,7 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			.replaceAll("–", "-");
 		await writeFile(
 			"src/pages/" + slug + ".tsx",
-			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\nexport default function Page(){const controller=useCalculator(createController);return <div ref={controller.root} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div>;}\n`,
+			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\nexport default function Page(){const controller=useCalculator(createController);return <div ref={controller.root} data-ready={controller.ready ? "true" : undefined} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div>;}\n`,
 		);
 		const route = file.replace(".html", "");
 		const routeFile = route.replaceAll("/", ".");

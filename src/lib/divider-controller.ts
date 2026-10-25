@@ -23,20 +23,53 @@ export function calculateDivider(
 	const result = solveEquations(
 		given,
 		loaded ? loadedDividerRules : dividerRules,
+		{ positive: ["R1", "R2", "RL", "Rp", "Rges"] },
 	);
 	output.replaceChildren();
+	if (result.issues.length) {
+		const issue = result.issues[0];
+		output.textContent =
+			issue.kind === "contradiction"
+				? `Widersprüchliche Eingaben für ${issue.target}. Die bekannten Werte erfüllen ${issue.formula} nicht. Bitte Werte prüfen.`
+				: issue.kind === "domain"
+					? `Diese Eingaben ergeben für ${issue.target} keinen positiven Widerstand. Bitte Werte prüfen.`
+					: `Aus diesen Eingaben lässt sich für ${issue.target} kein endlicher Wert berechnen. Bitte Werte prüfen.`;
+		output.setAttribute("role", "alert");
+		return;
+	}
+	output.removeAttribute("role");
 	if (!result.steps.length) {
 		output.textContent = "Bitte ausreichend bekannte Werte eingeben.";
 		return;
 	}
 	for (const step of result.steps) {
-		const row = globalThis.document.createElement("p");
+		const row = output.ownerDocument.createElement("span");
+		row.style.display = "block";
+		row.dataset.resultKey = step.target;
+		row.dataset.resultValue = String(step.value);
 		const unit = step.target.startsWith("R")
 			? "Ω"
 			: step.target.startsWith("I")
 				? "A"
 				: "V";
 		row.textContent = `${step.formula} = ${Number(step.value.toPrecision(7))} ${unit}`;
+		const detail = output.ownerDocument.createElement("small");
+		detail.style.display = "block";
+		detail.textContent =
+			"Eingesetzt: " +
+			Object.entries(step.inputs)
+				.map(([key, value]) => {
+					const unit = key.startsWith("R")
+						? "Ω"
+						: key.startsWith("I")
+							? "A"
+							: key.startsWith("U") || key === "delta"
+								? "V"
+								: "";
+					return `${key} = ${Number(value.toPrecision(8))}${unit ? " " + unit : ""}`;
+				})
+				.join("; ");
+		row.appendChild(detail);
 		output.appendChild(row);
 	}
 }

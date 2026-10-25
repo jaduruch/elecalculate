@@ -1,8 +1,21 @@
 import { parseInput, parseInputsquare } from "../lib/si";
 import { setHTML } from "../lib/safe-html";
 import { calculateDivider } from "../lib/divider-controller";
+import { calculateOpamp } from "../lib/opamp-controller";
+import { updateThreePhase, phaseSum } from "../lib/three-phase";
+import { quantumGate, validateQubit } from "../lib/quantum";
+import { calculateBasic } from "../lib/basic-solvers";
+import { calculateNetwork } from "../lib/resistor-network";
+import { convertNumericField } from "../lib/form-units";
+import {
+	calculatePassive,
+	calculatePassiveTransient,
+	calculatePassiveCapacitorAC,
+} from "../lib/passive-controller";
+import { drawPassivePhasors } from "../lib/passive-phasors";
+import { calculateACFilter, calculateACResonator } from "../lib/ac-controller";
 import { createShared } from "./shared.js";
-/** Existing calculation algorithms, isolated to this route's mount lifecycle. */
+/** Calculator presentation and reviewed domain adapters, isolated to this route's mount lifecycle. */
 export function createController(scope) {
 	const {
 		document,
@@ -39,14 +52,14 @@ export function createController(scope) {
 			currentDropdown.style.display === "block" ? "none" : "block";
 	}
 	document.querySelectorAll(".dropdown-select").forEach((selectBox) => {
-		selectBox.addEventListener("click", function (event) {
+		scope.listen(selectBox, "click", function (event) {
 			event.stopPropagation();
 			const dropdownId = this.nextElementSibling.id;
 			toggleDropdown(dropdownId);
 		});
 	});
 	document.querySelectorAll(".dropdown-content button").forEach((item) => {
-		item.addEventListener("click", function (event) {
+		scope.listen(item, "click", function (event) {
 			event.stopPropagation();
 			const value = this.getAttribute("data-value");
 			const colorBox =
@@ -77,10 +90,7 @@ export function createController(scope) {
 		const band1 = parseInt(document.getElementById("band1").value, 10);
 		const band2 = parseInt(document.getElementById("band2").value, 10);
 		const band3 = parseInt(document.getElementById("band3").value, 10);
-		const multiplier = parseInt(
-			document.getElementById("multiplier").value,
-			10,
-		);
+		const multiplier = parseFloat(document.getElementById("multiplier").value);
 		const tolerance = parseFloat(document.getElementById("tolerance").value);
 		if (!isNaN(band1) && !isNaN(band2)) {
 			let resistance =
@@ -90,7 +100,7 @@ export function createController(scope) {
 			resistance *= multiplier;
 			const tolerancePercent = tolerance * 100;
 			document.getElementById("resistanceValue").innerText =
-				`Widerstand: ${resistance}Ω`;
+				`Widerstand: ${Number(resistance.toPrecision(12))}Ω`;
 			document.getElementById("toleranceValue").innerText =
 				`Toleranz: ±${tolerancePercent}%`;
 		}
@@ -101,7 +111,7 @@ export function createController(scope) {
 		});
 	});
 	document.querySelectorAll(".dropdown-content").forEach((dropdown) => {
-		dropdown.addEventListener("click", function (event) {
+		scope.listen(dropdown, "click", function (event) {
 			event.stopPropagation();
 		});
 	});

@@ -66,15 +66,16 @@ database is required. `dist/server` is used only during prerendering.
 ## Verify
 
 ```sh
-bunx playwright install chromium
+bunx playwright install chromium webkit
 bun run verify
 ```
 
-Checks exercise every subject route on desktop and mobile, compare calculator
-results against the original source, independently check corrected voltage
-dividers, operate the Qubit controls and resistor selectors, test notebook
+Checks exercise every subject route on desktop and mobile, check independent numerical references for every implemented calculator
+family, forward/inverse identities, zero and inconsistent inputs, operate the Qubit controls and resistor selectors, test notebook
 persistence and multi-tab access, and revisit every page with networking disabled.
-Representative rendered views are written to `test-results`.
+The complete suite runs in Chromium and actual WebKit on desktop/mobile
+profiles. Representative rendered views are written to `test-results`.
+See [CHANGELOG.md](CHANGELOG.md) for the final functional audit corrections.
 
 ## Offline use and saved work
 
@@ -90,6 +91,13 @@ records. There is no account, cloud sync or transmission of calculation data.
 Serve the build over HTTPS or localhost. Opening the exported HTML with
 `file://` does not run a module application or service worker.
 
+If an older installed version stays visible, open the standalone
+[offline recovery page](https://elecalculate.com/aktualisieren.html) while online.
+It downloads the current complete build and activates it only when requested.
+Existing notebook records are retained. Normal update prompts also retain the
+current calculator inputs through the reload; an open note form must be saved
+or closed first.
+
 ## Repository layout
 
 - `src/routes/`: TanStack routes and metadata.
@@ -101,9 +109,10 @@ Serve the build over HTTPS or localhost. Opening the exported HTML with
 - `scripts/migrate-source.ts`: reproducible source-to-JSX port.
 - `scripts/postbuild.ts`: static compatibility URLs and offline generation.
 
-The established algorithms remain JavaScript modules where appropriate; this is
-not a claim that every historical formula has been rewritten in TypeScript.
-They run inside a mount-scoped lifecycle rather than global script tags.
+The calculation families use reviewed TypeScript models with domain and
+consistency checks. Historical JavaScript remains for presentation and simulation
+orchestration inside a mount-scoped lifecycle. Worked solutions expose formulas
+and substitutions; tests assert unrounded SI values, not copied historical errors.
 There are no iframe calculator wrappers, archive-only calculator fallbacks,
 runtime CDN dependencies, or AI calculation services.
 

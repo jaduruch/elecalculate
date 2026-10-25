@@ -7,7 +7,7 @@ The original `main` head was `9a6ba6d`. The more recent `development` head,
 `source/` preserves that branch's HTML, shared JavaScript, CSS and assets as
 comparison fixtures. These files are neither served nor copied into the build.
 
-`coverage.json` maps all 31 subject pages, 297 original inputs and 134 inline
+`coverage.json` maps all 31 subject pages, 296 unique inputs (one duplicated time field removed) and 134 inline
 handler bindings to native React components and scoped calculation modules.
 The new home and local notebook bring the prerendered total to 33 routes.
 
@@ -52,11 +52,12 @@ diagram code. `branch-snapshots.json` records every retired head.
 
 ## Deliberate boundaries
 
-The mathematical teaching content retains its original conventions and
-explanations. The migration does not claim independent scientific validation of
-every historical formula. Regression tests compare representative real inputs
-for every implemented calculator family with the original, and independently
-check the changed divider equations.
+The original reference content remains, but the archive-readiness audit replaced
+implemented arithmetic families with independently tested TypeScript models.
+Original-source agreement is no longer used as a correctness oracle. Tests cover
+physical identities, inverses, signs, zero values, contradictions and wide numeric
+scales. Model assumptions, such as ideal OPVs and balanced three-phase voltages,
+remain explicit. The original incomplete reference sections are marked as such.
 
 No user account, external database, analytics or AI inference is added. Drizzle
 uses a PostgreSQL worker on the user's own device for notebook persistence.

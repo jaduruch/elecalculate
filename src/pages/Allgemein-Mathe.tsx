@@ -3,7 +3,11 @@ import { createController } from "../calculations/Allgemein-Mathe.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>{"@layer source { @scope (.page-body) {\n\n} }"}</style>
 			<div>
 				<h1>
@@ -14,12 +18,16 @@ export default function Page() {
 			<div className="dropdown-container">
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-0"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -39,6 +47,7 @@ export default function Page() {
 							<div className="form-row">
 								<label>{"Fläche A"}</label>
 								<input
+									disabled={!controller.ready}
 									style={{ borderColor: "var(--Flaeche)" }}
 									type="text"
 									aria-label="Fläche A"
@@ -53,6 +62,7 @@ export default function Page() {
 							<div className="form-row">
 								<label>{"Durchmesser d"}</label>
 								<input
+									disabled={!controller.ready}
 									style={{ borderColor: "var(--Laenge)" }}
 									type="text"
 									aria-label="Durchmesser d"
@@ -61,28 +71,36 @@ export default function Page() {
 								<label>{"m [meter]"}</label>
 							</div>
 							<input
+								disabled={!controller.ready}
 								type="button"
 								defaultValue="Berechnen"
 								className="Button_Berechnen"
 								data-action="calculateKreis"
 								onClick={(event) => {
-									controller.current?.handlers.calculateKreis?.();
+									controller.current?.invoke?.(
+										"calculateKreis",
+										event.currentTarget,
+									);
 								}}
 							/>
 							<h3>{"Berechnete Ergebnisse"}</h3>
-							<p id="result_Kreis" aria-live="polite"></p>
+							<div id="result_Kreis" aria-live="polite"></div>
 						</div>
 					</div>
 				</div>
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-1"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -92,7 +110,7 @@ export default function Page() {
 					</button>
 					<div className="dropdown-content">
 						{
-							" \n                        Development in progress\n                    "
+							" \n                        In dieser Version nicht umgesetzt.\n                    "
 						}
 					</div>
 				</div>

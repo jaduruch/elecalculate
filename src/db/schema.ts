@@ -3,6 +3,9 @@ export interface FormSnapshot {
 	values: Record<string, string | boolean>;
 	selected: string[];
 	open: string[];
+	/** Explicit toggle buttons, separate from mutually exclusive selectors. */
+	active?: string[];
+	controller?: { kind: string; values: Record<string, number | boolean> };
 }
 export const notebook = pgTable("notebook", {
 	id: text().primaryKey(),

@@ -3,7 +3,11 @@ import { createController } from "../calculations/HST-Ausgangs-Stufen.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n    img {\n        border-width: 1.5px;\n        border-style: solid; /* Wichtig: Border-Stil hinzufügen */\n        border-color: rgb(77, 77, 77);\n        width: 100px;\n        height: auto; /* Optional: Höhe automatisch setzen */\n        border-radius: 5px;\n    }\n\n    \n} }"

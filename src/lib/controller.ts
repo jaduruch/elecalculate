@@ -1,6 +1,11 @@
 import renderMathInElement from "katex/contrib/auto-render";
 export type Handler = (...args: any[]) => unknown;
 export interface Controller {
+	invoke?: (name: string, target: HTMLElement, ...args: unknown[]) => unknown;
+	captureState?: () => import("./calculator-state").CalculatorSnapshot;
+	restoreState?: (
+		snapshot: import("./calculator-state").CalculatorSnapshot,
+	) => void;
 	handlers: Record<string, Handler>;
 	dispose?: () => void;
 }

@@ -3,7 +3,11 @@ import { createController } from "../calculations/Elektrotechnik-Filter.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        .filter-button {\n            position: relative;\n            width: 150px; /* Adjust as needed */\n            height: 100px; /* Adjust as needed */\n            border: 2px solid transparent; /* Initially transparent */\n            padding: 0;\n            margin: 10px;\n            background-color: transparent;\n            cursor: pointer;\n        }\n        \n        .filter-button img {\n            width: 100%;\n            height: 100%;\n            object-fit: cover;\n        }\n \n        .filter-button:hover {\n            border-color: gray; /* Gray border for hovered button */\n        }\n        \n        .filter-button.selected {\n            border-color: white; /* White border for selected button */\n        }     \n        \n        .filter-button span {\n            position: absolute;\n            bottom: 0;\n            left: 0;\n            width: 100%;\n            text-align: center;\n            background: rgba(0, 0, 0, 0.5);\n            color: white;\n            font-size: 14px;\n            padding: 2px 0;\n        }\n        \n        input {\n            border: 2px solid;\n            border-radius: 3px;\n        }\n\n        input:focus {\n            /*border: 3px solid;*/\n            outline: none; /* Entfernt den Standard-Umrandungsring */\n        }\n\n        /* Stil fuer das Formular und Layout */\n        .input-numbers {\n            display: flex;\n            flex-direction: column;\n            align-items: flex-start;\n            margin-bottom: 20px;\n            max-width: 800px; /* Setzt eine maximale Breite */\n            margin: 0 auto; /* Zentriert das Formular */\n            /*margin-left: 10px;*/\n        }\n\n        .comment{\n            font-size: smaller;\n            font-style: italic;\n            color:rgb(179, 179, 179);\n            margin-left: 10px;\n        }\n\n        .form-row {\n            display: flex;\n            align-items: center;\n            margin-bottom: 10px;\n            width: 100%;\n            margin-left: 10px;\n            \n        }\n\n        .form-row label {\n            flex: 3;\n            text-align: left;\n            margin-right: 10px;\n\n        }\n\n        h3 {\n            margin-top: 20px;\n        }\n\n        .results{\n            line-height: 2; /* Multiplikator fuer die Schriftgroesse */\n        }\n\n        .fraction\n        {\n            display: inline-block; \n            vertical-align: middle; \n            text-align: center;\n            margin-top: 1px;\n            margin-bottom: 1px;\n            line-height: 1.5; /* Multiplikator fuer die Schriftgroesse */\n        }\n\n        .fraction-numerator{\n            border-bottom: 1px solid;\n            padding-bottom: 0.2px; /* Sorgt fuer einen Abstand innerhalb des Elements */\n            display: inline-block; /* Macht die Anpassungen besser sichtbar */\n        }\n\n        .fraction-denominator {\n            border-top: 1px solid;\n        }\n\n        img{\n            width: 80%;\n            max-width: 600px;\n        }\n    \n} }"
@@ -15,13 +19,16 @@ export default function Page() {
 			</div>
 			<div>
 				<button
+					disabled={!controller.ready}
 					type="button"
 					id="control-0"
 					className="filter-button"
 					data-action="toggleSelection"
 					data-target="HP_RC"
 					onClick={(event) => {
-						controller.current?.handlers.toggleSelection?.(
+						controller.current?.invoke?.(
+							"toggleSelection",
+							event.currentTarget,
 							event.currentTarget,
 							"HP_RC",
 						);
@@ -31,13 +38,16 @@ export default function Page() {
 					<span>{"Hochpass RC"}</span>
 				</button>
 				<button
+					disabled={!controller.ready}
 					type="button"
 					id="control-1"
 					className="filter-button"
 					data-action="toggleSelection"
 					data-target="HP_RL"
 					onClick={(event) => {
-						controller.current?.handlers.toggleSelection?.(
+						controller.current?.invoke?.(
+							"toggleSelection",
+							event.currentTarget,
 							event.currentTarget,
 							"HP_RL",
 						);
@@ -47,13 +57,16 @@ export default function Page() {
 					<span>{"Hochpass RL"}</span>
 				</button>
 				<button
+					disabled={!controller.ready}
 					type="button"
 					id="control-2"
 					className="filter-button"
 					data-action="toggleSelection"
 					data-target="TP_RC"
 					onClick={(event) => {
-						controller.current?.handlers.toggleSelection?.(
+						controller.current?.invoke?.(
+							"toggleSelection",
+							event.currentTarget,
 							event.currentTarget,
 							"TP_RC",
 						);
@@ -63,13 +76,16 @@ export default function Page() {
 					<span>{"Tiefpass RC"}</span>
 				</button>
 				<button
+					disabled={!controller.ready}
 					type="button"
 					id="control-3"
 					className="filter-button"
 					data-action="toggleSelection"
 					data-target="TP_RL"
 					onClick={(event) => {
-						controller.current?.handlers.toggleSelection?.(
+						controller.current?.invoke?.(
+							"toggleSelection",
+							event.currentTarget,
 							event.currentTarget,
 							"TP_RL",
 						);
@@ -91,6 +107,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Winkel φ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Winkel)" }}
 						type="text"
 						aria-label="Winkel φ"
@@ -101,6 +118,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Widerstand R"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R"
@@ -114,6 +132,7 @@ export default function Page() {
 						<sub>{"C"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Bildwiderstand  XC"
@@ -124,6 +143,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Dämpfungssmass a"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsmass)" }}
 						type="text"
 						aria-label="Dämpfungssmass a"
@@ -134,6 +154,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Kapazität C"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Kapazitaet)" }}
 						type="text"
 						aria-label="Kapazität C"
@@ -147,6 +168,7 @@ export default function Page() {
 						<sub>{"in"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uin"
@@ -160,6 +182,7 @@ export default function Page() {
 						<sub>{"C"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung UC"
@@ -173,6 +196,7 @@ export default function Page() {
 						<sub>{"out"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uout"
@@ -186,6 +210,7 @@ export default function Page() {
 						<sub>{"g"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Grenzfrequenz fg"
@@ -196,6 +221,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Frequenz f"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Frequenz f"
@@ -204,16 +230,20 @@ export default function Page() {
 					<label>{"Hz [Hertz] "}</label>
 				</div>
 				<input
+					disabled={!controller.ready}
 					type="button"
 					defaultValue="Berechnen"
 					className="Button_Berechnen"
 					data-action="calculate_HP_RC"
 					onClick={(event) => {
-						controller.current?.handlers.calculate_HP_RC?.();
+						controller.current?.invoke?.(
+							"calculate_HP_RC",
+							event.currentTarget,
+						);
 					}}
 				/>
 				<h3>{"Berechnete Ergebnisse"}</h3>
-				<p id="result_HP_RC" aria-live="polite"></p>
+				<div id="result_HP_RC" aria-live="polite"></div>
 			</div>
 			<div style={{ display: "none" }} id="HP_RL" className="input-numbers">
 				<h2>{"Hochpass RL"}</h2>
@@ -227,6 +257,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Winkel φ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Winkel)" }}
 						type="text"
 						aria-label="Winkel φ"
@@ -237,6 +268,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Widerstand R"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R"
@@ -250,6 +282,7 @@ export default function Page() {
 						<sub>{"L"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Bildwiderstand  XL"
@@ -260,6 +293,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Dämpfungssmass a"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsmass)" }}
 						type="text"
 						aria-label="Dämpfungssmass a"
@@ -270,12 +304,13 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Induktivität L"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Induktivitaet)" }}
 						type="text"
 						aria-label="Induktivität L"
 						id="L-HP_RL"
 					/>
-					<label>{"H [Henri]"}</label>
+					<label>{"H [Henry]"}</label>
 				</div>
 				<div className="form-row">
 					<label>
@@ -283,6 +318,7 @@ export default function Page() {
 						<sub>{"in"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uin"
@@ -296,6 +332,7 @@ export default function Page() {
 						<sub>{"out"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uout"
@@ -309,6 +346,7 @@ export default function Page() {
 						<sub>{"g"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Grenzfrequenz fg"
@@ -319,6 +357,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Frequenz f"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Frequenz f"
@@ -327,16 +366,20 @@ export default function Page() {
 					<label>{"Hz [Hertz] "}</label>
 				</div>
 				<input
+					disabled={!controller.ready}
 					type="button"
 					defaultValue="Berechnen"
 					className="Button_Berechnen"
 					data-action="calculate_HP_RL"
 					onClick={(event) => {
-						controller.current?.handlers.calculate_HP_RL?.();
+						controller.current?.invoke?.(
+							"calculate_HP_RL",
+							event.currentTarget,
+						);
 					}}
 				/>
 				<h3>{"Berechnete Ergebnisse"}</h3>
-				<p id="result_HP_RL" aria-live="polite"></p>
+				<div id="result_HP_RL" aria-live="polite"></div>
 			</div>
 			<div style={{ display: "none" }} id="TP_RC" className="input-numbers">
 				<h2>{"Tiefpass RC"}</h2>
@@ -350,6 +393,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Winkel φ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Winkel)" }}
 						type="text"
 						aria-label="Winkel φ"
@@ -360,6 +404,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Widerstand R"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R"
@@ -373,6 +418,7 @@ export default function Page() {
 						<sub>{"C"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Bildwiderstand  XC"
@@ -383,6 +429,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Dämpfungssmass a"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsmass)" }}
 						type="text"
 						aria-label="Dämpfungssmass a"
@@ -393,6 +440,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Kapazität C"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Kapazitaet)" }}
 						type="text"
 						aria-label="Kapazität C"
@@ -406,6 +454,7 @@ export default function Page() {
 						<sub>{"in"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uin"
@@ -419,6 +468,7 @@ export default function Page() {
 						<sub>{"out"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uout"
@@ -432,6 +482,7 @@ export default function Page() {
 						<sub>{"g"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Grenzfrequenz fg"
@@ -442,6 +493,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Frequenz f"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Frequenz f"
@@ -450,16 +502,20 @@ export default function Page() {
 					<label>{"Hz [Hertz] "}</label>
 				</div>
 				<input
+					disabled={!controller.ready}
 					type="button"
 					defaultValue="Berechnen"
 					className="Button_Berechnen"
 					data-action="calculate_TP_RC"
 					onClick={(event) => {
-						controller.current?.handlers.calculate_TP_RC?.();
+						controller.current?.invoke?.(
+							"calculate_TP_RC",
+							event.currentTarget,
+						);
 					}}
 				/>
 				<h3>{"Berechnete Ergebnisse"}</h3>
-				<p id="result_TP_RC" aria-live="polite"></p>
+				<div id="result_TP_RC" aria-live="polite"></div>
 			</div>
 			<div style={{ display: "none" }} id="TP_RL" className="input-numbers">
 				<h2>{"Tiefpass RL"}</h2>
@@ -473,6 +529,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Winkel φ"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Winkel)" }}
 						type="text"
 						aria-label="Winkel φ"
@@ -483,6 +540,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Widerstand R"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Widerstand R"
@@ -496,6 +554,7 @@ export default function Page() {
 						<sub>{"L"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Widerstand)" }}
 						type="text"
 						aria-label="Bildwiderstand  XL"
@@ -506,6 +565,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Dämpfungssmass a"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Daempfungsmass)" }}
 						type="text"
 						aria-label="Dämpfungssmass a"
@@ -516,12 +576,13 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Induktivität L"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Induktivitaet)" }}
 						type="text"
 						aria-label="Induktivität L"
 						id="L-TP_RL"
 					/>
-					<label>{"H [Henri]"}</label>
+					<label>{"H [Henry]"}</label>
 				</div>
 				<div className="form-row">
 					<label>
@@ -529,6 +590,7 @@ export default function Page() {
 						<sub>{"in"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uin"
@@ -542,6 +604,7 @@ export default function Page() {
 						<sub>{"out"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Spannung)" }}
 						type="text"
 						aria-label="Spannung Uout"
@@ -555,6 +618,7 @@ export default function Page() {
 						<sub>{"g"}</sub>
 					</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Grenzfrequenz fg"
@@ -565,6 +629,7 @@ export default function Page() {
 				<div className="form-row">
 					<label>{"Frequenz f"}</label>
 					<input
+						disabled={!controller.ready}
 						style={{ borderColor: "var(--Frequenz)" }}
 						type="text"
 						aria-label="Frequenz f"
@@ -573,16 +638,20 @@ export default function Page() {
 					<label>{"Hz [Hertz] "}</label>
 				</div>
 				<input
+					disabled={!controller.ready}
 					type="button"
 					defaultValue="Berechnen"
 					className="Button_Berechnen"
 					data-action="calculate_TP_RL"
 					onClick={(event) => {
-						controller.current?.handlers.calculate_TP_RL?.();
+						controller.current?.invoke?.(
+							"calculate_TP_RL",
+							event.currentTarget,
+						);
 					}}
 				/>
 				<h3>{"Berechnete Ergebnisse"}</h3>
-				<p id="result_TP_RL" aria-live="polite"></p>
+				<div id="result_TP_RL" aria-live="polite"></div>
 			</div>
 			<br />
 		</div>

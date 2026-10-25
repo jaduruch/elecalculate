@@ -17,7 +17,10 @@ test("rendered home, calculator and Qubit views", async ({ page }, info) => {
 	await page.locator("#U").fill("12");
 	await page.locator("#R").fill("1k");
 	await page.locator('[data-action="calculateParametersURI"]').click();
-	await expect(page.locator("#result")).toContainText("12.000mA");
+	await expect(page.locator('#result [data-result-key="I"]')).toHaveAttribute(
+		"data-result-value",
+		"0.012",
+	);
 	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
 		path: `test-results/calculator-${info.project.name}.png`,

@@ -3,7 +3,11 @@ import { createController } from "../calculations/Allgemein-Glossar.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>{"@layer source { @scope (.page-body) {\n\n} }"}</style>
 			<div>
 				<h1>

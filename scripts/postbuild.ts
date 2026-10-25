@@ -1,3 +1,4 @@
+import packageJSON from "../package.json";
 import {
 	readdir,
 	readFile,
@@ -8,7 +9,12 @@ import {
 import { join, relative, dirname } from "node:path";
 import { createHash } from "node:crypto";
 import { catalog } from "../src/lib/catalog";
+import { getBuildId } from "./build-id";
+import { renderOfflineAcknowledgement } from "../src/lib/offline-ack";
+import { renderOfflineWorker } from "../src/lib/offline-worker";
+import { renderOfflineRecoveryPage } from "../src/lib/offline-recovery";
 const root = "dist/client";
+const buildId = getBuildId();
 for (const page of catalog) {
 	const target = "/" + page.file.replace(".html", "") + "/";
 	const path = join(root, page.file);
@@ -18,11 +24,15 @@ for (const page of catalog) {
 		`<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0;url=${target}"><title>${page.title} | Elecalculate</title><script>location.replace(${JSON.stringify(target)}+location.search+location.hash)</script><a href="${target}">${page.title} öffnen</a></html>`,
 	);
 }
+await writeFile(
+	join(root, "aktualisieren.html"),
+	renderOfflineRecoveryPage(buildId),
+);
 await copyFile("CNAME", join(root, "CNAME"));
 await writeFile(join(root, ".nojekyll"), "");
 await writeFile(
 	join(root, "404.html"),
-	'<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Seite nicht gefunden | Elecalculate</title><style>body{font-family:Arial,sans-serif;max-width:650px;margin:10vh auto;padding:25px;background:#000;color:#eee}a{color:#ddd}</style><h1>Diese Seite gibt es nicht.</h1><a href="/">Zur Themenübersicht</a></html>',
+	`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Seite nicht gefunden | Elecalculate</title><style>body{font-family:Arial,sans-serif;max-width:650px;margin:10vh auto;padding:25px;background:#000;color:#eee}a{color:#ddd}</style><script>${renderOfflineAcknowledgement(buildId)}</script></head><body><h1>Diese Seite gibt es nicht.</h1><a href="/">Zur Themenübersicht</a></body></html>`,
 );
 const commit =
 	process.env.GITHUB_SHA ??
@@ -30,7 +40,7 @@ const commit =
 await writeFile(
 	join(root, "version.json"),
 	JSON.stringify({
-		version: "2.0.0",
+		version: packageJSON.version,
 		commit,
 		stack: "TanStack Start / React / Drizzle / Tailwind",
 		pages: catalog.length + 2,
@@ -60,37 +70,23 @@ async function list(dir: string): Promise<string[]> {
 		)
 	).flat();
 }
-const files = (await list(root)).filter((p) => !p.endsWith(".map")).sort();
+const files = (await list(root))
+	.filter((p) => !p.endsWith(".map") && relative(root, p) !== "sw.js")
+	.sort();
 const hash = createHash("sha256");
-for (const file of files) hash.update(await readFile(file));
+for (const file of files) {
+	hash.update(relative(root, file));
+	hash.update(await readFile(file));
+}
 const version = hash.digest("hex").slice(0, 16);
 const assets = files.map(
 	(f) => "/" + relative(root, f).split("/").map(encodeURIComponent).join("/"),
 );
 await writeFile(
 	join(root, "sw.js"),
-	`
-const CACHE='elecalculate-static-${version}';
-const ASSETS=${JSON.stringify(assets)};
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
-self.addEventListener('activate',event=>event.waitUntil((async()=>{
- for(const key of await caches.keys())if(key.startsWith('elecalculate-static-')&&key!==CACHE)await caches.delete(key);
- await self.clients.claim();
-})()));
-self.addEventListener('fetch',event=>{
- const url=new URL(event.request.url);if(event.request.method!=='GET'||url.origin!==self.location.origin)return;
- event.respondWith((async()=>{
- const cache=await caches.open(CACHE);const hit=await cache.match(event.request,{ignoreSearch:true});if(hit)return hit;
- if(event.request.mode==='navigate'){
-  const path=url.pathname.endsWith('/')?url.pathname+'index.html':url.pathname+'/index.html';
-  const page=await cache.match(path);if(page)return page;
-  if(url.pathname==='/'){const home=await cache.match('/index.html');if(home)return home;}
- }
- return fetch(event.request);
- })());
-});
-`,
+	renderOfflineWorker(version, assets, buildId),
 );
+
 console.log(
 	`Static build ${version}: ${catalog.length + 2} prerendered pages; ${assets.length} offline assets.`,
 );

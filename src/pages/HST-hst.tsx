@@ -3,7 +3,11 @@ import { createController } from "../calculations/HST-hst.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        .alphabet-nav {\n            position: fixed;\n            right: 13px;\n            top: 50%;\n            transform: translateY(-50%);\n            display: flex;\n            flex-direction: column;\n            align-items: right;\n        }\n        .alphabet-nav a {\n            display: block;\n            /*padding: 5px;\n            font-size: 18px;*/\n            cursor: pointer;\n            text-decoration: none;\n            color: rgb(182, 182, 182);\n            transition: transform 0.3s ease, color 0.3s;\n        }\n        .alphabet-nav a:hover {\n            color: white;\n            transform: translateX(-15px);\n        }\n        .alphabet-nav a:hover + a,\n        .alphabet-nav a:has(+ a:hover) {\n            transform: translateX(-7.5px);\n        }\n\n        .search{\n            background-color: black;\n            color: white;\n            /*border: 2px solid white;*/\n            border: none;\n            border-radius: 3px;\n        }\n\n        .search:focus {\n            /*border: 3px solid;*/\n            outline: none; /* Entfernt den Standard-Umrandungsring */\n        }\n        table {\n            width: 800px;\n            max-width: 90%;\n            border-collapse: collapse;\n            \n        }\n        th, td {\n            border: none;\n            padding: 8px;\n            text-align: left;\n            vertical-align: top;\n        }\n        th {\n            background-color: #616161;\n        }\n    \n} }"
@@ -29,11 +33,12 @@ export default function Page() {
 				</nav>
 			</nav>
 			<input
+				disabled={!controller.ready}
 				type="text"
 				aria-label="Begriff suchen..."
 				id="search"
 				onInput={(event) => {
-					controller.current?.handlers.filterGlossary?.();
+					controller.current?.invoke?.("filterGlossary", event.currentTarget);
 				}}
 				placeholder="Begriff suchen..."
 				className="search"

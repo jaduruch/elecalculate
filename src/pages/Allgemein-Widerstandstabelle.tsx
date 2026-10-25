@@ -3,7 +3,11 @@ import { createController } from "../calculations/Allgemein-Widerstandstabelle.j
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        .dropdown-container {\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            margin-top: 20px;\n        }\n        .dropdown-container div {\n            margin-bottom: 10px;\n        }\n        .dropdown-menus {\n            display: flex;\n            justify-content: space-around;\n            width: 100%;\n        }\n        .dropdown {\n            position: relative;\n            display: inline-block;\n        }\n        .dropdown-select {\n            background-color: white;\n            color: black;\n            border: 1px solid #ccc;\n            padding: 5px;\n            cursor: pointer;\n            border-radius: 4px;\n        }\n        .dropdown-content {\n            display: none;\n            position: absolute;\n            background-color: white;\n            color: black;\n            border: 1px solid #ccc;\n            z-index: 1;\n            width: 120px;\n            border-radius: 4px;\n        }\n        .dropdown-content div {\n            padding: 5px;\n            cursor: pointer;\n        }\n        .dropdown-content div:hover {\n            filter: brightness(0.75);\n        }\n        .dropdown-content div.selected {\n            background-color: lightgray;\n        }\n        .color-box {\n            display: inline-block;\n            width: 20px;\n            height: 20px;\n            vertical-align: middle;\n            margin-right: 10px;\n            border-radius: 4px;\n            /*border-width: 2px;\n            border-color:rgb(0, 37, 202);*/\n        }\n        #result {\n            margin-top: 20px;\n            text-align: center;\n        }\n\n        th, td {\n        border: 1px solid black;\n        padding: 8px;\n        text-align: left;\n        }\n        \n        td {\n        min-width: 80px; /* Replace 'value' with the desired minimum width */\n        }\n\n    \n} }"
@@ -127,7 +131,12 @@ export default function Page() {
 			</table>
 			<br />
 			<div className="dropdown">
-				<button type="button" id="band1Select" className="dropdown-select">
+				<button
+					disabled={!controller.ready}
+					type="button"
+					id="band1Select"
+					className="dropdown-select"
+				>
 					<span
 						style={{ backgroundColor: "black" }}
 						className="color-box"
@@ -136,6 +145,7 @@ export default function Page() {
 				</button>
 				<div id="band1Dropdown" className="dropdown-content">
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "black", color: "white" }}
 						type="button"
 						id="control-0"
@@ -144,6 +154,7 @@ export default function Page() {
 						{"Schwarz"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "brown", color: "white" }}
 						type="button"
 						id="control-1"
@@ -152,6 +163,7 @@ export default function Page() {
 						{"Braun"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "red", color: "white" }}
 						type="button"
 						id="control-2"
@@ -160,6 +172,7 @@ export default function Page() {
 						{"Rot"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "orange", color: "black" }}
 						type="button"
 						id="control-3"
@@ -168,6 +181,7 @@ export default function Page() {
 						{"Orange"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "yellow", color: "black" }}
 						type="button"
 						id="control-4"
@@ -176,6 +190,7 @@ export default function Page() {
 						{"Gelb"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "green", color: "white" }}
 						type="button"
 						id="control-5"
@@ -184,6 +199,7 @@ export default function Page() {
 						{"Grün"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "blue", color: "white" }}
 						type="button"
 						id="control-6"
@@ -192,6 +208,7 @@ export default function Page() {
 						{"Blau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "purple", color: "white" }}
 						type="button"
 						id="control-7"
@@ -200,6 +217,7 @@ export default function Page() {
 						{"Violett"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "gray", color: "white" }}
 						type="button"
 						id="control-8"
@@ -208,6 +226,7 @@ export default function Page() {
 						{"Grau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "white", color: "black" }}
 						type="button"
 						id="control-9"
@@ -218,7 +237,12 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="dropdown">
-				<button type="button" id="band2Select" className="dropdown-select">
+				<button
+					disabled={!controller.ready}
+					type="button"
+					id="band2Select"
+					className="dropdown-select"
+				>
 					<span
 						style={{ backgroundColor: "rgb(0, 0, 0)" }}
 						className="color-box"
@@ -227,6 +251,7 @@ export default function Page() {
 				</button>
 				<div id="band2Dropdown" className="dropdown-content">
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "black", color: "white" }}
 						type="button"
 						id="control-10"
@@ -235,6 +260,7 @@ export default function Page() {
 						{"Schwarz"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "brown", color: "white" }}
 						type="button"
 						id="control-11"
@@ -243,6 +269,7 @@ export default function Page() {
 						{"Braun"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "red", color: "white" }}
 						type="button"
 						id="control-12"
@@ -251,6 +278,7 @@ export default function Page() {
 						{"Rot"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "orange", color: "black" }}
 						type="button"
 						id="control-13"
@@ -259,6 +287,7 @@ export default function Page() {
 						{"Orange"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "yellow", color: "black" }}
 						type="button"
 						id="control-14"
@@ -267,6 +296,7 @@ export default function Page() {
 						{"Gelb"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "green", color: "white" }}
 						type="button"
 						id="control-15"
@@ -275,6 +305,7 @@ export default function Page() {
 						{"Grün"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "blue", color: "white" }}
 						type="button"
 						id="control-16"
@@ -283,6 +314,7 @@ export default function Page() {
 						{"Blau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "purple", color: "white" }}
 						type="button"
 						id="control-17"
@@ -291,6 +323,7 @@ export default function Page() {
 						{"Violett"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "gray", color: "white" }}
 						type="button"
 						id="control-18"
@@ -299,6 +332,7 @@ export default function Page() {
 						{"Grau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "white", color: "black" }}
 						type="button"
 						id="control-19"
@@ -309,7 +343,12 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="dropdown">
-				<button type="button" id="band3Select" className="dropdown-select">
+				<button
+					disabled={!controller.ready}
+					type="button"
+					id="band3Select"
+					className="dropdown-select"
+				>
 					<span
 						style={{ backgroundColor: "black" }}
 						className="color-box"
@@ -318,6 +357,7 @@ export default function Page() {
 				</button>
 				<div id="band3Dropdown" className="dropdown-content">
 					<button
+						disabled={!controller.ready}
 						type="button"
 						id="control-20"
 						data-value="-1"
@@ -326,6 +366,7 @@ export default function Page() {
 						{"keine"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "black", color: "white" }}
 						type="button"
 						id="control-21"
@@ -334,6 +375,7 @@ export default function Page() {
 						{"Schwarz"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "brown", color: "white" }}
 						type="button"
 						id="control-22"
@@ -342,6 +384,7 @@ export default function Page() {
 						{"Braun"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "red", color: "white" }}
 						type="button"
 						id="control-23"
@@ -350,6 +393,7 @@ export default function Page() {
 						{"Rot"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "orange", color: "black" }}
 						type="button"
 						id="control-24"
@@ -358,6 +402,7 @@ export default function Page() {
 						{"Orange"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "yellow", color: "black" }}
 						type="button"
 						id="control-25"
@@ -366,6 +411,7 @@ export default function Page() {
 						{"Gelb"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "green", color: "white" }}
 						type="button"
 						id="control-26"
@@ -374,6 +420,7 @@ export default function Page() {
 						{"Grün"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "blue", color: "white" }}
 						type="button"
 						id="control-27"
@@ -382,6 +429,7 @@ export default function Page() {
 						{"Blau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "purple", color: "white" }}
 						type="button"
 						id="control-28"
@@ -390,6 +438,7 @@ export default function Page() {
 						{"Violett"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "gray", color: "white" }}
 						type="button"
 						id="control-29"
@@ -398,6 +447,7 @@ export default function Page() {
 						{"Grau"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "white", color: "black" }}
 						type="button"
 						id="control-30"
@@ -408,11 +458,17 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="dropdown">
-				<button type="button" id="multiplierSelect" className="dropdown-select">
+				<button
+					disabled={!controller.ready}
+					type="button"
+					id="multiplierSelect"
+					className="dropdown-select"
+				>
 					{"\n                        Multiplikator\n                    "}
 				</button>
 				<div id="multiplierDropdown" className="dropdown-content">
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "black", color: "white" }}
 						type="button"
 						id="control-31"
@@ -421,6 +477,7 @@ export default function Page() {
 						{"*1Ω"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "brown", color: "white" }}
 						type="button"
 						id="control-32"
@@ -429,6 +486,7 @@ export default function Page() {
 						{"*10Ω"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "red", color: "white" }}
 						type="button"
 						id="control-33"
@@ -437,6 +495,7 @@ export default function Page() {
 						{"*100Ω"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "orange", color: "black" }}
 						type="button"
 						id="control-34"
@@ -445,6 +504,7 @@ export default function Page() {
 						{"*1kΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "yellow", color: "black" }}
 						type="button"
 						id="control-35"
@@ -453,6 +513,7 @@ export default function Page() {
 						{"*10kΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "green", color: "white" }}
 						type="button"
 						id="control-36"
@@ -461,6 +522,7 @@ export default function Page() {
 						{"*100kΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "blue", color: "white" }}
 						type="button"
 						id="control-37"
@@ -469,6 +531,7 @@ export default function Page() {
 						{"*1MΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "purple", color: "white" }}
 						type="button"
 						id="control-38"
@@ -477,6 +540,7 @@ export default function Page() {
 						{"*10MΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "gray", color: "white" }}
 						type="button"
 						id="control-39"
@@ -485,6 +549,7 @@ export default function Page() {
 						{"*100MΩ"}
 					</button>
 					<button
+						disabled={!controller.ready}
 						style={{ backgroundColor: "white", color: "black" }}
 						type="button"
 						id="control-40"
@@ -492,35 +557,108 @@ export default function Page() {
 					>
 						{"*1GΩ"}
 					</button>
+					<button
+						disabled={!controller.ready}
+						style={{ backgroundColor: "#b79c40", color: "#000" }}
+						type="button"
+						id="multiplier-gold"
+						data-value="0.1"
+					>
+						{"Gold"}
+					</button>
+					<button
+						disabled={!controller.ready}
+						style={{ backgroundColor: "#c0c0c0", color: "#000" }}
+						type="button"
+						id="multiplier-silver"
+						data-value="0.01"
+					>
+						{"Silber"}
+					</button>
 				</div>
 			</div>
 			<div className="dropdown">
-				<button type="button" id="toleranceSelect" className="dropdown-select">
+				<button
+					disabled={!controller.ready}
+					type="button"
+					id="toleranceSelect"
+					className="dropdown-select"
+				>
 					{"\n                        Toleranz\n                    "}
 				</button>
 				<div id="toleranceDropdown" className="dropdown-content">
-					<button type="button" id="control-41" data-value="0.01">
+					<button
+						disabled={!controller.ready}
+						type="button"
+						id="control-41"
+						data-value="0.01"
+					>
 						{"±1%"}
 					</button>
-					<button type="button" id="control-42" data-value="0.02">
+					<button
+						disabled={!controller.ready}
+						type="button"
+						id="control-42"
+						data-value="0.02"
+					>
 						{"±2%"}
 					</button>
-					<button type="button" id="control-43" data-value="0.05">
+					<button
+						disabled={!controller.ready}
+						type="button"
+						id="control-43"
+						data-value="0.05"
+					>
 						{"±5%"}
 					</button>
-					<button type="button" id="control-44" data-value="0.1">
+					<button
+						disabled={!controller.ready}
+						type="button"
+						id="control-44"
+						data-value="0.1"
+					>
 						{"±10%"}
 					</button>
-					<button type="button" id="control-45" data-value="0.2">
+					<button
+						disabled={!controller.ready}
+						type="button"
+						id="control-45"
+						data-value="0.2"
+					>
 						{"±20%"}
 					</button>
 				</div>
 			</div>
-			<input type="hidden" id="band1" defaultValue="0" />
-			<input type="hidden" id="band2" defaultValue="0" />
-			<input type="hidden" id="band3" defaultValue="-1" />
-			<input type="hidden" id="multiplier" defaultValue="1" />
-			<input type="hidden" id="tolerance" defaultValue="0" />
+			<input
+				disabled={!controller.ready}
+				type="hidden"
+				id="band1"
+				defaultValue="0"
+			/>
+			<input
+				disabled={!controller.ready}
+				type="hidden"
+				id="band2"
+				defaultValue="0"
+			/>
+			<input
+				disabled={!controller.ready}
+				type="hidden"
+				id="band3"
+				defaultValue="-1"
+			/>
+			<input
+				disabled={!controller.ready}
+				type="hidden"
+				id="multiplier"
+				defaultValue="1"
+			/>
+			<input
+				disabled={!controller.ready}
+				type="hidden"
+				id="tolerance"
+				defaultValue="0"
+			/>
 			<div id="result" aria-live="polite">
 				<p id="resistanceValue">{"Widerstand: 0Ω"}</p>
 				<p id="toleranceValue">{"Toleranz: ±0%"}</p>

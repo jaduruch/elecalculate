@@ -3,7 +3,11 @@ import { createController } from "../calculations/HST-Objekt-Orientiert.js";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
-		<div ref={controller.root} className="page-body ">
+		<div
+			ref={controller.root}
+			data-ready={controller.ready ? "true" : undefined}
+			className="page-body "
+		>
 			<style>
 				{
 					"@layer source { @scope (.page-body) {\n\n        /* Lokales Syntax-Highlighting für C++ */\n        code {\n            font-family: Consolas, monospace;\n            background-color: #1e1e1e;\n            color: #f8f8f2;\n            padding: 0.5em;\n            display: block;\n            border-radius: 5px;\n            overflow-x: auto;\n            text-align: left;\n        }\n\n        .keyword {\n            color: #569cd6;\n        }\n\n        .type {\n            color: #4ec9b0;\n        }\n\n        .function {\n            color: #dcdcaa;\n        }\n\n        .string {\n            color: #ce9178;\n        }\n\n        .bracket {\n            color: #ffd000;\n        }\n\n        .error{\n            color: red;\n        }\n\n        .comment {\n            color: #6a9955;\n            font-style: italic;\n        }\n    \n} }"
@@ -22,12 +26,16 @@ export default function Page() {
 			<div className="dropdown-container">
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-0"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -107,12 +115,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-1"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -144,12 +156,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-2"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
@@ -188,12 +204,16 @@ export default function Page() {
 				<div className="divider"></div>
 				<div className="dropdown">
 					<button
+						disabled={!controller.ready}
 						type="button"
+						aria-expanded="false"
 						id="control-3"
 						className="dropdown-header"
 						data-action="toggleDropdown"
 						onClick={(event) => {
-							controller.current?.handlers.toggleDropdown?.(
+							controller.current?.invoke?.(
+								"toggleDropdown",
+								event.currentTarget,
 								event.currentTarget,
 							);
 						}}
