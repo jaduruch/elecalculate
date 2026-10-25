@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Allgemein-Mathe.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -42,7 +43,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Kreisberechnung"}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -115,7 +118,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Dreiecksberechnung "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							{

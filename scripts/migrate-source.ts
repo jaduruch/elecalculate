@@ -171,11 +171,15 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 		raw = raw
 			.replaceAll("P [Watt]", "W [Watt]")
 			.replaceAll("Landung Q", "Ladung Q")
-			.replaceAll("[Henri]", "[Henry]");
+			.replaceAll("[Henri]", "[Henry]")
+			.replaceAll("Activ Filter", "Aktive Filter");
 		if (file === "Elektrotechnik/Spule.html")
 			raw = raw
 				.replace("C = 15&mu;H", "L = 15&mu;H")
 				.replace("nicht 15uF", "nicht 15uH");
+		// Keep the demonstration focused on gates, state and measurement.
+		if (file === "Allgemein/Qubit.html")
+			raw = raw.replace(/<div id="easter-egg-hint"[^>]*>[\s\S]*?<\/div>/, "");
 		const dom = parseHTML(raw.replace(/<tr">/g, "<tr>")) as unknown as Node;
 		const main = walk(dom, (n) => n.tagName === "main")[0];
 		if (!main) throw Error("Missing main: " + file);
@@ -622,6 +626,15 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			if (tag === "img" && !attrs.some((a) => a.name === "alt"))
 				a.push('alt="Schaltungsabbildung"');
 			let content = (n.childNodes ?? []).map(jsx).join("");
+			if (
+				tag === "span" &&
+				attrs.some(
+					(a) => a.name === "class" && a.value.split(/\s+/).includes("arrow"),
+				)
+			) {
+				a.push('aria-hidden="true"');
+				content = '<Chevron direction="down" />';
+			}
 			if (attrs.some((a) => a.name === "id" && a.value === "pdfjs-viewer"))
 				content =
 					'<object data="/Elektrotechnik/Elektrotechnik.pdf" type="application/pdf" title="Elektrotechnik Unterlagen">' +
@@ -668,7 +681,7 @@ for (const section of ["Allgemein", "Elektrotechnik", "Elektronik", "HST"]) {
 			.replaceAll("–", "-");
 		await writeFile(
 			"src/pages/" + slug + ".tsx",
-			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\nexport default function Page(){const controller=useCalculator(createController);return <>{controller.restoring&&<p className="notebook-loading" role="status">Gespeicherte Eingaben werden geladen…</p>}<div ref={controller.root} inert={controller.restoring} aria-busy={controller.restoring || undefined} data-restoring={controller.restoring ? "true" : "false"} data-ready={controller.ready ? "true" : undefined} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div></>;}\n`,
+			`import { useCalculator } from '../lib/use-calculator';\nimport { createController } from '../calculations/${slug}.js';\n${markup.includes("<Chevron ") ? `import { Chevron } from '../components/chevron';\n` : ""}export default function Page(){const controller=useCalculator(createController);return <>{controller.restoring&&<p className="notebook-loading" role="status">Gespeicherte Eingaben werden geladen…</p>}<div ref={controller.root} inert={controller.restoring} aria-busy={controller.restoring || undefined} data-restoring={controller.restoring ? "true" : "false"} data-ready={controller.ready ? "true" : undefined} className="page-body ${qubit ? "qubit-page" : ""}"><style>{${JSON.stringify("@layer source { @scope (.page-body) {\n" + styles + "\n} }")}}</style>${markup}</div></>;}\n`,
 		);
 		const route = file.replace(".html", "");
 		const routeFile = route.replaceAll("/", ".");

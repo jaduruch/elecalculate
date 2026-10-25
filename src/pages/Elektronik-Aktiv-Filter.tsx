@@ -21,7 +21,7 @@ export default function Page() {
 				<div>
 					<h1>
 						<br />
-						{"Activ Filter"}
+						{"Aktive Filter"}
 					</h1>
 				</div>
 				<div>

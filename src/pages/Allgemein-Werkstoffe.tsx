@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Allgemein-Werkstoffe.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -46,7 +47,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Spezifischer Widerstand"}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -174,7 +177,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Temperaturabhängigkeit Widerstände "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -300,7 +305,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Stromdichte "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>

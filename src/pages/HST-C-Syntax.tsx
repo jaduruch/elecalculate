@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/HST-C-Syntax.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -46,7 +47,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        if / else\n                        "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="code-block">
@@ -98,7 +101,9 @@ export default function Page() {
 							{
 								"\n                        switch case\n                        "
 							}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="code-block">
@@ -165,7 +170,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        for\n                        "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="code-block">
@@ -213,7 +220,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        enum\n                        "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="code-block">
@@ -276,7 +285,9 @@ export default function Page() {
 							{
 								"\n                        ternärer operator (if/else auf einer Zeile)\n                        "
 							}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="code-block">

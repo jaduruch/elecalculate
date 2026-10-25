@@ -4,6 +4,6 @@ export const Route = createFileRoute("/Elektronik/Aktiv_Filter")({
 	validateSearch: (search: Record<string, unknown>): { notiz?: string } => ({
 		notiz: typeof search.notiz === "string" ? search.notiz : undefined,
 	}),
-	head: () => ({ meta: [{ title: "Activ Filter | Elecalculate" }] }),
+	head: () => ({ meta: [{ title: "Aktive Filter | Elecalculate" }] }),
 	component: Page,
 });

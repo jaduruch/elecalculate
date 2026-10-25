@@ -95,6 +95,8 @@ calculators and explanations rather than replacing them with a new demo.
   white text, compact gray fixed header, hamburger category menu, horizontally
   scrollable topic links and centered calculator content. Refresh the existing
   UI gently; do not replace it with a sidebar dashboard or light document theme.
+- Use decorative SVG icons with `currentColor`, never emoji or platform-dependent
+  Unicode glyphs as navigation icons. Keep accessible names on their controls.
 - No marketing dashboard, slogan hero, numbered instrument cards, neon badge
   decoration, em dashes or en dashes. The UI is a technical reference organized
   around the existing topics, source diagrams, forms, tables and worked solutions.

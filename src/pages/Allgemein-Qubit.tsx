@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Allgemein-Qubit.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -216,15 +217,6 @@ export default function Page() {
 									{"Reset"}
 								</button>
 							</div>
-							<div
-								style={{ display: "none" }}
-								id="easter-egg-hint"
-								className="easter-egg-hint"
-							>
-								{
-									"\n                            ✨ Press H then Measure for a quantum surprise! But a bit of luck is required! ✨\n                        "
-								}
-							</div>
 						</div>
 						<div className="state-display" id="state-display">
 							<div className="state-overlay" id="state-overlay">
@@ -331,7 +323,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        What is a Qubit? "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="info-text">
@@ -423,7 +417,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Quantum Gates Explained "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="info-text">
@@ -513,7 +509,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Quantum Measurement "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="info-text">
@@ -567,7 +565,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        References "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div className="info-text">

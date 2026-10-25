@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Elektrotechnik-Spule.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -38,7 +39,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Spulen berechnungen"}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div id="L_Inputs">
@@ -252,7 +255,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Spule an Wechselstrom "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -280,7 +285,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        RL-Glied "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>

@@ -858,239 +858,6 @@ export function createController(scope) {
 			animateToState(0, 0);
 		} else {
 			animateToState(Math.PI, 0);
-			if (prob0 > 0.4 && prob0 < 0.6) {
-				triggerQuantumNewYear();
-			}
-		}
-	}
-	let newYearTriggered = false;
-	function triggerQuantumNewYear() {
-		if (newYearTriggered) return;
-		newYearTriggered = true;
-		const overlay = document.createElement("div");
-		overlay.id = "quantum-new-year";
-		const now = new Date();
-		const currentYear =
-			now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
-		const nextYear = currentYear + 1;
-		setHTML(
-			overlay,
-			`
-                <div class="qny-content">
-                    <div class="qny-pretext">Before midnight, time existed in superposition...</div>
-                    <div class="qny-equation" id="qny-eq1">\\[|\\psi_{\\text{time}}\\rangle = \\frac{1}{\\sqrt{2}}\\left(|${currentYear}\\rangle + |${nextYear}\\rangle\\right)\\]</div>
-                    <div class="qny-arrow">↓ Your observation collapsed the wavefunction ↓</div>
-                    <div class="qny-result" id="qny-eq2">\\[|\\psi\\rangle \\rightarrow |${nextYear}\\rangle\\]</div>
-                    <div class="qny-message">🎆 Quantum New Year!</div>
-                    <div class="qny-subtitle">In quantum mechanics, measurement forces a definite outcome.<br>By observing the new year, you've irreversibly collapsed<br>the universe into the ${nextYear} eigenstate.</div>
-                    <div class="qny-footnote">* According to the Copenhagen interpretation</div>
-                    <button class="qny-close" data-ec-function="closeQuantumNewYear">Accept reality → ${nextYear}</button>
-                </div>
-            `,
-		);
-		setTimeout(() => {
-			if (window.MathJax && MathJax.typesetPromise) {
-				MathJax.typesetPromise([overlay]).catch((err) =>
-					console.log("MathJax error:", err),
-				);
-			}
-		}, 100);
-		overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: radial-gradient(ellipse at center, rgba(10, 10, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: qnyFadeIn 0.5s ease;
-            `;
-		document.body.appendChild(overlay);
-		const style = document.createElement("style");
-		style.textContent = `
-                @keyframes qnyFadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes qnyPulse {
-                    0%, 100% { transform: scale(1); text-shadow: 0 0 20px #ffe66d; }
-                    50% { transform: scale(1.05); text-shadow: 0 0 40px #ffe66d, 0 0 60px #ff6b6b; }
-                }
-                @keyframes qnySlideDown {
-                    from { opacity: 0; transform: translateY(-30px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .qny-content {
-                    text-align: center;
-                    color: white;
-                    font-family: 'Segoe UI', Arial, sans-serif;
-                }
-                .qny-equation {
-                    font-size: 28px;
-                    color: #4ecdc4;
-                    margin-bottom: 20px;
-                    animation: qnySlideDown 0.6s ease 0.2s both;
-                }
-                .qny-equation .frac { margin: 0 5px; }
-                .qny-equation .frac sup, .qny-equation .frac sub { 
-                    font-size: 0.7em; 
-                    display: block;
-                }
-                .qny-equation .frac sup { border-bottom: 2px solid #4ecdc4; padding-bottom: 3px; }
-                .qny-arrow {
-                    font-size: 20px;
-                    color: #888;
-                    margin: 15px 0;
-                    animation: qnySlideDown 0.6s ease 0.4s both;
-                }
-                .qny-result {
-                    font-size: 64px;
-                    font-weight: bold;
-                    color: #ffe66d;
-                    margin: 20px 0;
-                    animation: qnySlideDown 0.6s ease 0.6s both, qnyPulse 2s ease-in-out 1.2s infinite;
-                }
-                .qny-message {
-                    font-size: 36px;
-                    margin: 30px 0 10px;
-                    animation: qnySlideDown 0.6s ease 0.8s both;
-                }
-                .qny-pretext {
-                    font-size: 16px;
-                    color: #aaa;
-                    margin-bottom: 15px;
-                    font-style: italic;
-                    animation: qnySlideDown 0.6s ease 0.1s both;
-                }
-                .qny-subtitle {
-                    font-size: 16px;
-                    color: #aaa;
-                    margin-bottom: 20px;
-                    line-height: 1.6;
-                    animation: qnySlideDown 0.6s ease 1s both;
-                }
-                .qny-footnote {
-                    font-size: 12px;
-                    color: #666;
-                    font-style: italic;
-                    margin-bottom: 30px;
-                    animation: qnySlideDown 0.6s ease 1.1s both;
-                }
-                .qny-close {
-                    padding: 15px 40px;
-                    font-size: 18px;
-                    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-                    border: none;
-                    border-radius: 30px;
-                    color: white;
-                    cursor: pointer;
-                    animation: qnySlideDown 0.6s ease 1.2s both;
-                    transition: transform 0.2s, box-shadow 0.2s;
-                }
-                .qny-close:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 5px 30px rgba(78, 205, 196, 0.4);
-                }
-                
-                /* Mobile responsive styles */
-                @media (max-width: 768px) {
-                    .qny-content {
-                        padding: 15px;
-                    }
-                    .qny-pretext {
-                        font-size: 12px;
-                        margin-bottom: 10px;
-                    }
-                    .qny-equation {
-                        font-size: 14px;
-                        margin-bottom: 10px;
-                        overflow-x: auto;
-                    }
-                    .qny-arrow {
-                        font-size: 14px;
-                        margin: 8px 0;
-                    }
-                    .qny-result {
-                        font-size: 28px;
-                        margin: 10px 0;
-                    }
-                    .qny-message {
-                        font-size: 22px;
-                        margin: 15px 0 8px;
-                    }
-                    .qny-subtitle {
-                        font-size: 12px;
-                        margin-bottom: 12px;
-                        line-height: 1.5;
-                    }
-                    .qny-footnote {
-                        font-size: 10px;
-                        margin-bottom: 15px;
-                    }
-                    .qny-close {
-                        padding: 12px 25px;
-                        font-size: 14px;
-                    }
-                }
-            `;
-		document.head.appendChild(style);
-		createNewYearFireworks(overlay);
-	}
-	function closeQuantumNewYear() {
-		const overlay = document.getElementById("quantum-new-year");
-		if (overlay) {
-			overlay.style.opacity = "0";
-			overlay.style.transition = "opacity 0.3s";
-			setTimeout(() => overlay.remove(), 300);
-		}
-	}
-	function createNewYearFireworks(container) {
-		const colors = ["#ffe66d", "#ff6b6b", "#4ecdc4", "#c44dff", "#44a08d"];
-		function createFirework() {
-			const x = Math.random() * window.innerWidth;
-			const y = Math.random() * window.innerHeight * 0.6;
-			const color = colors[Math.floor(Math.random() * colors.length)];
-			for (let i = 0; i < 20; i++) {
-				const particle = document.createElement("div");
-				const angle = (i / 20) * Math.PI * 2;
-				const velocity = 2 + Math.random() * 3;
-				const vx = Math.cos(angle) * velocity;
-				const vy = Math.sin(angle) * velocity;
-				particle.style.cssText = `
-                        position: absolute;
-                        left: ${x}px;
-                        top: ${y}px;
-                        width: 6px;
-                        height: 6px;
-                        background: ${color};
-                        border-radius: 50%;
-                        pointer-events: none;
-                        box-shadow: 0 0 10px ${color};
-                    `;
-				container.appendChild(particle);
-				let px = 0,
-					py = 0,
-					opacity = 1;
-				function animateParticle() {
-					px += vx;
-					py += vy + 0.1;
-					opacity -= 0.02;
-					if (opacity <= 0) {
-						particle.remove();
-						return;
-					}
-					particle.style.transform = `translate(${px}px, ${py}px)`;
-					particle.style.opacity = opacity;
-					requestAnimationFrame(animateParticle);
-				}
-				setTimeout(animateParticle, i * 20);
-			}
-		}
-		for (let i = 0; i < 8; i++) {
-			setTimeout(createFirework, i * 400);
 		}
 	}
 	function createMeasurementBurst(result) {
@@ -1312,72 +1079,15 @@ export function createController(scope) {
 		const dropdown = element.parentElement;
 		dropdown.classList.toggle("open");
 	}
-	function addButtonEffects() {
-		document.querySelectorAll(".gate-btn").forEach((btn) => {
-			scope.listen(btn, "click", function (e) {
-				this.classList.add("clicked");
-				setTimeout(() => this.classList.remove("clicked"), 600);
-				createButtonBurst(e.target);
-			});
-		});
-	}
-	function createButtonBurst(button) {
-		const rect = button.getBoundingClientRect();
-		const color = window.getComputedStyle(button).color;
-		for (let i = 0; i < 8; i++) {
-			const particle = document.createElement("div");
-			particle.style.cssText = `
-                    position: fixed;
-                    width: 6px;
-                    height: 6px;
-                    background: ${color};
-                    border-radius: 50%;
-                    pointer-events: none;
-                    z-index: 9999;
-                    left: ${rect.left + rect.width / 2}px;
-                    top: ${rect.top + rect.height / 2}px;
-                    box-shadow: 0 0 10px ${color};
-                `;
-			document.body.appendChild(particle);
-			const angle = (i / 8) * Math.PI * 2;
-			const velocity = 50 + Math.random() * 30;
-			const vx = Math.cos(angle) * velocity;
-			const vy = Math.sin(angle) * velocity;
-			let opacity = 1;
-			let x = 0,
-				y = 0;
-			function animateParticle() {
-				x += vx * 0.016;
-				y += vy * 0.016;
-				opacity -= 0.03;
-				if (opacity <= 0) {
-					particle.remove();
-					return;
-				}
-				particle.style.transform = `translate(${x}px, ${y}px)`;
-				particle.style.opacity = opacity;
-				requestAnimationFrame(animateParticle);
-			}
-			animateParticle();
-		}
-	}
 	document.addEventListener("DOMContentLoaded", function () {
 		initBlochSphere();
 		updateStateDisplay();
-		addButtonEffects();
 		if (window.MathJax && MathJax.startup) {
 			MathJax.startup.promise.then(() => {
 				updateStateDisplay();
 			});
 		} else {
 			setTimeout(updateStateDisplay, 500);
-		}
-		const now = new Date();
-		const isNewYearSeason =
-			(now.getMonth() === 11 && now.getDate() === 31) || now.getMonth() === 0;
-		if (isNewYearSeason) {
-			const hint = document.getElementById("easter-egg-hint");
-			if (hint) hint.style.display = "block";
 		}
 	});
 	function scheduleQuantumRender() {
@@ -1478,9 +1188,6 @@ export function createController(scope) {
 			addTrailPoint,
 			fadeOutTrail,
 			measureQubit,
-			triggerQuantumNewYear,
-			closeQuantumNewYear,
-			createNewYearFireworks,
 			createMeasurementBurst,
 			resetQubit,
 			applyCustomRotation,
@@ -1490,8 +1197,6 @@ export function createController(scope) {
 			updateStateDisplay,
 			formatQuantumState,
 			toggleDropdown,
-			addButtonEffects,
-			createButtonBurst,
 			scheduleQuantumRender,
 			setQuantumBusy,
 			toggleAnimation,

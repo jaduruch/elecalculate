@@ -1,5 +1,14 @@
 # Changes
 
+## 2.1.1
+
+- Replaced platform-dependent topic arrows and accordion glyphs with consistent,
+  monochrome SVG chevrons. Internal links no longer resemble external links.
+- Removed the Qubit holiday popup, emoji hint and button fireworks so measurement
+  leaves the result and controls visible.
+- Corrected "Aktive Filter" across navigation, page headings and metadata, and
+  replaced the AI reference in the footer with a local-storage explanation.
+
 ## 2.1.0
 
 Final functional audit before archival. The original black interface and existing

@@ -276,7 +276,7 @@ function Root() {
 							>
 								Quellcode auf GitHub
 							</a>
-							<span>Berechnungen ohne KI und ohne Datenversand.</span>
+							<span>Berechnungen und Notizen bleiben auf deinem Gerät.</span>
 						</div>
 					</footer>
 				</div>

@@ -194,6 +194,25 @@ export function patchSimulationSource(file: string, code: string) {
 			"const scaleY = (midY - 20) / (up === 0 ? 1 : up);",
 		);
 	if (file === "Allgemein/Qubit.html") {
+		// Retire the dated holiday takeover and click fireworks, preserving gates.
+		code = code
+			.replace(
+				/if \(prob0 > 0\.4 && prob0 < 0\.6\) \{\s*triggerQuantumNewYear\(\);\s*\}/,
+				"",
+			)
+			.replace(
+				/let newYearTriggered = false;[\s\S]*?(?=function createMeasurementBurst)/,
+				"",
+			)
+			.replace(
+				/function addButtonEffects\(\) \{[\s\S]*?(?=document\.addEventListener\('DOMContentLoaded')/,
+				"",
+			)
+			.replace("addButtonEffects();", "")
+			.replace(
+				/const now = new Date\(\);\s*const isNewYearSeason[\s\S]*?if \(hint\) hint\.style\.display = 'block';\s*\}/,
+				"",
+			);
 		code = code.replace(
 			"requestAnimationFrame(animate);",
 			"animationFrame=requestAnimationFrame(animate);if(scope.isNoteOpen()&&!isAnimating&&!isDragging)return;if(timestamp-lastRender<(isAnimating||isDragging?1000/30:100))return;lastRender=timestamp;",

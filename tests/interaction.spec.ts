@@ -76,11 +76,7 @@ test("qubit gates, superposition, measurement and custom state", async ({
 	await expect(page.locator("#state-prob")).toContainText("50.0%");
 	await page.getByRole("button", { name: "Measure", exact: true }).click();
 	await expect(page.locator("#state-prob")).toContainText("100.0%");
-	const celebration = page.locator("#quantum-new-year");
-	if (await celebration.isVisible()) {
-		await celebration.locator("[data-ec-function=closeQuantumNewYear]").click();
-		await expect(celebration).toHaveCount(0);
-	}
+	await expect(page.locator("#quantum-new-year")).toHaveCount(0);
 	await page.locator("#theta-slider").fill("90");
 	await page.locator("#phi-slider").fill("90");
 	await page.getByRole("button", { name: "Set State", exact: true }).click();

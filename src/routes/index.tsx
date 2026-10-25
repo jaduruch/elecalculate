@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Chevron } from "../components/chevron";
 import { catalog } from "../lib/catalog";
 export const Route = createFileRoute("/")({ component: Index });
 const departments = [
@@ -58,7 +59,7 @@ function Index() {
 									<li key={p.slug}>
 										<Link to={"/" + p.file.replace(".html", "")}>
 											{p.title}
-											<span aria-hidden="true">↗</span>
+											<Chevron className="topic-chevron" />
 										</Link>
 									</li>
 								))}

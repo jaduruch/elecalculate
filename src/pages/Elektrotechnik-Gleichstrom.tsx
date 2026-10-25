@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Elektrotechnik-Gleichstrom.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -42,7 +43,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Ohmsches Gesetz (URI)"}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -146,7 +149,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Spannungsteiler "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<label className="switch">
@@ -459,7 +464,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Serie- und Parallelschaltung "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>
@@ -526,7 +533,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Stern- Dreickschaltung "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>

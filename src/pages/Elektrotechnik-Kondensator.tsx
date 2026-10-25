@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/Elektrotechnik-Kondensator.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -42,7 +43,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Kondensator berechnungen"}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div id="CapacitorParameter">
@@ -245,7 +248,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        Kondensator an Wechselstrom "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<button
@@ -1063,7 +1068,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                        RC-Glied "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<div>

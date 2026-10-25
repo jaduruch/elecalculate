@@ -303,7 +303,7 @@ export const catalog = [
 	},
 	{
 		file: "Elektronik/Aktiv_Filter.html",
-		title: "Activ Filter",
+		title: "Aktive Filter",
 		category: "Elektronik",
 		slug: "Elektronik-Aktiv-Filter",
 		inputs: 0,

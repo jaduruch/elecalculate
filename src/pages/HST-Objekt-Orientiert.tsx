@@ -1,5 +1,6 @@
 import { useCalculator } from "../lib/use-calculator";
 import { createController } from "../calculations/HST-Objekt-Orientiert.js";
+import { Chevron } from "../components/chevron";
 export default function Page() {
 	const controller = useCalculator(createController);
 	return (
@@ -50,7 +51,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                    Erklärung Begriffe\n                    "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<table>
@@ -143,7 +146,9 @@ export default function Page() {
 							{
 								"\n                    Variablen definieren\n                    "
 							}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<p>{"Variablen in Klassen:"}</p>
@@ -184,7 +189,9 @@ export default function Page() {
 							}}
 						>
 							{"\n                    Konstruktor\n                    "}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<p>
@@ -234,7 +241,9 @@ export default function Page() {
 							{
 								"\n                    Objekte erzeugen (Instanzieren)\n                    "
 							}
-							<span className="arrow">{"▼"}</span>
+							<span className="arrow" aria-hidden="true">
+								<Chevron direction="down" />
+							</span>
 						</button>
 						<div className="dropdown-content">
 							<p>{"So wird ein Objekt erzeugt:"}</p>
