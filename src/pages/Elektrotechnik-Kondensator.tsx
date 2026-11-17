@@ -35,11 +35,7 @@ export default function Page() {
 							className="dropdown-header"
 							data-action="toggleDropdown"
 							onClick={(event) => {
-								controller.current?.invoke?.(
-									"toggleDropdown",
-									event.currentTarget,
-									event.currentTarget,
-								);
+								controller.current?.invoke?.("toggleDropdown", event.currentTarget);
 							}}
 						>
 							{"\n                        Kondensatorberechnungen"}
@@ -252,11 +248,7 @@ export default function Page() {
 							className="dropdown-header"
 							data-action="toggleDropdown"
 							onClick={(event) => {
-								controller.current?.invoke?.(
-									"toggleDropdown",
-									event.currentTarget,
-									event.currentTarget,
-								);
+								controller.current?.invoke?.("toggleDropdown", event.currentTarget);
 							}}
 						>
 							{"\n                        Kondensator an Wechselstrom "}
@@ -275,7 +267,6 @@ export default function Page() {
 								onClick={(event) => {
 									controller.current?.invoke?.(
 										"toggleSelection",
-										event.currentTarget,
 										event.currentTarget,
 										"Serie",
 									);
@@ -298,7 +289,6 @@ export default function Page() {
 								onClick={(event) => {
 									controller.current?.invoke?.(
 										"toggleSelection",
-										event.currentTarget,
 										event.currentTarget,
 										"Parallel",
 									);
@@ -1102,11 +1092,7 @@ export default function Page() {
 							className="dropdown-header"
 							data-action="toggleDropdown"
 							onClick={(event) => {
-								controller.current?.invoke?.(
-									"toggleDropdown",
-									event.currentTarget,
-									event.currentTarget,
-								);
+								controller.current?.invoke?.("toggleDropdown", event.currentTarget);
 							}}
 						>
 							{"\n                        RC-Glied "}
