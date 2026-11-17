@@ -48,7 +48,9 @@ export function createController(scope) {
 	}
 	let selectedButton = null;
 	function toggleSelection(button, sectionId) {
+		if (!button || !sectionId) return;
 		const section = document.getElementById(sectionId);
+		if (!section) return;
 		if (selectedButton === button) {
 			button.classList.remove("selected");
 			section.style.display = "none";
@@ -728,7 +730,9 @@ export function createController(scope) {
 		ctx.restore();
 	}
 	function toggleDropdown(element) {
-		const dropdown = element.parentElement;
+		if (!element) return;
+		const dropdown = element.closest(".dropdown");
+		if (!dropdown) return;
 		dropdown.classList.toggle("open");
 	}
 	return {
