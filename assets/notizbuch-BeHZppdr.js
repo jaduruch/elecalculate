@@ -1,1 +1,0 @@
-import{t as e}from"./index-BUOA8sEo.js";var t=e;export{t as component};
